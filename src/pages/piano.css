@@ -1,0 +1,273 @@
+.instrument-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+}
+.rec-btn.on-accent {
+  background: var(--accent);
+  color: #fff;
+}
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg-panel);
+  border-radius: 999px;
+  box-shadow: var(--shadow);
+}
+.ctrl-label {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+.ctrl-val {
+  font-weight: 800;
+  min-width: 32px;
+  text-align: center;
+}
+.mini-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.ctrl-group select {
+  background: var(--bg);
+  color: var(--text);
+  border: none;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-weight: 600;
+}
+.ctrl-group input[type='range'] {
+  width: 100px;
+}
+.beat-dots {
+  display: flex;
+  gap: 4px;
+}
+.beat-dots.dim {
+  opacity: 0.3;
+}
+.beat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--text-soft);
+  transition: transform 0.08s, background 0.08s;
+}
+.beat-dot.on {
+  background: var(--accent);
+  transform: scale(1.5);
+}
+
+.dim-key {
+  opacity: 0.55;
+}
+.scale-key {
+  box-shadow: var(--shadow), inset 0 -8px 0 -4px var(--accent-2);
+}
+.row2 {
+  margin-top: -4px;
+}
+.patch-picker {
+  display: flex;
+  gap: 4px;
+}
+.patch-btn {
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+.patch-btn.on {
+  background: var(--primary);
+  color: #fff;
+}
+.chord-group {
+  flex-wrap: wrap;
+}
+.chord-btn {
+  min-width: 44px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.95rem;
+  transition: transform 0.06s, filter 0.06s;
+}
+.chord-btn:active {
+  transform: scale(0.94);
+  filter: brightness(1.2);
+}
+
+.instrument-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.rec-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  color: var(--text);
+  font-weight: 700;
+  box-shadow: var(--shadow);
+}
+.rec-btn.on {
+  background: #e03131;
+  color: #fff;
+}
+.rec-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.instrument-toolbar .hint {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}
+
+.piano-stage {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 320px;
+}
+
+/* 可视化气泡层 */
+.viz-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.viz-bubble {
+  position: absolute;
+  bottom: 300px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  transform: translate(-50%, 0) scale(1);
+  transition: transform 0.9s ease-out, opacity 0.9s ease-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.3rem;
+}
+
+/* 钢琴本体 */
+.piano {
+  position: relative;
+  width: 100%;
+  max-width: 1300px;
+  height: 300px;
+  padding-top: 10px;
+  background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
+  border-radius: 8px 8px 12px 12px;
+  box-shadow: var(--shadow), inset 0 4px 0 0 #c0392b;
+}
+.white-row {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  gap: 2px;
+  padding: 0 6px 6px;
+}
+.white-key {
+  flex: 1;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 88%, #e2e2e2 100%);
+  border-radius: 0 0 8px 8px;
+  box-shadow: inset 0 -6px 8px -4px rgba(0, 0, 0, 0.18), 0 3px 4px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 14px;
+  transition: background 0.05s, transform 0.05s, box-shadow 0.05s;
+  border: 1px solid #d8d8d8;
+  border-top: none;
+}
+.white-key.active {
+  transform: translateY(2px);
+  background: linear-gradient(180deg, #eef2ff 0%, #dfe6ff 100%);
+  box-shadow: inset 0 -3px 6px -3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+.key-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-soft);
+}
+.key-label b {
+  font-size: 1.1rem;
+  color: #555;
+}
+.key-label small {
+  font-size: 0.72rem;
+  color: #999;
+}
+.white-key.active .key-label b,
+.white-key.active .key-label small {
+  color: #3b5bdb;
+}
+
+.black-row {
+  position: absolute;
+  top: 10px;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  height: 60%;
+  gap: 2px;
+  pointer-events: none;
+}
+.black-slot {
+  flex: 1;
+  position: relative;
+}
+.black-key {
+  position: absolute;
+  right: -18%;
+  width: 62%;
+  height: 100%;
+  background: linear-gradient(180deg, #4a4a4a 0%, #1c1c1c 70%, #000 100%);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), inset 0 -3px 4px rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
+  z-index: 2;
+  transition: transform 0.05s;
+}
+.black-key.active {
+  transform: translateY(3px);
+  background: linear-gradient(180deg, #5c7cfa 0%, #3b5bdb 100%);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* 音源加载状态 */
+.piano-load {
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+.piano-load.loading {
+  color: var(--text-soft);
+}
+.piano-load.sampled {
+  color: var(--accent-2);
+}
+.piano-load.fallback {
+  color: var(--text-soft);
+}

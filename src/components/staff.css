@@ -1,0 +1,140 @@
+.staff-view {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+.staff-svg {
+  width: 100%;
+  height: auto;
+  background: var(--bg-panel);
+  border-radius: 12px;
+  padding: 4px 0;
+}
+.staff-line {
+  stroke: var(--text-soft);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.ledger {
+  stroke: var(--text-soft);
+  stroke-width: 1;
+  opacity: 0.7;
+}
+.clef {
+  font-size: 52px;
+  fill: var(--text);
+}
+.rest-glyph {
+  font-size: 26px;
+  fill: var(--text-soft);
+  text-anchor: middle;
+}
+.note-head.filled {
+  fill: var(--text);
+}
+.note-head.hollow {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.6;
+}
+.note-head.hl {
+  fill: var(--primary);
+  stroke: var(--primary);
+}
+.note-stem {
+  stroke: var(--text);
+  stroke-width: 1.6;
+}
+.note-flag {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.6;
+}
+.accidental {
+  font-size: 18px;
+  fill: var(--text);
+  text-anchor: middle;
+}
+.note-name-lbl {
+  font-size: 10px;
+  fill: var(--text-soft);
+  text-anchor: middle;
+  font-weight: 700;
+}
+.note-hl .note-stem,
+.note-hl .note-flag {
+  stroke: var(--primary);
+}
+.note-hl .note-name-lbl {
+  fill: var(--primary);
+}
+
+/* 简谱 */
+.jianpu-view {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 20px;
+  background: var(--bg-panel);
+  border-radius: 12px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+.jianpu-cell-wrap {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 6px;
+}
+.jianpu-cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+.jianpu-cell.hl {
+  background: var(--primary);
+  color: #fff;
+}
+.jp-num {
+  position: relative;
+  display: inline-block;
+}
+.jp-dot-top {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  line-height: 1;
+}
+.jp-dot-bot {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  line-height: 1;
+}
+.jp-sharp {
+  font-size: 0.7rem;
+}
+.jp-dash {
+  margin-left: 4px;
+  color: var(--text-soft);
+}
+.jp-underline {
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  height: 2px;
+  background: currentColor;
+}
+.jianpu-bar {
+  color: var(--text-soft);
+  font-weight: 400;
+}

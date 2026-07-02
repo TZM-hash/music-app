@@ -1,0 +1,142 @@
+.ear-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.ear-mode-tag {
+  padding: 6px 20px;
+  border-radius: 999px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.replay-btn {
+  padding: 18px 40px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+  transition: transform 0.1s;
+}
+.replay-btn:active {
+  transform: scale(0.95);
+}
+.ear-keys {
+  display: flex;
+  gap: 6px;
+  max-width: 900px;
+  width: 100%;
+  height: 220px;
+}
+.ear-key {
+  flex: 1;
+  background: var(--key-white);
+  color: var(--text);
+  border-radius: 0 0 10px 10px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 16px;
+  font-size: 1.1rem;
+  transition: background 0.15s, transform 0.1s;
+}
+.ear-key span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.ear-key b {
+  font-size: 1.3rem;
+}
+.ear-key small {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+.ear-key:active {
+  transform: translateY(2px);
+}
+.ear-key.right {
+  background: var(--accent-2);
+  color: #fff;
+}
+.ear-key.wrong {
+  background: #fa5252;
+  color: #fff;
+}
+
+/* 模式选择 */
+.mode-picker {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  transition: transform 0.15s;
+  min-width: 140px;
+}
+.mode-btn:hover {
+  transform: translateY(-4px);
+}
+.mode-btn.on {
+  background: var(--primary);
+  color: #fff;
+  transform: translateY(-4px);
+}
+.mode-icon {
+  font-size: 2rem;
+}
+.mode-btn b {
+  font-size: 1.1rem;
+}
+.mode-btn small {
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* 选择项（音程/和弦） */
+.ear-options {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 600px;
+}
+.ear-option {
+  min-width: 180px;
+  padding: 18px 28px;
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-weight: 800;
+  font-size: 1.3rem;
+  transition: background 0.15s, transform 0.1s;
+}
+.ear-option:active {
+  transform: scale(0.95);
+}
+.ear-option.right {
+  background: var(--accent-2);
+  color: #fff;
+}
+.ear-option.wrong {
+  background: #fa5252;
+  color: #fff;
+}

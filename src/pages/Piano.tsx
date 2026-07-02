@@ -1,0 +1,466 @@
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { buildNotes, whiteNotes, KEYBOARD_MAP, SCALES, NoteInfo } from '../music/notes'
+import {
+  ensureAudio,
+  attackNote,
+  releaseNote,
+  startMetronome,
+  stopMetronome,
+  setPatch,
+  setVolume,
+  setSustain,
+  setSustainTime,
+  playChord,
+  preloadPiano,
+  onPianoLoad,
+  PianoLoadState,
+  TonePatch,
+  PATCH_INFO,
+} from '../music/audioEngine'
+import { useApp } from '../state/appState'
+import Visualizer, { Burst } from '../components/Visualizer'
+import AccompanimentToggle from '../components/AccompanimentToggle'
+import './piano.css'
+
+// 常用和弦（C大调级数）
+const CHORDS: { label: string; root: string; quality: 'maj' | 'min' }[] = [
+  { label: 'C', root: 'C3', quality: 'maj' },
+  { label: 'Dm', root: 'D3', quality: 'min' },
+  { label: 'Em', root: 'E3', quality: 'min' },
+  { label: 'F', root: 'F3', quality: 'maj' },
+  { label: 'G', root: 'G3', quality: 'maj' },
+  { label: 'Am', root: 'A3', quality: 'min' },
+]
+
+// 钢琴偏好持久化（延音开关 / 余音时长）
+const PIANO_PREF_KEY = 'music-edu-piano-prefs-v1'
+interface PianoPrefs {
+  sustainOn: boolean
+  sustainSecs: number
+}
+function loadPianoPrefs(): PianoPrefs {
+  try {
+    const raw = localStorage.getItem(PIANO_PREF_KEY)
+    if (raw) return { sustainOn: false, sustainSecs: 2.5, ...JSON.parse(raw) }
+  } catch {
+    /* ignore */
+  }
+  return { sustainOn: false, sustainSecs: 2.5 }
+}
+function savePianoPrefs(p: PianoPrefs): void {
+  try {
+    localStorage.setItem(PIANO_PREF_KEY, JSON.stringify(p))
+  } catch {
+    /* ignore */
+  }
+}
+
+export default function Piano() {
+  const { showNoteNames } = useApp()
+  const initialPrefs = loadPianoPrefs()
+  const [octave, setOctave] = useState(3) // 起始八度
+  const [octaveSpan, setOctaveSpan] = useState(3) // 显示几个八度
+  const [scale, setScale] = useState<keyof typeof SCALES>('none')
+  const [patch, setPatchState] = useState<TonePatch>('piano')
+  const [volume, setVol] = useState(-6)
+  const [metroOn, setMetroOn] = useState(false)
+  const [bpm, setBpm] = useState(90)
+  const [beatFlash, setBeatFlash] = useState(-1)
+  const [sustainOn, setSustainOn] = useState(initialPrefs.sustainOn)
+  const [sustainSecs, setSustainSecs] = useState(initialPrefs.sustainSecs)
+  const [loadState, setLoadState] = useState<PianoLoadState>('idle')
+
+  const ALL = buildNotes(octave, octaveSpan)
+  const WHITES = whiteNotes(ALL)
+
+  const [active, setActive] = useState<Set<string>>(new Set())
+  const [bursts, setBursts] = useState<Burst[]>([])
+  const burstId = useRef(0)
+  const recording = useRef<{ note: string; t: number; v: number }[]>([])
+  const [isRecording, setIsRecording] = useState(false)
+  const [hasRecording, setHasRecording] = useState(false)
+  const startTime = useRef(0)
+
+  // 进入钢琴页即预加载采样，并订阅加载状态
+  useEffect(() => {
+    ensureAudio().then(() => preloadPiano())
+    return onPianoLoad(setLoadState)
+  }, [])
+
+  // 应用已保存的延音设置到音频引擎（进页面时恢复）
+  useEffect(() => {
+    setSustainTime(sustainSecs)
+    setSustain(sustainOn)
+    // 仅在挂载时应用一次
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // 延音偏好变化时持久化
+  useEffect(() => {
+    savePianoPrefs({ sustainOn, sustainSecs })
+  }, [sustainOn, sustainSecs])
+
+  const scaleNotes = SCALES[scale].notes
+  const inScale = (n: NoteInfo) => scaleNotes.length === 0 || scaleNotes.includes(n.name)
+
+  const noteX = useCallback(
+    (note: NoteInfo): number => {
+      const idx = WHITES.findIndex((w) => w.note === note.note)
+      if (idx >= 0) return (idx + 0.5) / WHITES.length
+      const leftWhite = WHITES.findIndex(
+        (w) => w.note[0] === note.note[0] && w.note.slice(-1) === note.note.slice(-1)
+      )
+      return leftWhite >= 0 ? (leftWhite + 1) / WHITES.length : 0.5
+    },
+    [WHITES]
+  )
+
+  // 力度：基于按钮高度计算，顶部(靠近鼻)轻=0.45，底部(靠近钢琴师)重=0.95
+  const pressWithVel = useCallback(
+    (note: NoteInfo, clientY: number, btnEl: HTMLElement) => {
+      const rect = btnEl.getBoundingClientRect()
+      const relY = clientY - rect.top
+      const vel = Math.min(0.95, Math.max(0.45, relY / rect.height))
+      ensureAudio().then(() => attackNote(note.note, vel))
+      setActive((s) => new Set(s).add(note.note))
+      const id = burstId.current++
+      setBursts((b) => [
+        ...b,
+        { id, x: noteX(note), color: note.color, label: showNoteNames ? note.jianpu : '' },
+      ])
+      setTimeout(() => setBursts((b) => b.filter((x) => x.id !== id)), 900)
+      if (isRecording) {
+        recording.current.push({ note: note.note, t: performance.now() - startTime.current, v: vel })
+      }
+    },
+    [noteX, showNoteNames, isRecording]
+  )
+
+  // 键盘/回放用的固定力度触发
+  const press = useCallback(
+    (note: NoteInfo, vel = 0.8) => {
+      ensureAudio().then(() => attackNote(note.note, vel))
+      setActive((s) => new Set(s).add(note.note))
+      const id = burstId.current++
+      setBursts((b) => [
+        ...b,
+        { id, x: noteX(note), color: note.color, label: showNoteNames ? note.jianpu : '' },
+      ])
+      setTimeout(() => setBursts((b) => b.filter((x) => x.id !== id)), 900)
+      if (isRecording) {
+        recording.current.push({ note: note.note, t: performance.now() - startTime.current, v: vel })
+      }
+    },
+    [noteX, showNoteNames, isRecording]
+  )
+
+  const release = useCallback((note: NoteInfo) => {
+    releaseNote(note.note)
+    setActive((s) => {
+      const n = new Set(s)
+      n.delete(note.note)
+      return n
+    })
+  }, [])
+
+  // 电脑键盘弹奏（映射固定为 C4 区，随 octave 偏移）
+  useEffect(() => {
+    const shift = (octave - 4) * 12
+    const transpose = (noteName: string): string => {
+      if (shift === 0) return noteName
+      const m = /^([A-G]#?)(\d)$/.exec(noteName)
+      if (!m) return noteName
+      return `${m[1]}${parseInt(m[2], 10) + (octave - 4)}`
+    }
+    const down = (e: KeyboardEvent) => {
+      if (e.repeat) return
+      const base = KEYBOARD_MAP[e.key.toLowerCase()]
+      if (!base) return
+      const target = transpose(base)
+      const info = ALL.find((n) => n.note === target)
+      if (info) press(info)
+    }
+    const up = (e: KeyboardEvent) => {
+      const base = KEYBOARD_MAP[e.key.toLowerCase()]
+      if (!base) return
+      const target = transpose(base)
+      const info = ALL.find((n) => n.note === target)
+      if (info) release(info)
+    }
+    window.addEventListener('keydown', down)
+    window.addEventListener('keyup', up)
+    return () => {
+      window.removeEventListener('keydown', down)
+      window.removeEventListener('keyup', up)
+    }
+  }, [press, release, octave, ALL])
+
+  // 节拍器
+  useEffect(() => {
+    if (metroOn) {
+      ensureAudio().then(() => startMetronome(bpm, (b) => setBeatFlash(b)))
+    } else {
+      stopMetronome()
+      setBeatFlash(-1)
+    }
+    return () => stopMetronome()
+  }, [metroOn, bpm])
+
+  const changePatch = (p: TonePatch) => {
+    setPatch(p)
+    setPatchState(p)
+  }
+  const changeVolume = (v: number) => {
+    setVolume(v)
+    setVol(v)
+  }
+  const strumChord = async (root: string, quality: 'maj' | 'min') => {
+    await ensureAudio()
+    playChord(root, quality, '2n')
+  }
+
+  const toggleRecord = () => {
+    if (isRecording) {
+      setIsRecording(false)
+      setHasRecording(recording.current.length > 0)
+    } else {
+      recording.current = []
+      startTime.current = performance.now()
+      setIsRecording(true)
+      setHasRecording(false)
+    }
+  }
+
+  const playback = async () => {
+    await ensureAudio()
+    recording.current.forEach((ev) => {
+      setTimeout(() => {
+        const info = ALL.find((n) => n.note === ev.note)
+        if (info) {
+          press(info, ev.v)
+          setTimeout(() => release(info), 300)
+        }
+      }, ev.t)
+    })
+  }
+
+  // 延音踏板：开关式
+  const toggleSustain = useCallback(() => {
+    setSustainOn((prev) => {
+      const next = !prev
+      setSustain(next)
+      return next
+    })
+  }, [])
+
+  const changeSustainTime = useCallback((sec: number) => {
+    setSustainSecs(sec)
+    setSustainTime(sec)
+  }, [])
+
+  // 空格键 = 切换延音踏板开关
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && !e.repeat) {
+        e.preventDefault()
+        toggleSustain()
+      }
+    }
+    window.addEventListener('keydown', down)
+    return () => window.removeEventListener('keydown', down)
+  }, [toggleSustain])
+
+  return (
+    <div className="instrument-wrap">
+      <div className="instrument-toolbar">
+        <button className={`rec-btn ${isRecording ? 'on' : ''}`} onClick={toggleRecord}>
+          {isRecording ? '⏹ 停止' : '⏺ 录制'}
+        </button>
+        <button className="rec-btn" onClick={playback} disabled={!hasRecording}>
+          ▶ 回放
+        </button>
+
+        <div className="ctrl-group">
+          <span className="ctrl-label">起始</span>
+          <button className="mini-btn" onClick={() => setOctave((o) => Math.max(1, o - 1))}>
+            −
+          </button>
+          <span className="ctrl-val">C{octave}</span>
+          <button className="mini-btn" onClick={() => setOctave((o) => Math.min(6, o + 1))}>
+            ＋
+          </button>
+        </div>
+
+        <div className="ctrl-group">
+          <span className="ctrl-label">音域</span>
+          <button className="mini-btn" onClick={() => setOctaveSpan((s) => Math.max(1, s - 1))}>
+            −
+          </button>
+          <span className="ctrl-val">{octaveSpan}组</span>
+          <button className="mini-btn" onClick={() => setOctaveSpan((s) => Math.min(5, s + 1))}>
+            ＋
+          </button>
+        </div>
+
+        <div className="ctrl-group">
+          <span className="ctrl-label">音阶高亮</span>
+          <select value={scale} onChange={(e) => setScale(e.target.value as keyof typeof SCALES)}>
+            {Object.entries(SCALES).map(([k, v]) => (
+              <option key={k} value={k}>
+                {v.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="ctrl-group">
+          <button
+            className={`rec-btn ${metroOn ? 'on-accent' : ''}`}
+            onClick={() => setMetroOn((v) => !v)}
+          >
+            🎵 节拍器 {metroOn ? '开' : '关'}
+          </button>
+          <div className={`beat-dots ${metroOn ? '' : 'dim'}`}>
+            {[0, 1, 2, 3].map((b) => (
+              <span key={b} className={`beat-dot ${beatFlash === b ? 'on' : ''}`} />
+            ))}
+          </div>
+          <input
+            type="range"
+            min={40}
+            max={200}
+            value={bpm}
+            onChange={(e) => setBpm(Number(e.target.value))}
+          />
+          <span className="ctrl-val">{bpm}</span>
+        </div>
+      </div>
+
+      {/* 第二行：音色 · 音量 · 和弦伴奏板 */}
+      <div className="instrument-toolbar row2">
+        <div className="ctrl-group">
+          <span className="ctrl-label">音色</span>
+          <div className="patch-picker">
+            {(Object.keys(PATCH_INFO) as TonePatch[]).map((p) => (
+              <button
+                key={p}
+                className={`patch-btn ${patch === p ? 'on' : ''}`}
+                onClick={() => changePatch(p)}
+              >
+                {PATCH_INFO[p].icon} {PATCH_INFO[p].name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="ctrl-group">
+          <span className="ctrl-label">🔊 音量</span>
+          <input
+            type="range"
+            min={-30}
+            max={0}
+            value={volume}
+            onChange={(e) => changeVolume(Number(e.target.value))}
+          />
+        </div>
+
+        <div className="ctrl-group chord-group">
+          <span className="ctrl-label">和弦伴奏</span>
+          {CHORDS.map((c) => (
+            <button
+              key={c.label}
+              className="chord-btn"
+              onPointerDown={() => strumChord(c.root, c.quality)}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="ctrl-group">
+          <button
+            className={`rec-btn ${sustainOn ? 'on-accent' : ''}`}
+            onClick={toggleSustain}
+            title="点击开关延音踏板（或按空格键）"
+          >
+            🦶 延音 {sustainOn ? '开' : '关'}
+          </button>
+          {sustainOn && (
+            <>
+              <span className="ctrl-label">余音 {sustainSecs.toFixed(1)}s</span>
+              <input
+                type="range"
+                min={0.5}
+                max={6}
+                step={0.5}
+                value={sustainSecs}
+                onChange={(e) => changeSustainTime(Number(e.target.value))}
+              />
+            </>
+          )}
+        </div>
+
+        <AccompanimentToggle bpm={bpm} />
+
+        <span className={`piano-load ${loadState}`}>
+          {loadState === 'loading' && '⏳ 正在加载真实钢琴音色…'}
+          {loadState === 'sampled' && '🎹 真实钢琴音色'}
+          {loadState === 'fallback' && '🎹 增强合成音色（离线）'}
+        </span>
+      </div>
+
+      <div className="piano-stage">
+        <Visualizer bursts={bursts} />
+        <div className="piano">
+          <div className="white-row">
+            {WHITES.map((n) => (
+              <button
+                key={n.note}
+                className={`white-key ${active.has(n.note) ? 'active' : ''} ${
+                  inScale(n) ? '' : 'dim-key'
+                } ${scaleNotes.length > 0 && inScale(n) ? 'scale-key' : ''}`}
+                style={active.has(n.note) ? { background: n.color } : undefined}
+                onPointerDown={(e) => pressWithVel(n, e.clientY, e.currentTarget)}
+                onPointerUp={() => release(n)}
+                onPointerLeave={() => active.has(n.note) && release(n)}
+              >
+                {showNoteNames && (
+                  <span className="key-label">
+                    <b>{n.jianpu}</b>
+                    <small>{n.name}</small>
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+          <div className="black-row">
+            {WHITES.map((w, i) => {
+              const blackAfter = ALL.find(
+                (n) => n.isBlack && n.note[0] === w.name && n.note.slice(-1) === w.note.slice(-1)
+              )
+              const showBlack =
+                blackAfter && w.name !== 'E' && w.name !== 'B' && i < WHITES.length - 1
+              return (
+                <div className="black-slot" key={w.note}>
+                  {showBlack && (
+                    <button
+                      className={`black-key ${active.has(blackAfter!.note) ? 'active' : ''} ${
+                        inScale(blackAfter!) ? '' : 'dim-key'
+                      }`}
+                      style={
+                        active.has(blackAfter!.note) ? { background: blackAfter!.color } : undefined
+                      }
+                      onPointerDown={(e) => pressWithVel(blackAfter!, e.clientY, e.currentTarget)}
+                      onPointerUp={() => release(blackAfter!)}
+                      onPointerLeave={() => active.has(blackAfter!.note) && release(blackAfter!)}
+                    />
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

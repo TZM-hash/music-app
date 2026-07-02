@@ -1,0 +1,285 @@
+.library {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.lib-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.lib-search {
+  flex: 1;
+  min-width: 200px;
+}
+.lib-search input {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+}
+.lib-search input:focus {
+  border-color: var(--primary);
+}
+.lib-level {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+.lib-level input {
+  width: 160px;
+}
+.lib-new {
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+
+.lib-tabs {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.lib-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  font-weight: 700;
+}
+.lib-tabs button.on {
+  background: var(--primary);
+  color: #fff;
+}
+.tab-count {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+  padding: 1px 9px;
+  font-size: 0.8rem;
+}
+
+.song-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+.lib-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-soft);
+  padding: 40px;
+}
+.song-card {
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.15s;
+}
+.song-card:hover {
+  transform: translateY(-4px);
+}
+.song-card-top {
+  height: 84px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.song-cat-icon {
+  font-size: 2.6rem;
+}
+.song-custom-tag {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+.song-card-body {
+  padding: 14px 16px 16px;
+}
+.song-card-body h3 {
+  font-size: 1.2rem;
+}
+.song-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  margin: 6px 0;
+}
+.song-desc {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  min-height: 1.2em;
+}
+.song-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.sa-btn {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: filter 0.1s;
+}
+.sa-btn:hover {
+  filter: brightness(1.05);
+}
+.sa-btn.primary {
+  background: var(--primary);
+  color: #fff;
+  flex: 1;
+}
+.sa-btn.playing {
+  background: var(--accent-2);
+  color: #fff;
+}
+.sa-btn.danger {
+  background: #fa5252;
+  color: #fff;
+}
+/* 乐谱弹窗 */
+.score-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  padding: 24px;
+}
+.score-modal {
+  width: 100%;
+  max-width: 900px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.score-modal-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.score-modal-head h3 {
+  flex: 1;
+  font-size: 1.4rem;
+}
+.score-mode-seg {
+  display: flex;
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 4px;
+}
+.score-mode-seg button {
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+.score-mode-seg button.on {
+  background: var(--primary);
+  color: #fff;
+}
+.score-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg);
+  font-weight: 800;
+  color: var(--text);
+}
+.score-body {
+  flex: 1;
+  overflow: auto;
+}
+.score-foot {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* 导入曲目 */
+.import-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.imp-title {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  outline: none;
+}
+.imp-title:focus {
+  border-color: var(--primary);
+}
+.imp-bpm {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+.imp-text {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: monospace;
+  resize: vertical;
+  outline: none;
+}
+.imp-text:focus {
+  border-color: var(--primary);
+}
+.imp-preview {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 12px;
+}
+.imp-preview-label {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 8px;
+}
+.imp-empty {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+}

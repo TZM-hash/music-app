@@ -1,0 +1,162 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+.kpi {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.kpi-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+}
+.kpi-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+}
+.kpi-label {
+  color: var(--text-soft);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.dash-empty {
+  text-align: center;
+  padding: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.dash-empty h3 {
+  font-size: 1.4rem;
+}
+.dash-empty p {
+  color: var(--text-soft);
+  max-width: 440px;
+}
+
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px;
+}
+.dash-panel h3 {
+  margin-bottom: 16px;
+}
+
+.dash-detail {
+  display: flex;
+  flex-direction: column;
+}
+.detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.detail-head select {
+  padding: 8px 16px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  border: none;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.detail-body {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.detail-radar {
+  flex-shrink: 0;
+}
+.detail-stats {
+  flex: 1;
+  min-width: 260px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+.ds-item {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+.ds-item span {
+  display: block;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+.ds-item b {
+  font-size: 1.5rem;
+  color: var(--primary);
+}
+.ds-skills {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.skill-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.skill-bar > span {
+  width: 90px;
+  color: var(--text-soft);
+}
+.skill-track {
+  flex: 1;
+  height: 12px;
+  background: var(--bg);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.skill-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s;
+}
+.skill-bar > b {
+  width: 44px;
+  text-align: right;
+}
+
+.dash-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+.dash-table th,
+.dash-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--bg);
+}
+.dash-table th {
+  color: var(--text-soft);
+  font-size: 0.85rem;
+}
+.dash-table tbody tr:hover {
+  background: var(--bg);
+}

@@ -1,0 +1,62 @@
+.chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.chart-x {
+  font-size: 2.4px;
+  fill: var(--text-soft);
+}
+.chart-val {
+  font-size: 2.6px;
+  font-weight: 700;
+  fill: var(--text);
+}
+.chart-empty {
+  color: var(--text-soft);
+  text-align: center;
+  padding: 30px;
+}
+
+.donut-wrap {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.donut-total {
+  font-size: 16px;
+  font-weight: 800;
+  fill: var(--text);
+}
+.donut-cap {
+  font-size: 6px;
+  fill: var(--text-soft);
+}
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+.radar {
+  display: block;
+  margin: 0 auto;
+}
+.radar-label {
+  font-size: 4px;
+  fill: var(--text-soft);
+  font-weight: 700;
+}

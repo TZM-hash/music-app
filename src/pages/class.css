@@ -1,0 +1,134 @@
+.roster {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.roster-add h3 {
+  margin-bottom: 12px;
+}
+.add-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.avatar-choices {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  max-width: 380px;
+}
+.avatar-choice {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--bg);
+  font-size: 1.3rem;
+  transition: transform 0.1s;
+}
+.avatar-choice.on {
+  background: var(--accent);
+  transform: scale(1.1);
+}
+.add-row input {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem;
+  outline: none;
+}
+.add-row input:focus {
+  border-color: var(--primary);
+}
+.add-btn {
+  padding: 12px 28px;
+  border-radius: 10px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 800;
+}
+
+.roster-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.link-btn {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.roster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+.stu-card {
+  transition: transform 0.15s;
+}
+.stu-card.active {
+  outline: 3px solid var(--accent);
+}
+.stu-card:hover {
+  transform: translateY(-3px);
+}
+.stu-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stu-card-avatar {
+  font-size: 2rem;
+}
+.stu-card-name {
+  flex: 1;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.now-tag {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 0.7rem;
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 8px;
+  border-radius: 999px;
+  vertical-align: middle;
+}
+.stu-del {
+  opacity: 0.5;
+}
+.stu-del:hover {
+  opacity: 1;
+}
+.stu-card-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 14px 0;
+}
+.stu-card-stats div {
+  text-align: center;
+}
+.stu-card-stats b {
+  display: block;
+  font-size: 1.3rem;
+  color: var(--primary);
+}
+.stu-card-stats small {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
+.stu-select-btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-weight: 700;
+}
+.stu-select-btn.on {
+  background: var(--accent-2);
+  color: #fff;
+}

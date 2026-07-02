@@ -1,0 +1,87 @@
+.read-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+.single-staff {
+  width: 300px;
+  height: auto;
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 8px;
+}
+.single-staff .staff-line,
+.single-staff .ledger {
+  stroke: var(--text-soft);
+  stroke-width: 1.4;
+}
+.single-staff .clef-big {
+  font-size: 76px;
+  fill: var(--text);
+}
+.single-staff .note-head.filled {
+  fill: var(--primary);
+}
+.single-staff .note-stem {
+  stroke: var(--primary);
+  stroke-width: 2;
+}
+.read-options {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.read-opt {
+  position: relative;
+  width: 76px;
+  height: 84px;
+  border-radius: 14px;
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  transition: transform 0.1s, background 0.15s;
+}
+.read-opt:active {
+  transform: scale(0.95);
+}
+.read-opt b {
+  font-size: 1.8rem;
+  color: var(--primary);
+}
+.read-opt small {
+  font-size: 0.85rem;
+  color: var(--text-soft);
+}
+.read-opt .opt-letter {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+.read-opt.right {
+  background: var(--accent-2);
+}
+.read-opt.right b,
+.read-opt.right small,
+.read-opt.right .opt-letter {
+  color: #fff;
+}
+.read-opt.wrong {
+  background: #fa5252;
+}
+.read-opt.wrong b,
+.read-opt.wrong small {
+  color: #fff;
+}
