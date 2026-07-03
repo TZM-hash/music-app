@@ -24,7 +24,7 @@ function Shell() {
   const { mode, route, sidebarOpen, setSidebarOpen, navigate } = useApp()
 
   useEffect(() => {
-    if (mode === 'student' && (route === 'class' || route === 'dashboard')) {
+    if (mode !== 'teacher' && (route === 'class' || route === 'dashboard')) {
       navigate('home')
     }
   }, [mode, route, navigate])

@@ -4,7 +4,7 @@ import { getCurrentStudent } from '../state/students'
 import { classOverview } from '../state/stats'
 import { allSongs } from '../music/songLibrary'
 import { THEORY_STAGES, THEORY_TOPICS } from '../music/theoryCatalog'
-import { encyclopediaToReviewQuestions } from '../music/encyclopedia'
+import { ENCYCLOPEDIA_ENTRIES, encyclopediaToReviewQuestions } from '../music/encyclopedia'
 import {
   buildDailyChallenge,
   getWeakCategories,
@@ -88,23 +88,26 @@ function theoryToReviewQuestions(): ReviewQuestion[] {
 
 export default function Home() {
   const { navigate, mode } = useApp()
+  const isLectureMode = mode === 'lecture'
   const progress = loadProgress()
   const student = getCurrentStudent()
   const overview = classOverview()
   const reviewBook = loadReviewBook(student?.id ?? 'anonymous')
-  const wrongAnswers = getWrongAnswers(reviewBook).slice(0, 3)
-  const weakCategories = getWeakCategories(reviewBook).slice(0, 4)
+  const wrongAnswers = getWrongAnswers(reviewBook).slice(0, 1)
+  const weakCategories = getWeakCategories(reviewBook).slice(0, 3)
   const dailyChallenge = buildDailyChallenge(
     reviewBook,
     [...theoryToReviewQuestions(), ...encyclopediaToReviewQuestions()],
     todayKey(),
-    4
+    2
   )
   const theoryPracticeCount = Object.keys(progress.bestScores).filter((key) =>
     key.startsWith('theory-')
   ).length
 
-  const recommendation = student
+  const recommendation = isLectureMode
+    ? '讲解模式已隐藏学生档案、错题本和个人练习记录。建议从分级乐理知识库进入知识点，配合课程路径、曲库谱例和音乐百科进行投屏讲解。'
+    : student
     ? theoryPracticeCount > 0
       ? `${student.name} 已完成 ${theoryPracticeCount} 个乐理知识点练习，建议按学段筛选继续学习并用谱例验证。`
       : `${student.name} 还没有乐理练习记录，建议先进入分级乐理知识库，从“小学低段”开始。`
@@ -122,11 +125,11 @@ export default function Home() {
           </p>
         </div>
         <div className="pro-student">
-          <span>{student ? student.avatar : '👤'}</span>
-          <b>{student ? student.name : '未选择学生'}</b>
-          <small>{student ? '乐理练习进入个人档案' : '匿名学习不计入班级统计'}</small>
-          <button onClick={() => navigate(mode === 'teacher' ? 'class' : 'theory')}>
-            {mode === 'teacher' ? '选择学生' : '开始分级学习'}
+          <span>{isLectureMode ? '🖥️' : student ? student.avatar : '👤'}</span>
+          <b>{isLectureMode ? '讲解上课模式' : student ? student.name : '未选择学生'}</b>
+          <small>{isLectureMode ? '不记录学生错题与练习档案' : student ? '乐理练习进入个人档案' : '匿名学习不计入班级统计'}</small>
+          <button onClick={() => navigate(isLectureMode ? 'theory' : mode === 'teacher' ? 'class' : 'theory')}>
+            {isLectureMode ? '进入讲解知识库' : mode === 'teacher' ? '选择学生' : '开始分级学习'}
           </button>
         </div>
       </section>
@@ -144,7 +147,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="review-home card">
+      {!isLectureMode && <section className="review-home card">
         <div className="review-block daily">
           <span className="pro-kicker">今日挑战</span>
           <h3>{dailyChallenge.length} 道混合复习题</h3>
@@ -193,7 +196,7 @@ export default function Home() {
             )}
           </div>
         </div>
-      </section>
+      </section>}
 
       <section className="pro-status">
         <div className="pro-kpi card">
@@ -205,12 +208,12 @@ export default function Home() {
           <span>学段难度</span>
         </div>
         <div className="pro-kpi card">
-          <b>{theoryPracticeCount}</b>
-          <span>已练知识点</span>
+          <b>{isLectureMode ? allSongs().length : theoryPracticeCount}</b>
+          <span>{isLectureMode ? '曲库谱例' : '已练知识点'}</span>
         </div>
         <div className="pro-kpi card">
-          <b>{overview.totalSessions}</b>
-          <span>训练记录</span>
+          <b>{isLectureMode ? ENCYCLOPEDIA_ENTRIES.length : overview.totalSessions}</b>
+          <span>{isLectureMode ? '百科条目' : '训练记录'}</span>
         </div>
       </section>
 

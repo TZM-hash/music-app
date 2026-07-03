@@ -72,13 +72,33 @@ const extraQuizFor = (topic: TheoryTopic) => [
     options: [topic.category, '课堂座位', '文件保存'],
     answer: 0,
   },
+  {
+    q: `复述“${topic.title}”时，哪一句更接近本课重点？`,
+    options: [topic.keyPoints[0], '只看按钮颜色', '不需要听音乐'],
+    answer: 0,
+  },
+  {
+    q: `观察“${topic.demo.title}”时，学生应该记录什么？`,
+    options: [topic.demo.caption, '谁坐在第一排', '文件保存位置'],
+    answer: 0,
+  },
+  {
+    q: `如果同学说不清“${topic.subtitle}”，老师最适合提醒哪一点？`,
+    options: [topic.keyPoints[1] ?? topic.keyPoints[0], '先换一个页面', '只记住题号'],
+    answer: 0,
+  },
+  {
+    q: `把“${topic.title}”用到课堂练习中，最合适的做法是？`,
+    options: [`结合${topic.actions[0]?.label ?? '课堂练习'}验证概念`, '只抄标题', '跳过声音示范'],
+    answer: 0,
+  },
 ]
 
 export function enrichTheoryTopicQuiz(topic: TheoryTopic): TheoryTopic {
-  if (topic.quiz.length >= 4) return topic
+  if (topic.quiz.length >= 6) return topic
   return {
     ...topic,
-    quiz: [...topic.quiz, ...extraQuizFor(topic)].slice(0, 4),
+    quiz: [...topic.quiz, ...extraQuizFor(topic)].slice(0, 6),
   }
 }
 

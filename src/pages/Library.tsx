@@ -23,7 +23,7 @@ type StageFilter = TheoryStageId | 'all'
 let previewTimer = 0
 
 export default function Library() {
-  const { playSongInGame, currentStudentId } = useApp()
+  const { playSongInGame, currentStudentId, mode } = useApp()
   const [view, setView] = useState<LibraryView>('songs')
   const [filter, setFilter] = useState<Filter>('all')
   const [encyclopediaType, setEncyclopediaType] = useState<EncyclopediaTypeFilter>('all')
@@ -108,22 +108,24 @@ export default function Library() {
     const pickKey = `${entry.id}:${questionIndex}`
     if (quizPicks[pickKey] !== undefined) return
     setQuizPicks((current) => ({ ...current, [pickKey]: selectedAnswer }))
-    const book = loadReviewBook(currentStudentId ?? 'anonymous')
-    saveReviewBook(
-      recordReviewAnswer(book, {
-        source: 'encyclopedia',
-        itemId: entry.id,
-        itemTitle: entry.title,
-        category: entry.category,
-        stage: entry.stage,
-        question: item.question,
-        options: item.options,
-        correctAnswer: item.answer,
-        selectedAnswer,
-        explanation: item.explanation,
-        timestamp: Date.now(),
-      })
-    )
+    if (mode !== 'lecture') {
+      const book = loadReviewBook(currentStudentId ?? 'anonymous')
+      saveReviewBook(
+        recordReviewAnswer(book, {
+          source: 'encyclopedia',
+          itemId: entry.id,
+          itemTitle: entry.title,
+          category: entry.category,
+          stage: entry.stage,
+          question: item.question,
+          options: item.options,
+          correctAnswer: item.answer,
+          selectedAnswer,
+          explanation: item.explanation,
+          timestamp: Date.now(),
+        })
+      )
+    }
   }
 
   return (

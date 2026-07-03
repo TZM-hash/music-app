@@ -54,7 +54,7 @@ test('catalog covers primary and junior-high theory with classroom filters', () 
     assert.ok(topic.category, `${topic.id} needs a category`)
     assert.ok(topic.stage, `${topic.id} needs a stage`)
     assert.ok(topic.demo?.kind, `${topic.id} needs an interactive demo kind`)
-    assert.ok(topic.quiz.length >= 4, `${topic.id} needs at least four quiz questions`)
+    assert.ok(topic.quiz.length >= 6, `${topic.id} needs at least six quiz questions`)
     assert.equal(topic.keyPoints.length, 3, `${topic.id} needs three key points`)
   }
 })

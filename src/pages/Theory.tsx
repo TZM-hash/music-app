@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useApp } from '../state/appState'
 import { ensureAudio, playNote } from '../music/audioEngine'
 import { recordResult } from '../state/progress'
@@ -20,7 +20,7 @@ type CategoryFilter = '全部' | string
 type StageFilter = '全部' | TheoryStageId
 
 export default function Theory() {
-  const { navigate, theoryFocus, currentStudentId } = useApp()
+  const { navigate, theoryFocus, currentStudentId, mode } = useApp()
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [stage, setStage] = useState<StageFilter>('全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
@@ -128,12 +128,13 @@ export default function Theory() {
               <div>
                 <span>{active.category} · {getStageLabel(active.stage)} · {active.level}</span>
                 <h2>{active.title}</h2>
-                <p>{active.concept}</p>
               </div>
               <button className="demo-play" onClick={() => playDemo(active.demo.kind, activeControl)}>
                 ▶ 听演示
               </button>
             </div>
+
+            <DetailedExplanation topic={active} />
 
             <TheoryDemoLab
               topic={active}
@@ -151,23 +152,73 @@ export default function Theory() {
             </div>
           </section>
 
-          <aside className="apply-panel card">
-            <span className="theory-kicker">课堂应用</span>
-            <h3>{active.demo.title}</h3>
-            <p>{active.demo.caption}</p>
-            <div className="action-list">
-              {active.actions.map((a) => (
-                <button key={a.label} onClick={() => navigate(a.route)}>
-                  {a.label}
-                </button>
-              ))}
+          <aside className="apply-panel quiz-panel card">
+            <span className="theory-kicker">本知识点题目</span>
+            <h3>{active.title}课堂小测</h3>
+            <p>先看左侧讲解，再用这组题确认学生是否抓住了核心概念和听辨依据。</p>
+            <MiniQuiz
+              key={active.id}
+              topic={active}
+              studentId={currentStudentId ?? 'anonymous'}
+              recordEnabled={mode !== 'lecture'}
+            />
+            <div className="application-links">
+              <span className="theory-kicker">课堂应用</span>
+              <h4>{active.demo.title}</h4>
+              <p>{active.demo.caption}</p>
+              <div className="action-list">
+                {active.actions.map((a) => (
+                  <button key={a.label} onClick={() => navigate(a.route)}>
+                    {a.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <MiniQuiz key={active.id} topic={active} studentId={currentStudentId ?? 'anonymous'} />
           </aside>
         </main>
       </div>
     </div>
   )
+}
+
+function DetailedExplanation({ topic }: { topic: TheoryTopic }) {
+  const stageLabel = getStageLabel(topic.stage)
+  const keywordTones = ['a', 'b', 'c', 'd'] as const
+
+  return (
+    <div className="topic-explanation">
+      <div className="explain-copy">
+        <p>
+          本节课讲的是 <Keyword tone="a">{topic.title}</Keyword>。它属于
+          <Keyword tone="b">{topic.category}</Keyword> 中的 {stageLabel} 内容，学生需要先理解：
+          {topic.concept}
+        </p>
+        <p>
+          讲解时可以先抓住 <Keyword tone="c">{topic.subtitle}</Keyword> 这个入口，再把抽象概念落到
+          <Keyword tone="d">听觉变化</Keyword>、<Keyword tone="a">视觉符号</Keyword> 和
+          <Keyword tone="b">课堂动作</Keyword> 上。这样学生不只是记住名称，而是能说出“我听到了什么、我看到了什么、为什么这样判断”。
+        </p>
+        <p>
+          教师可以用下方演示先做对比，再让学生用自己的话复述。复述时优先使用这些关键词：
+          {topic.keyPoints.map((point, index) => (
+            <Keyword key={point} tone={keywordTones[index % keywordTones.length]}>
+              {point}
+            </Keyword>
+          ))}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function Keyword({
+  tone,
+  children,
+}: {
+  tone: 'a' | 'b' | 'c' | 'd'
+  children: ReactNode
+}) {
+  return <mark className={`keyword keyword-${tone}`}>{children}</mark>
 }
 
 function FilterGroup({
@@ -442,65 +493,125 @@ function FormDemo({ control }: { control: DemoControl }) {
   )
 }
 
-function MiniQuiz({ topic, studentId }: { topic: TheoryTopic; studentId: string }) {
-  const [picked, setPicked] = useState<number | null>(null)
-  const [index, setIndex] = useState(0)
-  const [correct, setCorrect] = useState(0)
-  const q = topic.quiz[index]
+function MiniQuiz({
+  topic,
+  studentId,
+  recordEnabled,
+}: {
+  topic: TheoryTopic
+  studentId: string
+  recordEnabled: boolean
+}) {
+  const [pickedByQuestion, setPickedByQuestion] = useState<Record<number, number>>({})
+  const [quizPage, setQuizPage] = useState(0)
+  const questionsPerPage = 3
+  const pageCount = Math.ceil(topic.quiz.length / questionsPerPage)
+  const visibleQuestions = topic.quiz.slice(
+    quizPage * questionsPerPage,
+    quizPage * questionsPerPage + questionsPerPage
+  )
+  const answeredCount = Object.keys(pickedByQuestion).length
+  const correctCount = topic.quiz.reduce(
+    (total, q, questionIndex) => total + (pickedByQuestion[questionIndex] === q.answer ? 1 : 0),
+    0
+  )
 
-  const choose = async (i: number) => {
-    if (picked !== null) return
-    setPicked(i)
-    const ok = i === q.answer
-    const book = loadReviewBook(studentId)
-    saveReviewBook(
-      recordReviewAnswer(book, {
-        source: 'theory',
-        itemId: topic.id,
-        itemTitle: topic.title,
-        category: topic.category,
-        stage: topic.stage,
-        question: q.q,
-        options: q.options,
-        correctAnswer: q.answer,
-        selectedAnswer: i,
-        explanation: topic.concept,
-        timestamp: Date.now(),
-      })
-    )
+  const choose = async (questionIndex: number, selectedAnswer: number) => {
+    if (pickedByQuestion[questionIndex] !== undefined) return
+    const q = topic.quiz[questionIndex]
+    const ok = selectedAnswer === q.answer
+    const nextPicked = { ...pickedByQuestion, [questionIndex]: selectedAnswer }
+    setPickedByQuestion(nextPicked)
+
+    if (recordEnabled) {
+      const book = loadReviewBook(studentId)
+      saveReviewBook(
+        recordReviewAnswer(book, {
+          source: 'theory',
+          itemId: topic.id,
+          itemTitle: topic.title,
+          category: topic.category,
+          stage: topic.stage,
+          question: q.q,
+          options: q.options,
+          correctAnswer: q.answer,
+          selectedAnswer,
+          explanation: topic.concept,
+          timestamp: Date.now(),
+        })
+      )
+    }
+
     await ensureAudio()
     playNote(ok ? 'C5' : 'F3', '8n')
-    if (ok) setCorrect((c) => c + 1)
-    window.setTimeout(() => {
-      const next = index + 1
-      if (next >= topic.quiz.length) {
-        const finalCorrect = correct + (ok ? 1 : 0)
-        const acc = finalCorrect / topic.quiz.length
-        recordResult(`theory-${topic.id}`, 1, acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : 1, finalCorrect * 100, { accuracy: acc })
-        setIndex(0)
-        setCorrect(0)
-      } else {
-        setIndex(next)
-      }
-      setPicked(null)
-    }, 900)
+
+    if (recordEnabled && Object.keys(nextPicked).length === topic.quiz.length) {
+      const finalCorrect = topic.quiz.reduce(
+        (total, item, itemIndex) => total + (nextPicked[itemIndex] === item.answer ? 1 : 0),
+        0
+      )
+      const acc = finalCorrect / topic.quiz.length
+      recordResult(`theory-${topic.id}`, 1, acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : 1, finalCorrect * 100, { accuracy: acc })
+    }
   }
 
   return (
     <div className="mini-quiz">
-      <h4>本知识点小测</h4>
-      <p>{q.q}</p>
-      <div>
-        {q.options.map((opt, i) => {
-          const cls = picked == null ? '' : i === q.answer ? 'right' : i === picked ? 'wrong' : ''
+      <div className="quiz-summary">
+        <div>
+          <h4>本知识点小测</h4>
+          <p>每组 3 题，适合边讲边点答。</p>
+        </div>
+        <strong>{correctCount}/{topic.quiz.length}</strong>
+      </div>
+      <div className="quiz-grid">
+        {visibleQuestions.map((q, localIndex) => {
+          const questionIndex = quizPage * questionsPerPage + localIndex
+          const picked = pickedByQuestion[questionIndex]
           return (
-            <button key={opt} className={cls} disabled={picked !== null} onClick={() => choose(i)}>
-              {opt}
-            </button>
+            <div key={q.q} className="quiz-card">
+              <span>第 {questionIndex + 1} 题</span>
+              <h5>{q.q}</h5>
+              <div className="quiz-options">
+                {q.options.map((opt, optionIndex) => {
+                  const answered = picked !== undefined
+                  const cls = answered
+                    ? optionIndex === q.answer
+                      ? 'right'
+                      : optionIndex === picked
+                        ? 'wrong'
+                        : ''
+                    : ''
+                  return (
+                    <button
+                      key={`${q.q}-${opt}`}
+                      className={cls}
+                      disabled={answered}
+                      onClick={() => choose(questionIndex, optionIndex)}
+                    >
+                      {opt}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
           )
         })}
       </div>
-      <small>{index + 1}/{topic.quiz.length}</small>
+      {pageCount > 1 && (
+        <div className="quiz-pager">
+          <button disabled={quizPage === 0} onClick={() => setQuizPage((page) => Math.max(0, page - 1))}>
+            上一组
+          </button>
+          <span>{quizPage + 1}/{pageCount}</span>
+          <button
+            disabled={quizPage >= pageCount - 1}
+            onClick={() => setQuizPage((page) => Math.min(pageCount - 1, page + 1))}
+          >
+            下一组
+          </button>
+        </div>
+      )}
     </div>
   )
 }

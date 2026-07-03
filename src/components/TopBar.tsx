@@ -46,11 +46,14 @@ export default function TopBar() {
         </button>
       )}
 
-      <StudentSelector />
+      {mode !== 'lecture' && <StudentSelector />}
 
       <div className="seg" title="使用模式">
         <button className={mode === 'teacher' ? 'on' : ''} onClick={() => setMode('teacher')}>
           👩‍🏫 教师
+        </button>
+        <button className={mode === 'lecture' ? 'on' : ''} onClick={() => setMode('lecture')}>
+          🖥️ 讲解
         </button>
         <button className={mode === 'student' ? 'on' : ''} onClick={() => setMode('student')}>
           🎒 学生

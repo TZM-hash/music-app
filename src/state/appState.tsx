@@ -3,7 +3,7 @@ import { createContext, useContext, useState, useCallback, useEffect, ReactNode 
 import { getCurrentStudentId, setCurrentStudentId } from './students'
 import { createTheoryFocus, TheoryFocus } from './theoryFocus'
 
-export type AppMode = 'teacher' | 'student'
+export type AppMode = 'teacher' | 'lecture' | 'student'
 export type Route =
   | 'home'
   | 'course'
@@ -53,7 +53,11 @@ interface Prefs {
 function loadPrefs(): Prefs {
   try {
     const raw = localStorage.getItem(PREF_KEY)
-    if (raw) return { mode: 'teacher', showNoteNames: true, ...JSON.parse(raw) }
+    if (raw) {
+      const parsed = { mode: 'teacher', showNoteNames: true, ...JSON.parse(raw) } as Prefs
+      if (!['teacher', 'lecture', 'student'].includes(parsed.mode)) return { mode: 'teacher', showNoteNames: true }
+      return parsed
+    }
   } catch {
     /* ignore */
   }
