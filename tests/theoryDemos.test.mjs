@@ -7,8 +7,12 @@ import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const ts = require('typescript')
 
-function loadTsModule(filePath) {
-  const source = fs.readFileSync(path.resolve(filePath), 'utf8')
+function createTsLoader() {
+  const cache = new Map()
+  const load = (filePath) => {
+    const resolved = path.resolve(filePath.endsWith('.ts') ? filePath : `${filePath}.ts`)
+    if (cache.has(resolved)) return cache.get(resolved).exports
+    const source = fs.readFileSync(resolved, 'utf8')
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
@@ -16,12 +20,20 @@ function loadTsModule(filePath) {
     },
   }).outputText
   const module = { exports: {} }
-  const fn = new Function('module', 'exports', transpiled)
-  fn(module, module.exports)
-  return module.exports
+    cache.set(resolved, module)
+    const localRequire = (specifier) => {
+      if (specifier.startsWith('.')) return load(path.resolve(path.dirname(resolved), specifier))
+      return require(specifier)
+    }
+    const fn = new Function('module', 'exports', 'require', transpiled)
+    fn(module, module.exports, localRequire)
+    return module.exports
+  }
+  return load
 }
 
 test('every theory demo kind has an interactive scene', () => {
+  const loadTsModule = createTsLoader()
   const catalog = loadTsModule('src/music/theoryCatalog.ts')
   const demos = loadTsModule('src/music/theoryDemos.ts')
   const kinds = Array.from(new Set(catalog.THEORY_TOPICS.map((topic) => topic.demo.kind)))
@@ -44,6 +56,7 @@ test('every theory demo kind has an interactive scene', () => {
 })
 
 test('keyboard, rhythm, and harmony demos expose classroom-ready controls', () => {
+  const loadTsModule = createTsLoader()
   const demos = loadTsModule('src/music/theoryDemos.ts')
 
   assert.deepEqual(

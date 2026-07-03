@@ -7,9 +7,12 @@ import { createRequire } from 'node:module'
 const require = createRequire(import.meta.url)
 const ts = require('typescript')
 
-function loadCatalog() {
-  const filePath = path.resolve('src/music/theoryCatalog.ts')
-  const source = fs.readFileSync(filePath, 'utf8')
+function createTsLoader() {
+  const cache = new Map()
+  const load = (filePath) => {
+    const resolved = path.resolve(filePath.endsWith('.ts') ? filePath : `${filePath}.ts`)
+    if (cache.has(resolved)) return cache.get(resolved).exports
+    const source = fs.readFileSync(resolved, 'utf8')
   const transpiled = ts.transpileModule(source, {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
@@ -17,9 +20,20 @@ function loadCatalog() {
     },
   }).outputText
   const module = { exports: {} }
-  const fn = new Function('module', 'exports', transpiled)
-  fn(module, module.exports)
-  return module.exports
+    cache.set(resolved, module)
+    const localRequire = (specifier) => {
+      if (specifier.startsWith('.')) return load(path.resolve(path.dirname(resolved), specifier))
+      return require(specifier)
+    }
+    const fn = new Function('module', 'exports', 'require', transpiled)
+    fn(module, module.exports, localRequire)
+    return module.exports
+  }
+  return load
+}
+
+function loadCatalog() {
+  return createTsLoader()('src/music/theoryCatalog.ts')
 }
 
 test('catalog covers primary and junior-high theory with classroom filters', () => {
@@ -32,7 +46,7 @@ test('catalog covers primary and junior-high theory with classroom filters', () 
   )
 
   assert.ok(catalog.THEORY_CATEGORIES.length >= 8)
-  assert.ok(catalog.THEORY_TOPICS.length >= 48)
+  assert.ok(catalog.THEORY_TOPICS.length >= 100)
 
   for (const topic of catalog.THEORY_TOPICS) {
     assert.ok(topic.id, 'topic needs an id')
@@ -40,7 +54,7 @@ test('catalog covers primary and junior-high theory with classroom filters', () 
     assert.ok(topic.category, `${topic.id} needs a category`)
     assert.ok(topic.stage, `${topic.id} needs a stage`)
     assert.ok(topic.demo?.kind, `${topic.id} needs an interactive demo kind`)
-    assert.ok(topic.quiz.length >= 2, `${topic.id} needs at least two quiz questions`)
+    assert.ok(topic.quiz.length >= 4, `${topic.id} needs at least four quiz questions`)
     assert.equal(topic.keyPoints.length, 3, `${topic.id} needs three key points`)
   }
 })
@@ -67,4 +81,17 @@ test('junior advanced topics include harmony, form, and composition', () => {
   assert.ok(ids.includes('cadence'))
   assert.ok(ids.includes('variation-development'))
   assert.ok(ids.includes('four-bar-phrase-writing'))
+})
+
+test('expanded catalog gives every category meaningful depth', () => {
+  const catalog = loadCatalog()
+  const byCategory = new Map()
+
+  for (const topic of catalog.THEORY_TOPICS) {
+    byCategory.set(topic.category, (byCategory.get(topic.category) ?? 0) + 1)
+  }
+
+  for (const category of catalog.THEORY_CATEGORIES) {
+    assert.ok((byCategory.get(category) ?? 0) >= 8, `${category} needs at least eight topics`)
+  }
 })

@@ -1,165 +1,132 @@
 import { useMemo, useState } from 'react'
 import { Route, useApp } from '../state/appState'
-import { classOverview, classStats, GAME_META } from '../state/stats'
-import { getCurrentStudent, loadRoster } from '../state/students'
+import { loadProgress } from '../state/progress'
+import { getCurrentStudent } from '../state/students'
+import { getTheoryTopic } from '../music/theoryCatalog'
+import { THEORY_QUESTS } from '../music/theoryQuests'
 import './course.css'
 
-interface Station {
-  id: string
-  gameId: string
-  route: Route
-  icon: string
-  title: string
-  skill: string
-  mission: string
-  color: string
-  target: number
+function routeLabel(route: Route): string {
+  const labels: Partial<Record<Route, string>> = {
+    theory: '知识库',
+    course: '课程路径',
+    training: '练习中心',
+    library: '曲库谱例',
+    mixer: '混音创编',
+    'game-ear': '听辨挑战',
+    'game-taiko': '节奏挑战',
+    'game-sing': '视唱挑战',
+    'game-read': '读谱挑战',
+  }
+  return labels[route] ?? '开始'
 }
-
-const STATIONS: Station[] = [
-  {
-    id: 'ear',
-    gameId: 'game-ear',
-    route: 'game-ear',
-    icon: '👂',
-    title: '音高山',
-    skill: '听音辨识',
-    mission: '听出单音、音程和和弦色彩。',
-    color: '#2f9e44',
-    target: 8,
-  },
-  {
-    id: 'read',
-    gameId: 'game-read',
-    route: 'game-read',
-    icon: '🎼',
-    title: '识谱城',
-    skill: '谱面阅读',
-    mission: '看五线谱选唱名，逐步挑战低音谱号。',
-    color: '#f59f00',
-    target: 8,
-  },
-  {
-    id: 'sing',
-    gameId: 'game-sing',
-    route: 'game-sing',
-    icon: '🎤',
-    title: '歌唱谷',
-    skill: '演唱音准',
-    mission: '跟随目标旋律演唱，观察偏高和偏低。',
-    color: '#d6336c',
-    target: 6,
-  },
-  {
-    id: 'taiko',
-    gameId: 'game-taiko',
-    route: 'game-taiko',
-    icon: '🥁',
-    title: '合奏舞台',
-    skill: '反应律动',
-    mission: '用咚和咔完成节奏挑战，适合点名上台。',
-    color: '#f25050',
-    target: 6,
-  },
-]
 
 export default function AdventureMap() {
   const { navigate } = useApp()
-  const overview = classOverview()
-  const ranking = classStats()
-  const roster = loadRoster()
-  const current = getCurrentStudent()
-  const [calledId, setCalledId] = useState<string | null>(current?.id ?? roster[0]?.id ?? null)
+  const progress = loadProgress()
+  const student = getCurrentStudent()
+  const [activeQuestId, setActiveQuestId] = useState(THEORY_QUESTS[0].id)
+  const activeQuest = THEORY_QUESTS.find((quest) => quest.id === activeQuestId) ?? THEORY_QUESTS[0]
 
-  const called = roster.find((s) => s.id === calledId) ?? null
-  const nextStation = useMemo(() => {
-    return STATIONS.find((s) => (overview.sessionsByGame[s.gameId] ?? 0) < s.target) ?? STATIONS[0]
-  }, [overview.sessionsByGame])
+  const questStats = useMemo(() => {
+    return THEORY_QUESTS.map((quest, index) => {
+      const completed = quest.topicIds.filter((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0).length
+      const pct = Math.round((completed / quest.topicIds.length) * 100)
+      const previous = index === 0 ? null : THEORY_QUESTS[index - 1]
+      const previousStarted = previous
+        ? previous.topicIds.some((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0)
+        : true
+      return { quest, completed, pct, unlocked: index === 0 || previousStarted }
+    })
+  }, [progress.bestScores])
 
-  const randomCall = () => {
-    if (roster.length === 0) return
-    const next = roster[Math.floor(Math.random() * roster.length)]
-    setCalledId(next.id)
-  }
+  const activeStat = questStats.find((item) => item.quest.id === activeQuest.id) ?? questStats[0]
+  const previewTopics = activeQuest.topicIds
+    .map((id) => getTheoryTopic(id))
+    .filter(Boolean)
+    .slice(0, 6)
 
   return (
-    <div className="adventure-page">
+    <div className="adventure-page quest-page">
       <section className="course-head card adventure-head">
         <div>
-          <span className="course-kicker">能力进阶</span>
-          <h2>班级能力进阶</h2>
-          <p>把节奏、听觉、读谱、演唱和律动训练整理为可观察的课堂进度。</p>
-        </div>
-        <div className="map-summary">
-          <div><b>{overview.totalSessions}</b><small>全班练习</small></div>
-          <div><b>{overview.totalStars}</b><small>全班星星</small></div>
-          <div><b>{Math.round(overview.avgAccuracy * 100)}%</b><small>平均准确率</small></div>
-        </div>
-      </section>
-
-      <section className="call-panel card">
-        <div>
-          <span className="course-kicker">课堂抽测</span>
-          <h3>点名练习</h3>
+          <span className="course-kicker">快乐教学 · 边玩边学</span>
+          <h2>乐理闯关岛</h2>
           <p>
-            {called
-              ? `${called.avatar} ${called.name} 准备进行「${nextStation.title}」。`
-              : '先在学生名册添加学生，再开始课堂抽测。'}
+            把 100+ 个乐理知识点整理成九座音乐小岛：先探索知识，再听演示，最后进入练习或创编挑战。
           </p>
         </div>
+        <div className="map-summary">
+          <div><b>{THEORY_QUESTS.length}</b><small>音乐岛屿</small></div>
+          <div><b>{questStats.reduce((sum, item) => sum + item.completed, 0)}</b><small>已闯知识点</small></div>
+          <div><b>{student ? student.avatar : '🎒'}</b><small>{student ? student.name : '匿名冒险'}</small></div>
+        </div>
+      </section>
+
+      <section className="call-panel card quest-spotlight">
+        <div>
+          <span className="course-kicker">当前任务</span>
+          <h3>{activeQuest.icon} {activeQuest.title}</h3>
+          <p>{activeQuest.mission}</p>
+          <div className="quest-reward">完成奖励：{activeQuest.reward}</div>
+        </div>
         <div className="call-actions">
-          <button className="lesson-secondary" onClick={randomCall} disabled={roster.length === 0}>
-            随机点名
+          <button className="lesson-secondary" onClick={() => navigate('course')}>
+            课程指引
           </button>
-          <button className="big-start" onClick={() => navigate(nextStation.route)}>
-            开始下一项
+          <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
+            {routeLabel(activeQuest.practiceRoute)}
+          </button>
+          <button className="big-start" onClick={() => navigate('theory')}>
+            探索知识
           </button>
         </div>
       </section>
 
-      <div className="map-track">
-        {STATIONS.map((station, index) => {
-          const count = overview.sessionsByGame[station.gameId] ?? 0
-          const pct = Math.min(100, Math.round((count / station.target) * 100))
-          const unlocked = index === 0 || (overview.sessionsByGame[STATIONS[index - 1].gameId] ?? 0) > 0
-          const meta = GAME_META[station.gameId]
-          return (
-            <button
-              key={station.id}
-              className={`station card ${pct >= 100 ? 'done' : ''} ${unlocked ? '' : 'locked'}`}
-              onClick={() => unlocked && navigate(station.route)}
-              disabled={!unlocked}
-            >
-              <span className="station-index">{index + 1}</span>
-              <span className="station-icon" style={{ background: station.color }}>
-                {station.icon}
-              </span>
-              <h3>{station.title}</h3>
-              <p>{station.mission}</p>
-              <div className="station-skill">{meta?.skill ?? station.skill}</div>
-              <div className="station-progress">
-                <span style={{ width: `${pct}%`, background: station.color }} />
-              </div>
-              <small>{count}/{station.target} 次班级练习</small>
-            </button>
-          )
-        })}
+      <div className="map-track quest-track">
+        {questStats.map(({ quest, completed, pct, unlocked }, index) => (
+          <button
+            key={quest.id}
+            className={`station quest-card card ${pct >= 100 ? 'done' : ''} ${unlocked ? '' : 'locked'} ${quest.id === activeQuest.id ? 'active' : ''}`}
+            onClick={() => unlocked && setActiveQuestId(quest.id)}
+            disabled={!unlocked}
+          >
+            <span className="station-index">{index + 1}</span>
+            <span className="station-icon" style={{ background: quest.color }}>
+              {quest.icon}
+            </span>
+            <h3>{quest.title}</h3>
+            <p>{quest.mood}</p>
+            <div className="station-skill">{quest.topicIds.length} 个知识点 · {routeLabel(quest.practiceRoute)}</div>
+            <div className="station-progress">
+              <span style={{ width: `${pct}%`, background: quest.color }} />
+            </div>
+            <small>{completed}/{quest.topicIds.length} 个知识点已完成</small>
+          </button>
+        ))}
       </div>
 
-      <section className="leader-panel card">
+      <section className="leader-panel card quest-topic-panel">
         <div>
-          <span className="course-kicker">课堂榜单</span>
-          <h3>今日可表扬</h3>
+          <span className="course-kicker">岛屿知识卡</span>
+          <h3>{activeQuest.title}会遇到这些关卡</h3>
         </div>
-        <div className="leader-row">
-          {ranking.slice(0, 5).map((r, index) => (
-            <div key={r.student.id} className="leader-chip">
-              <span>{index + 1}</span>
-              <b>{r.student.avatar} {r.student.name}</b>
-              <small>{r.totalStars} 星 · {Math.round(r.avgAccuracy * 100)}%</small>
-            </div>
+        <div className="quest-topic-grid">
+          {previewTopics.map((topic) => (
+            <button key={topic!.id} onClick={() => navigate('theory')}>
+              <b>{topic!.title}</b>
+              <small>{topic!.category} · {topic!.level}</small>
+              <span>{topic!.subtitle}</span>
+            </button>
           ))}
-          {ranking.length === 0 && <p>还没有练习记录，先从乐理课程开始第一节课。</p>}
+        </div>
+        <div className="lesson-foot">
+          <button className="big-start" onClick={() => navigate('theory')}>
+            进入知识库闯关
+          </button>
+          <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
+            去完成小岛挑战
+          </button>
         </div>
       </section>
     </div>

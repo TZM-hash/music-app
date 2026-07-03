@@ -1,4 +1,5 @@
 import { Route } from '../state/appState'
+import { EXPANDED_THEORY_TOPICS, enrichTheoryTopicQuiz } from './theoryExpansion'
 
 export type TheoryStageId =
   | 'primary-lower'
@@ -103,7 +104,7 @@ function topic(
   return { id, category, stage, level, title, subtitle, concept, keyPoints, demo, actions, quiz }
 }
 
-export const THEORY_TOPICS: TheoryTopic[] = [
+const BASE_THEORY_TOPICS: TheoryTopic[] = [
   topic(
     'sound-four-properties',
     '音高与唱名',
@@ -1025,6 +1026,11 @@ export const THEORY_TOPICS: TheoryTopic[] = [
     ]
   ),
 ]
+
+export const THEORY_TOPICS: TheoryTopic[] = [
+  ...BASE_THEORY_TOPICS,
+  ...EXPANDED_THEORY_TOPICS,
+].map(enrichTheoryTopicQuiz)
 
 export function getStageLabel(stage: TheoryStageId): string {
   return THEORY_STAGES.find((item) => item.id === stage)?.label ?? stage
