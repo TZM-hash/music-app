@@ -600,6 +600,72 @@ button {
   background: var(--primary);
   color: #fff;
 }
+.review-home {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 0.9fr;
+  gap: 16px;
+}
+.review-block {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--bg);
+}
+.review-block h3 {
+  font-size: 1.05rem;
+}
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.review-list.compact {
+  max-height: 250px;
+  overflow: auto;
+}
+.review-list button {
+  display: flex;
+  min-height: 62px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--bg-panel);
+  color: var(--text);
+  text-align: left;
+}
+.review-list b {
+  font-size: 0.95rem;
+}
+.review-list small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.weak-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.weak-chip-row button {
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.weak-chip-row b {
+  color: var(--primary);
+}
 .work-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -712,6 +778,7 @@ button {
     flex-direction: column;
   }
   .pro-status,
+  .review-home,
   .work-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -751,6 +818,7 @@ button {
     grid-template-columns: 1fr;
   }
   .pro-status,
+  .review-home,
   .work-grid {
     grid-template-columns: 1fr;
   }

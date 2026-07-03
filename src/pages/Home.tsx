@@ -4,6 +4,14 @@ import { getCurrentStudent } from '../state/students'
 import { classOverview } from '../state/stats'
 import { allSongs } from '../music/songLibrary'
 import { THEORY_STAGES, THEORY_TOPICS } from '../music/theoryCatalog'
+import { encyclopediaToReviewQuestions } from '../music/encyclopedia'
+import {
+  buildDailyChallenge,
+  getWeakCategories,
+  getWrongAnswers,
+  loadReviewBook,
+  type ReviewQuestion,
+} from '../state/theoryReview'
 
 interface WorkItem {
   route: Route
@@ -54,11 +62,44 @@ const SUPPORT_TOOLS: { route: Route; label: string; desc: string }[] = [
   { route: 'game-sing', label: '视唱练习', desc: '把音阶、旋律和音准结合起来' },
 ]
 
+function todayKey(): string {
+  const now = new Date()
+  const month = `${now.getMonth() + 1}`.padStart(2, '0')
+  const day = `${now.getDate()}`.padStart(2, '0')
+  return `${now.getFullYear()}-${month}-${day}`
+}
+
+function theoryToReviewQuestions(): ReviewQuestion[] {
+  return THEORY_TOPICS.flatMap((topic) =>
+    topic.quiz.slice(0, 2).map((q, index) => ({
+      id: `theory:${topic.id}:${index}`,
+      source: 'theory',
+      itemId: topic.id,
+      itemTitle: topic.title,
+      category: topic.category,
+      stage: topic.stage,
+      question: q.q,
+      options: q.options,
+      correctAnswer: q.answer,
+      explanation: topic.concept,
+    }))
+  )
+}
+
 export default function Home() {
   const { navigate, mode } = useApp()
   const progress = loadProgress()
   const student = getCurrentStudent()
   const overview = classOverview()
+  const reviewBook = loadReviewBook(student?.id ?? 'anonymous')
+  const wrongAnswers = getWrongAnswers(reviewBook).slice(0, 3)
+  const weakCategories = getWeakCategories(reviewBook).slice(0, 4)
+  const dailyChallenge = buildDailyChallenge(
+    reviewBook,
+    [...theoryToReviewQuestions(), ...encyclopediaToReviewQuestions()],
+    todayKey(),
+    4
+  )
   const theoryPracticeCount = Object.keys(progress.bestScores).filter((key) =>
     key.startsWith('theory-')
   ).length
@@ -100,6 +141,57 @@ export default function Home() {
             进入分级乐理知识库
           </button>
           <button onClick={() => navigate('course')}>查看完整课程路径</button>
+        </div>
+      </section>
+
+      <section className="review-home card">
+        <div className="review-block daily">
+          <span className="pro-kicker">今日挑战</span>
+          <h3>{dailyChallenge.length} 道混合复习题</h3>
+          <div className="review-list compact">
+            {dailyChallenge.map((item) => (
+              <button key={item.id} onClick={() => navigate(item.source === 'encyclopedia' ? 'library' : 'theory')}>
+                <b>{item.itemTitle}</b>
+                <small>{item.category} · {item.question}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="review-block">
+          <span className="pro-kicker">错题本</span>
+          <h3>{wrongAnswers.length > 0 ? `${wrongAnswers.length} 个待巩固` : '暂无待处理错题'}</h3>
+          <div className="review-list">
+            {wrongAnswers.length === 0 ? (
+              <button onClick={() => navigate('theory')}>
+                <b>去完成一次小测</b>
+                <small>答题后这里会出现需要回看的知识点</small>
+              </button>
+            ) : (
+              wrongAnswers.map((item) => (
+                <button key={item.id} onClick={() => navigate(item.source === 'encyclopedia' ? 'library' : 'theory')}>
+                  <b>{item.itemTitle}</b>
+                  <small>
+                    {item.options[item.lastSelectedAnswer ?? -1] ?? '未选择'} → {item.options[item.correctAnswer]}
+                  </small>
+                </button>
+              ))
+            )}
+          </div>
+        </div>
+        <div className="review-block weak">
+          <span className="pro-kicker">薄弱分类</span>
+          <h3>{weakCategories.length > 0 ? '优先回看这些方向' : '完成小测后生成'}</h3>
+          <div className="weak-chip-row">
+            {weakCategories.length === 0 ? (
+              <button onClick={() => navigate('theory')}>开始乐理小测</button>
+            ) : (
+              weakCategories.map((item) => (
+                <button key={item.category} onClick={() => navigate('theory')}>
+                  {item.category} <b>{Math.round(item.accuracy * 100)}%</b>
+                </button>
+              ))
+            )}
+          </div>
         </div>
       </section>
 

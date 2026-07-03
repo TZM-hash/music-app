@@ -13,13 +13,14 @@ import {
   getStageLabel,
 } from '../music/theoryCatalog'
 import { DemoControl, getDemoScene } from '../music/theoryDemos'
+import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import './theory.css'
 
 type CategoryFilter = '全部' | string
 type StageFilter = '全部' | TheoryStageId
 
 export default function Theory() {
-  const { navigate, theoryFocus } = useApp()
+  const { navigate, theoryFocus, currentStudentId } = useApp()
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [stage, setStage] = useState<StageFilter>('全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
@@ -161,7 +162,7 @@ export default function Theory() {
                 </button>
               ))}
             </div>
-            <MiniQuiz key={active.id} topic={active} />
+            <MiniQuiz key={active.id} topic={active} studentId={currentStudentId ?? 'anonymous'} />
           </aside>
         </main>
       </div>
@@ -441,7 +442,7 @@ function FormDemo({ control }: { control: DemoControl }) {
   )
 }
 
-function MiniQuiz({ topic }: { topic: TheoryTopic }) {
+function MiniQuiz({ topic, studentId }: { topic: TheoryTopic; studentId: string }) {
   const [picked, setPicked] = useState<number | null>(null)
   const [index, setIndex] = useState(0)
   const [correct, setCorrect] = useState(0)
@@ -451,6 +452,22 @@ function MiniQuiz({ topic }: { topic: TheoryTopic }) {
     if (picked !== null) return
     setPicked(i)
     const ok = i === q.answer
+    const book = loadReviewBook(studentId)
+    saveReviewBook(
+      recordReviewAnswer(book, {
+        source: 'theory',
+        itemId: topic.id,
+        itemTitle: topic.title,
+        category: topic.category,
+        stage: topic.stage,
+        question: q.q,
+        options: q.options,
+        correctAnswer: q.answer,
+        selectedAnswer: i,
+        explanation: topic.concept,
+        timestamp: Date.now(),
+      })
+    )
     await ensureAudio()
     playNote(ok ? 'C5' : 'F3', '8n')
     if (ok) setCorrect((c) => c + 1)

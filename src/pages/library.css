@@ -46,6 +46,35 @@
   box-shadow: var(--shadow);
 }
 
+.lib-view-tabs {
+  display: inline-flex;
+  width: fit-content;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  box-shadow: var(--shadow);
+}
+.lib-view-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  color: var(--text-soft);
+  font-weight: 900;
+}
+.lib-view-tabs button.on {
+  background: var(--primary);
+  color: #fff;
+}
+.lib-view-tabs span {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.13);
+  font-size: 0.78rem;
+}
+
 .lib-tabs {
   display: flex;
   gap: 10px;
@@ -66,11 +95,31 @@
   background: var(--primary);
   color: #fff;
 }
+.encyclopedia-tabs button.on {
+  background: var(--accent);
+}
 .tab-count {
   background: rgba(0, 0, 0, 0.15);
   border-radius: 999px;
   padding: 1px 9px;
   font-size: 0.8rem;
+}
+.encyclopedia-stage-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.encyclopedia-stage-row button {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  color: var(--text);
+  font-weight: 800;
+  box-shadow: var(--shadow);
+}
+.encyclopedia-stage-row button.on {
+  background: var(--accent-2);
+  color: #fff;
 }
 
 .song-grid {
@@ -160,6 +209,95 @@
   color: #fff;
 }
 .sa-btn.danger {
+  background: #fa5252;
+  color: #fff;
+}
+.encyclopedia-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 18px;
+}
+.encyclopedia-card {
+  display: flex;
+  min-height: 430px;
+  flex-direction: column;
+  gap: 10px;
+}
+.encyclopedia-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.encyclopedia-head span,
+.related-count {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+.encyclopedia-head small {
+  color: var(--text-soft);
+  font-weight: 800;
+}
+.encyclopedia-card h3 {
+  font-size: 1.35rem;
+}
+.encyclopedia-card > b {
+  color: var(--text);
+}
+.encyclopedia-card p {
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+.fact-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+.fact-list span {
+  padding: 6px 9px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.classroom-prompt {
+  padding: 10px 12px;
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+.encyclopedia-quiz {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--bg);
+}
+.encyclopedia-quiz strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+}
+.encyclopedia-quiz div div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.encyclopedia-quiz button {
+  padding: 7px 10px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.encyclopedia-quiz button.right {
+  background: var(--accent-2);
+  color: #fff;
+}
+.encyclopedia-quiz button.wrong {
   background: #fa5252;
   color: #fff;
 }
