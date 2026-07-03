@@ -1,6 +1,7 @@
 // 全局应用状态：模式（教师/学生）、导航、当前学生、当前曲目
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
 import { getCurrentStudentId, setCurrentStudentId } from './students'
+import { createTheoryFocus, TheoryFocus } from './theoryFocus'
 
 export type AppMode = 'teacher' | 'student'
 export type Route =
@@ -28,10 +29,13 @@ interface AppState {
   currentStudentId: string | null
   /** 供游戏使用的当前选中曲目 id（从曲库跳转时带入） */
   activeSongId: string | null
+  /** 从课程路径/闯关岛进入乐理知识库时携带的筛选焦点 */
+  theoryFocus: TheoryFocus | null
   /** 窄屏时侧边栏是否展开 */
   sidebarOpen: boolean
   setMode: (m: AppMode) => void
   navigate: (r: Route) => void
+  openTheory: (focus?: TheoryFocus) => void
   toggleNoteNames: () => void
   selectStudent: (id: string | null) => void
   playSongInGame: (songId: string, route: Route) => void
@@ -70,6 +74,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [showNoteNames, setShowNoteNames] = useState(initial.showNoteNames)
   const [currentStudentId, setCurrentId] = useState<string | null>(() => getCurrentStudentId())
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
+  const [theoryFocus, setTheoryFocus] = useState<TheoryFocus | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // 偏好持久化
@@ -80,7 +85,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setMode = useCallback((m: AppMode) => setModeState(m), [])
   const navigate = useCallback((r: Route) => {
     setRoute(r)
+    if (r !== 'theory') setTheoryFocus(null)
     setSidebarOpen(false) // 导航后自动收起（窄屏）
+  }, [])
+  const openTheory = useCallback((focus?: TheoryFocus) => {
+    setTheoryFocus(focus ? createTheoryFocus(focus) : null)
+    setRoute('theory')
+    setSidebarOpen(false)
   }, [])
   const toggleNoteNames = useCallback(() => setShowNoteNames((v) => !v), [])
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), [])
@@ -108,9 +119,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
         showNoteNames,
         currentStudentId,
         activeSongId,
+        theoryFocus,
         sidebarOpen,
         setMode,
         navigate,
+        openTheory,
         toggleNoteNames,
         selectStudent,
         playSongInGame,

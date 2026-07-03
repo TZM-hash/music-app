@@ -118,7 +118,7 @@ const COURSES: CourseUnit[] = [
 ]
 
 export default function CourseCenter() {
-  const { navigate, mode } = useApp()
+  const { navigate, openTheory, mode } = useApp()
   const student = getCurrentStudent()
   const [activeId, setActiveId] = useState<TheoryStageId>('primary-lower')
   const active = useMemo(
@@ -127,6 +127,7 @@ export default function CourseCenter() {
   )
   const activeTopics = filterTheoryTopics({ stage: active.id })
   const stageLabel = THEORY_STAGES.find((stage) => stage.id === active.id)?.label ?? active.stage
+  const goTheoryForActiveStage = () => openTheory({ stage: active.id })
 
   return (
     <div className="course-page">
@@ -200,7 +201,10 @@ export default function CourseCenter() {
                   <p>{step.detail}</p>
                 </div>
                 {step.route && (
-                  <button className="step-action" onClick={() => navigate(step.route!)}>
+                  <button
+                    className="step-action"
+                    onClick={() => (step.route === 'theory' ? goTheoryForActiveStage() : navigate(step.route!))}
+                  >
                     {step.action ?? '开始'}
                   </button>
                 )}
@@ -209,7 +213,7 @@ export default function CourseCenter() {
           </div>
 
           <div className="lesson-foot">
-            <button className="big-start" onClick={() => navigate('theory')}>
+            <button className="big-start" onClick={goTheoryForActiveStage}>
               进入分级乐理知识库
             </button>
             <button className="lesson-secondary" onClick={() => navigate('training')}>

@@ -19,7 +19,7 @@ type CategoryFilter = '全部' | string
 type StageFilter = '全部' | TheoryStageId
 
 export default function Theory() {
-  const { navigate } = useApp()
+  const { navigate, theoryFocus } = useApp()
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [stage, setStage] = useState<StageFilter>('全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
@@ -43,6 +43,23 @@ export default function Theory() {
       setActiveId(filtered[0].id)
     }
   }, [activeId, filtered])
+
+  useEffect(() => {
+    if (!theoryFocus) return
+    const nextCategory = theoryFocus.category ?? '全部'
+    const nextStage = theoryFocus.stage ?? '全部'
+    const focusedTopics = filterTheoryTopics({
+      category: theoryFocus.category,
+      stage: theoryFocus.stage,
+    })
+    const nextTopic =
+      (theoryFocus.topicId && focusedTopics.find((topic) => topic.id === theoryFocus.topicId)) ||
+      focusedTopics[0]
+
+    setCategory(nextCategory)
+    setStage(nextStage)
+    if (nextTopic) setActiveId(nextTopic.id)
+  }, [theoryFocus])
 
   useEffect(() => {
     setActiveDemoValue(getDemoScene(active.demo.kind).controls[0].value)
