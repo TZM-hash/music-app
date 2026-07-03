@@ -200,6 +200,78 @@
   font-weight: 900;
 }
 
+.theory-demo-lab {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.demo-control-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--bg);
+}
+
+.demo-control-head b {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text);
+}
+
+.demo-control-head p {
+  color: var(--text-soft);
+  line-height: 1.45;
+}
+
+.demo-control-head > span {
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: var(--bg-panel);
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.demo-control-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.demo-control-row button {
+  min-height: 58px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  text-align: left;
+}
+
+.demo-control-row button.on {
+  background: var(--primary);
+  color: #fff;
+}
+
+.demo-control-row b,
+.demo-control-row small {
+  display: block;
+}
+
+.demo-control-row small {
+  margin-top: 3px;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.demo-control-row button.on small {
+  color: rgba(255, 255, 255, 0.84);
+}
+
 .lab-demo {
   min-height: 230px;
   display: flex;
@@ -209,6 +281,22 @@
   background: var(--bg);
   padding: 18px;
   overflow: hidden;
+}
+
+.demo-observations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.demo-observations span {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(81, 207, 102, 0.13);
+  color: var(--text);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .lab-keyboard {
@@ -277,6 +365,13 @@
   box-shadow: var(--shadow);
 }
 
+.duration-demo div.active,
+.tempo-demo div.active,
+.articulation-demo div.active {
+  outline: 3px solid rgba(255, 107, 107, 0.35);
+  background: rgba(255, 107, 107, 0.12);
+}
+
 .duration-demo b {
   display: block;
   font-size: 2.6rem;
@@ -322,6 +417,11 @@
   background: var(--primary);
   color: #fff;
   transform: scale(1.12);
+}
+
+.meter-demo span.medium {
+  background: var(--accent);
+  color: #fff;
 }
 
 .meter-demo p {
@@ -422,8 +522,21 @@
 }
 
 .dynamics-demo span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  min-height: 56px;
+  border-radius: 14px;
+  background: var(--bg-panel);
   font-style: italic;
   font-weight: 900;
+  box-shadow: var(--shadow);
+}
+
+.dynamics-demo span.active {
+  background: var(--primary);
+  color: #fff;
 }
 
 .dynamics-demo b {

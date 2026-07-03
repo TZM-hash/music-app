@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/appState'
-import { ensureAudio, playChord, playNote } from '../music/audioEngine'
+import { ensureAudio, playNote } from '../music/audioEngine'
 import { recordResult } from '../state/progress'
 import {
   DemoKind,
@@ -12,6 +12,7 @@ import {
   filterTheoryTopics,
   getStageLabel,
 } from '../music/theoryCatalog'
+import { DemoControl, getDemoScene } from '../music/theoryDemos'
 import './theory.css'
 
 type CategoryFilter = '全部' | string
@@ -22,6 +23,7 @@ export default function Theory() {
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [stage, setStage] = useState<StageFilter>('全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
+  const [activeDemoValue, setActiveDemoValue] = useState('')
 
   const filtered = useMemo(
     () =>
@@ -32,12 +34,19 @@ export default function Theory() {
     [category, stage]
   )
   const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? THEORY_TOPICS[0]
+  const demoScene = getDemoScene(active.demo.kind)
+  const activeControl =
+    demoScene.controls.find((control) => control.value === activeDemoValue) ?? demoScene.controls[0]
 
   useEffect(() => {
     if (filtered.length > 0 && !filtered.some((topic) => topic.id === activeId)) {
       setActiveId(filtered[0].id)
     }
   }, [activeId, filtered])
+
+  useEffect(() => {
+    setActiveDemoValue(getDemoScene(active.demo.kind).controls[0].value)
+  }, [active.id, active.demo.kind])
 
   const clearFilters = () => {
     setCategory('全部')
@@ -103,12 +112,16 @@ export default function Theory() {
                 <h2>{active.title}</h2>
                 <p>{active.concept}</p>
               </div>
-              <button className="demo-play" onClick={() => playDemo(active.demo.kind)}>
+              <button className="demo-play" onClick={() => playDemo(active.demo.kind, activeControl)}>
                 ▶ 听演示
               </button>
             </div>
 
-            <DemoView topic={active} />
+            <TheoryDemoLab
+              topic={active}
+              activeValue={activeControl.value}
+              onChange={setActiveDemoValue}
+            />
 
             <div className="point-grid">
               {active.keyPoints.map((p, i) => (
@@ -166,25 +179,72 @@ function FilterGroup({
   )
 }
 
-function DemoView({ topic }: { topic: TheoryTopic }) {
+function TheoryDemoLab({
+  topic,
+  activeValue,
+  onChange,
+}: {
+  topic: TheoryTopic
+  activeValue: string
+  onChange: (value: string) => void
+}) {
+  const scene = getDemoScene(topic.demo.kind)
+  const activeControl = scene.controls.find((control) => control.value === activeValue) ?? scene.controls[0]
+
+  return (
+    <div className="theory-demo-lab">
+      <div className="demo-control-head">
+        <div>
+          <b>{scene.title}</b>
+          <p>{scene.prompt}</p>
+        </div>
+        <span>{activeControl.detail}</span>
+      </div>
+      <div className="demo-control-row">
+        {scene.controls.map((control) => (
+          <button
+            key={control.value}
+            className={control.value === activeControl.value ? 'on' : ''}
+            onClick={() => onChange(control.value)}
+          >
+            <b>{control.label}</b>
+            <small>{control.detail}</small>
+          </button>
+        ))}
+      </div>
+      <DemoView topic={topic} control={activeControl} />
+      <div className="demo-observations">
+        {scene.observations.map((item) => (
+          <span key={item}>{item}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DemoView({ topic, control }: { topic: TheoryTopic; control: DemoControl }) {
   const kind = topic.demo.kind
   return (
     <div className={`lab-demo ${kind}`}>
-      {kind === 'pitch' && <KeyboardDemo active={['C', 'D', 'E', 'F', 'G', 'A', 'B']} />}
-      {kind === 'duration' && <DurationDemo />}
-      {kind === 'meter' && <MeterDemo />}
-      {kind === 'staff' && <StaffDemo />}
-      {kind === 'jianpu' && <JianpuDemo />}
-      {kind === 'scale' && <ScaleDemo />}
-      {kind === 'interval' && <IntervalDemo />}
-      {kind === 'chord' && <ChordDemo />}
-      {kind === 'tempo' && <TempoDemo />}
-      {kind === 'dynamics' && <DynamicsDemo />}
-      {kind === 'articulation' && <ArticulationDemo />}
-      {kind === 'repeat' && <RepeatDemo />}
-      {kind === 'form' && <FormDemo />}
+      {kind === 'pitch' && <KeyboardDemo active={control.notes.map(noteName)} />}
+      {kind === 'duration' && <DurationDemo control={control} />}
+      {kind === 'meter' && <MeterDemo control={control} />}
+      {kind === 'staff' && <StaffDemo control={control} />}
+      {kind === 'jianpu' && <JianpuDemo control={control} />}
+      {kind === 'scale' && <ScaleDemo control={control} />}
+      {kind === 'interval' && <IntervalDemo control={control} />}
+      {kind === 'chord' && <ChordDemo control={control} />}
+      {kind === 'tempo' && <TempoDemo active={control.value} />}
+      {kind === 'dynamics' && <DynamicsDemo active={control.value} />}
+      {kind === 'articulation' && <ArticulationDemo active={control.value} />}
+      {kind === 'repeat' && <RepeatDemo control={control} />}
+      {kind === 'form' && <FormDemo control={control} />}
     </div>
   )
+}
+
+function noteName(note: string) {
+  return note.replace(/[0-9]/g, '').replace('#', '♯')
 }
 
 function KeyboardDemo({ active }: { active: string[] }) {
@@ -203,145 +263,163 @@ function KeyboardDemo({ active }: { active: string[] }) {
   )
 }
 
-function DurationDemo() {
+function DurationDemo({ control }: { control: DemoControl }) {
+  const symbols = control.symbols ?? ['♩']
   return (
     <div className="duration-demo">
-      {[
-        ['𝅝', '全音符', '4 拍'],
-        ['𝅗𝅥', '二分音符', '2 拍'],
-        ['♩', '四分音符', '1 拍'],
-        ['♪', '八分音符', '半拍'],
-      ].map(([symbol, name, beats]) => (
-        <div key={name}>
+      {symbols.map((symbol, i) => (
+        <div key={`${symbol}${i}`} className={i === 0 ? 'active' : ''}>
           <b>{symbol}</b>
-          <span>{name}</span>
-          <small>{beats}</small>
+          <span>{control.label}</span>
+          <small>{control.detail}</small>
         </div>
       ))}
     </div>
   )
 }
 
-function MeterDemo() {
+function MeterDemo({ control }: { control: DemoControl }) {
+  const beats = control.beats ?? ['1', '2', '3', '4']
+  const accent = control.accentPattern ?? [1, 0, 0.6, 0]
   return (
     <div className="meter-demo">
-      {[1, 2, 3, 4].map((n) => (
-        <span key={n} className={n === 1 ? 'strong' : ''}>{n}</span>
+      {beats.map((n, i) => (
+        <span key={n} className={accent[i] === 1 ? 'strong' : accent[i] ? 'medium' : ''}>{n}</span>
       ))}
-      <p>强 弱 次强 弱</p>
+      <p>{control.detail}</p>
     </div>
   )
 }
 
-function StaffDemo() {
+function StaffDemo({ control }: { control: DemoControl }) {
+  const positions: Record<string, [number, number]> = {
+    C: [130, 110],
+    D: [165, 101],
+    E: [200, 92],
+    F: [235, 83],
+    G: [270, 74],
+    A: [305, 65],
+    B: [340, 56],
+  }
+  const notes = control.notes.map(noteName)
   return (
     <svg className="staff-demo" viewBox="0 0 420 150">
       {[0, 1, 2, 3, 4].map((i) => (
         <line key={i} x1="28" x2="390" y1={38 + i * 18} y2={38 + i * 18} />
       ))}
       <text x="42" y="105" className="clef">𝄞</text>
-      {[
-        [150, 110, 'C'],
-        [205, 92, 'E'],
-        [260, 74, 'G'],
-        [315, 56, 'B'],
-      ].map(([x, y, label]) => (
+      {notes.map((label, index) => {
+        const [x, y] = positions[label] ?? [150 + index * 48, 92 - index * 8]
+        return (
         <g key={label}>
           <ellipse cx={Number(x)} cy={Number(y)} rx="13" ry="9" transform={`rotate(-20 ${x} ${y})`} />
           <text x={Number(x)} y="135">{label}</text>
         </g>
-      ))}
+        )
+      })}
     </svg>
   )
 }
 
-function JianpuDemo() {
+function JianpuDemo({ control }: { control: DemoControl }) {
+  const symbols = control.symbols ?? ['1', '2', '3', '4', '5', '6', '7']
   return (
     <div className="jianpu-demo">
-      {['1', '2', '3', '4', '5', '6', '7'].map((n, i) => (
+      {symbols.map((n, i) => (
         <span key={n}>
           <b>{n}</b>
-          <small>{['do', 're', 'mi', 'fa', 'sol', 'la', 'ti'][i]}</small>
+          <small>{['do', 're', 'mi', 'fa', 'sol', 'la', 'ti'][Number(n) - 1] ?? control.notes[i]}</small>
         </span>
       ))}
     </div>
   )
 }
 
-function ScaleDemo() {
+function ScaleDemo({ control }: { control: DemoControl }) {
   return (
     <div className="scale-demo">
-      {['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'].map((n, i) => (
+      {control.notes.map((n, i) => (
         <span key={`${n}${i}`} style={{ height: 36 + i * 8 }}>
-          {n}
+          {noteName(n)}
         </span>
       ))}
     </div>
   )
 }
 
-function IntervalDemo() {
+function IntervalDemo({ control }: { control: DemoControl }) {
   return (
     <div className="interval-demo">
-      <KeyboardDemo active={['C', 'G']} />
-      <div className="interval-line">C 到 G：五度</div>
+      <KeyboardDemo active={control.notes.map(noteName)} />
+      <div className="interval-line">{control.detail}</div>
     </div>
   )
 }
 
-function ChordDemo() {
+function ChordDemo({ control }: { control: DemoControl }) {
   return (
     <div className="chord-demo">
-      <KeyboardDemo active={['C', 'E', 'G']} />
-      <div className="chord-label">C - E - G：C 大三和弦</div>
+      <KeyboardDemo active={control.notes.map(noteName)} />
+      <div className="chord-label">{control.detail}</div>
     </div>
   )
 }
 
-function TempoDemo() {
+function TempoDemo({ active }: { active: string }) {
   return (
     <div className="tempo-demo">
-      <div><b>慢速</b><span>60 BPM</span></div>
-      <div><b>中速</b><span>100 BPM</span></div>
-      <div><b>快速</b><span>140 BPM</span></div>
+      <div className={active === 'slow' ? 'active' : ''}><b>慢速</b><span>60 BPM</span></div>
+      <div className={active === 'medium' ? 'active' : ''}><b>中速</b><span>100 BPM</span></div>
+      <div className={active === 'fast' ? 'active' : ''}><b>快速</b><span>140 BPM</span></div>
     </div>
   )
 }
 
-function DynamicsDemo() {
+function DynamicsDemo({ active }: { active: string }) {
   return (
     <div className="dynamics-demo">
-      {['p', 'mp', 'mf', 'f'].map((d, i) => (
-        <span key={d} style={{ fontSize: 24 + i * 9 }}>{d}</span>
+      {[
+        ['soft', 'p'],
+        ['medium', 'mf'],
+        ['strong', 'f'],
+        ['crescendo', '<'],
+      ].map(([key, d], i) => (
+        <span key={key} className={active === key ? 'active' : ''} style={{ fontSize: 24 + i * 9 }}>{d}</span>
       ))}
-      <b>&lt;</b>
     </div>
   )
 }
 
-function ArticulationDemo() {
+function ArticulationDemo({ active }: { active: string }) {
   return (
     <div className="articulation-demo">
-      <div><b>连音</b><span>do - re - mi</span></div>
-      <div><b>跳音</b><span>do · re · mi</span></div>
+      <div className={active === 'legato' ? 'active' : ''}><b>连音</b><span>do - re - mi</span></div>
+      <div className={active === 'staccato' ? 'active' : ''}><b>跳音</b><span>do · re · mi</span></div>
+      <div className={active === 'accent' ? 'active' : ''}><b>重音</b><span>&gt; do re mi</span></div>
     </div>
   )
 }
 
-function RepeatDemo() {
+function RepeatDemo({ control }: { control: DemoControl }) {
+  const symbols = control.symbols ?? ['A', 'A', 'B']
   return (
     <div className="repeat-demo">
-      <span>A</span><b>→</b><span>A</span><b>→</b><span>B</span>
-      <small>主题重复后形成对比</small>
+      {symbols.map((symbol, index) => (
+        <span key={`${symbol}${index}`}>{symbol}</span>
+      ))}
+      <small>{control.detail}</small>
     </div>
   )
 }
 
-function FormDemo() {
+function FormDemo({ control }: { control: DemoControl }) {
+  const symbols = control.symbols ?? ['A', 'B', 'A']
   return (
     <div className="form-demo">
-      <span>A</span><span>B</span><span>A</span>
-      <small>熟悉 - 对比 - 再现</small>
+      {symbols.map((symbol, index) => (
+        <span key={`${symbol}${index}`}>{symbol}</span>
+      ))}
+      <small>{control.detail}</small>
     </div>
   )
 }
@@ -393,54 +471,60 @@ function MiniQuiz({ topic }: { topic: TheoryTopic }) {
   )
 }
 
-async function playDemo(kind: DemoKind) {
+async function playDemo(kind: DemoKind, control: DemoControl) {
   await ensureAudio()
   const later = (ms: number, fn: () => void) => window.setTimeout(fn, ms)
-  if (kind === 'pitch' || kind === 'scale' || kind === 'jianpu') {
-    ;['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'].forEach((n, i) => {
-      later(i * 260, () => playNote(n, '8n'))
+
+  if (kind === 'chord') {
+    control.notes.forEach((note) => playNote(note, '2n', control.value === 'dominant7' ? 0.55 : 0.65))
+    return
+  }
+
+  if (kind === 'tempo') {
+    const gap = control.value === 'slow' ? 620 : control.value === 'fast' ? 260 : 390
+    control.notes.forEach((note, i) => later(i * gap, () => playNote(note, '16n')))
+    return
+  }
+
+  if (kind === 'dynamics') {
+    if (control.value === 'crescendo') {
+      ;[0.3, 0.55, 0.9].forEach((volume, i) => later(i * 360, () => playNote('C4', '8n', volume)))
+    } else {
+      playNote('C4', '4n', control.value === 'soft' ? 0.3 : control.value === 'strong' ? 0.95 : 0.62)
+    }
+    return
+  }
+
+  if (kind === 'articulation') {
+    control.notes.forEach((note, i) => {
+      const duration = control.value === 'staccato' ? '16n' : '4n'
+      const volume = control.value === 'accent' && i === 0 ? 0.95 : 0.62
+      later(i * (control.value === 'staccato' ? 230 : 410), () => playNote(note, duration, volume))
     })
     return
   }
+
+  if (kind === 'meter') {
+    const accent = control.accentPattern ?? []
+    control.notes.forEach((note, i) => later(i * 360, () => playNote(note, '16n', accent[i] ? 0.9 : 0.45)))
+    return
+  }
+
   if (kind === 'duration') {
-    playNote('C4', '2n')
-    later(900, () => playNote('E4', '4n'))
-    later(1350, () => playNote('G4', '8n'))
+    control.notes.forEach((note, i) => later(i * 520, () => playNote(note, i === 0 ? '4n' : '8n')))
     return
   }
-  if (kind === 'meter' || kind === 'tempo') {
-    ;[0, 1, 2, 3].forEach((i) => later(i * (kind === 'tempo' ? 280 : 460), () => playNote(i === 0 ? 'C5' : 'C4', '16n')))
-    return
-  }
-  if (kind === 'staff') {
-    ;['C4', 'E4', 'G4', 'B4'].forEach((n, i) => later(i * 300, () => playNote(n, '8n')))
-    return
-  }
+
   if (kind === 'interval') {
-    playNote('C4', '4n')
-    later(520, () => playNote('G4', '4n'))
-    later(1050, () => playChord('C4', 'maj', '2n'))
+    control.notes.forEach((note, i) => later(i * 520, () => playNote(note, '4n')))
+    later(1180, () => control.notes.forEach((note) => playNote(note, '2n', 0.55)))
     return
   }
-  if (kind === 'chord') {
-    playChord('C4', 'maj', '2n')
-    later(900, () => playChord('A3', 'min', '2n'))
+
+  if (kind === 'repeat' || kind === 'form') {
+    control.notes.forEach((note, i) => later(i * 250, () => playNote(note, '8n')))
     return
   }
-  if (kind === 'dynamics') {
-    playNote('C4', '8n', 0.35)
-    later(420, () => playNote('C4', '8n', 0.65))
-    later(840, () => playNote('C4', '8n', 0.95))
-    return
-  }
-  if (kind === 'articulation') {
-    ;['C4', 'D4', 'E4'].forEach((n, i) => later(i * 420, () => playNote(n, '4n')))
-    ;['C5', 'D5', 'E5'].forEach((n, i) => later(1500 + i * 220, () => playNote(n, '16n')))
-    return
-  }
-  if (kind === 'repeat') {
-    ;['C4', 'E4', 'G4', 'C4', 'E4', 'G4', 'D4', 'F4', 'A4'].forEach((n, i) => later(i * 230, () => playNote(n, '8n')))
-    return
-  }
-  ;['C4', 'D4', 'E4', 'G4', 'A4', 'G4', 'C4', 'D4', 'E4'].forEach((n, i) => later(i * 240, () => playNote(n, '8n')))
+
+  control.notes.forEach((note, i) => later(i * 280, () => playNote(note, '8n')))
 }
