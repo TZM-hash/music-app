@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { classOverview, classStats, studentStat, GAME_META } from '../state/stats'
 import { BarChart, LineChart, Donut, Radar } from '../components/Charts'
 import '../components/charts.css'
@@ -8,15 +8,14 @@ import './dashboard.css'
 const GAME_COLORS: Record<string, string> = {
   'game-taiko': '#f25050',
   'game-sing': '#f783ac',
-  'game-rhythm': '#e64980',
   'game-ear': '#2f9e44',
   'game-read': '#f59f00',
 }
 
 export default function Dashboard() {
   const { navigate } = useApp()
-  const overview = useMemo(() => classOverview(), [])
-  const ranking = useMemo(() => classStats(), [])
+  const overview = classOverview()
+  const ranking = classStats()
   const [selected, setSelected] = useState<string | null>(ranking[0]?.student.id ?? null)
   const detail = selected ? studentStat(selected) : null
 

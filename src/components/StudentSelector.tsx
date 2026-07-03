@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp } from '../state/appState'
 import { loadRoster } from '../state/students'
+import { studentStat } from '../state/stats'
 
 export default function StudentSelector() {
   const { currentStudentId, selectStudent, navigate } = useApp()
@@ -40,16 +41,17 @@ export default function StudentSelector() {
               <span className="stu-avatar">👤</span> 匿名（不计入统计）
             </button>
             {roster.map((s) => (
-              <button
+              <StudentOption
                 key={s.id}
-                className={`stu-option ${currentStudentId === s.id ? 'on' : ''}`}
-                onClick={() => {
+                id={s.id}
+                avatar={s.avatar}
+                name={s.name}
+                active={currentStudentId === s.id}
+                onSelect={() => {
                   selectStudent(s.id)
                   setOpen(false)
                 }}
-              >
-                <span className="stu-avatar">{s.avatar}</span> {s.name}
-              </button>
+              />
             ))}
             <button
               className="stu-manage"
@@ -64,5 +66,32 @@ export default function StudentSelector() {
         </>
       )}
     </div>
+  )
+}
+
+function StudentOption({
+  id,
+  avatar,
+  name,
+  active,
+  onSelect,
+}: {
+  id: string
+  avatar: string
+  name: string
+  active: boolean
+  onSelect: () => void
+}) {
+  const stat = studentStat(id)
+  return (
+    <button className={`stu-option ${active ? 'on' : ''}`} onClick={onSelect}>
+      <span className="stu-avatar">{avatar}</span>
+      <span className="stu-option-main">
+        <span>{name}</span>
+        <small>
+          {stat?.totalSessions ?? 0} 次练习 · {stat?.totalStars ?? 0} 星
+        </small>
+      </span>
+    </button>
   )
 }

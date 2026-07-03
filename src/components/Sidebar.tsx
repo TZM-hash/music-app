@@ -14,37 +14,25 @@ interface NavGroup {
 
 const GROUPS: NavGroup[] = [
   {
-    title: '乐器',
+    title: '学习主线',
     items: [
-      { route: 'piano', icon: '🎹', label: '虚拟钢琴' },
-      { route: 'drums', icon: '🥁', label: '架子鼓' },
-      { route: 'recorder', icon: '🎵', label: '竖笛' },
-      { route: 'mixer', icon: '🎛️', label: '混音器' },
+      { route: 'theory', icon: '📚', label: '分级乐理知识库' },
+      { route: 'course', icon: '🧭', label: '完整课程路径' },
     ],
   },
   {
-    title: '游戏',
+    title: '验证与素材',
     items: [
-      { route: 'game-taiko', icon: '🥁', label: '咚咔鼓手' },
-      { route: 'game-sing', icon: '🎤', label: '唱歌评分' },
-      { route: 'game-rhythm', icon: '🕺', label: '节奏回响' },
-      { route: 'game-ear', icon: '👂', label: '听音辨调' },
-      { route: 'game-read', icon: '🎼', label: '识谱训练' },
+      { route: 'training', icon: '🎯', label: '专项练习中心' },
+      { route: 'library', icon: '🎵', label: '曲库谱例' },
     ],
   },
   {
-    title: '曲目',
-    items: [
-      { route: 'library', icon: '🎵', label: '曲库' },
-      { route: 'theory', icon: '📖', label: '乐理知识' },
-    ],
-  },
-  {
-    title: '班级',
+    title: '课堂管理',
     teacherOnly: true,
     items: [
-      { route: 'class', icon: '👥', label: '学生名册' },
-      { route: 'dashboard', icon: '📊', label: '数据看板' },
+      { route: 'class', icon: '👥', label: '学生档案' },
+      { route: 'dashboard', icon: '📊', label: '教学评估' },
     ],
   },
 ]
@@ -55,8 +43,8 @@ export default function Sidebar() {
   return (
     <aside className="sidebar">
       <button className="side-logo" onClick={() => navigate('home')}>
-        <span className="side-logo-icon">🎹</span>
-        <span className="side-logo-text">乐动课堂</span>
+        <span className="side-logo-icon">📚</span>
+        <span className="side-logo-text">乐理课堂</span>
       </button>
 
       <nav className="side-nav">
@@ -65,7 +53,7 @@ export default function Sidebar() {
           onClick={() => navigate('home')}
         >
           <span className="side-icon">🏠</span>
-          <span className="side-label">工作台</span>
+          <span className="side-label">学习工作台</span>
         </button>
 
         {GROUPS.map((g) => {
@@ -88,7 +76,7 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="side-foot">v0.3 · 数智音乐教学</div>
+      <div className="side-foot">v0.5 · 分级乐理课程系统</div>
     </aside>
   )
 }

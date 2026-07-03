@@ -49,6 +49,23 @@
   color: #fff;
   font-weight: 800;
 }
+.data-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+.class-notice {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(81, 207, 102, 0.14);
+  color: #2b7a3d;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
 
 .roster-header {
   display: flex;

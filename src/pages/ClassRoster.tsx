@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import {
   loadRoster,
   addStudent,
@@ -6,6 +6,8 @@ import {
   AVATAR_CHOICES,
 } from '../state/students'
 import { studentStat } from '../state/stats'
+import { exportClassroomBackup, importClassroomBackup } from '../state/backup'
+import { removeStudentProgress } from '../state/progress'
 import { useApp } from '../state/appState'
 import './class.css'
 
@@ -14,6 +16,8 @@ export default function ClassRoster() {
   const [version, setVersion] = useState(0)
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(AVATAR_CHOICES[0])
+  const [notice, setNotice] = useState<string | null>(null)
+  const importRef = useRef<HTMLInputElement>(null)
   const roster = loadRoster()
 
   const add = () => {
@@ -26,8 +30,35 @@ export default function ClassRoster() {
   const del = (id: string, nm: string) => {
     if (confirm(`确定删除「${nm}」及其所有练习记录吗？`)) {
       removeStudent(id)
+      removeStudentProgress(id)
       setVersion((v) => v + 1)
+      setNotice(`已删除 ${nm} 的名册和练习数据。`)
     }
+  }
+
+  const exportData = () => {
+    const blob = new Blob([exportClassroomBackup()], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `乐动课堂-课堂数据-${new Date().toISOString().slice(0, 10)}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+    setNotice('课堂数据已导出，请妥善保存备份文件。')
+  }
+
+  const importData = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const result = importClassroomBackup(String(reader.result ?? ''))
+      setNotice(result.message)
+      if (result.ok) {
+        selectStudent(null)
+        setVersion((v) => v + 1)
+      }
+      if (importRef.current) importRef.current.value = ''
+    }
+    reader.readAsText(file)
   }
 
   return (
@@ -41,6 +72,7 @@ export default function ClassRoster() {
                 key={a}
                 className={`avatar-choice ${avatar === a ? 'on' : ''}`}
                 onClick={() => setAvatar(a)}
+                aria-label={`选择头像 ${a}`}
               >
                 {a}
               </button>
@@ -56,6 +88,22 @@ export default function ClassRoster() {
             添加
           </button>
         </div>
+        <div className="data-tools">
+          <button className="link-btn" onClick={exportData}>
+            导出课堂数据
+          </button>
+          <button className="link-btn" onClick={() => importRef.current?.click()}>
+            导入课堂数据
+          </button>
+          <input
+            ref={importRef}
+            type="file"
+            accept="application/json,.json"
+            style={{ display: 'none' }}
+            onChange={(e) => e.target.files?.[0] && importData(e.target.files[0])}
+          />
+        </div>
+        {notice && <div className="class-notice">{notice}</div>}
       </div>
 
       <div className="roster-header">
@@ -77,7 +125,12 @@ export default function ClassRoster() {
                   {s.name}
                   {active && <span className="now-tag">练习中</span>}
                 </div>
-                <button className="stu-del" onClick={() => del(s.id, s.name)}>
+                <button
+                  className="stu-del"
+                  onClick={() => del(s.id, s.name)}
+                  aria-label={`删除 ${s.name}`}
+                  title={`删除 ${s.name}`}
+                >
                   🗑️
                 </button>
               </div>

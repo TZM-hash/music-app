@@ -4,7 +4,6 @@ import { loadRoster, loadSessions, sessionsOf, Session, Student } from './studen
 export const GAME_META: Record<string, { name: string; icon: string; skill: string }> = {
   'game-taiko': { name: '咚咔鼓手', icon: '🥁', skill: '律动' },
   'game-sing': { name: '唱歌评分', icon: '🎤', skill: '演唱' },
-  'game-rhythm': { name: '节奏回响', icon: '🕺', skill: '节奏' },
   'game-ear': { name: '听音辨调', icon: '👂', skill: '音准' },
   'game-read': { name: '识谱训练', icon: '🎼', skill: '识谱' },
 }

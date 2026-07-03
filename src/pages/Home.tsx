@@ -1,101 +1,57 @@
-import { useApp, Route } from '../state/appState'
-import { loadProgress, BADGE_INFO } from '../state/progress'
+import { Route, useApp } from '../state/appState'
+import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
 import { classOverview } from '../state/stats'
 import { allSongs } from '../music/songLibrary'
+import { THEORY_STAGES, THEORY_TOPICS } from '../music/theoryCatalog'
 
-interface Tile {
+interface WorkItem {
   route: Route
-  emoji: string
+  label: string
   title: string
   desc: string
-  color: string
+  meta: string
 }
 
-const INSTRUMENTS: Tile[] = [
-  {
-    route: 'piano',
-    emoji: '🎹',
-    title: '虚拟钢琴',
-    desc: '点击/键盘弹奏 · 节拍器 · 音阶高亮 · 录制回放',
-    color: 'linear-gradient(135deg,#ff6b6b,#ffa94d)',
-  },
-  {
-    route: 'drums',
-    emoji: '🥁',
-    title: '架子鼓',
-    desc: '敲出节奏 · 节奏循环机',
-    color: 'linear-gradient(135deg,#4dabf7,#3b5bdb)',
-  },
-  {
-    route: 'recorder',
-    emoji: '🎵',
-    title: '竖笛',
-    desc: '吹奏+指法图 · 小学必修乐器',
-    color: 'linear-gradient(135deg,#20c997,#0ca678)',
-  },
-  {
-    route: 'mixer',
-    emoji: '🎛️',
-    title: '混音器',
-    desc: '多轨编曲 · 自选乐器 · 做自己的音乐',
-    color: 'linear-gradient(135deg,#22b8cf,#0c8599)',
-  },
-]
-
-const GAMES: Tile[] = [
-  {
-    route: 'game-taiko',
-    emoji: '🥁',
-    title: '咚咔鼓手',
-    desc: '咚咔节奏 · 魂值气槽 · 连击',
-    color: 'linear-gradient(135deg,#ff8787,#e03131)',
-  },
-  {
-    route: 'game-sing',
-    emoji: '🎤',
-    title: '唱歌评分',
-    desc: '对麦克风跟唱 · 实时音准评分',
-    color: 'linear-gradient(135deg,#f783ac,#d6336c)',
-  },
-  {
-    route: 'game-rhythm',
-    emoji: '🕺',
-    title: '节奏回响',
-    desc: '听一遍·拍一遍·单键跟拍',
-    color: 'linear-gradient(135deg,#f783ac,#e64980)',
-  },
-  {
-    route: 'game-read',
-    emoji: '🎼',
-    title: '识谱训练',
-    desc: '看五线谱认音 · 高低音谱号',
-    color: 'linear-gradient(135deg,#ffd43b,#f59f00)',
-  },
-  {
-    route: 'game-ear',
-    emoji: '👂',
-    title: '听音辨调',
-    desc: '听一个音，猜猜它是哪个键',
-    color: 'linear-gradient(135deg,#51cf66,#2f9e44)',
-  },
-]
-
-const TOOLS: Tile[] = [
-  {
-    route: 'library',
-    emoji: '🎵',
-    title: '曲库',
-    desc: '分类浏览 · 试听 · 看乐谱',
-    color: 'linear-gradient(135deg,#22b8cf,#1098ad)',
-  },
+const WORK_ITEMS: WorkItem[] = [
   {
     route: 'theory',
-    emoji: '📖',
-    title: '乐理知识',
-    desc: '知识卡片 + 乐理小测验',
-    color: 'linear-gradient(135deg,#845ef7,#5f3dc4)',
+    label: '核心知识库',
+    title: '分级乐理知识库',
+    desc: '覆盖小学到初中，按教学类别和学段难度筛选学习。',
+    meta: '主功能',
   },
+  {
+    route: 'course',
+    label: '教学组织',
+    title: '完整课程路径',
+    desc: '按小学低段到初中进阶组织讲解、演示、练习、应用和评价。',
+    meta: '适合投屏',
+  },
+  {
+    route: 'training',
+    label: '知识练习',
+    title: '乐理专项练习',
+    desc: '围绕听觉、读谱、音准和节奏反应检验乐理掌握情况。',
+    meta: '形成反馈',
+  },
+  {
+    route: 'library',
+    label: '谱例素材',
+    title: '曲库谱例',
+    desc: '用真实旋律观察拍号、音阶、谱号、重复和乐句结构。',
+    meta: `${allSongs().length} 首曲目`,
+  },
+]
+
+const SUPPORT_TOOLS: { route: Route; label: string; desc: string }[] = [
+  { route: 'piano', label: '钢琴示范', desc: '演示音高、音阶、音程与和弦' },
+  { route: 'mixer', label: '混音创编', desc: '应用节奏、和声、乐句和织体' },
+  { route: 'recorder', label: '竖笛指法', desc: '连接识谱、指法和旋律演奏' },
+  { route: 'adventure', label: '能力进阶', desc: '查看练习能力成长路径' },
+  { route: 'game-ear', label: '听觉练习', desc: '练习音高、音程、和弦听辨' },
+  { route: 'game-read', label: '读谱练习', desc: '练习线间、谱号和唱名对应' },
+  { route: 'game-sing', label: '视唱练习', desc: '把音阶、旋律和音准结合起来' },
 ]
 
 export default function Home() {
@@ -103,100 +59,106 @@ export default function Home() {
   const progress = loadProgress()
   const student = getCurrentStudent()
   const overview = classOverview()
-  const songCount = allSongs().length
+  const theoryPracticeCount = Object.keys(progress.bestScores).filter((key) =>
+    key.startsWith('theory-')
+  ).length
+
+  const recommendation = student
+    ? theoryPracticeCount > 0
+      ? `${student.name} 已完成 ${theoryPracticeCount} 个乐理知识点练习，建议按学段筛选继续学习并用谱例验证。`
+      : `${student.name} 还没有乐理练习记录，建议先进入分级乐理知识库，从“小学低段”开始。`
+    : '当前为匿名学习。若要形成乐理学习档案，请先在学生档案中选择学生。'
 
   return (
-    <div>
-      <div className="home-hero">
-        <h1>🎵 乐动课堂</h1>
-        <p>
-          {mode === 'teacher'
-            ? '课堂投屏工作台 · 选择下方模块开始教学'
-            : '快来玩音乐吧！选一个开始练习'}
-        </p>
-      </div>
-
-      {/* 当前状态条 */}
-      <div className="home-status">
-        <div className="status-chip">
-          <span className="chip-icon">{student ? student.avatar : '👤'}</span>
-          <span>
-            当前学生：<b>{student ? student.name : '匿名（成绩不计入统计）'}</b>
-          </span>
-          <button className="chip-link" onClick={() => navigate('class')}>
-            切换
+    <div className="pro-home theory-home">
+      <section className="pro-hero card">
+        <div>
+          <span className="pro-kicker">小学到初中的乐理知识教授与练习</span>
+          <h1>乐理课堂</h1>
+          <p>
+            以完整分级乐理知识库为主线，通过可视化、声音演示、课程路径和即时练习帮助学生理解音乐概念。
+            乐器、混音器、曲库和游戏都作为教学支撑工具。
+          </p>
+        </div>
+        <div className="pro-student">
+          <span>{student ? student.avatar : '👤'}</span>
+          <b>{student ? student.name : '未选择学生'}</b>
+          <small>{student ? '乐理练习进入个人档案' : '匿名学习不计入班级统计'}</small>
+          <button onClick={() => navigate(mode === 'teacher' ? 'class' : 'theory')}>
+            {mode === 'teacher' ? '选择学生' : '开始分级学习'}
           </button>
         </div>
-        <div className="status-chip">🎼 曲库 <b>{songCount}</b> 首</div>
-        <div className="status-chip">🎮 累计练习 <b>{overview.totalSessions}</b> 次</div>
-        <div className="status-chip">⭐ 全班星星 <b>{overview.totalStars}</b></div>
-      </div>
+      </section>
 
-      <div className="section-label">🎸 虚拟乐器</div>
-      <div className="tile-grid" style={{ marginBottom: 28 }}>
-        {INSTRUMENTS.map((t) => (
-          <TileCard key={t.route} tile={t} onClick={() => navigate(t.route)} />
+      <section className="pro-recommend card">
+        <div>
+          <span className="pro-kicker">推荐学习路径</span>
+          <p>{recommendation}</p>
+        </div>
+        <div className="pro-actions">
+          <button className="primary-action" onClick={() => navigate('theory')}>
+            进入分级乐理知识库
+          </button>
+          <button onClick={() => navigate('course')}>查看完整课程路径</button>
+        </div>
+      </section>
+
+      <section className="pro-status">
+        <div className="pro-kpi card">
+          <b>{THEORY_TOPICS.length}</b>
+          <span>乐理知识点</span>
+        </div>
+        <div className="pro-kpi card">
+          <b>{THEORY_STAGES.length}</b>
+          <span>学段难度</span>
+        </div>
+        <div className="pro-kpi card">
+          <b>{theoryPracticeCount}</b>
+          <span>已练知识点</span>
+        </div>
+        <div className="pro-kpi card">
+          <b>{overview.totalSessions}</b>
+          <span>训练记录</span>
+        </div>
+      </section>
+
+      <section className="work-grid">
+        {WORK_ITEMS.map((item) => (
+          <button key={item.route} className="work-card card" onClick={() => navigate(item.route)}>
+            <small>{item.label}</small>
+            <h3>{item.title}</h3>
+            <p>{item.desc}</p>
+            <span>{item.meta}</span>
+          </button>
         ))}
-      </div>
+      </section>
 
-      <div className="section-label">🎮 音乐游戏</div>
-      <div className="tile-grid" style={{ marginBottom: 28 }}>
-        {GAMES.map((t) => {
-          const best = progress.bestScores[t.route] ?? 0
-          return (
-            <TileCard
-              key={t.route}
-              tile={t}
-              onClick={() => navigate(t.route)}
-              footer={best > 0 ? `最高分 ${best}` : undefined}
-            />
-          )
-        })}
-      </div>
-
-      <div className="section-label">🛠️ 曲目工具</div>
-      <div className="tile-grid">
-        {TOOLS.map((t) => (
-          <TileCard key={t.route} tile={t} onClick={() => navigate(t.route)} />
-        ))}
-      </div>
+      <section className="quick-tools card">
+        <div>
+          <span className="pro-kicker">乐理演示辅助</span>
+          <p>这些功能从主导航中精简出来，主要服务乐理知识的听觉化、可视化、创编和练习验证。</p>
+        </div>
+        <div>
+          {SUPPORT_TOOLS.map((tool) => (
+            <button key={tool.route} onClick={() => navigate(tool.route)} title={tool.desc}>
+              {tool.label}
+            </button>
+          ))}
+        </div>
+      </section>
 
       {progress.badges.length > 0 && (
-        <>
-          <div className="section-label" style={{ marginTop: 28 }}>
-            🏅 我的徽章
-          </div>
-          <div className="badge-shelf">
-            {progress.badges.map((b) => (
-              <div key={b} className="card badge-tile">
-                <div style={{ fontSize: '2rem' }}>{BADGE_INFO[b]?.icon ?? '🎖️'}</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 700 }}>
-                  {BADGE_INFO[b]?.name ?? b}
-                </div>
+        <section className="badge-shelf compact">
+          {progress.badges.map((b) => (
+            <div key={b} className="card badge-tile">
+              <div style={{ fontSize: '1.8rem' }}>{BADGE_INFO[b]?.icon ?? '🏅'}</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 700 }}>
+                {BADGE_INFO[b]?.name ?? b}
               </div>
-            ))}
-          </div>
-        </>
+            </div>
+          ))}
+        </section>
       )}
     </div>
-  )
-}
-
-function TileCard({
-  tile,
-  onClick,
-  footer,
-}: {
-  tile: Tile
-  onClick: () => void
-  footer?: string
-}) {
-  return (
-    <button className="tile" style={{ background: tile.color }} onClick={onClick}>
-      <span className="emoji">{tile.emoji}</span>
-      <h3>{tile.title}</h3>
-      <p>{tile.desc}</p>
-      {footer && <p style={{ fontWeight: 700 }}>{footer}</p>}
-    </button>
   )
 }

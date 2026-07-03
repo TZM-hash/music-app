@@ -1,337 +1,446 @@
-import { useMemo, useState } from 'react'
-import { THEORY_CARDS, QUIZ, TheoryCard, QuizQuestion } from '../music/theory'
-import { recordResult, loadProgress } from '../state/progress'
-import { ensureAudio, playNote } from '../music/audioEngine'
+import { useEffect, useMemo, useState } from 'react'
+import { useApp } from '../state/appState'
+import { ensureAudio, playChord, playNote } from '../music/audioEngine'
+import { recordResult } from '../state/progress'
+import {
+  DemoKind,
+  THEORY_CATEGORIES,
+  THEORY_STAGES,
+  THEORY_TOPICS,
+  TheoryStageId,
+  TheoryTopic,
+  filterTheoryTopics,
+  getStageLabel,
+} from '../music/theoryCatalog'
 import './theory.css'
 
+type CategoryFilter = '全部' | string
+type StageFilter = '全部' | TheoryStageId
+
 export default function Theory() {
-  const [tab, setTab] = useState<'learn' | 'quiz' | 'bank'>('learn')
-  const [openCard, setOpenCard] = useState<TheoryCard | null>(null)
+  const { navigate } = useApp()
+  const [category, setCategory] = useState<CategoryFilter>('全部')
+  const [stage, setStage] = useState<StageFilter>('全部')
+  const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
 
-  return (
-    <div className="theory">
-      <div className="theory-tabs">
-        <button className={tab === 'learn' ? 'on' : ''} onClick={() => { setTab('learn'); setOpenCard(null) }}>
-          📖 知识卡片
-        </button>
-        <button className={tab === 'quiz' ? 'on' : ''} onClick={() => { setTab('quiz'); setOpenCard(null) }}>
-          ✏️ 综合测验
-        </button>
-        <button className={tab === 'bank' ? 'on' : ''} onClick={() => { setTab('bank'); setOpenCard(null) }}>
-          📋 全部题库
-        </button>
-      </div>
-
-      {tab === 'learn' && !openCard && <CardList onOpen={setOpenCard} />}
-      {tab === 'learn' && openCard && <CardDetail card={openCard} onBack={() => setOpenCard(null)} />}
-      {tab === 'quiz' && <Quiz id="theory-quiz" questions={QUIZ} sample={12} title="综合测验" />}
-      {tab === 'bank' && <FullBank />}
-    </div>
+  const filtered = useMemo(
+    () =>
+      filterTheoryTopics({
+        category: category === '全部' ? undefined : category,
+        stage: stage === '全部' ? undefined : stage,
+      }),
+    [category, stage]
   )
-}
+  const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? THEORY_TOPICS[0]
 
-// 全部题库：按知识点分组列出所有题目
-function FullBank() {
-  const [openId, setOpenId] = useState<string | null>(THEORY_CARDS[0]?.id ?? null)
-  const total = THEORY_CARDS.reduce((n, c) => n + c.quiz.length, 0)
-  return (
-    <div className="fullbank">
-      <div className="qlist-hint card">
-        📋 全部知识点共 {total} 道题。点击下面各知识点展开查看题目与答案。
-      </div>
-      {THEORY_CARDS.map((c) => {
-        const open = openId === c.id
-        return (
-          <div key={c.id} className="bank-group card">
-            <button className="bank-group-head" onClick={() => setOpenId(open ? null : c.id)}>
-              <span className="bank-group-icon">{c.icon}</span>
-              <span className="bank-group-title">{c.title}</span>
-              <span className="bank-group-count">{c.quiz.length} 题</span>
-              <span className="bank-group-caret">{open ? '▲' : '▼'}</span>
-            </button>
-            {open && <QuestionList questions={c.quiz} embedded />}
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+  useEffect(() => {
+    if (filtered.length > 0 && !filtered.some((topic) => topic.id === activeId)) {
+      setActiveId(filtered[0].id)
+    }
+  }, [activeId, filtered])
 
-function CardList({ onOpen }: { onOpen: (c: TheoryCard) => void }) {
-  const progress = loadProgress()
-  return (
-    <div className="card-grid">
-      {THEORY_CARDS.map((c) => {
-        const best = progress.bestScores[`theory-${c.id}`] ?? 0
-        return (
-          <button key={c.id} className="theory-card card" onClick={() => onOpen(c)}>
-            <div className="tc-head">
-              <span className="tc-icon">{c.icon}</span>
-              <h3>{c.title}</h3>
-            </div>
-            {c.visual && <Visual type={c.visual} />}
-            <p className="tc-summary">{c.summary}</p>
-            <div className="tc-foot">
-              <span className="tc-count">{c.quiz.length} 道练习题</span>
-              {best > 0 && <span className="tc-best">最高 {best}</span>}
-              <span className="tc-enter">查看 →</span>
-            </div>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
+  const clearFilters = () => {
+    setCategory('全部')
+    setStage('全部')
+    setActiveId(THEORY_TOPICS[0].id)
+  }
 
-function CardDetail({ card, onBack }: { card: TheoryCard; onBack: () => void }) {
-  const [mode, setMode] = useState<'read' | 'quiz' | 'list'>('read')
   return (
-    <div className="card-detail">
-      <button className="detail-back" onClick={onBack}>← 返回知识列表</button>
-      <div className="detail-head card">
-        <span className="detail-icon">{card.icon}</span>
+    <div className="theory-lab">
+      <section className="theory-lab-head card">
         <div>
-          <h2>{card.title}</h2>
-          <p>{card.summary}</p>
+          <span className="theory-kicker">互动乐理实验室</span>
+          <h2>小学到初中的分级乐理知识库</h2>
+          <p>按教学类别和学段难度选择知识点，每个知识点都包含概念、可视化演示、声音示范、课堂应用和即时小测。</p>
         </div>
-      </div>
-
-      <div className="detail-seg">
-        <button className={mode === 'read' ? 'on' : ''} onClick={() => setMode('read')}>
-          📖 讲解
-        </button>
-        <button className={mode === 'quiz' ? 'on' : ''} onClick={() => setMode('quiz')}>
-          ✏️ 本节测验
-        </button>
-        <button className={mode === 'list' ? 'on' : ''} onClick={() => setMode('list')}>
-          📋 题库浏览（{card.quiz.length} 题）
-        </button>
-      </div>
-
-      {mode === 'read' && (
-        <div className="detail-body card">
-          {card.visual && (
-            <div className="detail-visual">
-              <Visual type={card.visual} />
-            </div>
-          )}
-          {card.body.map((para, i) => (
-            <p key={i} className="detail-para">{para}</p>
-          ))}
-          <button className="big-start" onClick={() => setMode('quiz')}>
-            ✏️ 做本节练习题
-          </button>
+        <div className="theory-count">
+          <b>{filtered.length}</b>
+          <small>当前 / 共 {THEORY_TOPICS.length}</small>
         </div>
-      )}
+      </section>
 
-      {mode === 'quiz' && (
-        <Quiz id={`theory-${card.id}`} questions={card.quiz} title={`${card.title} · 练习`} sample={8} />
-      )}
+      <div className="theory-layout">
+        <aside className="theory-nav card">
+          <FilterGroup
+            title="教学类别"
+            value={category}
+            options={['全部', ...THEORY_CATEGORIES]}
+            onChange={(next) => setCategory(next)}
+          />
+          <FilterGroup
+            title="学段难度"
+            value={stage}
+            options={['全部', ...THEORY_STAGES.map((item) => item.id)]}
+            getLabel={(value) => (value === '全部' ? '全部' : getStageLabel(value as TheoryStageId))}
+            onChange={(next) => setStage(next as StageFilter)}
+          />
 
-      {mode === 'list' && <QuestionList questions={card.quiz} />}
-    </div>
-  )
-}
-
-// 题库浏览：直接列出全部题目、正确答案、解析
-function QuestionList({ questions, embedded }: { questions: QuizQuestion[]; embedded?: boolean }) {
-  return (
-    <div className="qlist">
-      {!embedded && (
-        <div className="qlist-hint card">
-          📋 本节共 {questions.length} 道题，下面列出全部题目和答案，方便复习与备课。
-        </div>
-      )}
-      {questions.map((q, i) => (
-        <div key={i} className="qlist-item card">
-          <div className="qlist-q">
-            <span className="qlist-no">{i + 1}</span>
-            {q.q}
-          </div>
-          <div className="qlist-options">
-            {q.options.map((opt, oi) => (
-              <div key={oi} className={`qlist-opt ${oi === q.answer ? 'correct' : ''}`}>
-                <span className="qlist-mark">{oi === q.answer ? '✓' : String.fromCharCode(65 + oi)}</span>
-                {opt}
+          <div className="topic-list">
+            {filtered.length === 0 && (
+              <div className="topic-empty">
+                <b>没有匹配知识点</b>
+                <button onClick={clearFilters}>清除筛选</button>
               </div>
+            )}
+            {filtered.map((topic) => (
+              <button
+                key={topic.id}
+                className={topic.id === active.id ? 'on' : ''}
+                onClick={() => setActiveId(topic.id)}
+              >
+                <b>{topic.title}</b>
+                <small>{topic.level} · {getStageLabel(topic.stage)} · {topic.subtitle}</small>
+              </button>
             ))}
           </div>
-          {q.explain && <div className="qlist-explain">💡 {q.explain}</div>}
+        </aside>
+
+        <main className="theory-main">
+          <section className="topic-panel card">
+            <div className="topic-title">
+              <div>
+                <span>{active.category} · {getStageLabel(active.stage)} · {active.level}</span>
+                <h2>{active.title}</h2>
+                <p>{active.concept}</p>
+              </div>
+              <button className="demo-play" onClick={() => playDemo(active.demo.kind)}>
+                ▶ 听演示
+              </button>
+            </div>
+
+            <DemoView topic={active} />
+
+            <div className="point-grid">
+              {active.keyPoints.map((p, i) => (
+                <div key={p} className="point-card">
+                  <span>{i + 1}</span>
+                  <p>{p}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <aside className="apply-panel card">
+            <span className="theory-kicker">课堂应用</span>
+            <h3>{active.demo.title}</h3>
+            <p>{active.demo.caption}</p>
+            <div className="action-list">
+              {active.actions.map((a) => (
+                <button key={a.label} onClick={() => navigate(a.route)}>
+                  {a.label}
+                </button>
+              ))}
+            </div>
+            <MiniQuiz key={active.id} topic={active} />
+          </aside>
+        </main>
+      </div>
+    </div>
+  )
+}
+
+function FilterGroup({
+  title,
+  value,
+  options,
+  getLabel = (item) => item,
+  onChange,
+}: {
+  title: string
+  value: string
+  options: string[]
+  getLabel?: (item: string) => string
+  onChange: (value: string) => void
+}) {
+  return (
+    <div className="theory-filter-group">
+      <div className="side-group-title">{title}</div>
+      <div className="theory-cats">
+        {options.map((option) => (
+          <button key={option} className={value === option ? 'on' : ''} onClick={() => onChange(option)}>
+            {getLabel(option)}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DemoView({ topic }: { topic: TheoryTopic }) {
+  const kind = topic.demo.kind
+  return (
+    <div className={`lab-demo ${kind}`}>
+      {kind === 'pitch' && <KeyboardDemo active={['C', 'D', 'E', 'F', 'G', 'A', 'B']} />}
+      {kind === 'duration' && <DurationDemo />}
+      {kind === 'meter' && <MeterDemo />}
+      {kind === 'staff' && <StaffDemo />}
+      {kind === 'jianpu' && <JianpuDemo />}
+      {kind === 'scale' && <ScaleDemo />}
+      {kind === 'interval' && <IntervalDemo />}
+      {kind === 'chord' && <ChordDemo />}
+      {kind === 'tempo' && <TempoDemo />}
+      {kind === 'dynamics' && <DynamicsDemo />}
+      {kind === 'articulation' && <ArticulationDemo />}
+      {kind === 'repeat' && <RepeatDemo />}
+      {kind === 'form' && <FormDemo />}
+    </div>
+  )
+}
+
+function KeyboardDemo({ active }: { active: string[] }) {
+  const notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+  const solfege = ['do', 're', 'mi', 'fa', 'sol', 'la', 'ti']
+  return (
+    <div className="lab-keyboard">
+      {notes.map((n, i) => (
+        <div key={n} className={`lab-key ${active.includes(n) ? 'active' : ''}`}>
+          <b>{i + 1}</b>
+          <span>{n}</span>
+          <small>{solfege[i]}</small>
         </div>
       ))}
     </div>
   )
 }
 
-function Visual({ type }: { type: NonNullable<TheoryCard['visual']> }) {
-  if (type === 'staff-lines') {
-    return (
-      <svg className="tc-visual" viewBox="0 0 200 60">
-        {[0, 1, 2, 3, 4].map((l) => (
-          <line key={l} x1={10} y1={10 + l * 10} x2={190} y2={10 + l * 10} stroke="var(--text-soft)" />
-        ))}
-        <text x={12} y={44} fontSize="40" fill="var(--text)">𝄞</text>
-        <ellipse cx={120} cy={30} rx={7} ry={5} fill="var(--primary)" transform="rotate(-20 120 30)" />
-      </svg>
-    )
-  }
-  if (type === 'note-values') {
-    return (
-      <div className="tc-notes">
-        <span>𝅝<small>4拍</small></span>
-        <span>𝅗𝅥<small>2拍</small></span>
-        <span>♩<small>1拍</small></span>
-        <span>♪<small>½拍</small></span>
-      </div>
-    )
-  }
-  if (type === 'time-sig') {
-    return (
-      <div className="tc-timesig">
-        <div className="ts-frac"><b>4</b><b>4</b></div>
-        <div className="ts-frac"><b>3</b><b>4</b></div>
-        <div className="ts-frac"><b>6</b><b>8</b></div>
-      </div>
-    )
-  }
-  if (type === 'dynamics') {
-    return (
-      <div className="tc-dyn">
-        <span>p</span><span>mp</span><span>mf</span><span>f</span>
-        <span className="dyn-cresc">&lt;</span>
-      </div>
-    )
-  }
-  if (type === 'keyboard') {
-    return (
-      <div className="tc-keyboard">
-        {['1', '2', '3', '4', '5', '6', '7'].map((n, i) => (
-          <span key={i} className="tc-key">
-            <b>{n}</b>
-            <small>{['C', 'D', 'E', 'F', 'G', 'A', 'B'][i]}</small>
-          </span>
-        ))}
-      </div>
-    )
-  }
-  if (type === 'sharp-flat') {
-    return (
-      <div className="tc-sf">
-        <span>♯<small>升</small></span>
-        <span>♭<small>降</small></span>
-        <span>♮<small>还原</small></span>
-      </div>
-    )
-  }
-  return null
+function DurationDemo() {
+  return (
+    <div className="duration-demo">
+      {[
+        ['𝅝', '全音符', '4 拍'],
+        ['𝅗𝅥', '二分音符', '2 拍'],
+        ['♩', '四分音符', '1 拍'],
+        ['♪', '八分音符', '半拍'],
+      ].map(([symbol, name, beats]) => (
+        <div key={name}>
+          <b>{symbol}</b>
+          <span>{name}</span>
+          <small>{beats}</small>
+        </div>
+      ))}
+    </div>
+  )
 }
 
-// 通用测验组件
-// 每次进入/重测轮换起点，让抽到的题目不同
-let quizRotation = 0
+function MeterDemo() {
+  return (
+    <div className="meter-demo">
+      {[1, 2, 3, 4].map((n) => (
+        <span key={n} className={n === 1 ? 'strong' : ''}>{n}</span>
+      ))}
+      <p>强 弱 次强 弱</p>
+    </div>
+  )
+}
 
-function Quiz({
-  id,
-  questions,
-  title,
-  sample,
-}: {
-  id: string
-  questions: QuizQuestion[]
-  title: string
-  sample?: number
-}) {
-  const [round, setRound] = useState(0)
+function StaffDemo() {
+  return (
+    <svg className="staff-demo" viewBox="0 0 420 150">
+      {[0, 1, 2, 3, 4].map((i) => (
+        <line key={i} x1="28" x2="390" y1={38 + i * 18} y2={38 + i * 18} />
+      ))}
+      <text x="42" y="105" className="clef">𝄞</text>
+      {[
+        [150, 110, 'C'],
+        [205, 92, 'E'],
+        [260, 74, 'G'],
+        [315, 56, 'B'],
+      ].map(([x, y, label]) => (
+        <g key={label}>
+          <ellipse cx={Number(x)} cy={Number(y)} rx="13" ry="9" transform={`rotate(-20 ${x} ${y})`} />
+          <text x={Number(x)} y="135">{label}</text>
+        </g>
+      ))}
+    </svg>
+  )
+}
 
-  // 抽题：从大题库轮换取样，每次重测换一批
-  const quizList = useMemo(() => {
-    if (!sample || questions.length <= sample) return questions
-    const start = quizRotation % questions.length
-    const picked: QuizQuestion[] = []
-    for (let i = 0; i < questions.length && picked.length < sample; i++) {
-      picked.push(questions[(start + i) % questions.length])
-    }
-    return picked
-    // round 变化时重新取样
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [questions, sample, round])
+function JianpuDemo() {
+  return (
+    <div className="jianpu-demo">
+      {['1', '2', '3', '4', '5', '6', '7'].map((n, i) => (
+        <span key={n}>
+          <b>{n}</b>
+          <small>{['do', 're', 'mi', 'fa', 'sol', 'la', 'ti'][i]}</small>
+        </span>
+      ))}
+    </div>
+  )
+}
 
-  const [idx, setIdx] = useState(0)
+function ScaleDemo() {
+  return (
+    <div className="scale-demo">
+      {['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C'].map((n, i) => (
+        <span key={`${n}${i}`} style={{ height: 36 + i * 8 }}>
+          {n}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function IntervalDemo() {
+  return (
+    <div className="interval-demo">
+      <KeyboardDemo active={['C', 'G']} />
+      <div className="interval-line">C 到 G：五度</div>
+    </div>
+  )
+}
+
+function ChordDemo() {
+  return (
+    <div className="chord-demo">
+      <KeyboardDemo active={['C', 'E', 'G']} />
+      <div className="chord-label">C - E - G：C 大三和弦</div>
+    </div>
+  )
+}
+
+function TempoDemo() {
+  return (
+    <div className="tempo-demo">
+      <div><b>慢速</b><span>60 BPM</span></div>
+      <div><b>中速</b><span>100 BPM</span></div>
+      <div><b>快速</b><span>140 BPM</span></div>
+    </div>
+  )
+}
+
+function DynamicsDemo() {
+  return (
+    <div className="dynamics-demo">
+      {['p', 'mp', 'mf', 'f'].map((d, i) => (
+        <span key={d} style={{ fontSize: 24 + i * 9 }}>{d}</span>
+      ))}
+      <b>&lt;</b>
+    </div>
+  )
+}
+
+function ArticulationDemo() {
+  return (
+    <div className="articulation-demo">
+      <div><b>连音</b><span>do - re - mi</span></div>
+      <div><b>跳音</b><span>do · re · mi</span></div>
+    </div>
+  )
+}
+
+function RepeatDemo() {
+  return (
+    <div className="repeat-demo">
+      <span>A</span><b>→</b><span>A</span><b>→</b><span>B</span>
+      <small>主题重复后形成对比</small>
+    </div>
+  )
+}
+
+function FormDemo() {
+  return (
+    <div className="form-demo">
+      <span>A</span><span>B</span><span>A</span>
+      <small>熟悉 - 对比 - 再现</small>
+    </div>
+  )
+}
+
+function MiniQuiz({ topic }: { topic: TheoryTopic }) {
   const [picked, setPicked] = useState<number | null>(null)
-  const [score, setScore] = useState(0)
+  const [index, setIndex] = useState(0)
   const [correct, setCorrect] = useState(0)
-  const [done, setDone] = useState(false)
-
-  const q = quizList[idx]
-  const best = loadProgress().bestScores[id] ?? 0
+  const q = topic.quiz[index]
 
   const choose = async (i: number) => {
     if (picked !== null) return
     setPicked(i)
+    const ok = i === q.answer
     await ensureAudio()
-    const right = i === q.answer
-    if (right) {
-      playNote('C5', '8n')
-      setScore((s) => s + 100)
-      setCorrect((c) => c + 1)
-    } else {
-      playNote('F3', '8n')
-    }
-    setTimeout(() => {
-      if (idx + 1 >= quizList.length) {
-        const finalCorrect = correct + (right ? 1 : 0)
-        const finalScore = score + (right ? 100 : 0)
-        const acc = finalCorrect / quizList.length
-        const stars = acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : acc >= 0.3 ? 1 : 0
-        recordResult(id, 1, stars, finalScore, { accuracy: acc })
-        setDone(true)
+    playNote(ok ? 'C5' : 'F3', '8n')
+    if (ok) setCorrect((c) => c + 1)
+    window.setTimeout(() => {
+      const next = index + 1
+      if (next >= topic.quiz.length) {
+        const finalCorrect = correct + (ok ? 1 : 0)
+        const acc = finalCorrect / topic.quiz.length
+        recordResult(`theory-${topic.id}`, 1, acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : 1, finalCorrect * 100, { accuracy: acc })
+        setIndex(0)
+        setCorrect(0)
       } else {
-        setIdx(idx + 1)
-        setPicked(null)
+        setIndex(next)
       }
-    }, 1100)
-  }
-
-  const restart = () => {
-    quizRotation += sample ?? 5 // 轮换到下一批题目
-    setIdx(0); setPicked(null); setScore(0); setCorrect(0); setDone(false)
-    setRound((r) => r + 1)
-  }
-
-  if (done) {
-    const acc = correct / quizList.length
-    const stars = acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : acc >= 0.3 ? 1 : 0
-    return (
-      <div className="quiz-done card">
-        <div className="quiz-done-stars">{'⭐'.repeat(stars)}{'☆'.repeat(3 - stars)}</div>
-        <h2>答对 {correct}/{quizList.length} 题</h2>
-        <div className="quiz-score">{score} 分</div>
-        <button className="big-start" onClick={restart}>🔁 再测一次</button>
-      </div>
-    )
+      setPicked(null)
+    }, 900)
   }
 
   return (
-    <div className="quiz card">
-      <div className="quiz-progress">
-        {title} · 第 {idx + 1}/{quizList.length} 题 · 得分 {score} · 历史最高 {best}
-      </div>
-      <h2 className="quiz-q">{q.q}</h2>
-      <div className="quiz-options">
+    <div className="mini-quiz">
+      <h4>本知识点小测</h4>
+      <p>{q.q}</p>
+      <div>
         {q.options.map((opt, i) => {
-          let cls = ''
-          if (picked !== null) {
-            if (i === q.answer) cls = 'right'
-            else if (i === picked) cls = 'wrong'
-          }
+          const cls = picked == null ? '' : i === q.answer ? 'right' : i === picked ? 'wrong' : ''
           return (
-            <button key={i} className={`quiz-opt ${cls}`} onClick={() => choose(i)} disabled={picked !== null}>
+            <button key={opt} className={cls} disabled={picked !== null} onClick={() => choose(i)}>
               {opt}
             </button>
           )
         })}
       </div>
-      {picked !== null && q.explain && <div className="quiz-explain">💡 {q.explain}</div>}
+      <small>{index + 1}/{topic.quiz.length}</small>
     </div>
   )
+}
+
+async function playDemo(kind: DemoKind) {
+  await ensureAudio()
+  const later = (ms: number, fn: () => void) => window.setTimeout(fn, ms)
+  if (kind === 'pitch' || kind === 'scale' || kind === 'jianpu') {
+    ;['C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'B4', 'C5'].forEach((n, i) => {
+      later(i * 260, () => playNote(n, '8n'))
+    })
+    return
+  }
+  if (kind === 'duration') {
+    playNote('C4', '2n')
+    later(900, () => playNote('E4', '4n'))
+    later(1350, () => playNote('G4', '8n'))
+    return
+  }
+  if (kind === 'meter' || kind === 'tempo') {
+    ;[0, 1, 2, 3].forEach((i) => later(i * (kind === 'tempo' ? 280 : 460), () => playNote(i === 0 ? 'C5' : 'C4', '16n')))
+    return
+  }
+  if (kind === 'staff') {
+    ;['C4', 'E4', 'G4', 'B4'].forEach((n, i) => later(i * 300, () => playNote(n, '8n')))
+    return
+  }
+  if (kind === 'interval') {
+    playNote('C4', '4n')
+    later(520, () => playNote('G4', '4n'))
+    later(1050, () => playChord('C4', 'maj', '2n'))
+    return
+  }
+  if (kind === 'chord') {
+    playChord('C4', 'maj', '2n')
+    later(900, () => playChord('A3', 'min', '2n'))
+    return
+  }
+  if (kind === 'dynamics') {
+    playNote('C4', '8n', 0.35)
+    later(420, () => playNote('C4', '8n', 0.65))
+    later(840, () => playNote('C4', '8n', 0.95))
+    return
+  }
+  if (kind === 'articulation') {
+    ;['C4', 'D4', 'E4'].forEach((n, i) => later(i * 420, () => playNote(n, '4n')))
+    ;['C5', 'D5', 'E5'].forEach((n, i) => later(1500 + i * 220, () => playNote(n, '16n')))
+    return
+  }
+  if (kind === 'repeat') {
+    ;['C4', 'E4', 'G4', 'C4', 'E4', 'G4', 'D4', 'F4', 'A4'].forEach((n, i) => later(i * 230, () => playNote(n, '8n')))
+    return
+  }
+  ;['C4', 'D4', 'E4', 'G4', 'A4', 'G4', 'C4', 'D4', 'E4'].forEach((n, i) => later(i * 240, () => playNote(n, '8n')))
 }

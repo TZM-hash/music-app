@@ -19,6 +19,8 @@ export interface ReviewData {
   rows?: ReviewRow[]
   /** 一句话建议 */
   advice?: string
+  /** 专项能力诊断 */
+  diagnosis?: { label: string; value: string; tone?: 'good' | 'warn' | 'focus' }[]
 }
 
 interface Props {
@@ -47,6 +49,7 @@ export default function GameResult({
   const [showReview, setShowReview] = useState(false)
   const wrongRows = review?.rows?.filter((r) => !r.ok) ?? []
   const hasReview = !!review && ((review.rows?.length ?? 0) > 0 || (review.stats?.length ?? 0) > 0)
+  const diagnosis = buildDiagnosis(stars, review)
 
   return (
     <div className="result-overlay">
@@ -63,6 +66,15 @@ export default function GameResult({
               <div className="best-line">最高分 {bestScore}</div>
             )}
             {review?.advice && <div className="result-advice">💬 {review.advice}</div>}
+            {diagnosis.length > 0 && (
+              <div className="diagnosis-mini">
+                {diagnosis.slice(0, 2).map((d) => (
+                  <span key={d.label} className={d.tone ?? 'good'}>
+                    <b>{d.label}</b>{d.value}
+                  </span>
+                ))}
+              </div>
+            )}
             {newBadges.length > 0 && (
               <div className="badge-row">
                 {newBadges.map((b) => (
@@ -101,6 +113,16 @@ export default function GameResult({
               </div>
             )}
             {review?.advice && <div className="result-advice">💬 {review.advice}</div>}
+            {diagnosis.length > 0 && (
+              <div className="diagnosis-panel">
+                {diagnosis.map((d) => (
+                  <div key={d.label} className={`diagnosis-card ${d.tone ?? 'good'}`}>
+                    <small>{d.label}</small>
+                    <b>{d.value}</b>
+                  </div>
+                ))}
+              </div>
+            )}
             {review?.rows && review.rows.length > 0 && (
               <div className="review-list">
                 {review.rows.map((r, i) => (
@@ -128,3 +150,51 @@ export default function GameResult({
   )
 }
 
+function buildDiagnosis(stars: number, review?: ReviewData): NonNullable<ReviewData['diagnosis']> {
+  if (review?.diagnosis && review.diagnosis.length > 0) return review.diagnosis
+  if (!review) return []
+
+  const rows = review.rows ?? []
+  const wrong = rows.filter((r) => !r.ok).length
+  const total = rows.length
+  const accuracy = total > 0 ? Math.round(((total - wrong) / total) * 100) : null
+  const stats = review.stats ?? []
+
+  const out: NonNullable<ReviewData['diagnosis']> = []
+  if (accuracy != null) {
+    out.push({
+      label: '准确性',
+      value: accuracy >= 85 ? '稳定' : accuracy >= 60 ? '基本掌握' : '需要专项练习',
+      tone: accuracy >= 85 ? 'good' : accuracy >= 60 ? 'warn' : 'focus',
+    })
+  } else if (stars >= 0) {
+    out.push({
+      label: '完成度',
+      value: stars >= 3 ? '优秀' : stars >= 2 ? '达标' : '继续巩固',
+      tone: stars >= 3 ? 'good' : stars >= 2 ? 'warn' : 'focus',
+    })
+  }
+
+  if (wrong > 0 && total > 0) {
+    out.push({
+      label: '易错点',
+      value: wrong <= 2 ? '少量细节' : wrong <= total / 2 ? '局部不稳' : '基础需复习',
+      tone: wrong <= 2 ? 'warn' : 'focus',
+    })
+  } else if (total > 0) {
+    out.push({ label: '稳定性', value: '全项通过', tone: 'good' })
+  }
+
+  const statText = stats.map((s) => `${s.label}${s.value}`).join(' ')
+  const next =
+    /音准|唱|偏高|偏低/.test(statText + (review.advice ?? ''))
+      ? '分句慢速跟唱'
+      : /节奏|拍|命中|踏准/.test(statText + (review.advice ?? ''))
+        ? '慢速跟节拍器'
+        : /识谱|音名|正确/.test(statText + (review.advice ?? ''))
+          ? '错题音位复练'
+          : '降低难度再练'
+  out.push({ label: '下一步', value: next, tone: stars >= 2 ? 'good' : 'warn' })
+
+  return out
+}

@@ -14,7 +14,7 @@ export interface Student {
 export interface Session {
   id: string
   studentId: string
-  gameId: string // 'game-rhythm' | 'game-ear' | 'game-taiko' 等
+  gameId: string // 'game-ear' | 'game-taiko' 等
   songId?: string
   level: number
   score: number

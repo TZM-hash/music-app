@@ -2,20 +2,22 @@ import { useApp, Route } from '../state/appState'
 import StudentSelector from './StudentSelector'
 
 const ROUTE_TITLE: Record<Route, string> = {
-  home: '工作台',
-  piano: '虚拟钢琴',
+  home: '学习工作台',
+  course: '完整课程路径',
+  training: '专项练习中心',
+  adventure: '能力进阶',
+  piano: '钢琴示范',
   drums: '架子鼓',
   mixer: '混音器',
   recorder: '竖笛',
-  'game-rhythm': '节奏回响',
-  'game-ear': '听音辨调',
-  'game-taiko': '咚咔鼓手',
-  'game-sing': '唱歌评分',
-  'game-read': '识谱训练',
-  library: '曲库',
-  theory: '乐理知识',
-  class: '学生名册',
-  dashboard: '数据看板',
+  'game-ear': '听觉辨识训练',
+  'game-taiko': '节奏反应训练',
+  'game-sing': '音准与视唱训练',
+  'game-read': '读谱训练',
+  library: '曲库谱例',
+  theory: '分级乐理知识库',
+  class: '学生档案',
+  dashboard: '教学评估',
 }
 
 export default function TopBar() {
@@ -28,7 +30,7 @@ export default function TopBar() {
         ☰
       </button>
       <div className="breadcrumb">
-        <span className="crumb-home">乐动课堂</span>
+        <span className="crumb-home">乐理课堂</span>
         <span className="crumb-sep">/</span>
         <span className="crumb-current">{ROUTE_TITLE[route]}</span>
       </div>

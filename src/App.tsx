@@ -8,18 +8,26 @@ import Piano from './pages/Piano'
 import Drums from './pages/Drums'
 import Mixer from './pages/Mixer'
 import Recorder from './pages/Recorder'
-import RhythmHeaven from './pages/games/RhythmHeaven'
 import EarGame from './pages/games/EarGame'
 import TaikoGame from './pages/games/TaikoGame'
 import SingGame from './pages/games/SingGame'
 import ReadGame from './pages/games/ReadGame'
 import Library from './pages/Library'
 import Theory from './pages/Theory'
+import CourseCenter from './pages/CourseCenter'
+import TrainingCenter from './pages/TrainingCenter'
+import AdventureMap from './pages/AdventureMap'
 import ClassRoster from './pages/ClassRoster'
 import Dashboard from './pages/Dashboard'
 
 function Shell() {
-  const { route, sidebarOpen, setSidebarOpen } = useApp()
+  const { mode, route, sidebarOpen, setSidebarOpen, navigate } = useApp()
+
+  useEffect(() => {
+    if (mode === 'student' && (route === 'class' || route === 'dashboard')) {
+      navigate('home')
+    }
+  }, [mode, route, navigate])
 
   // 切换页面时停掉一切后台音频（伴奏/节拍器/持续音），避免残留
   useEffect(() => {
@@ -38,15 +46,17 @@ function Shell() {
           {route === 'drums' && <Drums />}
           {route === 'mixer' && <Mixer />}
           {route === 'recorder' && <Recorder />}
-          {route === 'game-rhythm' && <RhythmHeaven />}
           {route === 'game-ear' && <EarGame />}
           {route === 'game-taiko' && <TaikoGame />}
           {route === 'game-sing' && <SingGame />}
           {route === 'game-read' && <ReadGame />}
           {route === 'library' && <Library />}
           {route === 'theory' && <Theory />}
-          {route === 'class' && <ClassRoster />}
-          {route === 'dashboard' && <Dashboard />}
+          {route === 'course' && <CourseCenter />}
+          {route === 'training' && <TrainingCenter />}
+          {route === 'adventure' && <AdventureMap />}
+          {mode === 'teacher' && route === 'class' && <ClassRoster />}
+          {mode === 'teacher' && route === 'dashboard' && <Dashboard />}
         </div>
       </div>
     </div>

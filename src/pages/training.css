@@ -1,0 +1,130 @@
+.training-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.training-head {
+  border-left: 6px solid var(--accent);
+}
+
+.training-kicker {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.training-head h2 {
+  margin-bottom: 6px;
+  font-size: 1.8rem;
+}
+
+.training-head p {
+  max-width: 820px;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.training-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.training-card {
+  display: flex;
+  min-height: 310px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  transition: transform 0.15s;
+}
+
+.training-card:hover {
+  transform: translateY(-3px);
+}
+
+.training-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.training-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 1.6rem;
+}
+
+.training-level {
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.training-card h3 {
+  font-size: 1.15rem;
+}
+
+.training-card small,
+.training-card p {
+  color: var(--text-soft);
+}
+
+.training-card p {
+  line-height: 1.5;
+}
+
+.metric-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.metric-row span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.training-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.training-foot b {
+  color: var(--primary);
+}
+
+.training-foot span {
+  color: var(--accent);
+  font-weight: 800;
+}
+
+@media (max-width: 1180px) {
+  .training-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+}
