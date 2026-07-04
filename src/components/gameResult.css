@@ -1,7 +1,7 @@
 .result-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 23, 42, 0.52);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,6 +16,7 @@
 .result-card {
   background: var(--bg-panel);
   border-radius: var(--radius);
+  border: 1px solid var(--line);
   box-shadow: var(--shadow);
   padding: 32px 44px;
   text-align: center;
@@ -76,7 +77,7 @@
 .btn-ghost {
   flex: 1;
   padding: 12px 20px;
-  border-radius: 999px;
+  border-radius: 8px;
   font-weight: 700;
   font-size: 1rem;
 }
@@ -85,7 +86,7 @@
   color: #fff;
 }
 .btn-ghost {
-  background: var(--bg);
+  background: var(--bg-soft);
   color: var(--text);
 }
 
@@ -118,15 +119,16 @@
 }
 .level-picker button {
   padding: 8px 18px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
   font-weight: 700;
   color: var(--text);
 }
 .level-picker button.on {
-  background: var(--accent);
-  color: #fff;
+  background: #e6f7f4;
+  color: var(--accent);
 }
 .start-hint {
   flex: 1;
@@ -147,12 +149,12 @@
 }
 .big-start {
   padding: 16px 48px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--primary);
   color: #fff;
   font-size: 1.3rem;
   font-weight: 800;
-  box-shadow: var(--shadow);
+  box-shadow: 0 14px 28px rgba(47, 111, 237, 0.18);
 }
 
 /* 结果回顾 */
@@ -164,8 +166,8 @@
 .result-advice {
   margin-top: 12px;
   padding: 10px 16px;
-  background: var(--bg);
-  border-radius: 12px;
+  background: var(--bg-soft);
+  border-radius: 8px;
   color: var(--text);
   font-weight: 600;
   line-height: 1.5;
@@ -179,8 +181,8 @@
 }
 .diagnosis-mini span {
   padding: 7px 10px;
-  border-radius: 999px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text-soft);
   font-size: 0.86rem;
   font-weight: 700;
@@ -231,8 +233,8 @@
 }
 .diagnosis-card {
   padding: 12px;
-  border-radius: 12px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   text-align: left;
 }
 .diagnosis-card small {
@@ -268,8 +270,8 @@
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   font-size: 0.92rem;
 }
 .review-row.bad {

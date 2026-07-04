@@ -6,6 +6,7 @@ import { createTheoryFocus, TheoryFocus } from './theoryFocus'
 export type AppMode = 'teacher' | 'lecture' | 'student'
 export type Route =
   | 'home'
+  | 'lesson'
   | 'course'
   | 'training'
   | 'adventure'

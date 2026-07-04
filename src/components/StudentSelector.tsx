@@ -7,11 +7,11 @@ export default function StudentSelector() {
   const { currentStudentId, selectStudent, navigate } = useApp()
   const [open, setOpen] = useState(false)
   const roster = loadRoster()
-  const current = roster.find((s) => s.id === currentStudentId)
+  const current = roster.find((student) => student.id === currentStudentId)
 
   return (
     <div className="stu-selector">
-      <button className="stu-current" onClick={() => setOpen((v) => !v)}>
+      <button className="stu-current" onClick={() => setOpen((value) => !value)}>
         {current ? (
           <>
             <span className="stu-avatar">{current.avatar}</span>
@@ -19,18 +19,18 @@ export default function StudentSelector() {
           </>
         ) : (
           <>
-            <span className="stu-avatar">👤</span>
+            <span className="stu-avatar">访</span>
             <span>选择学生</span>
           </>
         )}
-        <span className="stu-caret">▾</span>
+        <span className="stu-caret">⌄</span>
       </button>
 
       {open && (
         <>
           <div className="stu-backdrop" onClick={() => setOpen(false)} />
           <div className="stu-dropdown">
-            <div className="stu-dropdown-title">谁在练习？</div>
+            <div className="stu-dropdown-title">当前练习对象</div>
             <button
               className={`stu-option ${!currentStudentId ? 'on' : ''}`}
               onClick={() => {
@@ -38,17 +38,21 @@ export default function StudentSelector() {
                 setOpen(false)
               }}
             >
-              <span className="stu-avatar">👤</span> 匿名（不计入统计）
+              <span className="stu-avatar">访</span>
+              <span className="stu-option-main">
+                <span>匿名体验</span>
+                <small>不计入班级统计</small>
+              </span>
             </button>
-            {roster.map((s) => (
+            {roster.map((student) => (
               <StudentOption
-                key={s.id}
-                id={s.id}
-                avatar={s.avatar}
-                name={s.name}
-                active={currentStudentId === s.id}
+                key={student.id}
+                id={student.id}
+                avatar={student.avatar}
+                name={student.name}
+                active={currentStudentId === student.id}
                 onSelect={() => {
-                  selectStudent(s.id)
+                  selectStudent(student.id)
                   setOpen(false)
                 }}
               />
@@ -60,7 +64,7 @@ export default function StudentSelector() {
                 navigate('class')
               }}
             >
-              ⚙️ 管理学生名册
+              管理学生名单
             </button>
           </div>
         </>
@@ -83,6 +87,7 @@ function StudentOption({
   onSelect: () => void
 }) {
   const stat = studentStat(id)
+
   return (
     <button className={`stu-option ${active ? 'on' : ''}`} onClick={onSelect}>
       <span className="stu-avatar">{avatar}</span>

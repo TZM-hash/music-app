@@ -4,6 +4,7 @@ import { stopAllAudio } from './music/audioEngine'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
 import Home from './pages/Home'
+import LessonMode from './pages/LessonMode'
 import Piano from './pages/Piano'
 import Drums from './pages/Drums'
 import Mixer from './pages/Mixer'
@@ -42,6 +43,7 @@ function Shell() {
         <TopBar />
         <div className="content">
           {route === 'home' && <Home />}
+          {route === 'lesson' && <LessonMode />}
           {route === 'piano' && <Piano />}
           {route === 'drums' && <Drums />}
           {route === 'mixer' && <Mixer />}

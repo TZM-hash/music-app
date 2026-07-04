@@ -24,7 +24,7 @@
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 300px;
-  gap: 18px;
+  gap: 16px;
   min-height: 0;
 }
 
@@ -41,16 +41,17 @@
 }
 .picker-cats button {
   padding: 6px 14px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
   color: var(--text);
   font-weight: 700;
   font-size: 0.85rem;
 }
 .picker-cats button.on {
-  background: var(--primary);
-  color: #fff;
+  background: #e8f0ff;
+  color: var(--primary);
 }
 .picker-list {
   flex: 1;
@@ -66,23 +67,23 @@
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: 8px;
   background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
   text-align: left;
-  transition: transform 0.1s, outline 0.1s;
-  outline: 2px solid transparent;
+  transition: transform 0.1s, border-color 0.1s;
 }
 .picker-song:hover {
   transform: translateY(-2px);
 }
 .picker-song.on {
-  outline: 2px solid var(--primary);
+  border-color: var(--primary);
 }
 .ps-icon {
   width: 42px;
   height: 42px;
-  border-radius: 10px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -108,8 +109,8 @@
 .ps-preview {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -148,7 +149,8 @@
 .picker-diff {
   background: var(--bg-panel);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
   padding: 16px 20px;
 }
 .diff-btns {
@@ -158,14 +160,14 @@
 }
 .diff-btns button {
   padding: 12px;
-  border-radius: 12px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   font-weight: 700;
 }
 .diff-btns button.on {
-  background: var(--accent);
-  color: #fff;
+  background: #e6f7f4;
+  color: var(--accent);
 }
 .picker-start {
   margin-top: auto;
@@ -175,7 +177,7 @@
   color: #fff;
   font-size: 1.3rem;
   font-weight: 800;
-  box-shadow: var(--shadow);
+  box-shadow: 0 14px 28px rgba(47, 111, 237, 0.18);
 }
 .picker-start:disabled {
   opacity: 0.4;

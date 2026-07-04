@@ -16,9 +16,9 @@
 .lib-search input {
   width: 100%;
   padding: 12px 18px;
-  border-radius: 999px;
-  border: 2px solid transparent;
-  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
   color: var(--text);
   font-size: 1rem;
   outline: none;
@@ -39,11 +39,11 @@
 }
 .lib-new {
   padding: 12px 22px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--accent);
   color: #fff;
   font-weight: 800;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
 }
 
 .lib-view-tabs {
@@ -51,26 +51,27 @@
   width: fit-content;
   gap: 4px;
   padding: 5px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
 }
 .lib-view-tabs button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: 9px 16px;
-  border-radius: 999px;
+  border-radius: 6px;
   color: var(--text-soft);
   font-weight: 900;
 }
 .lib-view-tabs button.on {
-  background: var(--primary);
-  color: #fff;
+  background: #e8f0ff;
+  color: var(--primary);
 }
 .lib-view-tabs span {
   padding: 1px 8px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: rgba(0, 0, 0, 0.13);
   font-size: 0.78rem;
 }
@@ -85,22 +86,24 @@
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
   color: var(--text);
   font-weight: 700;
 }
 .lib-tabs button.on {
-  background: var(--primary);
-  color: #fff;
+  background: #e8f0ff;
+  color: var(--primary);
 }
 .encyclopedia-tabs button.on {
-  background: var(--accent);
+  background: #e6f7f4;
+  color: var(--accent);
 }
 .tab-count {
   background: rgba(0, 0, 0, 0.15);
-  border-radius: 999px;
+  border-radius: 6px;
   padding: 1px 9px;
   font-size: 0.8rem;
 }
@@ -111,21 +114,23 @@
 }
 .encyclopedia-stage-row button {
   padding: 7px 12px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-panel);
+  border: 1px solid var(--line);
   color: var(--text);
   font-weight: 800;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
 }
 .encyclopedia-stage-row button.on {
-  background: var(--accent-2);
-  color: #fff;
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: #a16207;
 }
 
 .song-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 .lib-empty {
   grid-column: 1 / -1;
@@ -136,10 +141,12 @@
 .song-card {
   padding: 0;
   overflow: hidden;
-  transition: transform 0.15s;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 .song-card:hover {
   transform: translateY(-4px);
+  border-color: rgba(47, 111, 237, 0.28);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
 }
 .song-card-top {
   height: 84px;
@@ -189,8 +196,8 @@
 }
 .sa-btn {
   padding: 8px 14px;
-  border-radius: 10px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   font-weight: 700;
   font-size: 0.9rem;
@@ -215,7 +222,7 @@
 .encyclopedia-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 .encyclopedia-card {
   display: flex;
@@ -256,8 +263,8 @@
 }
 .fact-list span {
   padding: 6px 9px;
-  border-radius: 10px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   font-size: 0.8rem;
   font-weight: 800;
@@ -266,14 +273,14 @@
   padding: 10px 12px;
   border-left: 4px solid var(--primary);
   border-radius: 8px;
-  background: var(--bg);
+  background: var(--bg-soft);
   color: var(--text);
   line-height: 1.5;
 }
 .encyclopedia-quiz {
   margin-top: auto;
   padding-top: 10px;
-  border-top: 1px solid var(--bg);
+  border-top: 1px solid var(--line);
 }
 .encyclopedia-quiz strong {
   display: block;
@@ -287,8 +294,8 @@
 }
 .encyclopedia-quiz button {
   padding: 7px 10px;
-  border-radius: 10px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   font-size: 0.82rem;
   font-weight: 800;
@@ -305,7 +312,7 @@
 .score-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(15, 23, 42, 0.52);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -331,14 +338,14 @@
 }
 .score-mode-seg {
   display: flex;
-  background: var(--bg);
-  border-radius: 999px;
+  background: var(--bg-soft);
+  border-radius: 8px;
   padding: 4px;
   gap: 4px;
 }
 .score-mode-seg button {
   padding: 6px 16px;
-  border-radius: 999px;
+  border-radius: 6px;
   font-weight: 700;
   color: var(--text-soft);
 }
@@ -349,8 +356,8 @@
 .score-close {
   width: 36px;
   height: 36px;
-  border-radius: 50%;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   font-weight: 800;
   color: var(--text);
 }
@@ -372,9 +379,9 @@
 }
 .imp-title {
   padding: 12px 16px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
   color: var(--text);
   font-size: 1.1rem;
   font-weight: 700;
@@ -393,9 +400,9 @@
 }
 .imp-text {
   padding: 12px 16px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background: var(--bg);
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--bg-panel);
   color: var(--text);
   font-size: 1rem;
   font-family: monospace;
@@ -406,8 +413,8 @@
   border-color: var(--primary);
 }
 .imp-preview {
-  background: var(--bg);
-  border-radius: 10px;
+  background: var(--bg-soft);
+  border-radius: 8px;
   padding: 12px;
 }
 .imp-preview-label {

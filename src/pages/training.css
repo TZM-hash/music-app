@@ -1,11 +1,12 @@
 .training-page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .training-head {
-  border-left: 6px solid var(--accent);
+  padding: 24px;
+  border-left: 4px solid var(--accent);
 }
 
 .training-kicker {
@@ -14,7 +15,7 @@
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
 }
 
 .training-head h2 {
@@ -31,7 +32,7 @@
 .training-grid {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .training-card {
@@ -39,13 +40,15 @@
   min-height: 310px;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 11px;
   text-align: left;
-  transition: transform 0.15s;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 .training-card:hover {
   transform: translateY(-3px);
+  border-color: rgba(47, 111, 237, 0.3);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
 }
 
 .training-card-top {
@@ -61,15 +64,15 @@
   justify-content: center;
   width: 54px;
   height: 54px;
-  border-radius: 14px;
+  border-radius: 8px;
   color: #fff;
   font-size: 1.6rem;
 }
 
 .training-level {
   padding: 5px 9px;
-  border-radius: 999px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text-soft);
   font-size: 0.76rem;
   font-weight: 800;
@@ -96,8 +99,8 @@
 
 .metric-row span {
   padding: 5px 8px;
-  border-radius: 999px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   font-size: 0.78rem;
   font-weight: 700;
@@ -111,7 +114,7 @@
   width: 100%;
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--line);
 }
 
 .training-foot b {

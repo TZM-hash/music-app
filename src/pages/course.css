@@ -2,7 +2,7 @@
 .adventure-page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .course-head {
@@ -10,7 +10,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  border-left: 6px solid var(--primary);
+  padding: 24px;
+  border-left: 4px solid var(--primary);
 }
 
 .course-kicker {
@@ -19,7 +20,7 @@
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 800;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.05em;
 }
 
 .course-head h2 {
@@ -37,8 +38,8 @@
 .course-current {
   min-width: 170px;
   padding: 14px;
-  border-radius: 14px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   text-align: center;
 }
 
@@ -61,13 +62,13 @@
 .course-layout {
   display: grid;
   grid-template-columns: 310px minmax(0, 1fr);
-  gap: 18px;
+  gap: 16px;
 }
 
 .course-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .course-tab {
@@ -76,12 +77,14 @@
   gap: 12px;
   width: 100%;
   padding: 14px;
-  border: 2px solid transparent;
+  border: 1px solid var(--line);
   text-align: left;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 .course-tab.on {
   transform: translateY(-2px);
+  box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
 }
 
 .course-icon {
@@ -90,7 +93,7 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 14px;
+  border-radius: 8px;
   color: #fff;
   font-size: 1.4rem;
   flex-shrink: 0;
@@ -116,7 +119,7 @@
 .lesson-board {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .lesson-title {
@@ -142,8 +145,8 @@
 
 .outcome-row span {
   padding: 8px 12px;
-  border-radius: 999px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   font-weight: 700;
   font-size: 0.9rem;
@@ -157,7 +160,7 @@
 
 .course-focus span {
   padding: 7px 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   background: rgba(77, 171, 247, 0.14);
   color: var(--accent);
   font-size: 0.82rem;
@@ -176,8 +179,8 @@
   align-items: center;
   gap: 14px;
   padding: 14px;
-  border-radius: 14px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
 }
 
 .step-index {
@@ -186,7 +189,7 @@
   justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: var(--primary);
   color: #fff;
   font-weight: 900;
@@ -205,11 +208,12 @@
 .step-action,
 .lesson-secondary {
   padding: 10px 16px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--bg-panel);
-  color: var(--accent);
+  border: 1px solid var(--line);
+  color: var(--primary);
   font-weight: 800;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
 }
 
 .lesson-foot {
@@ -226,7 +230,7 @@
 .quest-page {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .map-summary {
@@ -237,8 +241,8 @@
 .map-summary div {
   min-width: 92px;
   padding: 12px;
-  border-radius: 14px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   text-align: center;
 }
 
@@ -273,14 +277,14 @@
 }
 
 .quest-spotlight {
-  border-left: 6px solid var(--primary);
+  border-left: 4px solid var(--primary);
 }
 
 .quest-reward {
   display: inline-flex;
   margin-top: 10px;
   padding: 8px 12px;
-  border-radius: 999px;
+  border-radius: 8px;
   background: rgba(81, 207, 102, 0.16);
   color: var(--text);
   font-weight: 900;
@@ -311,7 +315,7 @@
   align-items: flex-start;
   gap: 10px;
   text-align: left;
-  transition: transform 0.15s, opacity 0.15s;
+  transition: transform 0.15s, opacity 0.15s, border-color 0.15s;
 }
 
 .station:hover {
@@ -323,11 +327,11 @@
 }
 
 .station.done {
-  outline: 3px solid var(--accent-2);
+  outline: 3px solid rgba(245, 158, 11, 0.28);
 }
 
 .station.active {
-  outline: 3px solid var(--primary);
+  outline: 3px solid rgba(47, 111, 237, 0.24);
 }
 
 .station-index {
@@ -344,7 +348,7 @@
   justify-content: center;
   width: 56px;
   height: 56px;
-  border-radius: 16px;
+  border-radius: 8px;
   color: #fff;
   font-size: 1.8rem;
 }
@@ -361,8 +365,8 @@
 .station-skill {
   margin-top: auto;
   padding: 6px 10px;
-  border-radius: 999px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   font-weight: 800;
   font-size: 0.82rem;
 }
@@ -372,7 +376,7 @@
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--bg);
+  background: var(--bg-soft);
 }
 
 .station-progress span {
@@ -406,8 +410,8 @@
   flex-direction: column;
   gap: 6px;
   padding: 13px;
-  border-radius: 14px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
   color: var(--text);
   text-align: left;
 }
@@ -445,8 +449,8 @@
   gap: 2px 10px;
   min-width: 180px;
   padding: 10px 12px;
-  border-radius: 14px;
-  background: var(--bg);
+  border-radius: 8px;
+  background: var(--bg-soft);
 }
 
 .leader-chip span {
@@ -456,7 +460,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  border-radius: 50%;
+  border-radius: 8px;
   background: var(--primary);
   color: #fff;
   font-weight: 900;

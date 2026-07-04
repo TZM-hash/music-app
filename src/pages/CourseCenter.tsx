@@ -213,6 +213,9 @@ export default function CourseCenter() {
           </div>
 
           <div className="lesson-foot">
+            <button className="big-start" onClick={() => navigate('lesson')}>
+              开始课时模式
+            </button>
             <button className="big-start" onClick={goTheoryForActiveStage}>
               进入分级乐理知识库
             </button>
