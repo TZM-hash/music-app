@@ -2,6 +2,8 @@ import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
 import { classOverview } from '../state/stats'
+import { ProgressRing, SpectrumBars } from '../components/Charts'
+import '../components/charts.css'
 import { allSongs } from '../music/songLibrary'
 import { THEORY_STAGES, THEORY_TOPICS } from '../music/theoryCatalog'
 import { ENCYCLOPEDIA_ENTRIES, encyclopediaToReviewQuestions } from '../music/encyclopedia'
@@ -111,6 +113,29 @@ export default function Home() {
   const theoryPracticeCount = Object.keys(progress.bestScores).filter((key) =>
     key.startsWith('theory-')
   ).length
+  const totalStars = Object.values(progress.stars).reduce(
+    (sum, levels) => sum + Object.values(levels).reduce((a, b) => a + b, 0),
+    0
+  )
+  const knowledgeMastery = theoryPracticeCount / Math.max(1, THEORY_TOPICS.length)
+  const practiceSignals = [
+    { label: '乐理', value: theoryPracticeCount, color: 'var(--primary)' },
+    { label: '练习', value: overview.totalSessions, color: 'var(--accent)' },
+    { label: '星数', value: totalStars, color: 'var(--accent-2)' },
+    { label: '错题', value: wrongAnswers.length, color: 'var(--danger)' },
+    { label: '挑战', value: dailyChallenge.length, color: 'var(--primary-2)' },
+  ]
+  const lessonFlow = [
+    { label: '导入', detail: '用声音唤醒概念', route: 'lesson' as Route },
+    { label: '讲解', detail: '打开分级乐理知识库', route: 'theory' as Route },
+    { label: '演示', detail: '用键盘或节奏验证', route: 'piano' as Route },
+    { label: '练习', detail: '进入专项训练反馈', route: 'training' as Route },
+  ]
+  const growthTrack = [
+    { label: '知识', value: THEORY_TOPICS.length, tone: 'primary' },
+    { label: '实践', value: theoryPracticeCount, tone: 'accent' },
+    { label: '记录', value: overview.totalSessions, tone: 'warm' },
+  ]
 
   const recommendation = isLectureMode
     ? '讲解模式会隐藏学生档案和个人练习记录。建议从乐理知识库进入知识点，再配合课程路径、曲库谱例和音乐百科投屏讲解。'
@@ -194,6 +219,52 @@ export default function Home() {
           </button>
           <button onClick={() => navigate('course')}>查看课程路径</button>
           <button onClick={() => navigate('training')}>进入练习中心</button>
+        </div>
+      </section>
+
+      <section className="home-lab-grid">
+        <div className="home-lab-panel card spectrum-panel">
+          <div>
+            <span className="pro-kicker">学习声谱</span>
+            <h3>今天该看哪些信号</h3>
+            <p>把知识练习、班级训练、星数和错题放在同一张声谱里，方便老师快速判断下一步。</p>
+          </div>
+          <SpectrumBars values={practiceSignals} compact />
+        </div>
+
+        <div className="home-lab-panel card command-panel">
+          <div className="command-panel-head">
+            <div>
+              <span className="pro-kicker">课堂指挥台</span>
+              <h3>一节课的四段节奏</h3>
+            </div>
+            <ProgressRing value={knowledgeMastery} label="知识进度" caption="本机记录" color="var(--primary)" size={104} />
+          </div>
+          <div className="lesson-flow-mini">
+            {lessonFlow.map((step, index) => (
+              <button key={step.label} onClick={() => navigate(step.route)}>
+                <span>{index + 1}</span>
+                <b>{step.label}</b>
+                <small>{step.detail}</small>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="home-lab-panel card growth-panel">
+          <div>
+            <span className="pro-kicker">成长轨道</span>
+            <h3>{student ? `${student.name} 的能力节点` : '匿名能力节点'}</h3>
+            <p>保留一点游戏化路径感，用节点表达学习、练习和记录的推进。</p>
+          </div>
+          <div className="growth-track-mini">
+            {growthTrack.map((node, index) => (
+              <button key={node.label} className={`growth-node ${node.tone}`} onClick={() => navigate(index === 0 ? 'theory' : index === 1 ? 'training' : 'adventure')}>
+                <b>{node.value}</b>
+                <span>{node.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 

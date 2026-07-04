@@ -90,6 +90,7 @@ export default function AdventureMap() {
             className={`station quest-card card ${pct >= 100 ? 'done' : ''} ${unlocked ? '' : 'locked'} ${quest.id === activeQuest.id ? 'active' : ''}`}
             onClick={() => unlocked && setActiveQuestId(quest.id)}
             disabled={!unlocked}
+            title={`${quest.title}：${quest.mood}。${quest.topicIds.length} 个知识点 · ${routeLabel(quest.practiceRoute)}`}
           >
             <span className="station-index">{index + 1}</span>
             <span className="station-icon" style={{ background: quest.color }}>
@@ -113,7 +114,7 @@ export default function AdventureMap() {
         </div>
         <div className="quest-topic-grid">
           {previewTopics.map((topic) => (
-            <button key={topic!.id} onClick={() => navigate('theory')}>
+            <button key={topic!.id} onClick={() => navigate('theory')} title={topic!.subtitle}>
               <b>{topic!.title}</b>
               <small>{topic!.category} · {topic!.level}</small>
               <span>{topic!.subtitle}</span>

@@ -1,7 +1,8 @@
 .training-page {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 14px;
+  min-height: 0;
 }
 
 .training-head {
@@ -29,26 +30,76 @@
   line-height: 1.6;
 }
 
-.training-grid {
+.training-lab-strip {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 0.9fr);
+  gap: 18px;
+  align-items: center;
+  padding: 22px;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(238, 250, 255, 0.68)),
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(33, 199, 184, 0.06) 34px 35px);
+}
+
+.training-lab-strip h3 {
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 1.35rem;
+}
+
+.training-lab-strip p {
+  max-width: 680px;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.training-spectrum {
+  min-width: 0;
+}
+
+.training-grid {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+}
+
+.training-workbench {
+  display: grid;
+  grid-template-columns: 310px minmax(0, 1fr);
   gap: 14px;
+  min-height: 0;
+}
+
+.training-module-list {
+  min-width: 0;
 }
 
 .training-card {
   display: flex;
-  min-height: 310px;
+  min-height: 0;
   flex-direction: column;
   align-items: flex-start;
-  gap: 11px;
+  gap: 9px;
+  padding: 14px;
   text-align: left;
   transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
 .training-card:hover {
-  transform: translateY(-3px);
+  transform: translateX(3px);
   border-color: rgba(47, 111, 237, 0.3);
   box-shadow: 0 18px 36px rgba(15, 23, 42, 0.08);
+}
+
+.training-card.on {
+  border-color: rgba(93, 107, 255, 0.48);
+  background:
+    linear-gradient(135deg, rgba(93, 107, 255, 0.1), rgba(33, 199, 184, 0.08)),
+    var(--bg-panel);
+  box-shadow: 0 18px 34px rgba(93, 107, 255, 0.13);
 }
 
 .training-card-top {
@@ -67,6 +118,13 @@
   border-radius: 8px;
   color: #fff;
   font-size: 1.6rem;
+}
+
+.training-stage-icon {
+  width: 68px;
+  height: 68px;
+  font-size: 2rem;
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.14);
 }
 
 .training-level {
@@ -91,6 +149,112 @@
   line-height: 1.5;
 }
 
+.training-module-list .training-card p,
+.training-module-list .metric-row,
+.training-module-list .training-score-track {
+  display: none;
+}
+
+.training-module-list .training-foot {
+  margin-top: 0;
+}
+
+.training-module-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  gap: 16px;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(239, 250, 255, 0.78)),
+    repeating-linear-gradient(90deg, transparent 0 36px, rgba(33, 199, 184, 0.06) 36px 37px);
+}
+
+.training-stage-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.training-stage-head h2 {
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 1.8rem;
+}
+
+.training-stage-head p {
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.training-stage-visuals {
+  display: grid;
+  grid-template-columns: minmax(126px, 0.36fr) minmax(0, 1fr);
+  gap: 18px;
+  align-items: center;
+  min-height: 0;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.training-stage-spectrum {
+  min-width: 0;
+}
+
+.training-stage-spectrum > b {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text);
+  font-size: 0.96rem;
+}
+
+.training-stage-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.training-stage-metrics span {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.training-stage-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.training-stage-footer b,
+.training-stage-footer small {
+  display: block;
+}
+
+.training-stage-footer b {
+  color: var(--primary);
+}
+
+.training-stage-footer small {
+  margin-top: 3px;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.training-start {
+  flex-shrink: 0;
+}
+
 .metric-row {
   display: flex;
   flex-wrap: wrap;
@@ -104,6 +268,24 @@
   color: var(--text);
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.training-score-track {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(101, 112, 134, 0.12);
+}
+
+.training-score-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  min-width: 8px;
+  border-radius: inherit;
+  box-shadow: 0 10px 18px rgba(42, 52, 84, 0.14);
+  transition: width 0.45s ease;
 }
 
 .training-foot {
@@ -127,7 +309,25 @@
 }
 
 @media (max-width: 1180px) {
-  .training-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  .training-lab-strip {
+    grid-template-columns: minmax(240px, 1fr) auto minmax(220px, 0.9fr);
+  }
+
+  .training-workbench {
+    grid-template-columns: 260px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .training-lab-strip,
+  .training-workbench,
+  .training-stage-head,
+  .training-stage-visuals {
+    grid-template-columns: 1fr;
+  }
+
+  .training-stage-footer {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

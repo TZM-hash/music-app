@@ -2463,3 +2463,4479 @@ body::before {
     margin-inline: 0;
   }
 }
+
+/* ===== Data spectrum command deck ===== */
+.home-lab-grid {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.9fr) minmax(360px, 1.25fr) minmax(240px, 0.85fr);
+  gap: 16px;
+}
+
+.home-lab-panel {
+  display: flex;
+  min-height: 250px;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.home-lab-panel h3 {
+  color: var(--text);
+  font-size: 1.26rem;
+  line-height: 1.2;
+}
+
+.home-lab-panel p {
+  margin-top: 6px;
+  color: var(--text-soft);
+  line-height: 1.58;
+}
+
+.spectrum-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(240, 250, 255, 0.68)),
+    repeating-linear-gradient(0deg, transparent 0 30px, rgba(33, 199, 184, 0.07) 30px 31px);
+}
+
+.command-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(242, 247, 255, 0.72)),
+    repeating-linear-gradient(90deg, transparent 0 34px, rgba(107, 92, 255, 0.055) 34px 35px);
+}
+
+.growth-panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.86), rgba(255, 248, 234, 0.64)),
+    repeating-linear-gradient(0deg, transparent 0 34px, rgba(255, 184, 77, 0.075) 34px 35px);
+}
+
+.command-panel-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
+.lesson-flow-mini {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: auto;
+}
+
+.lesson-flow-mini button {
+  display: flex;
+  min-height: 118px;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--text);
+  text-align: left;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.lesson-flow-mini button:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: var(--shadow);
+}
+
+.lesson-flow-mini span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 950;
+}
+
+.lesson-flow-mini b {
+  font-size: 1rem;
+}
+
+.lesson-flow-mini small {
+  color: var(--text-soft);
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.growth-track-mini {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: auto;
+}
+
+.growth-track-mini::before {
+  content: '';
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 39px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--primary), var(--accent), var(--accent-2));
+  opacity: 0.54;
+}
+
+.growth-node {
+  position: relative;
+  display: grid;
+  min-height: 134px;
+  place-items: center;
+  align-content: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.68);
+  color: var(--text);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.growth-node:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.growth-node b {
+  display: grid;
+  width: 58px;
+  height: 58px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.growth-node.accent b {
+  background: var(--accent);
+}
+
+.growth-node.warm b {
+  background: var(--accent-2);
+}
+
+.growth-node span {
+  color: var(--text-soft);
+  font-weight: 900;
+}
+
+@media (max-width: 1180px) {
+  .home-lab-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-lab-panel {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 700px) {
+  .command-panel-head,
+  .lesson-flow-mini,
+  .growth-track-mini {
+    grid-template-columns: 1fr;
+  }
+
+  .growth-track-mini::before {
+    display: none;
+  }
+
+  .lesson-flow-mini button,
+  .growth-node {
+    min-height: 96px;
+  }
+}
+
+/* ===== Desktop fullscreen fit mode ===== */
+@media (min-width: 1100px) and (min-height: 700px) {
+  .content {
+    min-height: 0;
+    overflow: hidden;
+    padding: 12px 14px;
+  }
+
+  .content > * {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .content .card {
+    padding: 14px;
+  }
+
+  .content h1,
+  .content h2,
+  .content h3 {
+    line-height: 1.12;
+  }
+
+  .content p {
+    line-height: 1.42;
+  }
+
+  .content .pro-kicker,
+  .content .course-kicker,
+  .content .training-kicker,
+  .content .theory-kicker,
+  .content .dash-kicker,
+  .content .lesson-kicker {
+    margin-bottom: 4px;
+    font-size: 0.7rem;
+  }
+
+  .content.route-home .music-home {
+    display: grid;
+    max-width: none;
+    grid-template-columns: 1.05fr 1fr 0.9fr 0.9fr;
+    grid-template-rows: minmax(190px, 0.94fr) minmax(160px, 0.82fr) minmax(132px, 0.72fr);
+    gap: 10px;
+  }
+
+  .content.route-home .music-hero {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+    gap: 18px;
+    padding: 16px;
+  }
+
+  .content.route-home .music-hero h1 {
+    font-size: clamp(1.45rem, 1.8vw, 2rem);
+  }
+
+  .content.route-home .music-hero p {
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
+
+  .content.route-home .hero-actions {
+    margin-top: 12px;
+  }
+
+  .content.route-home .hero-console {
+    min-height: 0;
+    height: 100%;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .content.route-home .hero-wave {
+    height: 62px;
+  }
+
+  .content.route-home .hero-status-grid span {
+    min-height: 48px;
+  }
+
+  .content.route-home .hero-note-strip {
+    display: none;
+  }
+
+  .content.route-home .pro-recommend {
+    grid-column: 3 / 5;
+    grid-row: 1;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .content.route-home .pro-recommend p {
+    font-size: 0.9rem;
+  }
+
+  .content.route-home .pro-actions {
+    align-content: start;
+  }
+
+  .content.route-home .home-lab-grid {
+    grid-column: 1 / 4;
+    grid-row: 2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-home .home-lab-panel {
+    min-height: 0;
+    gap: 10px;
+  }
+
+  .content.route-home .home-lab-panel h3 {
+    font-size: 1.05rem;
+  }
+
+  .content.route-home .home-lab-panel p {
+    font-size: 0.82rem;
+  }
+
+  .content.route-home .lesson-flow-mini {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .content.route-home .lesson-flow-mini button {
+    min-height: 82px;
+    padding: 9px;
+  }
+
+  .content.route-home .growth-node {
+    min-height: 82px;
+  }
+
+  .content.route-home .growth-node b {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+
+  .content.route-home .review-home {
+    grid-column: 4;
+    grid-row: 2;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px;
+    overflow: auto;
+  }
+
+  .content.route-home .review-block {
+    gap: 5px;
+    padding: 8px 10px;
+  }
+
+  .content.route-home .review-list.compact {
+    max-height: 64px;
+  }
+
+  .content.route-home .pro-status {
+    grid-column: 1;
+    grid-row: 3;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-home .pro-kpi {
+    padding: 12px;
+  }
+
+  .content.route-home .pro-kpi b {
+    font-size: 1.42rem;
+  }
+
+  .content.route-home .work-grid {
+    grid-column: 2 / 4;
+    grid-row: 3;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-home .work-card {
+    min-height: 0;
+    gap: 6px;
+    padding: 12px;
+  }
+
+  .content.route-home .work-card h3 {
+    font-size: 0.98rem;
+  }
+
+  .content.route-home .work-card p {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
+
+  .content.route-home .quick-tools {
+    grid-column: 4;
+    grid-row: 3;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 8px;
+    overflow: auto;
+  }
+
+  .content.route-home .quick-tools p {
+    font-size: 0.82rem;
+  }
+
+  .content.route-home .quick-tools > div:last-child {
+    justify-content: flex-start;
+    gap: 6px;
+  }
+
+  .content.route-home .quick-tools button {
+    min-height: 34px;
+    padding: 7px 9px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-home .badge-shelf {
+    display: none;
+  }
+
+  .content.route-dashboard .dashboard {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: minmax(88px, 0.62fr) minmax(132px, 0.86fr) minmax(150px, 1fr);
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dashboard > * {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dash-lab-head {
+    grid-column: 1 / 7;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    padding: 12px;
+  }
+
+  .content.route-dashboard .dash-lab-copy h2 {
+    font-size: 1.12rem;
+  }
+
+  .content.route-dashboard .dash-lab-copy p,
+  .content.route-dashboard .dash-signal-copy p {
+    font-size: 0.74rem;
+    line-height: 1.3;
+  }
+
+  .content.route-dashboard .progress-ring {
+    transform: scale(0.82);
+    transform-origin: center;
+  }
+
+  .content.route-dashboard .dash-command {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 4px;
+  }
+
+  .content.route-dashboard .dash-focus button {
+    min-height: 30px;
+    padding: 5px 8px;
+    font-size: 0.74rem;
+  }
+
+  .content.route-dashboard .kpi-row {
+    grid-column: 7 / 13;
+    grid-row: 1;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-dashboard .kpi {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .content.route-dashboard .kpi-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.35rem;
+  }
+
+  .content.route-dashboard .kpi-val {
+    font-size: 1.45rem;
+  }
+
+  .content.route-dashboard .dash-signal-board {
+    grid-column: 1 / 5;
+    grid-row: 2 / 4;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    gap: 10px;
+    padding: 12px;
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dash-spectrum .spectrum-bars {
+    min-height: 96px;
+  }
+
+  .content.route-dashboard .dash-trend-mini {
+    min-height: 78px;
+    padding: 10px;
+  }
+
+  .content.route-dashboard .dash-grid {
+    grid-column: 5 / 13;
+    grid-row: 2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dash-panel {
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dash-panel h3 {
+    margin-bottom: 8px;
+    font-size: 0.98rem;
+  }
+
+  .content.route-dashboard .dash-detail {
+    grid-column: 5 / 10;
+    grid-row: 3;
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dash-detail > * {
+    min-height: 0;
+  }
+
+  .content.route-dashboard .detail-head {
+    margin-bottom: 8px;
+  }
+
+  .content.route-dashboard .detail-body {
+    gap: 12px;
+  }
+
+  .content.route-dashboard .detail-radar svg {
+    width: 132px;
+    height: 132px;
+  }
+
+  .content.route-dashboard .detail-stats {
+    gap: 8px;
+  }
+
+  .content.route-dashboard .ds-item {
+    padding: 8px 10px;
+  }
+
+  .content.route-dashboard .ds-item b {
+    font-size: 1.15rem;
+  }
+
+  .content.route-dashboard .skill-bar {
+    gap: 8px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-dashboard .dash-table {
+    grid-column: 10 / 13;
+    grid-row: 3;
+    overflow: auto;
+  }
+
+  .content.route-dashboard .dash-table h3 {
+    font-size: 1rem;
+  }
+
+  .content.route-dashboard .dash-table th,
+  .content.route-dashboard .dash-table td {
+    padding: 7px 8px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page,
+  .content.route-training .training-page,
+  .content.route-class .roster,
+  .content.route-library .library,
+  .content.route-theory .theory-lab,
+  .content.route-lesson .lesson-page {
+    max-width: none;
+    display: grid;
+    gap: 10px;
+  }
+
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page,
+  .content.route-lesson .lesson-page {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-course .course-head,
+  .content.route-adventure .course-head,
+  .content.route-training .training-head,
+  .content.route-theory .theory-lab-head,
+  .content.route-lesson .lesson-hero,
+  .content.route-library .lib-header,
+  .content.route-class .roster-add {
+    padding: 14px;
+  }
+
+  .content.route-course .course-head h2,
+  .content.route-adventure .course-head h2,
+  .content.route-training .training-head h2,
+  .content.route-theory .theory-lab-head h2,
+  .content.route-lesson .lesson-hero h2 {
+    font-size: 1.35rem;
+  }
+
+  .content.route-course .course-head p,
+  .content.route-adventure .course-head p,
+  .content.route-training .training-head p,
+  .content.route-theory .theory-lab-head p,
+  .content.route-lesson .lesson-hero p {
+    font-size: 0.86rem;
+  }
+
+  .content.route-course .course-current,
+  .content.route-lesson .lesson-progress-card {
+    padding: 10px;
+    min-width: 140px;
+  }
+
+  .content.route-course .course-layout {
+    min-height: 0;
+    grid-template-columns: 300px minmax(0, 1fr);
+  }
+
+  .content.route-course .course-list {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-course .course-tab {
+    padding: 10px;
+  }
+
+  .content.route-course .lesson-board {
+    min-height: 0;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .content.route-course .lesson-title h2 {
+    font-size: 1.32rem;
+  }
+
+  .content.route-course .outcome-row,
+  .content.route-course .course-focus {
+    gap: 6px;
+  }
+
+  .content.route-course .outcome-row span,
+  .content.route-course .course-focus span {
+    padding: 5px 8px;
+    font-size: 0.75rem;
+  }
+
+  .content.route-course .course-lab-strip {
+    grid-template-columns: auto minmax(180px, 0.8fr) minmax(220px, 1fr);
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .content.route-course .lesson-flow {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-course .lesson-step {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .content.route-course .lesson-step h3 {
+    font-size: 0.92rem;
+  }
+
+  .content.route-course .lesson-step p {
+    font-size: 0.8rem;
+  }
+
+  .content.route-course .lesson-foot {
+    flex-shrink: 0;
+  }
+
+  .content.route-training .training-page {
+    grid-template-rows: auto minmax(110px, 0.42fr) minmax(0, 1fr);
+  }
+
+  .content.route-training .training-lab-strip {
+    grid-template-columns: minmax(260px, 1fr) auto minmax(260px, 0.9fr);
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .content.route-training .training-lab-strip h3 {
+    font-size: 1.12rem;
+  }
+
+  .content.route-training .training-lab-strip p {
+    font-size: 0.82rem;
+  }
+
+  .content.route-training .training-grid {
+    min-height: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-training .training-card {
+    min-height: 0;
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .content.route-training .training-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .content.route-training .training-card h3 {
+    font-size: 1rem;
+  }
+
+  .content.route-training .training-card p {
+    font-size: 0.8rem;
+  }
+
+  .content.route-adventure .quest-page {
+    grid-template-rows: auto auto minmax(0, 1.05fr) minmax(130px, 0.55fr);
+  }
+
+  .content.route-adventure .call-panel {
+    padding: 12px 14px;
+  }
+
+  .content.route-adventure .map-track {
+    min-height: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-adventure .station {
+    min-height: 0;
+    gap: 7px;
+    padding: 14px;
+  }
+
+  .content.route-adventure .station-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.35rem;
+  }
+
+  .content.route-adventure .station h3 {
+    font-size: 1rem;
+  }
+
+  .content.route-adventure .station p {
+    font-size: 0.8rem;
+  }
+
+  .content.route-adventure .quest-topic-panel {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-adventure .quest-topic-grid {
+    min-height: 0;
+    overflow: auto;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .content.route-adventure .quest-topic-grid button {
+    min-height: 86px;
+    padding: 10px;
+  }
+
+  .content.route-lesson .lesson-page {
+    grid-template-rows: minmax(82px, auto) minmax(88px, auto) minmax(0, 1fr);
+    gap: 6px;
+  }
+
+  .content.route-lesson .lesson-hero {
+    gap: 14px;
+    padding: 10px 12px;
+  }
+
+  .content.route-lesson .lesson-hero h2 {
+    margin-bottom: 4px;
+    font-size: 1.16rem;
+  }
+
+  .content.route-lesson .lesson-hero p {
+    font-size: 0.78rem;
+    line-height: 1.32;
+  }
+
+  .content.route-lesson .lesson-progress-card {
+    gap: 2px;
+  }
+
+  .content.route-lesson .lesson-progress-card b {
+    font-size: 1.45rem;
+  }
+
+  .content.route-lesson .lesson-planner {
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+    gap: 8px;
+    min-height: 0;
+    padding: 8px;
+  }
+
+  .content.route-lesson .lesson-select {
+    gap: 8px;
+  }
+
+  .content.route-lesson .lesson-select label {
+    gap: 4px;
+    font-size: 0.72rem;
+  }
+
+  .content.route-lesson .lesson-select select {
+    min-height: 34px;
+    padding: 6px 9px;
+    font-size: 0.82rem;
+  }
+
+  .content.route-lesson .lesson-topic-brief {
+    padding: 8px 10px;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-topic-brief h3 {
+    margin: 3px 0 5px;
+    font-size: 0.98rem;
+  }
+
+  .content.route-lesson .lesson-topic-brief p {
+    font-size: 0.78rem;
+    line-height: 1.32;
+  }
+
+  .content.route-lesson .lesson-layout {
+    min-height: 0;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .content.route-lesson .lesson-steps {
+    position: static;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-lesson .lesson-steps button {
+    padding: 9px;
+  }
+
+  .content.route-lesson .lesson-main {
+    min-height: 0;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-main-head {
+    padding-bottom: 10px;
+  }
+
+  .content.route-lesson .lesson-main-head h3 {
+    font-size: 1.24rem;
+  }
+
+  .content.route-lesson .lesson-section {
+    min-height: 0;
+    overflow: auto;
+    gap: 10px;
+  }
+
+  .content.route-lesson .prompt-panel,
+  .content.route-lesson .concept-copy,
+  .content.route-lesson .demo-board,
+  .content.route-lesson .lesson-card-grid > div,
+  .content.route-lesson .lesson-summary > div {
+    padding: 12px;
+  }
+
+  .content.route-lesson .lesson-quiz-card {
+    min-height: 170px;
+  }
+
+  .content.route-theory .theory-lab {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-theory .theory-lab > * {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-theory .theory-layout {
+    height: 100%;
+    min-height: 0;
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .content.route-theory .theory-nav {
+    min-height: 0;
+    max-height: none;
+    overflow: hidden;
+  }
+
+  .content.route-theory .topic-list {
+    min-height: 0;
+  }
+
+  .content.route-theory .theory-main {
+    height: 100%;
+    min-height: 0;
+    grid-template-columns: minmax(0, 1.12fr) minmax(340px, 0.88fr);
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .content.route-theory .topic-panel,
+  .content.route-theory .apply-panel {
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    gap: 10px;
+    overflow: auto;
+  }
+
+  .content.route-theory .topic-title h2 {
+    font-size: 1.28rem;
+  }
+
+  .content.route-theory .topic-explanation,
+  .content.route-theory .demo-control-head,
+  .content.route-theory .mini-quiz {
+    padding: 12px;
+  }
+
+  .content.route-theory .explain-copy p {
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+
+  .content.route-theory .lab-demo {
+    min-height: 130px;
+  }
+
+  .content.route-theory .lab-key {
+    min-height: 92px;
+  }
+
+  .content.route-theory .demo-observations {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .content.route-theory .demo-observations span {
+    padding: 8px 9px;
+    font-size: 0.76rem;
+  }
+
+  .content.route-theory .quiz-card {
+    min-height: 118px;
+  }
+
+  .content.route-library .library {
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+  }
+
+  .content.route-library .lib-header {
+    gap: 12px;
+  }
+
+  .content.route-library .lib-tabs,
+  .content.route-library .encyclopedia-stage-row {
+    gap: 6px;
+  }
+
+  .content.route-library .lib-tabs button,
+  .content.route-library .encyclopedia-stage-row button {
+    padding: 6px 10px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-library .song-grid,
+  .content.route-library .encyclopedia-grid {
+    min-height: 0;
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .content.route-library .song-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-library .song-card-top {
+    height: 58px;
+  }
+
+  .content.route-library .song-card-body {
+    padding: 10px 12px;
+  }
+
+  .content.route-library .song-card-body h3 {
+    font-size: 1rem;
+  }
+
+  .content.route-library .song-desc,
+  .content.route-library .song-meta {
+    font-size: 0.76rem;
+  }
+
+  .content.route-library .encyclopedia-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-library .encyclopedia-card {
+    min-height: 0;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .content.route-library .encyclopedia-card h3 {
+    font-size: 1.05rem;
+  }
+
+  .content.route-library .encyclopedia-card p,
+  .content.route-library .classroom-prompt {
+    font-size: 0.8rem;
+  }
+
+  .content.route-class .roster {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .content.route-class .roster-add h3 {
+    margin-bottom: 8px;
+    font-size: 1.12rem;
+  }
+
+  .content.route-class .add-row {
+    gap: 8px;
+  }
+
+  .content.route-class .avatar-choice {
+    width: 34px;
+    height: 34px;
+  }
+
+  .content.route-class .add-row input {
+    padding: 9px 12px;
+  }
+
+  .content.route-class .data-tools {
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+
+  .content.route-class .roster-grid {
+    min-height: 0;
+    overflow: auto;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    padding-right: 4px;
+  }
+
+  .content.route-class .stu-card {
+    padding: 12px;
+  }
+
+  .content.route-class .stu-card-stats {
+    margin: 10px 0;
+  }
+
+  .content.route-piano .instrument-wrap,
+  .content.route-drums .instrument-wrap,
+  .content.route-recorder .instrument-wrap,
+  .content.route-mixer .mixer,
+  .content.route-game-ear .game-wrap,
+  .content.route-game-read .game-wrap,
+  .content.route-game-sing .game-wrap,
+  .content.route-game-taiko .game-wrap {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-piano .instrument-wrap,
+  .content.route-drums .instrument-wrap,
+  .content.route-recorder .instrument-wrap {
+    gap: 10px;
+  }
+
+  .content.route-piano .instrument-toolbar,
+  .content.route-drums .instrument-toolbar,
+  .content.route-recorder .instrument-toolbar,
+  .content.route-mixer .mixer-toolbar,
+  .content.route-mixer .mix-transport,
+  .content.route-mixer .mix-toolbar2,
+  .content .game-hud {
+    flex-shrink: 0;
+    gap: 8px;
+  }
+
+  .content.route-piano .ctrl-group {
+    padding: 5px 9px;
+  }
+
+  .content.route-piano .piano-stage {
+    min-height: 0;
+  }
+
+  .content.route-piano .piano {
+    height: clamp(220px, 42vh, 300px);
+  }
+
+  .content.route-drums .drum-kit.compact {
+    min-height: 0;
+  }
+
+  .content.route-drums .drum-pad {
+    height: clamp(82px, 14vh, 120px);
+  }
+
+  .content.route-drums .sequencer {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-recorder .recorder-stage {
+    min-height: 0;
+    grid-template-columns: minmax(360px, 0.9fr) minmax(300px, 0.7fr);
+    align-items: center;
+  }
+
+  .content.route-mixer .mix-tracks {
+    min-height: 0;
+    overflow: auto;
+  }
+}
+
+/* ===== Desktop density rebalance: content-led, no stretched cards ===== */
+@media (min-width: 1100px) and (min-height: 700px) {
+  .content {
+    overflow: hidden;
+    padding: 10px 14px 12px;
+  }
+
+  .content > * {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .content .card {
+    padding: 12px;
+  }
+
+  .content h2,
+  .content h3 {
+    line-height: 1.15;
+  }
+
+  .content p {
+    line-height: 1.42;
+  }
+
+  .content.route-home .music-home,
+  .content.route-dashboard .dashboard,
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page,
+  .content.route-training .training-page,
+  .content.route-class .roster,
+  .content.route-library .library,
+  .content.route-theory .theory-lab,
+  .content.route-lesson .lesson-page {
+    max-width: none;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-home .music-home {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: minmax(178px, 0.7fr) minmax(176px, 0.7fr) minmax(0, 0.95fr);
+    gap: 10px;
+    align-content: start;
+  }
+
+  .content.route-home .music-hero {
+    grid-column: 1 / 8;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.08fr) minmax(210px, 0.92fr);
+    gap: 14px;
+    align-items: center;
+    min-height: 0;
+    padding: 14px 16px;
+  }
+
+  .content.route-home .hero-copy {
+    max-width: none;
+  }
+
+  .content.route-home .music-hero h1 {
+    max-width: 430px;
+    margin-bottom: 6px;
+    font-size: clamp(1.55rem, 1.72vw, 2.05rem);
+  }
+
+  .content.route-home .music-hero p,
+  .content.route-home .pro-recommend p,
+  .content.route-home .home-lab-panel p,
+  .content.route-home .quick-tools p,
+  .content.route-training .training-head p,
+  .content.route-training .training-lab-strip p,
+  .content.route-training .training-card p,
+  .content.route-course .course-head p,
+  .content.route-course .lesson-step p,
+  .content.route-lesson .lesson-hero p,
+  .content.route-lesson .lesson-topic-brief p,
+  .content.route-theory .theory-lab-head p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+  }
+
+  .content.route-home .music-hero p {
+    -webkit-line-clamp: 3;
+    font-size: 0.84rem;
+  }
+
+  .content.route-home .hero-actions {
+    margin-top: 9px;
+  }
+
+  .content.route-home .hero-actions button,
+  .content.route-home .pro-actions button,
+  .content.route-home .quick-tools button {
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-home .hero-stage {
+    width: 100%;
+    min-width: 0;
+    height: 164px;
+  }
+
+  .content.route-home .hero-console {
+    width: 100%;
+    height: 164px;
+    min-height: 0;
+    gap: 8px;
+    padding: 11px;
+  }
+
+  .content.route-home .hero-console::before,
+  .content.route-home .hero-note-strip {
+    display: none;
+  }
+
+  .content.route-home .hero-console-head b {
+    max-width: 150px;
+    font-size: 0.88rem;
+  }
+
+  .content.route-home .hero-wave {
+    height: 54px;
+    gap: 6px;
+    margin: 0;
+  }
+
+  .content.route-home .hero-wave i {
+    width: 9px;
+  }
+
+  .content.route-home .hero-wave i:nth-child(1) { height: 24px; }
+  .content.route-home .hero-wave i:nth-child(2) { height: 42px; }
+  .content.route-home .hero-wave i:nth-child(3) { height: 32px; }
+  .content.route-home .hero-wave i:nth-child(4) { height: 48px; }
+  .content.route-home .hero-wave i:nth-child(5) { height: 34px; }
+  .content.route-home .hero-wave i:nth-child(6) { height: 44px; }
+  .content.route-home .hero-wave i:nth-child(7) { height: 28px; }
+  .content.route-home .hero-wave i:nth-child(8) { height: 40px; }
+  .content.route-home .hero-wave i:nth-child(9) { height: 26px; }
+
+  .content.route-home .hero-status-grid span {
+    min-height: 38px;
+    font-size: 0.68rem;
+  }
+
+  .content.route-home .hero-status-grid b {
+    font-size: 1rem;
+  }
+
+  .content.route-home .pro-recommend {
+    grid-column: 8 / 13;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    align-content: start;
+    align-items: start;
+    overflow: hidden;
+  }
+
+  .content.route-home .pro-recommend p {
+    -webkit-line-clamp: 4;
+    font-size: 0.84rem;
+  }
+
+  .content.route-home .pro-actions {
+    gap: 8px;
+  }
+
+  .content.route-home .home-lab-grid {
+    grid-column: 1 / 10;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.18fr) minmax(0, 0.9fr);
+    gap: 10px;
+    min-height: 0;
+  }
+
+  .content.route-home .home-lab-panel {
+    min-height: 0;
+    height: 100%;
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .content.route-home .home-lab-panel h3 {
+    font-size: 0.98rem;
+  }
+
+  .content.route-home .home-lab-panel p {
+    -webkit-line-clamp: 2;
+    font-size: 0.74rem;
+  }
+
+  .content.route-home .command-panel-head {
+    gap: 8px;
+  }
+
+  .content.route-home .command-panel-head .progress-ring {
+    transform: scale(0.74);
+    transform-origin: right center;
+  }
+
+  .content.route-home .lesson-flow-mini {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .content.route-home .lesson-flow-mini button {
+    min-height: 58px;
+    gap: 4px;
+    padding: 7px;
+  }
+
+  .content.route-home .lesson-flow-mini span {
+    width: 24px;
+    height: 24px;
+  }
+
+  .content.route-home .lesson-flow-mini b {
+    font-size: 0.82rem;
+  }
+
+  .content.route-home .lesson-flow-mini small {
+    display: none;
+  }
+
+  .content.route-home .growth-track-mini {
+    gap: 7px;
+  }
+
+  .content.route-home .growth-track-mini::before {
+    top: 31px;
+  }
+
+  .content.route-home .growth-node {
+    min-height: 66px;
+  }
+
+  .content.route-home .growth-node b {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+  }
+
+  .content.route-home .review-home {
+    grid-column: 10 / 13;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+    align-content: start;
+    overflow: hidden;
+  }
+
+  .content.route-home .review-block {
+    min-height: 0;
+    gap: 3px;
+    padding: 9px 10px;
+  }
+
+  .content.route-home .review-block h3 {
+    overflow: hidden;
+    color: var(--text);
+    font-size: 0.84rem;
+    line-height: 1.28;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.route-home .review-list,
+  .content.route-home .review-list.compact,
+  .content.route-home .weak-chip-row {
+    display: none;
+  }
+
+  .content.route-home .pro-status {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    align-content: start;
+  }
+
+  .content.route-home .pro-kpi {
+    min-height: 68px;
+    padding: 9px;
+  }
+
+  .content.route-home .pro-kpi b {
+    font-size: 1.35rem;
+  }
+
+  .content.route-home .pro-kpi span {
+    font-size: 0.78rem;
+  }
+
+  .content.route-home .work-grid {
+    grid-column: 3 / 9;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    align-items: start;
+  }
+
+  .content.route-home .work-card {
+    min-height: 0;
+    gap: 4px;
+    padding: 10px;
+  }
+
+  .content.route-home .work-card small {
+    font-size: 0.68rem;
+  }
+
+  .content.route-home .work-card h3 {
+    font-size: 0.88rem;
+  }
+
+  .content.route-home .work-card p {
+    display: none;
+  }
+
+  .content.route-home .work-card span {
+    margin-top: 2px;
+    font-size: 0.7rem;
+  }
+
+  .content.route-home .quick-tools {
+    grid-column: 9 / 13;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 9px;
+    align-content: start;
+    align-items: start;
+    overflow: hidden;
+  }
+
+  .content.route-home .quick-tools p {
+    -webkit-line-clamp: 2;
+    font-size: 0.78rem;
+  }
+
+  .content.route-home .quick-tools > div:last-child {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .content.route-home .badge-shelf {
+    display: none;
+  }
+
+  .content.route-dashboard .dashboard {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dashboard.has-data {
+    grid-template-rows: minmax(92px, auto) minmax(146px, auto) minmax(0, 1fr);
+  }
+
+  .content.route-dashboard .dashboard.no-data {
+    grid-template-rows: minmax(104px, auto) minmax(132px, auto) minmax(0, 1fr);
+  }
+
+  .content.route-dashboard .dash-lab-head {
+    grid-column: 1 / 7;
+    grid-row: 1;
+    gap: 12px;
+    align-items: center;
+    padding: 12px 14px;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-lab-head {
+    grid-column: 1 / 8;
+  }
+
+  .content.route-dashboard .dash-lab-copy h2 {
+    max-width: 420px;
+    font-size: 1.18rem;
+  }
+
+  .content.route-dashboard .dash-lab-copy p,
+  .content.route-dashboard .dash-signal-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 0.76rem;
+  }
+
+  .content.route-dashboard .dash-command {
+    gap: 8px;
+  }
+
+  .content.route-dashboard .dash-command .progress-ring {
+    transform: scale(0.74);
+    transform-origin: center;
+  }
+
+  .content.route-dashboard .dash-focus b {
+    margin-bottom: 5px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-dashboard .dash-focus button {
+    min-height: 28px;
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  .content.route-dashboard .kpi-row {
+    grid-column: 7 / 13;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    align-self: stretch;
+  }
+
+  .content.route-dashboard .dashboard.no-data .kpi-row {
+    grid-column: 8 / 13;
+  }
+
+  .content.route-dashboard .kpi {
+    min-height: 0;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .content.route-dashboard .kpi-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
+  }
+
+  .content.route-dashboard .kpi-val {
+    font-size: 1.35rem;
+  }
+
+  .content.route-dashboard .kpi-label {
+    font-size: 0.75rem;
+  }
+
+  .content.route-dashboard .dash-signal-board {
+    align-self: start;
+    gap: 12px;
+    padding: 14px;
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-signal-board {
+    grid-column: 1 / 5;
+    grid-row: 2 / 4;
+    grid-template-columns: 1fr;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board {
+    grid-column: 1 / 8;
+    grid-row: 2 / 4;
+    grid-template-columns: minmax(0, 0.9fr) minmax(240px, 1.1fr);
+  }
+
+  .content.route-dashboard .dash-signal-copy h3 {
+    font-size: 1.06rem;
+  }
+
+  .content.route-dashboard .dash-spectrum .spectrum-bars {
+    min-height: 82px;
+  }
+
+  .content.route-dashboard .dash-trend-mini {
+    min-height: 58px;
+    padding: 9px;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-trend-mini {
+    display: none;
+  }
+
+  .content.route-dashboard .dash-empty {
+    grid-column: 8 / 13;
+    grid-row: 2 / 4;
+    align-self: start;
+    min-height: 0;
+    padding: 24px;
+    text-align: left;
+  }
+
+  .content.route-dashboard .dash-empty h3 {
+    font-size: 1.35rem;
+    line-height: 1.15;
+    writing-mode: horizontal-tb;
+  }
+
+  .content.route-dashboard .dash-empty p {
+    max-width: 360px;
+  }
+
+  .content.route-dashboard .dash-grid {
+    grid-column: 5 / 13;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dash-panel {
+    min-height: 0;
+  }
+
+  .content.route-dashboard .dash-panel h3 {
+    margin-bottom: 8px;
+    font-size: 0.94rem;
+  }
+
+  .content.route-dashboard .dash-detail {
+    grid-column: 5 / 10;
+    grid-row: 3;
+    align-self: start;
+    min-height: 0;
+  }
+
+  .content.route-dashboard .dash-table {
+    grid-column: 10 / 13;
+    grid-row: 3;
+    align-self: start;
+    max-height: 100%;
+    overflow: auto;
+  }
+
+  .content.route-training .training-page {
+    display: grid;
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .content.route-training .training-head {
+    padding: 14px 16px;
+  }
+
+  .content.route-training .training-head h2 {
+    margin-bottom: 4px;
+    font-size: 1.28rem;
+  }
+
+  .content.route-training .training-head p,
+  .content.route-training .training-lab-strip p {
+    -webkit-line-clamp: 2;
+    font-size: 0.82rem;
+  }
+
+  .content.route-training .training-lab-strip {
+    grid-template-columns: minmax(0, 1fr) 120px minmax(270px, 0.82fr);
+    gap: 12px;
+    align-items: center;
+    min-height: 0;
+    padding: 12px 14px;
+  }
+
+  .content.route-training .training-lab-strip h3 {
+    margin-bottom: 4px;
+    font-size: 1.08rem;
+  }
+
+  .content.route-training .training-lab-strip .progress-ring {
+    transform: scale(0.78);
+    transform-origin: center;
+  }
+
+  .content.route-training .training-spectrum .spectrum-bars {
+    min-height: 70px;
+  }
+
+  .content.route-training .training-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    align-items: start;
+    min-height: 0;
+  }
+
+  .content.route-training .training-card {
+    height: auto;
+    min-height: 0;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .content.route-training .training-icon {
+    width: 42px;
+    height: 42px;
+    font-size: 1.35rem;
+  }
+
+  .content.route-training .training-card h3 {
+    font-size: 1rem;
+  }
+
+  .content.route-training .training-card p {
+    -webkit-line-clamp: 3;
+    font-size: 0.78rem;
+  }
+
+  .content.route-training .metric-row span {
+    padding: 4px 7px;
+    font-size: 0.72rem;
+  }
+
+  .content.route-training .training-foot {
+    margin-top: 6px;
+    padding-top: 9px;
+  }
+
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page,
+  .content.route-lesson .lesson-page,
+  .content.route-theory .theory-lab,
+  .content.route-library .library,
+  .content.route-class .roster {
+    display: grid;
+    gap: 10px;
+  }
+
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-course .course-head,
+  .content.route-adventure .course-head,
+  .content.route-theory .theory-lab-head,
+  .content.route-lesson .lesson-hero {
+    padding: 12px 14px;
+  }
+
+  .content.route-course .course-head h2,
+  .content.route-adventure .course-head h2,
+  .content.route-theory .theory-lab-head h2,
+  .content.route-lesson .lesson-hero h2 {
+    margin-bottom: 4px;
+    font-size: 1.28rem;
+  }
+
+  .content.route-course .course-head p,
+  .content.route-adventure .course-head p,
+  .content.route-theory .theory-lab-head p,
+  .content.route-lesson .lesson-hero p {
+    -webkit-line-clamp: 2;
+    font-size: 0.8rem;
+  }
+
+  .content.route-course .course-current,
+  .content.route-lesson .lesson-progress-card,
+  .content.route-theory .theory-count {
+    min-width: 126px;
+    padding: 9px;
+  }
+
+  .content.route-course .course-current span,
+  .content.route-theory .theory-count b,
+  .content.route-lesson .lesson-progress-card b {
+    font-size: 1.45rem;
+  }
+
+  .content.route-course .course-layout {
+    grid-template-columns: 292px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-list {
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-tab {
+    padding: 9px;
+  }
+
+  .content.route-course .course-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 1.15rem;
+  }
+
+  .content.route-course .course-icon.big {
+    width: 50px;
+    height: 50px;
+    font-size: 1.55rem;
+  }
+
+  .content.route-course .lesson-board {
+    align-self: start;
+    gap: 6px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .lesson-title {
+    gap: 10px;
+  }
+
+  .content.route-course .lesson-title h2 {
+    font-size: 1.12rem;
+  }
+
+  .content.route-course .lesson-title p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    font-size: 0.8rem;
+  }
+
+  .content.route-course .outcome-row span,
+  .content.route-course .course-focus span {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  .content.route-course .course-lab-strip {
+    grid-template-columns: 82px minmax(160px, 0.72fr) minmax(220px, 1fr);
+    gap: 8px;
+    max-height: 96px;
+    padding: 7px 9px;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-lab-strip .progress-ring {
+    width: 82px !important;
+    height: 82px !important;
+    transform: scale(0.72);
+    transform-origin: center;
+  }
+
+  .content.route-course .course-lab-strip .progress-ring svg {
+    width: 82px;
+    height: 82px;
+  }
+
+  .content.route-course .course-spectrum-block > b {
+    margin-bottom: 4px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-course .course-spectrum-block .spectrum-bars {
+    min-height: 58px;
+  }
+
+  .content.route-course .course-node-preview b {
+    width: 28px;
+    height: 28px;
+    font-size: 0.82rem;
+  }
+
+  .content.route-course .course-node-preview span {
+    gap: 4px;
+    font-size: 0.68rem;
+  }
+
+  .content.route-course .lesson-flow {
+    gap: 6px;
+    overflow: visible;
+  }
+
+  .content.route-course .lesson-step {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 7px;
+    min-height: 42px;
+    padding: 6px 9px;
+  }
+
+  .content.route-course .step-index {
+    width: 28px;
+    height: 28px;
+  }
+
+  .content.route-course .lesson-step h3 {
+    margin-bottom: 1px;
+    font-size: 0.84rem;
+  }
+
+  .content.route-course .lesson-step p {
+    -webkit-line-clamp: 1;
+    font-size: 0.7rem;
+  }
+
+  .content.route-course .step-action,
+  .content.route-course .lesson-secondary {
+    min-height: 30px;
+    padding: 6px 9px;
+    font-size: 0.74rem;
+  }
+
+  .content.route-course .lesson-foot {
+    gap: 8px;
+    padding-top: 0;
+  }
+
+  .content.route-course .lesson-foot .big-start {
+    min-height: 38px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+  }
+
+  .content.route-lesson .lesson-page {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .content.route-lesson .lesson-hero {
+    gap: 12px;
+  }
+
+  .content.route-lesson .lesson-planner {
+    grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+    gap: 8px;
+    align-items: start;
+    padding: 8px;
+  }
+
+  .content.route-lesson .lesson-select {
+    gap: 8px;
+  }
+
+  .content.route-lesson .lesson-select select {
+    min-height: 32px;
+    padding: 6px 9px;
+    font-size: 0.8rem;
+  }
+
+  .content.route-lesson .lesson-topic-brief {
+    padding: 8px 10px;
+  }
+
+  .content.route-lesson .lesson-topic-brief h3 {
+    margin: 3px 0 4px;
+    font-size: 0.98rem;
+  }
+
+  .content.route-lesson .lesson-topic-brief p {
+    -webkit-line-clamp: 2;
+    font-size: 0.76rem;
+  }
+
+  .content.route-lesson .lesson-layout {
+    grid-template-columns: 232px minmax(0, 1fr);
+    gap: 10px;
+    align-items: start;
+    min-height: 0;
+  }
+
+  .content.route-lesson .lesson-steps {
+    gap: 6px;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-steps button {
+    min-height: 0;
+    padding: 8px;
+  }
+
+  .content.route-lesson .lesson-steps b {
+    font-size: 0.88rem;
+  }
+
+  .content.route-lesson .lesson-steps small {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 0.7rem;
+  }
+
+  .content.route-lesson .lesson-main {
+    align-self: start;
+    min-height: 0;
+    height: auto;
+    gap: 9px;
+    overflow: visible;
+  }
+
+  .content.route-lesson .lesson-main-head {
+    padding-bottom: 8px;
+  }
+
+  .content.route-lesson .lesson-main-head h3 {
+    font-size: 1.16rem;
+  }
+
+  .content.route-lesson .lesson-main-head button,
+  .content.route-lesson .lesson-actions button {
+    min-height: 34px;
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .content.route-lesson .lesson-section {
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .content.route-lesson .prompt-panel,
+  .content.route-lesson .concept-copy,
+  .content.route-lesson .demo-board,
+  .content.route-lesson .lesson-card-grid > div,
+  .content.route-lesson .lesson-summary > div {
+    padding: 10px;
+  }
+
+  .content.route-lesson .lesson-card-grid {
+    gap: 9px;
+  }
+
+  .content.route-theory .theory-lab {
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .content.route-theory .theory-layout {
+    grid-template-columns: 242px minmax(0, 1fr);
+    gap: 10px;
+    align-items: stretch;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-theory .theory-nav {
+    gap: 8px;
+    min-height: 0;
+    padding: 10px;
+    overflow: hidden;
+  }
+
+  .content.route-theory .theory-cats {
+    gap: 5px;
+  }
+
+  .content.route-theory .theory-cats button {
+    padding: 5px 8px;
+    font-size: 0.72rem;
+  }
+
+  .content.route-theory .topic-list {
+    gap: 6px;
+    overflow: auto;
+  }
+
+  .content.route-theory .topic-list button {
+    padding: 8px 9px;
+  }
+
+  .content.route-theory .theory-main {
+    grid-template-columns: minmax(0, 1.28fr) minmax(260px, 0.72fr);
+    gap: 10px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-theory .topic-panel,
+  .content.route-theory .apply-panel {
+    height: 100%;
+    max-height: 100%;
+    gap: 9px;
+    overflow: hidden;
+  }
+
+  .content.route-theory .topic-title h2 {
+    margin: 3px 0 4px;
+    font-size: 1.18rem;
+  }
+
+  .content.route-theory .topic-title p,
+  .content.route-theory .apply-panel p,
+  .content.route-theory .explain-copy p {
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .content.route-theory .explain-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 5;
+  }
+
+  .content.route-theory .topic-explanation,
+  .content.route-theory .demo-control-head,
+  .content.route-theory .mini-quiz {
+    padding: 10px;
+  }
+
+  .content.route-theory .theory-demo-lab {
+    gap: 8px;
+  }
+
+  .content.route-theory .demo-control-row {
+    gap: 6px;
+  }
+
+  .content.route-theory .demo-control-row button {
+    min-height: 44px;
+    padding: 7px 9px;
+  }
+
+  .content.route-theory .lab-demo {
+    min-height: 92px;
+    padding: 10px;
+  }
+
+  .content.route-theory .lab-key {
+    min-height: 78px;
+  }
+
+  .content.route-theory .demo-observations {
+    display: none;
+  }
+
+  .content.route-theory .apply-panel h3 {
+    font-size: 1.12rem;
+  }
+
+  .content.route-theory .quiz-summary {
+    margin-bottom: 8px;
+  }
+
+  .content.route-theory .quiz-card {
+    min-height: 0;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .content.route-theory .quiz-card:nth-child(n + 2) {
+    display: none;
+  }
+
+  .content.route-theory .quiz-card h5 {
+    min-height: auto;
+    font-size: 0.84rem;
+  }
+
+  .content.route-theory .mini-quiz button {
+    min-height: 30px;
+    padding: 6px 8px;
+    font-size: 0.78rem;
+  }
+
+  .content.route-theory .application-links {
+    display: none;
+  }
+
+  .content.route-library .library {
+    grid-template-rows: auto auto auto minmax(0, 1fr);
+  }
+
+  .content.route-class .roster {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .content.route-piano .instrument-wrap,
+  .content.route-drums .instrument-wrap,
+  .content.route-recorder .instrument-wrap,
+  .content.route-mixer .mixer,
+  .content.route-game-ear .game-wrap,
+  .content.route-game-read .game-wrap,
+  .content.route-game-sing .game-wrap,
+  .content.route-game-taiko .game-wrap {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+/* ===== Final fixed workbench pass ===== */
+@media (min-width: 1100px) and (min-height: 700px) {
+  .content {
+    overflow: hidden;
+    padding: 10px 14px 12px;
+  }
+
+  .content > * {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content .card {
+    box-shadow: 0 8px 24px rgba(51, 71, 118, 0.08);
+  }
+
+  .content.route-home .music-home {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: minmax(168px, 0.72fr) minmax(164px, 0.72fr) minmax(0, 0.88fr);
+    gap: 10px;
+  }
+
+  .content.route-home .music-hero {
+    grid-column: 1 / 8;
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  .content.route-home .pro-recommend {
+    grid-column: 8 / 13;
+    grid-row: 1;
+    min-height: 0;
+  }
+
+  .content.route-home .home-lab-grid {
+    grid-column: 1 / 10;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .content.route-home .review-home {
+    grid-column: 10 / 13;
+    grid-row: 2;
+    min-height: 0;
+  }
+
+  .content.route-home .pro-status {
+    grid-column: 1 / 3;
+    grid-row: 3;
+    min-height: 0;
+  }
+
+  .content.route-home .work-grid {
+    grid-column: 3 / 9;
+    grid-row: 3;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-height: 0;
+  }
+
+  .content.route-home .quick-tools {
+    grid-column: 9 / 13;
+    grid-row: 3;
+    min-height: 0;
+  }
+
+  .content.route-home .music-hero h1 {
+    font-size: 1.75rem;
+  }
+
+  .content.route-home .hero-stage,
+  .content.route-home .hero-console {
+    height: 150px;
+  }
+
+  .content.route-home .home-lab-panel,
+  .content.route-home .review-block,
+  .content.route-home .work-card,
+  .content.route-home .quick-tools {
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dashboard {
+    display: grid;
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dashboard.has-data {
+    grid-template-columns: minmax(250px, 0.68fr) minmax(0, 1.62fr) minmax(274px, 0.76fr);
+    grid-template-rows: minmax(112px, auto) minmax(186px, 0.48fr) minmax(0, 1fr);
+  }
+
+  .content.route-dashboard .dashboard.no-data {
+    grid-template-columns: minmax(0, 1fr) minmax(286px, 0.75fr);
+    grid-template-rows: minmax(116px, auto) minmax(0, 1fr);
+  }
+
+  .content.route-dashboard .dash-lab-head,
+  .content.route-dashboard .kpi-row,
+  .content.route-dashboard .dash-signal-board,
+  .content.route-dashboard .dash-grid,
+  .content.route-dashboard .dash-detail,
+  .content.route-dashboard .dash-table,
+  .content.route-dashboard .dash-empty {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-lab-head {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr) minmax(210px, 330px);
+  }
+
+  .content.route-dashboard .dashboard.has-data .kpi-row {
+    grid-column: 3;
+    grid-row: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-signal-board {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    align-items: stretch;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid {
+    grid-column: 2;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1.18fr) minmax(168px, 0.82fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid .dash-panel:first-child {
+    grid-row: 1 / 3;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid .dash-panel:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid .dash-panel:nth-child(3) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-detail {
+    grid-column: 2;
+    grid-row: 3;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-table {
+    grid-column: 3;
+    grid-row: 2 / 4;
+    overflow: auto;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-lab-head {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .content.route-dashboard .dashboard.no-data .kpi-row {
+    grid-column: 2;
+    grid-row: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board {
+    grid-column: 1;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 0.9fr) minmax(230px, 1fr);
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-empty {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .content.route-dashboard .dash-lab-head {
+    padding: 12px 14px;
+  }
+
+  .content.route-dashboard .dash-lab-copy h2 {
+    max-width: 520px;
+    font-size: 1.18rem;
+  }
+
+  .content.route-dashboard .dash-grid .dash-panel {
+    padding: 10px;
+  }
+
+  .content.route-dashboard .dash-panel h3 {
+    margin-bottom: 6px;
+    font-size: 0.86rem;
+    line-height: 1.22;
+  }
+
+  .content.route-dashboard .detail-body {
+    gap: 12px;
+    flex-wrap: nowrap;
+  }
+
+  .content.route-dashboard .detail-radar svg {
+    width: 140px;
+    height: 140px;
+  }
+
+  .content.route-dashboard .detail-stats {
+    gap: 8px;
+  }
+
+  .content.route-training .training-page {
+    display: grid;
+    grid-template-rows: auto minmax(100px, 0.28fr) minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .content.route-training .training-workbench {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-training .training-grid {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    gap: 8px;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-training .training-card {
+    min-height: 0;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .content.route-training .training-card:hover {
+    transform: translateX(3px);
+  }
+
+  .content.route-training .training-card p {
+    -webkit-line-clamp: 2;
+    font-size: 0.74rem;
+  }
+
+  .content.route-training .training-module-list .training-card p,
+  .content.route-training .training-module-list .metric-row,
+  .content.route-training .training-module-list .training-score-track {
+    display: none;
+  }
+
+  .content.route-training .training-module-stage {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-training .training-stage-head {
+    gap: 12px;
+  }
+
+  .content.route-training .training-stage-head h2 {
+    font-size: 1.38rem;
+  }
+
+  .content.route-training .training-stage-head p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    font-size: 0.82rem;
+  }
+
+  .content.route-training .training-stage-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 1.75rem;
+  }
+
+  .content.route-training .training-stage-visuals {
+    grid-template-columns: 130px minmax(0, 1fr);
+    gap: 12px;
+    min-height: 0;
+    padding: 10px;
+  }
+
+  .content.route-training .training-stage-spectrum .spectrum-bars {
+    min-height: 86px;
+  }
+
+  .content.route-training .training-stage-metrics span {
+    padding: 6px 9px;
+    font-size: 0.76rem;
+  }
+
+  .content.route-training .training-stage-footer {
+    padding-top: 9px;
+  }
+
+  .content.route-course .course-layout,
+  .content.route-lesson .lesson-layout,
+  .content.route-theory .theory-layout {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content.route-training .training-page {
+    height: auto;
+    max-height: 100%;
+    grid-template-rows: auto auto auto;
+    align-content: start;
+  }
+
+  .content.route-training .training-workbench {
+    align-items: start;
+    height: auto;
+  }
+
+  .content.route-training .training-module-stage {
+    height: auto;
+    grid-template-rows: auto auto auto auto;
+    align-content: start;
+  }
+
+  .content.route-training .training-stage-visuals {
+    min-height: 220px;
+  }
+}
+
+/* ===== Proportional stage layout pass ===== */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content {
+    --stage-gap: clamp(8px, 0.64vw, 15px);
+    --stage-pad-x: clamp(10px, 0.92vw, 18px);
+    --stage-pad-y: clamp(8px, 0.78vh, 14px);
+    --panel-pad: clamp(10px, 0.82vw, 18px);
+    --compact-pad: clamp(8px, 0.66vw, 14px);
+    --tight-text: clamp(0.76rem, 0.68rem + 0.18vw, 0.9rem);
+    --body-text: clamp(0.82rem, 0.76rem + 0.18vw, 0.96rem);
+    --title-text: clamp(1.15rem, 0.94rem + 0.56vw, 1.7rem);
+    padding: var(--stage-pad-y) var(--stage-pad-x);
+    overflow: hidden;
+  }
+
+  .content > * {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+
+  .content .card {
+    padding: var(--panel-pad);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(51, 71, 118, 0.08);
+  }
+
+  .content h1,
+  .content h2,
+  .content h3,
+  .content h4 {
+    letter-spacing: 0;
+  }
+
+  .content p,
+  .content small,
+  .content button,
+  .content select,
+  .content span {
+    font-size: var(--body-text);
+  }
+
+  .content .pro-kicker,
+  .content .course-kicker,
+  .content .training-kicker,
+  .content .theory-kicker,
+  .content .dash-kicker,
+  .content .lesson-kicker {
+    font-size: clamp(0.68rem, 0.62rem + 0.12vw, 0.78rem);
+  }
+
+  .content.route-home .music-home,
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page,
+  .content.route-training .training-page,
+  .content.route-theory .theory-lab,
+  .content.route-lesson .lesson-page,
+  .content.route-dashboard .dashboard,
+  .content.route-library .library,
+  .content.route-class .roster {
+    display: grid;
+    gap: var(--stage-gap);
+    max-width: none;
+    min-height: 0;
+    align-content: stretch;
+    overflow: hidden;
+  }
+
+  .content.route-home .music-home {
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1.08fr) minmax(0, 0.9fr) minmax(0, 0.62fr);
+  }
+
+  .content.route-home .music-hero {
+    grid-column: 1 / 9;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(34%, 0.9fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+  }
+
+  .content.route-home .pro-recommend {
+    grid-column: 9 / 14;
+    grid-row: 1;
+    display: grid;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-home .pro-status {
+    grid-column: 14 / 17;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .content.route-home .home-lab-grid {
+    grid-column: 1 / 9;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.1fr) minmax(0, 0.8fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+  }
+
+  .content.route-home .review-home {
+    grid-column: 9 / 13;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-home .quick-tools {
+    grid-column: 13 / 17;
+    grid-row: 2;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-home .work-grid {
+    grid-column: 1 / 17;
+    grid-row: 3;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-home .badge-shelf {
+    display: none;
+  }
+
+  .content.route-home .hero-copy,
+  .content.route-home .hero-stage,
+  .content.route-home .hero-console,
+  .content.route-home .home-lab-panel,
+  .content.route-home .review-block,
+  .content.route-home .work-card,
+  .content.route-home .quick-tools > div {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-home .music-hero h1 {
+    font-size: clamp(1.38rem, 1.02rem + 1vw, 2.15rem);
+    line-height: 1.12;
+  }
+
+  .content.route-home .music-hero p,
+  .content.route-home .pro-recommend p,
+  .content.route-home .home-lab-panel p,
+  .content.route-home .quick-tools p,
+  .content.route-home .work-card p,
+  .content.route-home .review-list small {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+  }
+
+  .content.route-home .music-hero p {
+    -webkit-line-clamp: 3;
+  }
+
+  .content.route-home .pro-recommend p,
+  .content.route-home .home-lab-panel p,
+  .content.route-home .quick-tools p {
+    -webkit-line-clamp: 2;
+  }
+
+  .content.route-home .work-card p,
+  .content.route-home .review-list small {
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-home .hero-stage,
+  .content.route-home .hero-console {
+    height: 100%;
+  }
+
+  .content.route-home .hero-console {
+    padding: clamp(10px, 0.8vw, 16px);
+  }
+
+  .content.route-home .hero-wave {
+    height: clamp(42px, 7vh, 84px);
+  }
+
+  .content.route-home .hero-status-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .content.route-home .pro-kpi {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-home .pro-kpi b {
+    font-size: clamp(1.15rem, 0.9rem + 0.7vw, 1.75rem);
+  }
+
+  .content.route-home .work-card {
+    gap: 5px;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-home .work-card h3 {
+    font-size: clamp(0.95rem, 0.84rem + 0.28vw, 1.2rem);
+  }
+
+  .content.route-home .quick-tools > div:last-child {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    overflow: auto;
+  }
+
+  .content.route-home .quick-tools button,
+  .content.route-home .hero-actions button,
+  .content.route-home .pro-actions button {
+    min-height: clamp(32px, 4.4vh, 42px);
+    padding: 7px 10px;
+  }
+
+  .content.route-course .course-page,
+  .content.route-adventure .adventure-page {
+    grid-template-rows: minmax(76px, 0.28fr) minmax(0, 1.72fr);
+  }
+
+  .content.route-course .course-head,
+  .content.route-adventure .course-head,
+  .content.route-lesson .lesson-hero,
+  .content.route-theory .theory-lab-head,
+  .content.route-training .training-head {
+    min-height: 0;
+    padding: var(--panel-pad);
+    overflow: hidden;
+  }
+
+  .content.route-course .course-head h2,
+  .content.route-adventure .course-head h2,
+  .content.route-lesson .lesson-hero h2,
+  .content.route-theory .theory-lab-head h2,
+  .content.route-training .training-head h2 {
+    font-size: var(--title-text);
+  }
+
+  .content.route-course .course-head p,
+  .content.route-adventure .course-head p,
+  .content.route-lesson .lesson-hero p,
+  .content.route-theory .theory-lab-head p,
+  .content.route-training .training-head p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.45;
+  }
+
+  .content.route-course .course-current,
+  .content.route-lesson .lesson-progress-card,
+  .content.route-theory .theory-count {
+    min-width: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-course .course-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.44fr) minmax(0, 1.56fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-list {
+    display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-tab {
+    gap: 10px;
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-course .course-tab small {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-course .lesson-board {
+    display: grid;
+    grid-template-rows: auto auto minmax(92px, 0.38fr) minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-lab-strip {
+    grid-template-columns: minmax(86px, 0.2fr) minmax(0, 0.8fr) minmax(0, 1fr);
+    gap: 10px;
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-course .lesson-flow {
+    display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .lesson-step {
+    grid-template-columns: clamp(30px, 2.6vw, 42px) minmax(0, 1fr) auto;
+    gap: 10px;
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-course .lesson-step p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.38;
+  }
+
+  .content.route-course .lesson-foot {
+    gap: 8px;
+    overflow: hidden;
+  }
+
+  .content.route-course .lesson-foot button {
+    min-height: clamp(34px, 4.2vh, 44px);
+    padding: 8px 12px;
+  }
+
+  .content.route-lesson .lesson-page {
+    grid-template-rows: minmax(72px, 0.24fr) minmax(96px, 0.34fr) minmax(0, 1.42fr);
+  }
+
+  .content.route-lesson .lesson-planner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.12fr) minmax(0, 0.88fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-select {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-lesson .lesson-select select {
+    min-height: clamp(34px, 4.4vh, 42px);
+    padding: 7px 10px;
+  }
+
+  .content.route-lesson .lesson-topic-brief {
+    min-height: 0;
+    padding: var(--compact-pad);
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-topic-brief p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.45;
+  }
+
+  .content.route-lesson .lesson-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.36fr) minmax(0, 1.64fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-steps {
+    position: static;
+    display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-steps button {
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-lesson .lesson-steps small {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .content.route-lesson .lesson-main {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+    gap: 12px;
+    overflow: hidden;
+  }
+
+  .content.route-lesson .lesson-section {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-lesson .lesson-main-head h3 {
+    font-size: clamp(1.1rem, 0.94rem + 0.42vw, 1.45rem);
+  }
+
+  .content.route-lesson .prompt-panel,
+  .content.route-lesson .concept-copy,
+  .content.route-lesson .demo-board,
+  .content.route-lesson .lesson-card-grid > div,
+  .content.route-lesson .lesson-summary > div,
+  .content.route-lesson .lesson-quiz-card {
+    padding: var(--compact-pad);
+  }
+
+  .content.route-lesson .lesson-card-grid,
+  .content.route-lesson .lesson-quiz-list,
+  .content.route-lesson .lesson-summary {
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 30%), 1fr));
+    gap: 8px;
+  }
+
+  .content.route-lesson .lesson-quiz-card {
+    min-height: 0;
+  }
+
+  .content.route-theory .theory-lab {
+    grid-template-rows: minmax(72px, 0.24fr) minmax(0, 1.76fr);
+  }
+
+  .content.route-theory .theory-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1.58fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-theory .theory-nav {
+    max-height: none;
+    min-height: 0;
+    gap: 10px;
+    overflow: hidden;
+  }
+
+  .content.route-theory .theory-cats {
+    gap: 6px;
+  }
+
+  .content.route-theory .theory-cats button {
+    padding: 6px 8px;
+    font-size: var(--tight-text);
+  }
+
+  .content.route-theory .topic-list {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-theory .topic-list button {
+    padding: 8px 10px;
+  }
+
+  .content.route-theory .topic-list small {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-theory .theory-main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.34fr) minmax(0, 0.66fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-theory .topic-panel,
+  .content.route-theory .apply-panel {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-theory .topic-title h2,
+  .content.route-theory .apply-panel h3 {
+    font-size: clamp(1.08rem, 0.9rem + 0.48vw, 1.52rem);
+  }
+
+  .content.route-theory .topic-explanation,
+  .content.route-theory .demo-control-head,
+  .content.route-theory .mini-quiz {
+    padding: var(--compact-pad);
+  }
+
+  .content.route-theory .lab-demo {
+    min-height: clamp(124px, 18vh, 220px);
+  }
+
+  .content.route-theory .lab-key {
+    min-height: clamp(82px, 13vh, 138px);
+  }
+
+  .content.route-theory .quiz-card {
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-training .training-page {
+    height: 100%;
+    max-height: none;
+    grid-template-rows: minmax(70px, 0.22fr) minmax(104px, 0.34fr) minmax(0, 1.44fr);
+    align-content: stretch;
+  }
+
+  .content.route-training .training-lab-strip {
+    grid-template-columns: minmax(0, 1fr) minmax(86px, 0.18fr) minmax(0, 0.78fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    padding: var(--panel-pad);
+    overflow: hidden;
+  }
+
+  .content.route-training .training-lab-strip h3 {
+    font-size: clamp(1rem, 0.86rem + 0.38vw, 1.35rem);
+  }
+
+  .content.route-training .training-lab-strip p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.42;
+  }
+
+  .content.route-training .training-workbench {
+    display: grid;
+    grid-template-columns: minmax(0, 0.42fr) minmax(0, 1.58fr);
+    gap: var(--stage-gap);
+    height: 100%;
+    min-height: 0;
+    align-items: stretch;
+    overflow: hidden;
+  }
+
+  .content.route-training .training-grid {
+    display: grid;
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-training .training-card {
+    gap: 6px;
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-training .training-card h3 {
+    font-size: clamp(0.94rem, 0.82rem + 0.28vw, 1.16rem);
+  }
+
+  .content.route-training .training-module-stage {
+    height: 100%;
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    gap: var(--stage-gap);
+    min-height: 0;
+    align-content: stretch;
+    overflow: hidden;
+  }
+
+  .content.route-training .training-stage-head h2 {
+    font-size: clamp(1.18rem, 0.92rem + 0.72vw, 1.85rem);
+  }
+
+  .content.route-training .training-stage-visuals {
+    grid-template-columns: minmax(104px, 0.28fr) minmax(0, 1fr);
+    gap: var(--stage-gap);
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-training .training-stage-spectrum .spectrum-bars {
+    min-height: clamp(86px, 18vh, 180px);
+  }
+
+  .content.route-training .training-stage-footer {
+    padding-top: 8px;
+  }
+
+  .content.route-dashboard .dashboard {
+    gap: var(--stage-gap);
+  }
+
+  .content.route-dashboard .dashboard.has-data {
+    grid-template-columns: minmax(0, 0.52fr) minmax(0, 1.58fr) minmax(0, 0.72fr);
+    grid-template-rows: minmax(82px, 0.26fr) minmax(150px, 0.58fr) minmax(0, 1.16fr);
+  }
+
+  .content.route-dashboard .dashboard.no-data {
+    grid-template-columns: minmax(0, 1.34fr) minmax(0, 0.66fr);
+    grid-template-rows: minmax(82px, 0.26fr) minmax(0, 1.74fr);
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-lab-head {
+    grid-column: 1 / 3;
+    grid-row: 1;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.46fr);
+  }
+
+  .content.route-dashboard .dashboard.has-data .kpi-row {
+    grid-column: 3;
+    grid-row: 1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-signal-board {
+    grid-column: 1;
+    grid-row: 2 / 4;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 10px;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid {
+    grid-column: 2;
+    grid-row: 2;
+    grid-template-columns: minmax(0, 1.24fr) minmax(0, 0.76fr);
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    min-height: 0;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-detail {
+    grid-column: 2;
+    grid-row: 3;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-table {
+    grid-column: 3;
+    grid-row: 2 / 4;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-dashboard .dash-lab-head,
+  .content.route-dashboard .dash-signal-board,
+  .content.route-dashboard .dash-grid,
+  .content.route-dashboard .dash-detail,
+  .content.route-dashboard .dash-table,
+  .content.route-dashboard .dash-empty {
+    min-height: 0;
+    padding: var(--panel-pad);
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .dash-lab-copy h2 {
+    font-size: clamp(1.1rem, 0.9rem + 0.56vw, 1.58rem);
+  }
+
+  .content.route-dashboard .dash-lab-copy p,
+  .content.route-dashboard .dash-signal-copy p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.42;
+  }
+
+  .content.route-dashboard .kpi {
+    gap: 8px;
+    min-height: 0;
+    padding: var(--compact-pad);
+  }
+
+  .content.route-dashboard .kpi-icon {
+    width: clamp(34px, 3.2vw, 52px);
+    height: clamp(34px, 3.2vw, 52px);
+    font-size: clamp(1.1rem, 0.86rem + 0.62vw, 1.65rem);
+  }
+
+  .content.route-dashboard .kpi-val {
+    font-size: clamp(1.1rem, 0.9rem + 0.6vw, 1.75rem);
+  }
+
+  .content.route-dashboard .dash-grid .dash-panel {
+    padding: var(--compact-pad);
+    overflow: hidden;
+  }
+
+  .content.route-dashboard .detail-body {
+    display: grid;
+    grid-template-columns: minmax(112px, 0.36fr) minmax(0, 1fr);
+    gap: 12px;
+    min-height: 0;
+  }
+
+  .content.route-dashboard .detail-radar svg {
+    width: clamp(118px, 10vw, 168px);
+    height: clamp(118px, 10vw, 168px);
+  }
+
+  .content.route-dashboard .detail-stats {
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .content.route-dashboard .dash-table th,
+  .content.route-dashboard .dash-table td {
+    padding: 8px 10px;
+  }
+
+  .content.route-library .library {
+    grid-template-rows: auto auto minmax(0, 1fr);
+  }
+
+  .content.route-library .song-grid,
+  .content.route-library .encyclopedia-grid,
+  .content.route-class .roster-grid {
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-adventure .map-track {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--stage-gap);
+    min-height: 0;
+  }
+
+  .content.route-adventure .station {
+    min-height: 0;
+    padding: var(--panel-pad);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content {
+    --stage-gap: clamp(12px, 0.72vw, 18px);
+    --panel-pad: clamp(14px, 0.86vw, 20px);
+  }
+
+  .content.route-home .music-home {
+    grid-template-rows: minmax(0, 1.05fr) minmax(0, 0.9fr) minmax(0, 0.7fr);
+  }
+
+  .content.route-course .lesson-board {
+    grid-template-rows: auto auto minmax(116px, 0.42fr) minmax(0, 1fr) auto;
+  }
+
+  .content.route-training .training-page {
+    height: 100%;
+    grid-template-rows: minmax(82px, 0.24fr) minmax(122px, 0.36fr) minmax(0, 1.4fr);
+    align-content: stretch;
+  }
+}
+
+/* ===== Proportional layout polish: remove accidental empty zones ===== */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content.route-home .pro-recommend {
+    position: relative;
+    isolation: isolate;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-home .pro-recommend::after {
+    content: '';
+    grid-column: 1;
+    grid-row: 2;
+    align-self: stretch;
+    border-radius: 8px;
+    background:
+      linear-gradient(90deg, rgba(93, 107, 255, 0.08), rgba(20, 200, 184, 0.08)),
+      repeating-linear-gradient(0deg, transparent 0 16px, rgba(0, 164, 216, 0.1) 16px 17px),
+      repeating-linear-gradient(90deg, transparent 0 42px, rgba(255, 181, 71, 0.12) 42px 44px);
+    opacity: 0.72;
+  }
+
+  .content.route-home .pro-actions {
+    z-index: 1;
+    grid-column: 1;
+    grid-row: 2;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-self: end;
+    gap: 8px;
+  }
+
+  .content.route-course .lesson-board {
+    grid-template-rows: auto auto auto minmax(88px, 0.34fr) minmax(0, 1fr) auto;
+  }
+
+  .content.route-course .course-focus {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-course .course-focus span {
+    padding: 6px 9px;
+  }
+
+  .content.route-course .lesson-flow {
+    overflow: hidden;
+  }
+
+  .content.route-course .lesson-step {
+    min-height: 0;
+    padding: clamp(7px, 0.52vw, 11px);
+  }
+
+  .content.route-course .lesson-step h3 {
+    margin-bottom: 2px;
+  }
+
+  .content.route-course .lesson-step p {
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board,
+  .content.route-dashboard .dashboard.no-data .dash-empty {
+    height: 100%;
+    align-self: stretch;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: var(--stage-gap);
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board::after {
+    content: '';
+    position: absolute;
+    inset: clamp(64px, 10vh, 120px) clamp(18px, 2vw, 34px);
+    border-radius: 8px;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 19px, rgba(0, 164, 216, 0.08) 19px 20px),
+      repeating-linear-gradient(90deg, transparent 0 48px, rgba(255, 181, 71, 0.1) 48px 50px);
+    opacity: 0.72;
+    pointer-events: none;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-copy {
+    grid-column: 1 / -1;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-spectrum,
+  .content.route-dashboard .dashboard.no-data .dash-trend-mini {
+    min-height: 0;
+    height: auto;
+    align-self: center;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-spectrum {
+    display: grid;
+    align-items: center;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-spectrum .spectrum-bars,
+  .content.route-dashboard .dashboard.no-data .dash-trend-mini .spectrum-bars {
+    min-height: clamp(94px, 16vh, 150px);
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-trend-mini {
+    display: grid;
+    align-content: center;
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-empty {
+    justify-content: center;
+  }
+
+  .content.route-training .training-page {
+    grid-template-rows: minmax(84px, 0.26fr) minmax(104px, 0.32fr) minmax(0, 1.42fr);
+  }
+
+  .content.route-training .training-head p {
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-lesson .lesson-layout {
+    align-items: stretch;
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content.route-course .lesson-board {
+    grid-template-rows: auto auto auto minmax(112px, 0.38fr) minmax(0, 1fr) auto;
+  }
+
+  .content.route-course .lesson-step p,
+  .content.route-training .training-head p {
+    -webkit-line-clamp: 2;
+  }
+}
+
+/* ===== Graphic fill pass: use visuals to absorb sparse card space ===== */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content .spectrum-bars {
+    align-self: stretch;
+    min-height: clamp(126px, 20vh, 230px);
+  }
+
+  .content .spectrum-bars.compact {
+    min-height: clamp(96px, 15vh, 170px);
+  }
+
+  .content .spectrum-bar {
+    width: min(64%, clamp(24px, 2.7vw, 46px));
+    min-height: clamp(22px, 4.4vh, 54px);
+  }
+
+  .content .spectrum-bars.compact .spectrum-bar {
+    width: min(58%, clamp(18px, 2vw, 34px));
+    min-height: clamp(18px, 3.6vh, 42px);
+  }
+
+  .content .chart {
+    display: block;
+    min-height: clamp(130px, 22vh, 260px);
+  }
+
+  .content.route-home .spectrum-panel,
+  .content.route-home .command-panel,
+  .content.route-home .growth-panel,
+  .content.route-training .training-lab-strip,
+  .content.route-training .training-module-stage,
+  .content.route-dashboard .dash-signal-board,
+  .content.route-dashboard .dash-panel,
+  .content.route-course .course-lab-strip {
+    container-type: size;
+  }
+
+  .content.route-home .spectrum-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-home .spectrum-panel .spectrum-bars {
+    min-height: clamp(116px, 20cqh, 210px);
+    padding-top: clamp(8px, 1cqh, 14px);
+  }
+
+  .content.route-home .command-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-home .command-panel-head {
+    align-items: center;
+  }
+
+  .content.route-home .command-panel-head .progress-ring,
+  .content.route-home .growth-node b,
+  .content.route-home .pro-kpi b {
+    transform-origin: center;
+  }
+
+  .content.route-home .command-panel-head .progress-ring {
+    width: clamp(112px, 16cqw, 148px) !important;
+    height: clamp(112px, 16cqw, 148px) !important;
+  }
+
+  .content.route-home .lesson-flow-mini {
+    align-content: stretch;
+  }
+
+  .content.route-home .lesson-flow-mini button {
+    min-height: clamp(58px, 8.2cqh, 88px);
+  }
+
+  .content.route-home .growth-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-home .growth-track-mini {
+    align-items: center;
+    min-height: 0;
+  }
+
+  .content.route-home .growth-node {
+    min-height: clamp(74px, 18cqh, 126px);
+  }
+
+  .content.route-home .growth-node b {
+    font-size: clamp(1.5rem, 6cqw, 2.35rem);
+  }
+
+  .content.route-home .pro-status {
+    container-type: size;
+  }
+
+  .content.route-home .pro-kpi {
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(239, 250, 255, 0.72)),
+      repeating-linear-gradient(90deg, transparent 0 13px, rgba(20, 200, 184, 0.14) 13px 20px);
+  }
+
+  .content.route-home .pro-kpi b {
+    font-size: clamp(1.55rem, 16cqw, 2.5rem);
+  }
+
+  .content.route-home .hero-wave i {
+    width: clamp(9px, 1.2cqw, 18px);
+  }
+
+  .content.route-course .course-lab-strip {
+    align-items: stretch;
+  }
+
+  .content.route-course .course-lab-strip .progress-ring {
+    width: clamp(116px, 14cqw, 162px) !important;
+    height: clamp(116px, 14cqw, 162px) !important;
+    align-self: center;
+  }
+
+  .content.route-course .course-spectrum-block {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-course .course-spectrum-block .spectrum-bars {
+    min-height: clamp(92px, 18cqh, 166px);
+  }
+
+  .content.route-course .course-node-preview {
+    align-self: stretch;
+    align-items: center;
+  }
+
+  .content.route-course .course-node-preview b {
+    width: clamp(38px, 5cqw, 58px);
+    height: clamp(38px, 5cqw, 58px);
+    font-size: clamp(0.95rem, 1.2cqw, 1.35rem);
+  }
+
+  .content.route-training .training-lab-strip .progress-ring {
+    width: clamp(102px, 9vw, 146px) !important;
+    height: clamp(102px, 9vw, 146px) !important;
+    align-self: center;
+  }
+
+  .content.route-training .training-lab-strip .spectrum-bars {
+    min-height: clamp(92px, 18cqh, 168px);
+  }
+
+  .content.route-training .training-stage-visuals {
+    grid-template-columns: minmax(142px, 0.36fr) minmax(0, 1fr);
+  }
+
+  .content.route-training .training-stage-visuals .progress-ring {
+    width: clamp(148px, 17vw, 240px) !important;
+    height: clamp(148px, 17vw, 240px) !important;
+  }
+
+  .content.route-training .training-stage-spectrum {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
+  }
+
+  .content.route-training .training-stage-spectrum .spectrum-bars {
+    min-height: clamp(150px, 32cqh, 270px);
+  }
+
+  .content.route-dashboard .dash-signal-board {
+    align-items: stretch;
+  }
+
+  .content.route-dashboard .dash-signal-board .spectrum-bars {
+    min-height: clamp(150px, 28cqh, 270px);
+  }
+
+  .content.route-dashboard .dash-trend-mini .spectrum-bars.compact {
+    min-height: clamp(96px, 16cqh, 160px);
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board {
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-signal-board::after {
+    inset: clamp(48px, 7vh, 82px) clamp(18px, 2vw, 34px);
+  }
+
+  .content.route-dashboard .dashboard.no-data .dash-spectrum .spectrum-bars,
+  .content.route-dashboard .dashboard.no-data .dash-trend-mini .spectrum-bars {
+    min-height: clamp(190px, 42cqh, 340px);
+  }
+
+  .content.route-dashboard .dashboard.no-data .spectrum-bar {
+    width: min(70%, clamp(30px, 4.2vw, 70px));
+    min-height: clamp(42px, 11vh, 118px);
+  }
+
+  .content.route-dashboard .dash-grid .dash-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .content.route-dashboard .dash-grid .chart {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  .content.route-dashboard .dash-grid .donut-wrap {
+    height: 100%;
+    align-content: center;
+    gap: clamp(10px, 1.2vw, 22px);
+  }
+
+  .content.route-dashboard .dash-grid .donut {
+    width: clamp(128px, 14cqw, 220px);
+    height: clamp(128px, 14cqw, 220px);
+  }
+
+  .content.route-dashboard .detail-radar svg {
+    width: clamp(150px, 15cqw, 230px);
+    height: clamp(150px, 15cqw, 230px);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content.route-dashboard .dashboard.no-data .dash-spectrum .spectrum-bars,
+  .content.route-dashboard .dashboard.no-data .dash-trend-mini .spectrum-bars {
+    min-height: clamp(240px, 44cqh, 430px);
+  }
+
+  .content.route-training .training-stage-visuals .progress-ring {
+    width: clamp(180px, 14vw, 270px) !important;
+    height: clamp(180px, 14vw, 270px) !important;
+  }
+}
+
+/* ===== Graphic fill guardrails: keep enlarged visuals inside short strips ===== */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content.route-course .lesson-board {
+    grid-template-rows: auto auto auto minmax(108px, 0.36fr) minmax(0, 1fr) auto;
+  }
+
+  .content.route-course .course-lab-strip {
+    overflow: hidden;
+  }
+
+  .content.route-course .course-lab-strip .progress-ring {
+    width: clamp(86px, 9cqw, 112px) !important;
+    height: clamp(86px, 9cqw, 112px) !important;
+  }
+
+  .content.route-course .course-spectrum-block .spectrum-bars {
+    min-height: clamp(76px, 13cqh, 108px);
+  }
+
+  .content.route-course .course-spectrum-block .spectrum-bar {
+    min-height: clamp(24px, 5cqh, 44px);
+  }
+
+  .content.route-course .course-node-preview b {
+    width: clamp(32px, 3.6cqw, 44px);
+    height: clamp(32px, 3.6cqw, 44px);
+  }
+
+  .content.route-course .lesson-flow {
+    gap: 7px;
+  }
+
+  .content.route-course .lesson-step {
+    padding: 6px 9px;
+  }
+
+  .content.route-course .lesson-foot {
+    min-height: 0;
+  }
+
+  .content.route-course .lesson-foot button {
+    min-height: 32px;
+    padding: 7px 12px;
+  }
+
+  .content.route-training .training-page {
+    grid-template-rows: minmax(84px, 0.24fr) minmax(124px, 0.36fr) minmax(0, 1.4fr);
+  }
+
+  .content.route-training .training-lab-strip {
+    padding-block: clamp(8px, 0.72vh, 12px);
+  }
+
+  .content.route-training .training-lab-strip .progress-ring {
+    width: clamp(76px, 6.6vw, 98px) !important;
+    height: clamp(76px, 6.6vw, 98px) !important;
+  }
+
+  .content.route-training .training-lab-strip .spectrum-bars {
+    min-height: clamp(66px, 12cqh, 102px);
+  }
+
+  .content.route-training .training-lab-strip .spectrum-bar {
+    min-height: clamp(20px, 4cqh, 38px);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content.route-course .lesson-board {
+    grid-template-rows: auto auto auto minmax(132px, 0.42fr) minmax(0, 1fr) auto;
+  }
+
+  .content.route-training .training-page {
+    grid-template-rows: minmax(86px, 0.22fr) minmax(142px, 0.36fr) minmax(0, 1.42fr);
+  }
+}
+
+/* ===== Card density balance pass ===== */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content.route-adventure .adventure-page {
+    grid-template-rows: minmax(86px, 0.24fr) minmax(72px, 0.2fr) minmax(0, 0.78fr) minmax(0, 0.78fr);
+  }
+
+  .content.route-adventure .course-head,
+  .content.route-adventure .call-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: var(--stage-gap);
+    align-items: center;
+    overflow: hidden;
+  }
+
+  .content.route-adventure .course-head h2,
+  .content.route-adventure .call-panel h3 {
+    margin-bottom: 2px;
+    font-size: clamp(1.08rem, 0.92rem + 0.45vw, 1.45rem);
+    line-height: 1.12;
+  }
+
+  .content.route-adventure .course-head p,
+  .content.route-adventure .call-panel p {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-height: 1.38;
+  }
+
+  .content.route-adventure .map-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(74px, 1fr));
+    gap: 8px;
+  }
+
+  .content.route-adventure .map-summary div {
+    min-width: 0;
+    padding: 8px 10px;
+  }
+
+  .content.route-adventure .map-summary b {
+    font-size: clamp(1.05rem, 0.92rem + 0.4vw, 1.35rem);
+  }
+
+  .content.route-adventure .quest-reward {
+    margin-top: 5px;
+    padding: 5px 9px;
+    font-size: var(--tight-text);
+  }
+
+  .content.route-adventure .call-actions {
+    gap: 8px;
+  }
+
+  .content.route-adventure .call-actions button {
+    min-height: 34px;
+    padding: 7px 12px;
+  }
+
+  .content.route-adventure .map-track.quest-track {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    gap: 8px;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-adventure .station {
+    gap: 6px;
+    min-height: 0;
+    padding: 10px;
+  }
+
+  .content.route-adventure .station-icon {
+    width: clamp(34px, 3vw, 48px);
+    height: clamp(34px, 3vw, 48px);
+    font-size: clamp(1.1rem, 0.9rem + 0.55vw, 1.55rem);
+  }
+
+  .content.route-adventure .station h3 {
+    font-size: clamp(0.9rem, 0.82rem + 0.18vw, 1.04rem);
+    line-height: 1.2;
+  }
+
+  .content.route-adventure .station p,
+  .content.route-adventure .station small,
+  .content.route-adventure .station-skill {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-height: 1.3;
+  }
+
+  .content.route-adventure .station-skill {
+    margin-top: auto;
+    padding: 5px 8px;
+    font-size: var(--tight-text);
+  }
+
+  .content.route-adventure .quest-topic-panel {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-adventure .quest-topic-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .content.route-adventure .quest-topic-grid button {
+    min-height: 0;
+    padding: 10px;
+  }
+
+  .content.route-adventure .quest-topic-grid span {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-class .roster {
+    grid-template-rows: auto auto minmax(0, 1fr);
+    align-content: start;
+  }
+
+  .content.route-class .roster-add {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 10px 16px;
+    align-items: center;
+    padding: var(--panel-pad);
+  }
+
+  .content.route-class .roster-add h3 {
+    margin: 0;
+  }
+
+  .content.route-class .add-row {
+    min-width: 0;
+  }
+
+  .content.route-class .avatar-choices {
+    max-width: min(44vw, 520px);
+  }
+
+  .content.route-class .data-tools {
+    margin: 0;
+    padding: 0;
+    border-top: 0;
+    justify-content: flex-end;
+  }
+
+  .content.route-class .class-notice {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  .content.route-class .roster-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 240px));
+    grid-auto-rows: auto;
+    align-content: start;
+    align-items: start;
+    gap: var(--stage-gap);
+    min-height: 0;
+    overflow: auto;
+  }
+
+  .content.route-class .stu-card {
+    display: grid;
+    gap: 10px;
+    min-height: 0;
+    padding: 12px;
+  }
+
+  .content.route-class .stu-card-stats {
+    margin: 0;
+  }
+
+  .content.route-dashboard .dashboard.no-data {
+    grid-template-columns: minmax(0, 1.42fr) minmax(320px, 0.58fr);
+  }
+
+  .content.route-dashboard .dash-empty {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    align-content: center;
+    gap: clamp(14px, 2vh, 24px);
+    text-align: left;
+  }
+
+  .content.route-dashboard .dash-empty-main {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+  }
+
+  .content.route-dashboard .dash-empty-icon {
+    display: grid;
+    width: clamp(54px, 5vw, 78px);
+    height: clamp(54px, 5vw, 78px);
+    place-items: center;
+    border-radius: 8px;
+    background:
+      linear-gradient(135deg, rgba(93, 107, 255, 0.12), rgba(20, 200, 184, 0.12)),
+      var(--bg-soft);
+    font-size: clamp(2rem, 2.6vw, 3rem);
+  }
+
+  .content.route-dashboard .dash-empty-main p {
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  .content.route-dashboard .dash-empty-steps {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .content.route-dashboard .dash-empty-steps span {
+    display: grid;
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--bg-soft);
+    color: var(--text);
+    font-weight: 850;
+  }
+
+  .content.route-dashboard .dash-empty-steps b {
+    display: grid;
+    width: 28px;
+    height: 28px;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .content.route-dashboard .dash-empty-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .content.route-dashboard .dash-empty-actions button {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .content.route-theory .theory-layout {
+    grid-template-columns: minmax(260px, 0.48fr) minmax(0, 1.52fr);
+  }
+
+  .content.route-theory .theory-nav {
+    padding: 12px;
+  }
+
+  .content.route-theory .topic-list button {
+    display: grid;
+    gap: 2px;
+  }
+
+  .content.route-theory .topic-list b {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.route-theory .topic-list small {
+    white-space: nowrap;
+  }
+
+  .content.route-home .pro-recommend::after,
+  .content.route-home .quick-tools::after {
+    pointer-events: none;
+  }
+
+  .content.route-home .quick-tools {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .content.route-home .quick-tools::after {
+    content: '';
+    position: absolute;
+    inset: clamp(56px, 8vh, 96px) 12px 12px;
+    z-index: -1;
+    border-radius: 8px;
+    background:
+      repeating-linear-gradient(0deg, transparent 0 18px, rgba(93, 107, 255, 0.08) 18px 19px),
+      repeating-linear-gradient(90deg, transparent 0 36px, rgba(20, 200, 184, 0.11) 36px 38px);
+    opacity: 0.78;
+  }
+
+  .content.route-home .quick-tools > div:last-child {
+    align-content: center;
+  }
+
+  .content.route-drums .instrument-wrap {
+    grid-template-rows: auto minmax(170px, 0.74fr) minmax(0, 1.26fr);
+  }
+
+  .content.route-drums .drum-kit.compact {
+    align-content: center;
+    min-height: 0;
+  }
+
+  .content.route-drums .drum-kit.compact .drum-pad {
+    width: clamp(116px, 8.2vw, 160px);
+    height: clamp(116px, 8.2vw, 160px);
+  }
+
+  .content.route-drums .sequencer {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    min-height: 0;
+    padding: clamp(14px, 1.1vw, 22px);
+  }
+
+  .content.route-drums .seq-grid {
+    display: grid;
+    grid-template-rows: repeat(3, minmax(0, 1fr));
+    min-height: 0;
+  }
+
+  .content.route-drums .seq-row {
+    min-height: 0;
+  }
+
+  .content.route-drums .seq-cell {
+    height: 100%;
+    min-height: clamp(42px, 6vh, 76px);
+  }
+
+  .content.route-mixer .mixer {
+    grid-template-rows: minmax(64px, auto) minmax(64px, auto) minmax(18px, auto) minmax(0, 1fr);
+    display: grid;
+  }
+
+  .content.route-mixer .mix-transport,
+  .content.route-mixer .mix-toolbar2 {
+    min-height: 0;
+    padding: clamp(12px, 0.9vw, 18px);
+  }
+
+  .content.route-mixer .mix-tracks {
+    min-height: 0;
+    overflow: hidden;
+    justify-content: stretch;
+  }
+
+  .content.route-mixer .mix-track {
+    flex: 1;
+    min-height: clamp(72px, 10vh, 126px);
+  }
+
+  .content.route-mixer .mix-cell {
+    height: 100%;
+    min-height: clamp(44px, 6vh, 82px);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content.route-adventure .adventure-page {
+    grid-template-rows: minmax(90px, 0.22fr) minmax(84px, 0.2fr) minmax(0, 0.82fr) minmax(0, 0.76fr);
+  }
+
+  .content.route-adventure .quest-topic-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+
+  .content.route-class .roster-grid {
+    grid-template-columns: repeat(auto-fill, minmax(230px, 260px));
+  }
+
+  .content.route-dashboard .dash-empty-steps {
+    gap: 10px;
+  }
+}
+
+/* ===== Final card density tuning: balance cramped and sparse panels ===== */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content.route-adventure .adventure-page {
+    grid-template-rows: minmax(82px, 0.19fr) minmax(84px, 0.2fr) minmax(0, 0.96fr) minmax(0, 0.65fr);
+  }
+
+  .content.route-adventure .map-track.quest-track {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .content.route-adventure .station {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto minmax(6px, auto) auto;
+    align-content: center;
+    justify-items: start;
+    gap: 5px;
+    padding: clamp(8px, 0.7vw, 12px);
+    overflow: hidden;
+  }
+
+  .content.route-adventure .station-icon {
+    width: clamp(38px, 3.5vw, 54px);
+    height: clamp(38px, 3.5vw, 54px);
+    font-size: clamp(1.2rem, 1vw + 0.72rem, 1.65rem);
+  }
+
+  .content.route-adventure .station-index {
+    top: 12px;
+    right: 14px;
+    font-size: clamp(0.9rem, 0.75rem + 0.35vw, 1.15rem);
+  }
+
+  .content.route-adventure .station h3 {
+    width: 100%;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.route-adventure .station p,
+  .content.route-adventure .station-skill {
+    display: none;
+  }
+
+  .content.route-adventure .call-panel p {
+    display: none;
+  }
+
+  .content.route-adventure .station-progress {
+    width: 100%;
+    height: 7px;
+    margin-top: 2px;
+  }
+
+  .content.route-adventure .station small {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    color: var(--text-soft);
+    font-size: clamp(0.72rem, 0.66rem + 0.12vw, 0.82rem);
+    font-weight: 800;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.route-adventure .quest-topic-panel {
+    gap: 8px;
+    padding: clamp(12px, 0.95vw, 16px);
+  }
+
+  .content.route-adventure .quest-topic-panel h3 {
+    margin: 2px 0 0;
+    font-size: clamp(1rem, 0.88rem + 0.3vw, 1.24rem);
+    line-height: 1.18;
+  }
+
+  .content.route-adventure .quest-topic-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-rows: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .content.route-adventure .quest-topic-grid button {
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: center;
+    gap: 4px;
+    min-height: 0;
+    padding: clamp(8px, 0.72vw, 12px);
+    overflow: hidden;
+  }
+
+  .content.route-adventure .quest-topic-grid b,
+  .content.route-adventure .quest-topic-grid small {
+    overflow: hidden;
+    line-height: 1.22;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.route-adventure .quest-topic-grid span {
+    display: none;
+  }
+
+  .content.route-adventure .lesson-foot {
+    margin-top: 0;
+    gap: 10px;
+  }
+
+  .content.route-adventure .lesson-foot button {
+    min-height: 40px;
+  }
+
+  .content.route-theory .topic-list button {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 44px;
+    padding: 8px 10px;
+  }
+
+  .content.route-theory .topic-list small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .content.route-home .work-card {
+    align-content: center;
+  }
+
+  .content.route-home .work-card p,
+  .content.route-home .review-list small {
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-home .quick-tools > div:last-child {
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  }
+
+  .content.route-mixer .mix-tracks {
+    display: grid;
+    grid-template-rows: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: minmax(0, 1fr);
+    align-content: stretch;
+    gap: clamp(7px, 0.7vh, 10px);
+  }
+
+  .content.route-mixer .mix-track {
+    min-height: 0;
+    padding-block: clamp(8px, 0.8vh, 12px);
+  }
+
+  .content.route-mixer .mix-cell {
+    min-height: clamp(52px, 7.6vh, 96px);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 900px) {
+  .content.route-adventure .adventure-page {
+    grid-template-rows: minmax(90px, 0.2fr) minmax(82px, 0.18fr) minmax(0, 0.96fr) minmax(0, 0.66fr);
+  }
+
+  .content.route-adventure .station {
+    grid-template-rows: auto auto auto minmax(8px, auto) auto auto;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .content.route-adventure .station-icon {
+    width: clamp(62px, 4.7vw, 86px);
+    height: clamp(62px, 4.7vw, 86px);
+    font-size: clamp(1.8rem, 1.25rem + 1vw, 2.45rem);
+  }
+
+  .content.route-adventure .call-panel p {
+    display: -webkit-box;
+  }
+
+  .content.route-adventure .station p,
+  .content.route-adventure .station-skill {
+    display: -webkit-box;
+    width: 100%;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    line-height: 1.25;
+  }
+
+  .content.route-adventure .station p {
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-adventure .station-skill {
+    margin-top: 0;
+    -webkit-line-clamp: 1;
+  }
+
+  .content.route-adventure .station-progress {
+    max-width: 82%;
+  }
+
+  .content.route-adventure .quest-topic-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+  }
+
+  .content.route-adventure .quest-topic-grid button {
+    grid-template-rows: auto auto auto;
+    align-content: center;
+  }
+
+  .content.route-adventure .quest-topic-grid span {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 1.32;
+  }
+}

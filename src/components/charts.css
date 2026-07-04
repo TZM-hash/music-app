@@ -3,6 +3,29 @@
   height: auto;
   overflow: visible;
 }
+.chart-grid {
+  stroke: rgba(101, 112, 134, 0.18);
+  stroke-width: 0.35;
+  stroke-dasharray: 1.4 1.6;
+}
+.chart-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: chartRise 0.58s var(--motion, ease) both;
+}
+.chart-area {
+  transform-origin: center bottom;
+  animation: chartFade 0.55s ease both;
+}
+.chart-line {
+  stroke-dasharray: 180;
+  stroke-dashoffset: 180;
+  animation: chartTrace 0.8s ease forwards;
+}
+.chart-dot {
+  opacity: 0;
+  animation: chartFade 0.35s ease forwards 0.45s;
+}
 .chart-x {
   font-size: 2.4px;
   fill: var(--text-soft);
@@ -51,12 +74,163 @@
   height: 12px;
   border-radius: 3px;
 }
+.donut-segment {
+  transition: stroke-width 0.18s ease, opacity 0.18s ease;
+}
+.donut:hover .donut-segment {
+  stroke-width: 16;
+}
 .radar {
   display: block;
   margin: 0 auto;
+}
+.radar-shape {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: radarBloom 0.7s ease both;
 }
 .radar-label {
   font-size: 4px;
   fill: var(--text-soft);
   font-weight: 700;
+}
+
+.progress-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.88) 0 52%, transparent 53%),
+    conic-gradient(var(--ring-color) var(--ring-value), rgba(101, 112, 134, 0.14) 0);
+  box-shadow: var(--shadow-soft);
+}
+.progress-ring::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+}
+.progress-ring-core {
+  position: relative;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.progress-ring-core b {
+  color: var(--text);
+  font-size: 1.35rem;
+  line-height: 1;
+}
+.progress-ring-core span {
+  margin-top: 4px;
+  color: var(--text-soft);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+.progress-ring > small {
+  position: absolute;
+  right: -8px;
+  bottom: 8px;
+  padding: 4px 7px;
+  border-radius: 8px;
+  background: var(--bg-panel);
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  font-weight: 900;
+  box-shadow: var(--shadow-soft);
+}
+
+.spectrum-bars {
+  display: grid;
+  min-height: 150px;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(20px, 1fr);
+  align-items: end;
+  gap: 10px;
+}
+.spectrum-bars.compact {
+  min-height: 88px;
+  gap: 6px;
+}
+.spectrum-bar-wrap {
+  display: grid;
+  min-width: 0;
+  height: 100%;
+  grid-template-rows: 1fr auto;
+  align-items: end;
+  justify-items: center;
+  gap: 7px;
+}
+.spectrum-bar {
+  display: block;
+  width: min(100%, 24px);
+  height: var(--bar-height);
+  min-height: 12px;
+  border-radius: 999px 999px 7px 7px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bar-color) 86%, white), var(--bar-color));
+  box-shadow: 0 12px 22px color-mix(in srgb, var(--bar-color) 22%, transparent);
+  animation: spectrumLift 1.7s ease-in-out infinite;
+}
+.spectrum-bars.compact .spectrum-bar {
+  width: min(100%, 16px);
+}
+.spectrum-bar-wrap small {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes chartRise {
+  from {
+    transform: scaleY(0.06);
+    opacity: 0.45;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes chartTrace {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes chartFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes radarBloom {
+  from {
+    transform: scale(0.74);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes spectrumLift {
+  0%, 100% {
+    transform: scaleY(0.82);
+    opacity: 0.76;
+  }
+  50% {
+    transform: scaleY(1.05);
+    opacity: 1;
+  }
 }

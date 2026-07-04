@@ -1,7 +1,10 @@
 import { useMemo, useState } from 'react'
 import { Route, useApp } from '../state/appState'
+import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
 import { THEORY_STAGES, TheoryStageId, filterTheoryTopics } from '../music/theoryCatalog'
+import { ProgressRing, SpectrumBars } from '../components/Charts'
+import '../components/charts.css'
 import './course.css'
 
 interface LessonStep {
@@ -127,6 +130,13 @@ export default function CourseCenter() {
   )
   const activeTopics = filterTheoryTopics({ stage: active.id })
   const stageLabel = THEORY_STAGES.find((stage) => stage.id === active.id)?.label ?? active.stage
+  const progress = loadProgress()
+  const completedTopics = activeTopics.filter((topic) => (progress.bestScores[`theory-${topic.id}`] ?? 0) > 0).length
+  const categorySignals = active.categories.map((category) => ({
+    label: category.slice(0, 2),
+    value: activeTopics.filter((topic) => topic.category === category).length,
+    color: active.color,
+  }))
   const goTheoryForActiveStage = () => openTheory({ stage: active.id })
 
   return (
@@ -190,6 +200,28 @@ export default function CourseCenter() {
             {active.categories.map((category) => (
               <span key={category}>{category}</span>
             ))}
+          </div>
+
+          <div className="course-lab-strip">
+            <ProgressRing
+              value={completedTopics / Math.max(1, activeTopics.length)}
+              label="阶段进度"
+              caption={`${completedTopics}/${activeTopics.length}`}
+              color={active.color}
+              size={106}
+            />
+            <div className="course-spectrum-block">
+              <b>知识类别声谱</b>
+              <SpectrumBars values={categorySignals} compact />
+            </div>
+            <div className="course-node-preview">
+              {active.steps.slice(0, 4).map((step, index) => (
+                <span key={step.title}>
+                  <b>{index + 1}</b>
+                  {step.title}
+                </span>
+              ))}
+            </div>
           </div>
 
           <div className="lesson-flow">

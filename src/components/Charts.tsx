@@ -1,4 +1,6 @@
-// 纯 SVG 图表组件：柱状图、折线图、环形图、雷达图（无第三方依赖）
+import type { CSSProperties } from 'react'
+
+// 纯 SVG / CSS 图表组件：柱状图、折线图、环形图、雷达图与课堂声谱图（无第三方依赖）
 
 interface BarDatum {
   label: string
@@ -10,23 +12,36 @@ export function BarChart({ data, height = 200 }: { data: BarDatum[]; height?: nu
   const max = Math.max(1, ...data.map((d) => d.value))
   const barW = 100 / (data.length * 1.6)
   const gap = barW * 0.6
+  const chartH = height / 2
   return (
-    <svg viewBox={`0 0 100 ${height / 2}`} className="chart" preserveAspectRatio="none">
+    <svg viewBox={`0 0 100 ${chartH}`} className="chart" preserveAspectRatio="none">
+      {[0.25, 0.5, 0.75].map((tick) => (
+        <line
+          key={tick}
+          x1={0}
+          x2={100}
+          y1={chartH - 8 - tick * (chartH - 14)}
+          y2={chartH - 8 - tick * (chartH - 14)}
+          className="chart-grid"
+        />
+      ))}
       {data.map((d, i) => {
-        const h = (d.value / max) * (height / 2 - 14)
+        const h = (d.value / max) * (chartH - 14)
         const x = i * (barW + gap) + gap
-        const y = height / 2 - h - 8
+        const y = chartH - h - 8
         return (
           <g key={i}>
             <rect
+              className="chart-bar"
               x={x}
               y={y}
               width={barW}
               height={h}
               rx={1.2}
               fill={d.color ?? 'var(--primary)'}
+              style={{ animationDelay: `${i * 55}ms` }}
             />
-            <text x={x + barW / 2} y={height / 2 - 1} className="chart-x" textAnchor="middle">
+            <text x={x + barW / 2} y={chartH - 1} className="chart-x" textAnchor="middle">
               {d.label}
             </text>
             <text x={x + barW / 2} y={y - 1.5} className="chart-val" textAnchor="middle">
@@ -60,11 +75,21 @@ export function LineChart({
   const area = `${path} L100,${H - 6} L0,${H - 6} Z`
   return (
     <svg viewBox={`0 0 100 ${H}`} className="chart" preserveAspectRatio="none">
-      <path d={area} fill="var(--primary)" opacity={0.15} />
-      <path d={path} fill="none" stroke="var(--primary)" strokeWidth={1.2} />
+      {[0.25, 0.5, 0.75].map((tick) => (
+        <line
+          key={tick}
+          x1={0}
+          x2={100}
+          y1={H - 10 - tick * (H - 18)}
+          y2={H - 10 - tick * (H - 18)}
+          className="chart-grid"
+        />
+      ))}
+      <path d={area} fill="var(--primary)" opacity={0.15} className="chart-area" />
+      <path d={path} fill="none" stroke="var(--primary)" strokeWidth={1.2} className="chart-line" />
       {coords.map((c, i) => (
         <g key={i}>
-          <circle cx={c.x} cy={c.y} r={1.6} fill="var(--primary)" />
+          <circle cx={c.x} cy={c.y} r={1.6} fill="var(--primary)" className="chart-dot" />
           <text x={c.x} y={H - 1} className="chart-x" textAnchor="middle">
             {c.label}
           </text>
@@ -104,6 +129,7 @@ export function Donut({
               strokeDasharray={`${dash} ${c - dash}`}
               strokeDashoffset={-offset}
               transform="rotate(-90 50 50)"
+              className="donut-segment"
             />
           )
           offset += dash
@@ -175,6 +201,7 @@ export function Radar({
         fillOpacity={0.35}
         stroke="var(--accent)"
         strokeWidth={0.8}
+        className="radar-shape"
       />
       {axes.map((ax, i) => {
         const [x, y] = pt(i, R + 8)
@@ -185,5 +212,66 @@ export function Radar({
         )
       })}
     </svg>
+  )
+}
+
+export function ProgressRing({
+  value,
+  label,
+  caption,
+  color = 'var(--primary)',
+  size = 118,
+}: {
+  value: number
+  label: string
+  caption?: string
+  color?: string
+  size?: number
+}) {
+  const pct = Math.max(0, Math.min(100, Math.round(value * 100)))
+  const style = {
+    '--ring-value': `${pct * 3.6}deg`,
+    '--ring-color': color,
+    width: size,
+    height: size,
+  } as CSSProperties
+
+  return (
+    <div className="progress-ring" style={style} aria-label={`${label} ${pct}%`}>
+      <div className="progress-ring-core">
+        <b>{pct}%</b>
+        <span>{label}</span>
+      </div>
+      {caption && <small>{caption}</small>}
+    </div>
+  )
+}
+
+export function SpectrumBars({
+  values,
+  compact = false,
+}: {
+  values: { label: string; value: number; color?: string }[]
+  compact?: boolean
+}) {
+  const max = Math.max(1, ...values.map((item) => item.value))
+
+  return (
+    <div className={`spectrum-bars ${compact ? 'compact' : ''}`} aria-label="声谱数据条">
+      {values.map((item, index) => {
+        const height = Math.max(12, Math.round((item.value / max) * 100))
+        const style = {
+          '--bar-height': `${height}%`,
+          '--bar-color': item.color ?? 'var(--primary)',
+          animationDelay: `${index * 60}ms`,
+        } as CSSProperties
+        return (
+          <div key={`${item.label}-${index}`} className="spectrum-bar-wrap">
+            <span className="spectrum-bar" style={style} title={`${item.label}: ${item.value}`} />
+            <small>{item.label}</small>
+          </div>
+        )
+      })}
+    </div>
   )
 }

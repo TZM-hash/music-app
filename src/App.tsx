@@ -41,7 +41,7 @@ function Shell() {
       {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
       <div className="main-col">
         <TopBar />
-        <div className="content">
+        <div className={`content route-${route}`}>
           {route === 'home' && <Home />}
           {route === 'lesson' && <LessonMode />}
           {route === 'piano' && <Piano />}
