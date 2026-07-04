@@ -1,4 +1,4 @@
-// 乐理知识卡片 + 分知识点系统化题库
+// 音乐发现卡 + 分主题互动题库
 export interface QuizQuestion {
   q: string
   options: string[]
@@ -12,11 +12,11 @@ export interface TheoryCard {
   title: string
   /** 一句话简介（卡片列表显示） */
   summary: string
-  /** 详细讲解（可多段） */
+  /** 互动说明（可多段） */
   body: string[]
   /** 图示类型 */
   visual?: 'note-values' | 'time-sig' | 'dynamics' | 'staff-lines' | 'keyboard' | 'sharp-flat'
-  /** 该知识点专项题库（系统化、由浅入深） */
+  /** 该主题互动题库（由浅入深） */
   quiz: QuizQuestion[]
 }
 
@@ -318,7 +318,7 @@ export const THEORY_CARDS: TheoryCard[] = [
       { q: '下面哪个音程最宽（跨度最大）？', options: ['二度', '三度', '五度', '八度'], answer: 3 },
       { q: '下面哪个音程最窄？', options: ['二度', '四度', '五度', '八度'], answer: 0 },
       { q: 'mi 到 sol 是什么音程？', options: ['大二度', '小三度', '纯四度', '纯五度'], answer: 1 },
-      { q: '听辨音程属于哪种训练？', options: ['练耳', '识谱', '打拍子', '认力度'], answer: 0 },
+      { q: '听辨音程更像哪种挑战？', options: ['练耳', '识谱', '打拍子', '认力度'], answer: 0 },
       { q: 'sol 到 高音 do 是什么音程？', options: ['纯四度', '纯五度', '大三度', '八度'], answer: 0 },
     ],
   },
@@ -379,5 +379,5 @@ export const THEORY_CARDS: TheoryCard[] = [
   },
 ]
 
-// 综合测验：从所有知识点题库里汇总
+// 综合挑战：从所有主题题库里汇总
 export const QUIZ: QuizQuestion[] = THEORY_CARDS.flatMap((c) => c.quiz)

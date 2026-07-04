@@ -76,17 +76,17 @@ export const THEORY_CATEGORIES = [
   '速度力度与表情',
   '曲式结构',
   '创作与编配',
-  '民族与课堂常识',
+  '民族与音乐场景',
 ]
 
-const piano = { label: '钢琴示范', route: 'piano' as Route }
-const ear = { label: '听觉辨识训练', route: 'game-ear' as Route }
-const read = { label: '读谱训练', route: 'game-read' as Route }
-const rhythm = { label: '节奏反应训练', route: 'game-taiko' as Route }
-const sing = { label: '音准与视唱训练', route: 'game-sing' as Route }
-const library = { label: '曲库谱例', route: 'library' as Route }
-const mixer = { label: '混音器创编', route: 'mixer' as Route }
-const recorder = { label: '竖笛指法', route: 'recorder' as Route }
+const piano = { label: '钢琴', route: 'piano' as Route }
+const ear = { label: '听感挑战', route: 'game-ear' as Route }
+const read = { label: '读谱闯关', route: 'game-read' as Route }
+const rhythm = { label: '节奏反应挑战', route: 'game-taiko' as Route }
+const sing = { label: '跟唱挑战', route: 'game-sing' as Route }
+const library = { label: '素材库', route: 'library' as Route }
+const mixer = { label: '混音创作', route: 'mixer' as Route }
+const recorder = { label: '竖笛', route: 'recorder' as Route }
 
 function topic(
   id: string,
@@ -112,12 +112,12 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
     'L1',
     '声音的四个要素',
     '高低、长短、强弱、音色',
-    '音乐中的声音可以从高低、长短、强弱和音色四个角度观察，这是进入乐理学习的第一组概念。',
+    '音乐中的声音可以从高低、长短、强弱和音色四个角度观察，这是进入音乐探索的第一组发现。',
     ['高低对应音高', '长短对应时值', '强弱和音色帮助表达情绪'],
     { kind: 'dynamics', title: '声音要素对比', caption: '用同一个音感受高低、强弱和长短的变化。' },
     [piano, sing],
     [
-      { q: '声音高低在乐理中通常叫？', options: ['音高', '速度', '力度'], answer: 0 },
+      { q: '声音高低在音乐里通常叫？', options: ['音高', '速度', '力度'], answer: 0 },
       { q: '声音强弱主要对应什么？', options: ['力度', '谱号', '小节线'], answer: 0 },
     ]
   ),
@@ -563,7 +563,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
     'L2',
     'C 大调音阶',
     'do 到高音 do',
-    'C 大调音阶由 C D E F G A B C 组成，是学习音高和视唱的常用起点。',
+    'C 大调音阶由 C D E F G A B C 组成，是探索音高和跟唱的常用起点。',
     ['C 大调没有固定升降号', '音阶按级进排列', '适合初学视唱'],
     { kind: 'scale', title: 'C 大调阶梯', caption: '听完整上行音阶，观察阶梯式上升。' },
     [piano, sing],
@@ -692,7 +692,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
     'L4',
     '三和弦',
     '根音、三音、五音',
-    '三和弦通常由三个音叠置而成，是和声学习和伴奏设计的基础。',
+    '三和弦通常由三个音叠置而成，是感受和声色彩、设计伴奏的基础。',
     ['三和弦有三个主要音', '大三和弦常明亮', '小三和弦常柔和或忧伤'],
     { kind: 'chord', title: '大小三和弦', caption: '听 C 大三和弦与 A 小三和弦的色彩差异。' },
     [piano, ear],
@@ -860,7 +860,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
     [sing, library],
     [
       { q: '问答乐句强调什么？', options: ['前后呼应', '随机音', '只看颜色'], answer: 0 },
-      { q: '乐句学习要注意？', options: ['呼吸与收束', '忽略旋律', '只打强拍'], answer: 0 },
+      { q: '乐句探索要注意？', options: ['呼吸与收束', '忽略旋律', '只打强拍'], answer: 0 },
     ]
   ),
   topic(
@@ -908,7 +908,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
     { kind: 'form', title: '动机发展', caption: '听一个短动机如何重复和变化。' },
     [mixer, piano],
     [
-      { q: '动机通常是？', options: ['短小音乐材料', '整本教材', '无声部分'], answer: 0 },
+      { q: '动机通常是？', options: ['短小音乐材料', '一整段大作品', '无声部分'], answer: 0 },
       { q: '动机可通过什么发展？', options: ['重复和变化', '删除节拍', '只改颜色'], answer: 0 },
     ]
   ),
@@ -941,7 +941,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
     [mixer, piano],
     [
       { q: '伴奏应该怎样对待旋律？', options: ['支持旋律', '完全盖住旋律', '取消旋律'], answer: 0 },
-      { q: '织体学习关注？', options: ['音乐层次', '按钮大小', '题目颜色'], answer: 0 },
+      { q: '织体探索关注？', options: ['音乐层次', '按钮大小', '题目颜色'], answer: 0 },
     ]
   ),
   topic(
@@ -963,7 +963,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
 
   topic(
     'instrument-families',
-    '民族与课堂常识',
+    '民族与音乐场景',
     'primary-lower',
     'L1',
     '常见乐器分类',
@@ -979,7 +979,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
   ),
   topic(
     'chinese-instruments',
-    '民族与课堂常识',
+    '民族与音乐场景',
     'primary-middle',
     'L2',
     '中国民族乐器',
@@ -995,7 +995,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
   ),
   topic(
     'ensemble-roles',
-    '民族与课堂常识',
+    '民族与音乐场景',
     'junior-basic',
     'L4',
     '合奏声部角色',
@@ -1011,7 +1011,7 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
   ),
   topic(
     'listening-analysis',
-    '民族与课堂常识',
+    '民族与音乐场景',
     'junior-advanced',
     'L5',
     '听赏分析方法',

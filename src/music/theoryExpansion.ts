@@ -6,40 +6,40 @@ type TopicDraft = Omit<TheoryTopic, 'actions' | 'demo'> & {
 
 const actionMap: Record<string, TheoryTopic['actions']> = {
   '音高与唱名': [
-    { label: '钢琴示范', route: 'piano' },
-    { label: '听觉辨识训练', route: 'game-ear' },
+    { label: '钢琴', route: 'piano' },
+    { label: '听感挑战', route: 'game-ear' },
   ],
   '节奏与节拍': [
-    { label: '节奏反应训练', route: 'game-taiko' },
-    { label: '混音器创编', route: 'mixer' },
+    { label: '节奏反应挑战', route: 'game-taiko' },
+    { label: '混音创作', route: 'mixer' },
   ],
   '记谱与读谱': [
-    { label: '读谱训练', route: 'game-read' },
+    { label: '读谱闯关', route: 'game-read' },
     { label: '曲库谱例', route: 'library' },
   ],
   '调式与音阶': [
-    { label: '钢琴示范', route: 'piano' },
-    { label: '音准与视唱训练', route: 'game-sing' },
+    { label: '钢琴', route: 'piano' },
+    { label: '跟唱挑战', route: 'game-sing' },
   ],
   '音程与和声': [
-    { label: '听觉辨识训练', route: 'game-ear' },
-    { label: '钢琴示范', route: 'piano' },
+    { label: '听感挑战', route: 'game-ear' },
+    { label: '钢琴', route: 'piano' },
   ],
   '速度力度与表情': [
-    { label: '音准与视唱训练', route: 'game-sing' },
+    { label: '跟唱挑战', route: 'game-sing' },
     { label: '曲库谱例', route: 'library' },
   ],
   '曲式结构': [
     { label: '曲库谱例', route: 'library' },
-    { label: '混音器创编', route: 'mixer' },
+    { label: '混音创作', route: 'mixer' },
   ],
   '创作与编配': [
-    { label: '混音器创编', route: 'mixer' },
-    { label: '钢琴示范', route: 'piano' },
+    { label: '混音创作', route: 'mixer' },
+    { label: '钢琴', route: 'piano' },
   ],
-  '民族与课堂常识': [
+  '民族与音乐场景': [
     { label: '曲库谱例', route: 'library' },
-    { label: '竖笛指法', route: 'recorder' },
+    { label: '竖笛', route: 'recorder' },
   ],
 }
 
@@ -63,7 +63,7 @@ const q = (topic: string, right: string, wrongA: string, wrongB: string) => ({
 
 const extraQuizFor = (topic: TheoryTopic) => [
   {
-    q: `学习“${topic.title}”时，最适合先做什么？`,
+    q: `探索“${topic.title}”时，最适合先做什么？`,
     options: ['先听或观察例子', '直接背答案', '跳过节拍'],
     answer: 0,
   },
@@ -689,7 +689,7 @@ const drafts: TopicDraft[] = [
 
   {
     id: 'folk-song-region',
-    category: '民族与课堂常识',
+    category: '民族与音乐场景',
     stage: 'primary-upper',
     level: 'L3',
     title: '民歌地域风格',
@@ -701,7 +701,7 @@ const drafts: TopicDraft[] = [
   },
   {
     id: 'opera-role-types',
-    category: '民族与课堂常识',
+    category: '民族与音乐场景',
     stage: 'junior-basic',
     level: 'L4',
     title: '戏曲行当',
@@ -713,19 +713,19 @@ const drafts: TopicDraft[] = [
   },
   {
     id: 'world-music-meter',
-    category: '民族与课堂常识',
+    category: '民族与音乐场景',
     stage: 'junior-advanced',
     level: 'L5',
     title: '世界音乐节拍',
     subtitle: '不同文化的律动',
-    concept: '不同文化有不同律动方式，音乐学习可以从拍子、乐器和场景比较。',
+    concept: '不同文化有不同律动方式，音乐探索可以从拍子、乐器和场景比较。',
     keyPoints: ['节拍体现文化', '乐器组合不同', '听赏要开放比较'],
     demo: 'meter',
     quiz: [q('世界音乐节拍', '文化中的律动', '谱号字体', '按钮顺序'), { q: '比较世界音乐可先听？', options: ['节拍律动', '文件路径', '题目数量'], answer: 0 }],
   },
   {
     id: 'orchestra-sections',
-    category: '民族与课堂常识',
+    category: '民族与音乐场景',
     stage: 'primary-upper',
     level: 'L3',
     title: '管弦乐队声部',
@@ -737,7 +737,7 @@ const drafts: TopicDraft[] = [
   },
   {
     id: 'listening-map',
-    category: '民族与课堂常识',
+    category: '民族与音乐场景',
     stage: 'junior-basic',
     level: 'L4',
     title: '听赏地图',
@@ -749,7 +749,7 @@ const drafts: TopicDraft[] = [
   },
   {
     id: 'classroom-ensemble-rules',
-    category: '民族与课堂常识',
+    category: '民族与音乐场景',
     stage: 'primary-middle',
     level: 'L2',
     title: '课堂合奏规则',

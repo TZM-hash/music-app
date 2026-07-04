@@ -127,6 +127,220 @@
   color: #a16207;
 }
 
+.library-browser {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
+  gap: 14px;
+  min-height: 0;
+  overflow: hidden;
+}
+.library-list {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 8px;
+  overflow: auto;
+  padding-right: 4px;
+}
+.song-menu-row,
+.encyclopedia-menu-row {
+  display: grid;
+  width: 100%;
+  min-height: 72px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+  background: var(--bg-panel);
+  box-shadow: var(--shadow-soft);
+  color: var(--text);
+  text-align: left;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.song-menu-row {
+  grid-template-columns: 44px minmax(0, 1fr) minmax(190px, auto);
+}
+.encyclopedia-menu-row {
+  grid-template-columns: minmax(180px, 0.86fr) minmax(220px, 1fr) auto;
+  min-height: 92px;
+  align-items: start;
+}
+.song-menu-row:hover,
+.encyclopedia-menu-row:hover {
+  transform: translateY(-2px);
+  border-color: rgba(47, 111, 237, 0.28);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+}
+.song-menu-row.active,
+.encyclopedia-menu-row.active {
+  border-color: rgba(47, 111, 237, 0.34);
+  background: rgba(232, 240, 255, 0.92);
+  box-shadow: inset 0 0 0 1px rgba(47, 111, 237, 0.16), var(--shadow-soft);
+}
+.song-menu-icon {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+.song-menu-main,
+.encyclopedia-menu-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+.song-menu-title,
+.encyclopedia-menu-head {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+.song-menu-title b,
+.encyclopedia-menu-main b {
+  overflow: hidden;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.song-menu-main small,
+.encyclopedia-menu-main small {
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.encyclopedia-menu-summary {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.song-menu-title .song-custom-tag {
+  position: static;
+  flex-shrink: 0;
+  background: rgba(47, 111, 237, 0.12);
+  color: var(--primary);
+}
+.song-menu-meta {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.song-menu-meta span,
+.library-detail-meta span,
+.encyclopedia-menu-head span {
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: var(--bg-soft);
+  color: var(--text);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+.encyclopedia-menu-head span {
+  color: var(--accent);
+}
+.encyclopedia-menu-row > .related-count {
+  align-self: center;
+  white-space: nowrap;
+}
+.library-detail {
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 14px;
+  overflow: auto;
+}
+.library-detail-head {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+.library-detail-head h3 {
+  color: var(--text);
+  font-size: 1.28rem;
+}
+.library-detail-head p,
+.library-detail-head > b {
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+.song-detail-title {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+}
+.song-detail-title > span {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1.6rem;
+}
+.library-detail-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.library-detail-meta span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: 10px;
+}
+.library-detail-meta b {
+  overflow: hidden;
+  color: var(--text);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.library-detail-meta small {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+}
+.detail-score-preview {
+  min-height: 118px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px;
+  border-radius: 8px;
+  background: var(--bg-soft);
+}
+.library-detail-actions {
+  margin-top: auto;
+}
+.library-detail-empty {
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  color: var(--text-soft);
+  line-height: 1.5;
+  text-align: center;
+}
+.encyclopedia-detail .fact-list {
+  margin-top: 2px;
+}
+
 .song-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -308,6 +522,54 @@
   background: #fa5252;
   color: #fff;
 }
+
+@media (max-width: 980px) {
+  .library-browser {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .library-list,
+  .library-detail {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .song-menu-row,
+  .encyclopedia-menu-row {
+    grid-template-columns: 42px minmax(0, 1fr);
+  }
+
+  .encyclopedia-menu-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .song-menu-meta {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 560px) {
+  .lib-header,
+  .lib-view-tabs,
+  .lib-tabs,
+  .encyclopedia-stage-row {
+    width: 100%;
+  }
+
+  .lib-view-tabs,
+  .lib-tabs,
+  .encyclopedia-stage-row {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .library-detail-meta {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* 乐谱弹窗 */
 .score-overlay {
   position: fixed;

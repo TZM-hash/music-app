@@ -49,13 +49,13 @@ export const ENCYCLOPEDIA_CATEGORIES: { type: EncyclopediaType; label: string }[
 function quiz(title: string, category: string, fact: string): EncyclopediaQuiz[] {
   return [
     {
-      question: `${title}最适合归入哪一类知识？`,
+      question: `${title}最适合归入哪一类音乐线索？`,
       options: [category, '课堂座位', '文件格式'],
       answer: 0,
-      explanation: `${title}属于${category}，可以和相关乐理知识一起复习。`,
+      explanation: `${title}属于${category}，可以和相关音乐发现一起回看。`,
     },
     {
-      question: `学习${title}时，最应该先抓住什么？`,
+      question: `探索${title}时，最应该先抓住什么？`,
       options: [fact, '按钮颜色', '屏幕宽度'],
       answer: 0,
       explanation: fact,
@@ -64,7 +64,7 @@ function quiz(title: string, category: string, fact: string): EncyclopediaQuiz[]
       question: `${title}可以怎样进入课堂活动？`,
       options: ['先听辨或观察，再说出依据', '只背标题', '跳过音乐材料'],
       answer: 0,
-      explanation: '百科知识要回到聆听、演唱、演奏或讨论中使用。',
+      explanation: '音乐故事要回到聆听、演唱、演奏或讨论中使用。',
     },
   ]
 }
@@ -98,11 +98,11 @@ function entry(
 
 export const ENCYCLOPEDIA_ENTRIES: EncyclopediaEntry[] = [
   entry('bach', 'composer', '巴赫', '巴洛克时期的复调大师', 'junior-basic', '巴赫的作品结构清晰、声部严密，常用来理解复调、节奏稳定和和声进行。', ['复调织体清楚', '代表作有平均律键盘曲集', '巴洛克音乐重要人物'], '听一小段赋格，找一找主题有没有在不同声部轮流出现。', ['countermelody', 'parallel-motion', 'harmonic-function']),
-  entry('mozart', 'composer', '莫扎特', '古典主义的旋律天才', 'primary-upper', '莫扎特的旋律明亮、句法平衡，适合学习问答乐句、清晰终止和古典风格。', ['旋律自然流畅', '古典主义代表人物', '常见清楚的乐句结构'], '哼唱一段莫扎特旋律，判断它像提问还是回答。', ['phrase-question-answer', 'cadence', 'period-form']),
+  entry('mozart', 'composer', '莫扎特', '古典主义的旋律天才', 'primary-upper', '莫扎特的旋律明亮、句法平衡，适合探索问答乐句、清晰终止和古典风格。', ['旋律自然流畅', '古典主义代表人物', '常见清楚的乐句结构'], '哼唱一段莫扎特旋律，判断它像提问还是回答。', ['phrase-question-answer', 'cadence', 'period-form']),
   entry('beethoven', 'composer', '贝多芬', '从古典走向浪漫的作曲家', 'junior-basic', '贝多芬常用短小动机发展出强烈的音乐戏剧性，是理解主题发展的好入口。', ['动机发展很突出', '代表作包括欢乐颂', '连接古典与浪漫风格'], '听欢乐颂主题，观察重复和变化怎样让旋律被记住。', ['motif', 'theme-development', 'variation-development']),
   entry('chopin', 'composer', '肖邦', '钢琴诗人', 'junior-basic', '肖邦作品常有歌唱性的旋律、细腻力度和自由速度，适合联系钢琴音色与乐句表达。', ['钢琴作品丰富', '旋律常有歌唱性', '常用自由速度表达'], '用同一旋律比较平直演奏和带呼吸演奏的区别。', ['rubato-and-phrasing', 'ornaments-intro', 'vocal-range']),
   entry('tchaikovsky', 'composer', '柴科夫斯基', '旋律浓郁的俄罗斯作曲家', 'junior-basic', '柴科夫斯基的舞剧和交响作品旋律鲜明、配器丰富，适合做音乐形象欣赏。', ['舞剧音乐广为流传', '旋律情感强烈', '管弦乐色彩丰富'], '听天鹅湖主题，说出主要旋律由哪类乐器呈现。', ['orchestra-sections', 'arrangement-color', 'listening-map']),
-  entry('nie-er', 'composer', '聂耳', '义勇军进行曲作者', 'primary-upper', '聂耳的歌曲节奏坚定、形象鲜明，是学习进行曲节奏和爱国歌曲的重要材料。', ['创作义勇军进行曲', '节奏坚定有号召力', '歌曲和时代紧密相关'], '拍出进行曲的稳定强拍，感受音乐怎样带来前进感。', ['steady-beat', 'tempo-basic', 'rhythmic-motif']),
+  entry('nie-er', 'composer', '聂耳', '义勇军进行曲作者', 'primary-upper', '聂耳的歌曲节奏坚定、形象鲜明，是感受进行曲节奏和爱国歌曲的重要材料。', ['创作义勇军进行曲', '节奏坚定有号召力', '歌曲和时代紧密相关'], '拍出进行曲的稳定强拍，感受音乐怎样带来前进感。', ['steady-beat', 'tempo-basic', 'rhythmic-motif']),
   entry('ode-to-joy', 'appreciation', '欢乐颂', '贝多芬第九交响曲主题', 'primary-middle', '欢乐颂主题级进明显、结构整齐，适合初学者歌唱和分析旋律线。', ['主题便于歌唱', '常见级进旋律', '来自第九交响曲'], '唱主题前两句，画出旋律上行和下行的方向。', ['melodic-step-leap', 'melody-contour', 'phrase-question-answer']),
   entry('march-volunteers', 'appreciation', '义勇军进行曲', '中华人民共和国国歌', 'primary-upper', '这首作品节奏有力、进行感强，能帮助学生理解进行曲和强弱组织。', ['进行曲风格鲜明', '附点和强拍带来力量', '旋律具有号召感'], '边听边踏步，找出最有推动力的节奏。', ['dotted-rhythm', 'steady-beat', 'rhythm-pattern-ta-ta-ti']),
   entry('yellow-river-cantata', 'appreciation', '黄河大合唱', '大型声乐套曲', 'junior-basic', '黄河大合唱把合唱、朗诵和民族情感结合起来，适合做声部角色与作品背景讨论。', ['大型声乐作品', '有鲜明民族气质', '合唱声部对比丰富'], '听合唱片段，分辨主旋律、低声部和节奏支撑。', ['ensemble-roles', 'listening-analysis', 'classroom-ensemble-rules']),

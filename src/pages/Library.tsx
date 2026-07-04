@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { CATEGORY_INFO, SongCategory, Song } from '../music/songs'
 import { allSongs, upsertCustomSong, newSongId, parseJianpu } from '../music/songLibrary'
 import { ensureAudio, playNote } from '../music/audioEngine'
@@ -39,15 +39,28 @@ export default function Library() {
   const [impTitle, setImpTitle] = useState('')
   const [impText, setImpText] = useState('')
   const [impBpm, setImpBpm] = useState(100)
+  const [selectedSongId, setSelectedSongId] = useState<string | null>(null)
+  const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const resultScrollRef = useRef<HTMLDivElement | null>(null)
+
+  const resetResultScroll = () => {
+    window.requestAnimationFrame(() => {
+      resultScrollRef.current?.scrollTo({ top: 0, left: 0 })
+    })
+  }
 
   const songs = useMemo(() => allSongs(), [version])
 
-  const filtered = songs.filter((s) => {
-    if (filter !== 'all' && s.category !== filter) return false
-    if (s.level > maxLevel) return false
-    if (search && !s.title.includes(search)) return false
-    return true
-  })
+  const filtered = useMemo(
+    () =>
+      songs.filter((s) => {
+        if (filter !== 'all' && s.category !== filter) return false
+        if (s.level > maxLevel) return false
+        if (search && !s.title.includes(search)) return false
+        return true
+      }),
+    [filter, maxLevel, search, songs]
+  )
 
   const encyclopediaEntries = useMemo(
     () =>
@@ -81,6 +94,15 @@ export default function Library() {
   }, [songs])
 
   const importPreview = useMemo(() => parseJianpu(impText), [impText])
+  const selectedSong = useMemo(
+    () => filtered.find((song) => song.id === selectedSongId) ?? filtered[0] ?? null,
+    [filtered, selectedSongId]
+  )
+  const selectedEntry = useMemo(
+    () => encyclopediaEntries.find((entry) => entry.id === selectedEntryId) ?? encyclopediaEntries[0] ?? null,
+    [encyclopediaEntries, selectedEntryId]
+  )
+  const selectedSongCat = selectedSong ? CATEGORY_INFO[selectedSong.category] : null
 
   const doImport = () => {
     const melody = parseJianpu(impText)
@@ -100,7 +122,31 @@ export default function Library() {
     setShowImport(false)
     setImpTitle('')
     setImpText('')
+    setSelectedSongId(song.id)
     setVersion((v) => v + 1)
+  }
+
+  const selectView = (nextView: LibraryView) => {
+    setView(nextView)
+    resetResultScroll()
+  }
+
+  const selectSongFilter = (nextFilter: Filter) => {
+    setFilter(nextFilter)
+    setSelectedSongId(null)
+    resetResultScroll()
+  }
+
+  const selectEncyclopediaType = (nextType: EncyclopediaTypeFilter) => {
+    setEncyclopediaType(nextType)
+    setSelectedEntryId(null)
+    resetResultScroll()
+  }
+
+  const selectEncyclopediaStage = (nextStage: StageFilter) => {
+    setEncyclopediaStage(nextStage)
+    setSelectedEntryId(null)
+    resetResultScroll()
   }
 
   const answerEncyclopediaQuiz = (entry: EncyclopediaEntry, questionIndex: number, selectedAnswer: number) => {
@@ -129,13 +175,18 @@ export default function Library() {
   }
 
   return (
-    <div className="library">
+    <div className={`library library-${view}`}>
       <div className="lib-header card">
         <div className="lib-search">
           <input
-            placeholder={view === 'songs' ? '🔍 搜索曲目名称…' : '🔍 搜索百科标题或关键词…'}
+            placeholder={view === 'songs' ? '🔍 搜索曲目名称…' : '🔍 搜索音乐故事或关键词…'}
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setSelectedSongId(null)
+              setSelectedEntryId(null)
+              resetResultScroll()
+            }}
           />
         </div>
         {view === 'songs' && (
@@ -146,7 +197,11 @@ export default function Library() {
               min={1}
               max={5}
               value={maxLevel}
-              onChange={(e) => setMaxLevel(Number(e.target.value))}
+              onChange={(e) => {
+                setMaxLevel(Number(e.target.value))
+                setSelectedSongId(null)
+                resetResultScroll()
+              }}
             />
           </div>
         )}
@@ -158,25 +213,25 @@ export default function Library() {
       </div>
 
       <div className="lib-view-tabs">
-        <button className={view === 'songs' ? 'on' : ''} onClick={() => setView('songs')}>
+        <button className={view === 'songs' ? 'on' : ''} onClick={() => selectView('songs')}>
           曲库谱例 <span>{songs.length}</span>
         </button>
-        <button className={view === 'encyclopedia' ? 'on' : ''} onClick={() => setView('encyclopedia')}>
-          音乐百科 <span>{ENCYCLOPEDIA_ENTRIES.length}</span>
+        <button className={view === 'encyclopedia' ? 'on' : ''} onClick={() => selectView('encyclopedia')}>
+          音乐故事 <span>{ENCYCLOPEDIA_ENTRIES.length}</span>
         </button>
       </div>
 
       {view === 'songs' ? (
         <>
           <div className="lib-tabs">
-            <button className={filter === 'all' ? 'on' : ''} onClick={() => setFilter('all')}>
+            <button className={filter === 'all' ? 'on' : ''} onClick={() => selectSongFilter('all')}>
               🎼 全部 <span className="tab-count">{counts.all ?? 0}</span>
             </button>
             {(Object.keys(CATEGORY_INFO) as SongCategory[]).map((cat) => (
               <button
                 key={cat}
                 className={filter === cat ? 'on' : ''}
-                onClick={() => setFilter(cat)}
+                onClick={() => selectSongFilter(cat)}
                 style={filter === cat ? { background: CATEGORY_INFO[cat].color } : undefined}
               >
                 {CATEGORY_INFO[cat].icon} {CATEGORY_INFO[cat].name}
@@ -185,58 +240,100 @@ export default function Library() {
             ))}
           </div>
 
-          <div className="song-grid">
-            {filtered.length === 0 && <div className="lib-empty">没有匹配的曲目，换个筛选试试～</div>}
-            {filtered.map((song) => {
-              const cat = CATEGORY_INFO[song.category]
-              return (
-                <div key={song.id} className="song-card card">
-                  <div className="song-card-top" style={{ background: cat.color }}>
-                    <span className="song-cat-icon">{cat.icon}</span>
-                    {song.custom && <span className="song-custom-tag">我的创作</span>}
-                  </div>
-                  <div className="song-card-body">
-                    <h3>{song.title}</h3>
-                    <div className="song-meta">
+          <div className="library-browser">
+            <div className="library-list song-menu" ref={resultScrollRef}>
+              {filtered.length === 0 && <div className="lib-empty">没有匹配的曲目，换个筛选试试～</div>}
+              {filtered.map((song) => {
+                const cat = CATEGORY_INFO[song.category]
+                const selected = selectedSong?.id === song.id
+                return (
+                  <button
+                    key={song.id}
+                    className={`song-menu-row ${selected ? 'active' : ''}`}
+                    style={{ borderLeftColor: cat.color }}
+                    onClick={() => setSelectedSongId(song.id)}
+                  >
+                    <span className="song-menu-icon" style={{ background: cat.color }}>
+                      {cat.icon}
+                    </span>
+                    <span className="song-menu-main">
+                      <span className="song-menu-title">
+                        <b>{song.title}</b>
+                        {song.custom && <span className="song-custom-tag">我的创作</span>}
+                      </span>
+                      {song.desc && <small>{song.desc}</small>}
+                    </span>
+                    <span className="song-menu-meta">
+                      <span>{cat.name}</span>
                       <span>{'★'.repeat(song.level)}</span>
-                      <span>· {song.bpm} BPM</span>
-                      <span>· {song.melody.length} 音</span>
-                    </div>
-                    {song.desc && <p className="song-desc">{song.desc}</p>}
-                    <div className="song-actions">
-                      <button
-                        className={`sa-btn ${previewing === song.id ? 'playing' : ''}`}
-                        onClick={() => preview(song)}
-                      >
-                        {previewing === song.id ? '🎵 播放中' : '▶ 试听'}
-                      </button>
-                      <button className="sa-btn" onClick={() => setScoreSong(song)}>
-                        🎼 乐谱
-                      </button>
-                      <button
-                        className="sa-btn primary"
-                        onClick={() => playSongInGame(song.id, 'game-taiko')}
-                      >
-                        🎯 练习
-                      </button>
+                      <span>{song.bpm} BPM</span>
+                      <span>{song.melody.length} 音</span>
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+
+            <aside className="library-detail card">
+              {selectedSong && selectedSongCat ? (
+                <>
+                  <div className="library-detail-head">
+                    <span className="course-kicker">当前曲目</span>
+                    <div className="song-detail-title">
+                      <span style={{ background: selectedSongCat.color }}>{selectedSongCat.icon}</span>
+                      <div>
+                        <h3>{selectedSong.title}</h3>
+                        <p>{selectedSong.desc ?? '跟着旋律听一听，再试着拍一拍或演奏出来。'}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-            })}
+
+                  <div className="library-detail-meta">
+                    <span><b>{selectedSongCat.name}</b><small>素材分类</small></span>
+                    <span><b>{'★'.repeat(selectedSong.level)}</b><small>难度星级</small></span>
+                    <span><b>{selectedSong.bpm}</b><small>BPM</small></span>
+                    <span><b>{selectedSong.melody.length}</b><small>旋律音数</small></span>
+                  </div>
+
+                  <div className="detail-score-preview">
+                    <StaffView melody={selectedSong.melody} mode="jianpu" beatsPerBar={selectedSong.beatsPerBar} />
+                  </div>
+
+                  <div className="song-actions library-detail-actions">
+                    <button
+                      className={`sa-btn ${previewing === selectedSong.id ? 'playing' : ''}`}
+                      onClick={() => preview(selectedSong)}
+                    >
+                      {previewing === selectedSong.id ? '🎵 播放中' : '▶ 试听'}
+                    </button>
+                    <button className="sa-btn" onClick={() => setScoreSong(selectedSong)}>
+                      🎼 乐谱
+                    </button>
+                    <button
+                      className="sa-btn primary"
+                      onClick={() => playSongInGame(selectedSong.id, 'game-taiko')}
+                    >
+                      🎯 挑战
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="library-detail-empty">左侧选择一条素材，这里会出现可互动的详情。</div>
+              )}
+            </aside>
           </div>
         </>
       ) : (
         <>
           <div className="lib-tabs encyclopedia-tabs">
-            <button className={encyclopediaType === 'all' ? 'on' : ''} onClick={() => setEncyclopediaType('all')}>
+            <button className={encyclopediaType === 'all' ? 'on' : ''} onClick={() => selectEncyclopediaType('all')}>
               全部 <span className="tab-count">{ENCYCLOPEDIA_ENTRIES.length}</span>
             </button>
             {ENCYCLOPEDIA_CATEGORIES.map((cat) => (
               <button
                 key={cat.type}
                 className={encyclopediaType === cat.type ? 'on' : ''}
-                onClick={() => setEncyclopediaType(cat.type)}
+                onClick={() => selectEncyclopediaType(cat.type)}
               >
                 {cat.label}
                 <span className="tab-count">
@@ -246,72 +343,96 @@ export default function Library() {
             ))}
           </div>
           <div className="encyclopedia-stage-row">
-            <button className={encyclopediaStage === 'all' ? 'on' : ''} onClick={() => setEncyclopediaStage('all')}>
+            <button className={encyclopediaStage === 'all' ? 'on' : ''} onClick={() => selectEncyclopediaStage('all')}>
               全学段
             </button>
             {THEORY_STAGES.map((stage) => (
               <button
                 key={stage.id}
                 className={encyclopediaStage === stage.id ? 'on' : ''}
-                onClick={() => setEncyclopediaStage(stage.id)}
+                onClick={() => selectEncyclopediaStage(stage.id)}
               >
                 {getStageLabel(stage.id)}
               </button>
             ))}
           </div>
-          <div className="encyclopedia-grid">
-            {encyclopediaEntries.length === 0 && <div className="lib-empty">没有匹配的百科条目，换个筛选试试～</div>}
-            {encyclopediaEntries.map((entry) => (
-              <div key={entry.id} className="encyclopedia-card card">
-                <div className="encyclopedia-head">
-                  <span>{entry.category}</span>
-                  <small>{getStageLabel(entry.stage)}</small>
-                </div>
-                <h3>{entry.title}</h3>
-                <b>{entry.subtitle}</b>
-                <p>{entry.summary}</p>
-                <div className="fact-list">
-                  {entry.keyFacts.map((fact) => (
-                    <span key={fact}>{fact}</span>
-                  ))}
-                </div>
-                <div className="classroom-prompt">{entry.prompt}</div>
-                <small className="related-count">关联乐理 {entry.relatedTheoryIds.length} 个</small>
-                <div className="encyclopedia-quiz">
-                  {entry.quiz.slice(0, 1).map((q, questionIndex) => {
-                    const pickKey = `${entry.id}:${questionIndex}`
-                    const picked = quizPicks[pickKey]
-                    return (
-                      <div key={q.question}>
-                        <strong>{q.question}</strong>
-                        <div>
-                          {q.options.map((option, optionIndex) => {
-                            const answered = picked !== undefined
-                            const cls = answered
-                              ? optionIndex === q.answer
-                                ? 'right'
-                                : optionIndex === picked
-                                  ? 'wrong'
-                                  : ''
-                              : ''
-                            return (
-                              <button
-                                key={option}
-                                className={cls}
-                                disabled={answered}
-                                onClick={() => answerEncyclopediaQuiz(entry, questionIndex, optionIndex)}
-                              >
-                                {option}
-                              </button>
-                            )
-                          })}
+          <div className="library-browser">
+            <div className="library-list encyclopedia-menu" ref={resultScrollRef}>
+              {encyclopediaEntries.length === 0 && <div className="lib-empty">没有匹配的音乐故事，换个筛选试试～</div>}
+              {encyclopediaEntries.map((entry) => (
+                <button
+                  key={entry.id}
+                  className={`encyclopedia-menu-row ${selectedEntry?.id === entry.id ? 'active' : ''}`}
+                  onClick={() => setSelectedEntryId(entry.id)}
+                >
+                  <span className="encyclopedia-menu-main">
+                    <span className="encyclopedia-menu-head">
+                      <span>{entry.category}</span>
+                      <small>{getStageLabel(entry.stage)}</small>
+                    </span>
+                    <b>{entry.title}</b>
+                    <small>{entry.subtitle}</small>
+                  </span>
+                  <span className="encyclopedia-menu-summary">{entry.summary}</span>
+                  <span className="related-count">相关发现 {entry.relatedTheoryIds.length} 个</span>
+                </button>
+              ))}
+            </div>
+
+            <aside className="library-detail card encyclopedia-detail">
+              {selectedEntry ? (
+                <>
+                  <div className="library-detail-head">
+                    <span className="course-kicker">{selectedEntry.category} · {getStageLabel(selectedEntry.stage)}</span>
+                    <h3>{selectedEntry.title}</h3>
+                    <b>{selectedEntry.subtitle}</b>
+                    <p>{selectedEntry.summary}</p>
+                  </div>
+                  <div className="fact-list">
+                    {selectedEntry.keyFacts.map((fact) => (
+                      <span key={fact}>{fact}</span>
+                    ))}
+                  </div>
+                  <div className="classroom-prompt">{selectedEntry.prompt}</div>
+                  <small className="related-count">相关发现 {selectedEntry.relatedTheoryIds.length} 个</small>
+                  <div className="encyclopedia-quiz">
+                    {selectedEntry.quiz.slice(0, 1).map((q, questionIndex) => {
+                      const pickKey = `${selectedEntry.id}:${questionIndex}`
+                      const picked = quizPicks[pickKey]
+                      return (
+                        <div key={q.question}>
+                          <strong>{q.question}</strong>
+                          <div>
+                            {q.options.map((option, optionIndex) => {
+                              const answered = picked !== undefined
+                              const cls = answered
+                                ? optionIndex === q.answer
+                                  ? 'right'
+                                  : optionIndex === picked
+                                    ? 'wrong'
+                                    : ''
+                                : ''
+                              return (
+                                <button
+                                  key={option}
+                                  className={cls}
+                                  disabled={answered}
+                                  onClick={() => answerEncyclopediaQuiz(selectedEntry, questionIndex, optionIndex)}
+                                >
+                                  {option}
+                                </button>
+                              )
+                            })}
+                          </div>
                         </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
+                      )
+                    })}
+                  </div>
+                </>
+              ) : (
+                <div className="library-detail-empty">左侧选择一个音乐故事，这里会出现可互动的详情。</div>
+              )}
+            </aside>
           </div>
         </>
       )}
@@ -352,7 +473,7 @@ export default function Library() {
                 className="sa-btn primary"
                 onClick={() => playSongInGame(scoreSong.id, 'game-taiko')}
               >
-                🎯 去练习
+                🎯 去挑战
               </button>
             </div>
           </div>

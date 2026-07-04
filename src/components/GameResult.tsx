@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Stars from './Stars'
+import { buildMusicAbilitySignals } from '../state/musicAbilities'
 import './gameResult.css'
 
 export interface ReviewRow {
@@ -28,11 +29,14 @@ interface Props {
   score: number
   stars: number
   bestScore?: number
+  gameId?: string
   isNewBest?: boolean
   newBadges?: { icon: string; name: string }[]
   review?: ReviewData
   onRetry: () => void
   onHome: () => void
+  onContinue?: () => void
+  continueLabel?: string
 }
 
 export default function GameResult({
@@ -40,16 +44,27 @@ export default function GameResult({
   score,
   stars,
   bestScore,
+  gameId,
   isNewBest,
   newBadges = [],
   review,
   onRetry,
   onHome,
+  onContinue,
+  continueLabel = '回到挑战中心',
 }: Props) {
   const [showReview, setShowReview] = useState(false)
   const wrongRows = review?.rows?.filter((r) => !r.ok) ?? []
   const hasReview = !!review && ((review.rows?.length ?? 0) > 0 || (review.stats?.length ?? 0) > 0)
   const diagnosis = buildDiagnosis(stars, review)
+  const abilitySignals = buildMusicAbilitySignals({
+    gameId,
+    stars,
+    score,
+    stats: review?.stats,
+    rows: review?.rows,
+    advice: review?.advice,
+  })
 
   return (
     <div className="result-overlay">
@@ -75,6 +90,15 @@ export default function GameResult({
                 ))}
               </div>
             )}
+            <div className="ability-mini" aria-label="音乐能力反馈">
+              {abilitySignals.map((ability) => (
+                <span key={ability.id} className={ability.tone}>
+                  <i style={{ height: `${Math.max(16, ability.value)}%` }} />
+                  <b>{ability.label}</b>
+                  <small>{ability.value}</small>
+                </span>
+              ))}
+            </div>
             {newBadges.length > 0 && (
               <div className="badge-row">
                 {newBadges.map((b) => (
@@ -87,11 +111,14 @@ export default function GameResult({
             )}
             <div className="result-actions">
               <button className="btn-primary" onClick={onRetry}>
-                🔁 再来一次
+                再练一次
               </button>
-              <button className="btn-ghost" onClick={onHome}>
-                🏠 返回首页
-              </button>
+              {onContinue && (
+                <button className="btn-secondary" onClick={onContinue}>
+                  {continueLabel}
+                </button>
+              )}
+              <button className="btn-ghost" onClick={onHome}>回首页</button>
             </div>
             {hasReview && (
               <button className="review-link" onClick={() => setShowReview(true)}>
@@ -123,6 +150,20 @@ export default function GameResult({
                 ))}
               </div>
             )}
+            <div className="ability-panel">
+              {abilitySignals.map((ability) => (
+                <div key={ability.id} className={`ability-card ${ability.tone}`}>
+                  <div>
+                    <small>{ability.label}</small>
+                    <b>{ability.value}</b>
+                  </div>
+                  <span>
+                    <i style={{ width: `${ability.value}%` }} />
+                  </span>
+                  <p>{ability.tip}</p>
+                </div>
+              ))}
+            </div>
             {review?.rows && review.rows.length > 0 && (
               <div className="review-list">
                 {review.rows.map((r, i) => (
@@ -137,10 +178,15 @@ export default function GameResult({
             )}
             <div className="result-actions">
               <button className="btn-primary" onClick={onRetry}>
-                🔁 再练一次
+                再练一次
               </button>
+              {onContinue && (
+                <button className="btn-secondary" onClick={onContinue}>
+                  {continueLabel}
+                </button>
+              )}
               <button className="btn-ghost" onClick={() => setShowReview(false)}>
-                ← 返回
+                返回成绩
               </button>
             </div>
           </>
@@ -164,13 +210,13 @@ function buildDiagnosis(stars: number, review?: ReviewData): NonNullable<ReviewD
   if (accuracy != null) {
     out.push({
       label: '准确性',
-      value: accuracy >= 85 ? '稳定' : accuracy >= 60 ? '基本掌握' : '需要专项练习',
+      value: accuracy >= 85 ? '很稳定' : accuracy >= 60 ? '快抓住了' : '适合再玩一次',
       tone: accuracy >= 85 ? 'good' : accuracy >= 60 ? 'warn' : 'focus',
     })
   } else if (stars >= 0) {
     out.push({
       label: '完成度',
-      value: stars >= 3 ? '优秀' : stars >= 2 ? '达标' : '继续巩固',
+      value: stars >= 3 ? '很亮眼' : stars >= 2 ? '有进步' : '再试一次',
       tone: stars >= 3 ? 'good' : stars >= 2 ? 'warn' : 'focus',
     })
   }
@@ -178,7 +224,7 @@ function buildDiagnosis(stars: number, review?: ReviewData): NonNullable<ReviewD
   if (wrong > 0 && total > 0) {
     out.push({
       label: '易错点',
-      value: wrong <= 2 ? '少量细节' : wrong <= total / 2 ? '局部不稳' : '基础需复习',
+      value: wrong <= 2 ? '少量细节' : wrong <= total / 2 ? '局部不稳' : '适合回放',
       tone: wrong <= 2 ? 'warn' : 'focus',
     })
   } else if (total > 0) {
@@ -192,8 +238,8 @@ function buildDiagnosis(stars: number, review?: ReviewData): NonNullable<ReviewD
       : /节奏|拍|命中|踏准/.test(statText + (review.advice ?? ''))
         ? '慢速跟节拍器'
         : /识谱|音名|正确/.test(statText + (review.advice ?? ''))
-          ? '错题音位复练'
-          : '降低难度再练'
+          ? '音位回放挑战'
+          : '降低难度再玩'
   out.push({ label: '下一步', value: next, tone: stars >= 2 ? 'good' : 'warn' })
 
   return out

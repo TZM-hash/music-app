@@ -127,7 +127,7 @@ export default function ReadGame() {
 
       {!playing && !result && (
         <div className="start-hint">
-          <h2>🎼 识谱训练</h2>
+          <h2>🎼 读谱闯关</h2>
           <p>五线谱上会出现一个音符，判断它是哪个音（do re mi…）。共 {ROUNDS} 题，看谱选音名。</p>
           <p>最高分：{best}</p>
           <button className="big-start" onClick={start}>▶ 开始</button>
@@ -155,6 +155,7 @@ export default function ReadGame() {
 
       {result && (
         <GameResult
+          gameId={GAME_ID}
           score={result.score}
           stars={result.stars}
           bestScore={best}
@@ -162,6 +163,7 @@ export default function ReadGame() {
           newBadges={result.newBadges}
           review={result.review}
           onRetry={start}
+          onContinue={() => navigate('training')}
           onHome={() => navigate('home')}
         />
       )}

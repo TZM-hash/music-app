@@ -61,7 +61,7 @@ export default function StudentSelector() {
               className="stu-manage"
               onClick={() => {
                 setOpen(false)
-                navigate('class')
+                navigate('class', { history: 'reset' })
               }}
             >
               管理学生名单

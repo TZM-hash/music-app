@@ -1,5 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ensureAudio, triggerVoice, VoiceKind, VOICE_INFO, setVolume } from '../music/audioEngine'
+import { useApp } from '../state/appState'
+import {
+  loadCreativeWorks,
+  removeCreativeWork,
+  saveCreativeWork,
+  type CreativeWork,
+} from '../state/creativeWorks'
 import './mixer.css'
 
 const STEPS = 16
@@ -151,7 +158,21 @@ function decodeShare(code: string): SavedProject | null {
   }
 }
 
+function summarizeProject(project: SavedProject): string {
+  const hits = project.tracks.reduce((sum, track) => sum + track.steps.filter(Boolean).length, 0)
+  const voices = Array.from(new Set(project.tracks.map((track) => VOICE_INFO[track.voice]?.name ?? track.voice)))
+    .slice(0, 3)
+    .join('、')
+  return `${project.tracks.length} 条音轨 · ${hits} 个触发点 · ${project.bpm} BPM · ${voices || '自由音色'}`
+}
+
+function isSavedProject(value: unknown): value is SavedProject {
+  const project = value as SavedProject
+  return !!project && typeof project === 'object' && Array.isArray(project.tracks) && typeof project.bpm === 'number'
+}
+
 export default function Mixer() {
+  const { currentStudentId } = useApp()
   const [tracks, setTracks] = useState<Track[]>(() => presetToTracks(PRESETS[0]))
   const [playing, setPlaying] = useState(false)
   const [bpm, setBpm] = useState(110)
@@ -163,6 +184,12 @@ export default function Mixer() {
   const [importOpen, setImportOpen] = useState(false)
   const [importText, setImportText] = useState('')
   const [copied, setCopied] = useState(false)
+  const [projectName, setProjectName] = useState('我的节奏小作品')
+  const [creativeNote, setCreativeNote] = useState('我想让这段音乐听起来更有律动。')
+  const [lastSavedTitle, setLastSavedTitle] = useState('')
+  const [creativeWorks, setCreativeWorks] = useState<CreativeWork[]>(() =>
+    loadCreativeWorks(currentStudentId).filter((work) => work.source === 'mixer')
+  )
   const tracksRef = useRef(tracks)
   const swingRef = useRef(swing)
   const stopRef = useRef<(() => void) | null>(null)
@@ -206,6 +233,10 @@ export default function Mixer() {
 
   useEffect(() => () => stopRef.current?.(), [])
 
+  useEffect(() => {
+    setCreativeWorks(loadCreativeWorks(currentStudentId).filter((work) => work.source === 'mixer'))
+  }, [currentStudentId])
+
   // 主音量
   useEffect(() => {
     setVolume(master)
@@ -226,18 +257,33 @@ export default function Mixer() {
     updateTrack(tid, { voice, note: VOICE_INFO[voice].defaultNote })
   }
   const addTrack = () => setTracks((ts) => [...ts, makeTrack('piano')])
-  const removeTrack = (tid: number) => setTracks((ts) => ts.filter((t) => t.id !== tid))
+  const removeTrack = (tid: number) => {
+    if (!window.confirm('确定删除这条音轨吗？')) return
+    setTracks((ts) => ts.filter((t) => t.id !== tid))
+  }
   const clearTrack = (tid: number) =>
-    setTracks((ts) => ts.map((t) => (t.id === tid ? { ...t, steps: Array(STEPS).fill(false) } : t)))
-  const clearAll = () => setTracks((ts) => ts.map((t) => ({ ...t, steps: Array(STEPS).fill(false) })))
+    setTracks((ts) => {
+      const target = ts.find((t) => t.id === tid)
+      if (!target || !target.steps.some(Boolean)) return ts
+      if (!window.confirm('确定清空这条音轨的触发点吗？')) return ts
+      return ts.map((t) => (t.id === tid ? { ...t, steps: Array(STEPS).fill(false) } : t))
+    })
+  const hasAnyStep = () => tracksRef.current.some((track) => track.steps.some(Boolean))
+  const clearAll = () => {
+    if (!hasAnyStep()) return
+    if (!window.confirm('确定清空所有音轨的触发点吗？')) return
+    setTracks((ts) => ts.map((t) => ({ ...t, steps: Array(STEPS).fill(false) })))
+  }
 
   const applyPreset = (p: Preset) => {
+    if (hasAnyStep() && !window.confirm(`确定用「${p.name}」替换当前节奏吗？`)) return
     setTracks(presetToTracks(p))
     setBpm(p.bpm)
   }
 
   // 随机填充：给每条轨道生成一段有规律的随机节奏（用序号驱动，保证可玩）
   const randomize = () => {
+    if (hasAnyStep() && !window.confirm('确定用随机节奏替换当前触发点吗？')) return
     setTracks((ts) => ts.map((t, ti) => {
       const density = t.voice === 'hihat' ? 0.5 : t.voice === 'kick' ? 0.28 : 0.22
       const steps = Array.from({ length: STEPS }, (_, i) => {
@@ -254,17 +300,22 @@ export default function Mixer() {
   }
 
   const saveCurrent = () => {
-    const name = prompt('给作品起个名字：', `我的作品 ${projects.length + 1}`)
-    if (!name) return
-    const proj: SavedProject = {
-      name,
-      bpm,
-      swing,
-      tracks: tracks.map((t) => ({ voice: t.voice, note: t.note, steps: t.steps, volume: t.volume })),
-    }
+    const name = projectName.trim() || `我的作品 ${projects.length + 1}`
+    const proj = currentProject(name)
     const list = [...projects, proj]
     saveProjects(list)
     setProjects(list)
+    const work = saveCreativeWork({
+      title: name,
+      source: 'mixer',
+      studentId: currentStudentId,
+      summary: summarizeProject(proj),
+      reflection: creativeNote,
+      abilityTags: ['creating', 'rhythm'],
+      snapshot: proj,
+    })
+    setCreativeWorks(loadCreativeWorks(currentStudentId).filter((item) => item.source === 'mixer'))
+    setLastSavedTitle(work.title)
   }
   const loadProject = (p: SavedProject) => {
     setTracks(p.tracks.map((t) => {
@@ -275,8 +326,10 @@ export default function Mixer() {
     }))
     setBpm(p.bpm)
     setSwing(p.swing ?? 0)
+    setProjectName(p.name)
   }
   const deleteProject = (idx: number) => {
+    if (!window.confirm('确定删除这个已保存作品吗？')) return
     const list = projects.filter((_, i) => i !== idx)
     saveProjects(list)
     setProjects(list)
@@ -289,6 +342,19 @@ export default function Mixer() {
     swing,
     tracks: tracks.map((t) => ({ voice: t.voice, note: t.note, steps: t.steps, volume: t.volume })),
   })
+
+  const openCreativeWork = (work: CreativeWork) => {
+    if (isSavedProject(work.snapshot)) {
+      loadProject(work.snapshot)
+      setCreativeNote(work.reflection || creativeNote)
+    }
+  }
+
+  const deleteCreativeWork = (id: string) => {
+    if (!window.confirm('确定删除这条创作记录吗？')) return
+    removeCreativeWork(id)
+    setCreativeWorks(loadCreativeWorks(currentStudentId).filter((work) => work.source === 'mixer'))
+  }
 
   // 导出分享码
   const exportShare = () => {
@@ -363,6 +429,28 @@ export default function Mixer() {
         </div>
       </div>
 
+      <div className="mix-creative-brief card">
+        <div className="mix-creative-copy">
+          <span className="mix-tag">创作任务</span>
+          <h2>做一个四小节音乐小作品</h2>
+          <p>先选节奏型，再改音色、音高和触发点。保存时写一句创作想法，作品会进入你的创作记录。</p>
+        </div>
+        <div className="mix-creative-fields">
+          <label>
+            作品名
+            <input value={projectName} onChange={(event) => setProjectName(event.target.value)} />
+          </label>
+          <label>
+            创作想法
+            <textarea value={creativeNote} onChange={(event) => setCreativeNote(event.target.value)} rows={2} />
+          </label>
+        </div>
+        <div className="mix-creative-actions">
+          <button className="mix-btn primary" onClick={saveCurrent}>保存成小作品</button>
+          {lastSavedTitle && <small>已保存：{lastSavedTitle}</small>}
+        </div>
+      </div>
+
       {/* 预设 + 操作 */}
       <div className="mix-toolbar2 card">
         <span className="mix-toolbar-label">🎵 节奏型：</span>
@@ -375,7 +463,7 @@ export default function Mixer() {
         <button className="mix-btn" onClick={randomize}>🎲 随机</button>
         <button className="mix-btn" onClick={addTrack}>➕ 加轨</button>
         <button className="mix-btn" onClick={clearAll}>🧹 清空</button>
-        <button className="mix-btn primary" onClick={saveCurrent}>💾 保存</button>
+        <button className="mix-btn primary" onClick={saveCurrent}>保存作品</button>
         <button className="mix-btn" onClick={exportShare}>🔗 分享码</button>
         <button className="mix-btn" onClick={exportFile}>⬇️ 导出文件</button>
         <button className="mix-btn" onClick={() => { setImportOpen(true); setImportText('') }}>📥 导入</button>
@@ -391,6 +479,27 @@ export default function Mixer() {
               <button className="proj-del" onClick={() => deleteProject(i)}>✕</button>
             </span>
           ))}
+        </div>
+      )}
+
+      {creativeWorks.length > 0 && (
+        <div className="mix-creative-feed card">
+          <div>
+            <span className="mix-tag">作品记录</span>
+            <b>最近的创作</b>
+          </div>
+          <div className="creative-work-list">
+            {creativeWorks.slice(0, 4).map((work) => (
+              <div key={work.id} className="creative-work-item">
+                <button onClick={() => openCreativeWork(work)}>
+                  <b>{work.title}</b>
+                  <small>{work.summary}</small>
+                  {work.reflection && <span>{work.reflection}</span>}
+                </button>
+                <button className="creative-work-del" onClick={() => deleteCreativeWork(work.id)}>删除</button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

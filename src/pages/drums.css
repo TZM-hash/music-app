@@ -82,6 +82,7 @@
   flex-wrap: wrap;
 }
 .preset-btn {
+  min-height: 36px;
   padding: 7px 14px;
   border-radius: 999px;
   background: var(--bg);
@@ -94,6 +95,8 @@
   color: #fff;
 }
 .preset-btn.clear {
+  min-width: 52px;
+  min-height: 36px;
   background: transparent;
   color: var(--text-soft);
   text-decoration: underline;

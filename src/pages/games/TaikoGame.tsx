@@ -171,6 +171,6 @@ export default function TaikoGame() {
         <button className="key-ka" onPointerDown={() => hit('ka')}><span>🥁 咔</span><small>J / K</small></button>
       </div>
     </div>}
-    {result && <GameResult score={result.score} stars={result.stars} bestScore={best} isNewBest={result.isNewBest} newBadges={result.newBadges} review={result.review} onRetry={() => song && startPlay(song)} onHome={() => navigate('home')} />}
+    {result && <GameResult gameId={GAME_ID} score={result.score} stars={result.stars} bestScore={best} isNewBest={result.isNewBest} newBadges={result.newBadges} review={result.review} onRetry={() => song && startPlay(song)} onContinue={() => navigate('training')} onHome={() => navigate('home')} />}
   </div>)
 }

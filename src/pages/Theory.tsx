@@ -13,6 +13,7 @@ import {
   getStageLabel,
 } from '../music/theoryCatalog'
 import { DemoControl, getDemoScene } from '../music/theoryDemos'
+import { buildExplorationTaskCard } from '../music/explorationLoop'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import './theory.css'
 
@@ -76,9 +77,9 @@ export default function Theory() {
     <div className="theory-lab">
       <section className="theory-lab-head card">
         <div>
-          <span className="theory-kicker">互动乐理实验室</span>
-          <h2>小学到初中的分级乐理知识库</h2>
-          <p>按教学类别和学段难度选择知识点，每个知识点都包含概念、可视化演示、声音示范、课堂应用和即时小测。</p>
+          <span className="theory-kicker">互动音乐探索馆</span>
+          <h2>小学到初中的音乐发现地图</h2>
+          <p>按音乐方向和成长阶段选择发现卡，每张卡都用声音、图形、小游戏和创作入口帮助学生边玩边理解。</p>
         </div>
         <div className="theory-count">
           <b>{filtered.length}</b>
@@ -89,13 +90,13 @@ export default function Theory() {
       <div className="theory-layout">
         <aside className="theory-nav card">
           <FilterGroup
-            title="教学类别"
+            title="音乐方向"
             value={category}
             options={['全部', ...THEORY_CATEGORIES]}
             onChange={(next) => setCategory(next)}
           />
           <FilterGroup
-            title="学段难度"
+            title="成长阶段"
             value={stage}
             options={['全部', ...THEORY_STAGES.map((item) => item.id)]}
             getLabel={(value) => (value === '全部' ? '全部' : getStageLabel(value as TheoryStageId))}
@@ -105,7 +106,7 @@ export default function Theory() {
           <div className="topic-list">
             {filtered.length === 0 && (
               <div className="topic-empty">
-                <b>没有匹配知识点</b>
+                <b>没有匹配发现卡</b>
                 <button onClick={clearFilters}>清除筛选</button>
               </div>
             )}
@@ -142,6 +143,29 @@ export default function Theory() {
               onChange={setActiveDemoValue}
             />
 
+            <section className="inline-quiz-panel">
+              <div className="inline-quiz-copy">
+                <span className="theory-kicker">本关互动题</span>
+                <h3>{active.title}声音挑战</h3>
+                <p>听完演示后，用一题快速判断学生是否抓住声音变化。</p>
+              </div>
+              <MiniQuiz
+                key={active.id}
+                topic={active}
+                studentId={currentStudentId ?? 'anonymous'}
+                recordEnabled={mode !== 'lecture'}
+              />
+            </section>
+
+            <ExplorationLoop
+              topic={active}
+              scene={demoScene}
+              activeValue={activeControl.value}
+              onChange={setActiveDemoValue}
+              onPlay={() => playDemo(active.demo.kind, activeControl)}
+              onNavigate={navigate}
+            />
+
             <div className="point-grid">
               {active.keyPoints.map((p, i) => (
                 <div key={p} className="point-card">
@@ -151,30 +175,6 @@ export default function Theory() {
               ))}
             </div>
           </section>
-
-          <aside className="apply-panel quiz-panel card">
-            <span className="theory-kicker">本知识点题目</span>
-            <h3>{active.title}课堂小测</h3>
-            <p>先看左侧讲解，再用这组题确认学生是否抓住了核心概念和听辨依据。</p>
-            <MiniQuiz
-              key={active.id}
-              topic={active}
-              studentId={currentStudentId ?? 'anonymous'}
-              recordEnabled={mode !== 'lecture'}
-            />
-            <div className="application-links">
-              <span className="theory-kicker">课堂应用</span>
-              <h4>{active.demo.title}</h4>
-              <p>{active.demo.caption}</p>
-              <div className="action-list">
-                {active.actions.map((a) => (
-                  <button key={a.label} onClick={() => navigate(a.route)}>
-                    {a.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </aside>
         </main>
       </div>
     </div>
@@ -189,17 +189,17 @@ function DetailedExplanation({ topic }: { topic: TheoryTopic }) {
     <div className="topic-explanation">
       <div className="explain-copy">
         <p>
-          本节课讲的是 <Keyword tone="a">{topic.title}</Keyword>。它属于
-          <Keyword tone="b">{topic.category}</Keyword> 中的 {stageLabel} 内容，学生需要先理解：
+          这张发现卡从 <Keyword tone="a">{topic.title}</Keyword> 开始。它属于
+          <Keyword tone="b">{topic.category}</Keyword> 里的 {stageLabel} 探索，学生可以先听见：
           {topic.concept}
         </p>
         <p>
-          讲解时可以先抓住 <Keyword tone="c">{topic.subtitle}</Keyword> 这个入口，再把抽象概念落到
+          互动时可以先抓住 <Keyword tone="c">{topic.subtitle}</Keyword> 这个入口，再把抽象说法落到
           <Keyword tone="d">听觉变化</Keyword>、<Keyword tone="a">视觉符号</Keyword> 和
-          <Keyword tone="b">课堂动作</Keyword> 上。这样学生不只是记住名称，而是能说出“我听到了什么、我看到了什么、为什么这样判断”。
+          <Keyword tone="b">身体动作</Keyword> 上。这样学生不只是记住名称，而是能说出“我听到了什么、我看到了什么、我想怎么表现它”。
         </p>
         <p>
-          教师可以用下方演示先做对比，再让学生用自己的话复述。复述时优先使用这些关键词：
+          可以用下方演示先做对比，再让学生用自己的话、动作或哼唱复述。表达时可以抓住这些线索：
           {topic.keyPoints.map((point, index) => (
             <Keyword key={point} tone={keywordTones[index % keywordTones.length]}>
               {point}
@@ -285,6 +285,119 @@ function TheoryDemoLab({
       <div className="demo-observations">
         {scene.observations.map((item) => (
           <span key={item}>{item}</span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function ExplorationLoop({
+  topic,
+  scene,
+  activeValue,
+  onChange,
+  onPlay,
+  onNavigate,
+}: {
+  topic: TheoryTopic
+  scene: ReturnType<typeof getDemoScene>
+  activeValue: string
+  onChange: (value: string) => void
+  onPlay: () => void
+  onNavigate: ReturnType<typeof useApp>['navigate']
+}) {
+  const task = buildExplorationTaskCard(topic, scene)
+  const steps = task.steps
+  const guessControls = scene.controls.slice(0, 2)
+  const speakStarters = [
+    `我听到：${topic.subtitle}`,
+    `我发现：${topic.keyPoints[0]}`,
+    '我想把它变成一段小作品',
+  ]
+
+  return (
+    <div className="exploration-loop">
+      <div className="exploration-head">
+        <div>
+          <span className="theory-kicker">声音探险卡</span>
+          <h3>{task.title}</h3>
+          <p>{task.mission}</p>
+        </div>
+        <button className="demo-play" onClick={onPlay}>
+          ▶ 先听一遍
+        </button>
+      </div>
+      <div className="task-checkpoints" aria-label="本次探索检查点">
+        {task.checkpoints.map((checkpoint) => (
+          <span key={checkpoint}>{checkpoint}</span>
+        ))}
+      </div>
+      <div className="exploration-steps">
+        {steps.map((step, index) => (
+          <div key={step.id} className={`exploration-step step-${step.id}`}>
+            <div className="exploration-step-top">
+              <span className="exploration-index">{index + 1}</span>
+              <span className="task-badge">{step.badge}</span>
+            </div>
+            <div>
+              <b>{step.title}</b>
+              <p>{step.prompt}</p>
+              <small>{step.microGoal}</small>
+            </div>
+            {step.id === 'listen' && (
+              <button onClick={onPlay}>{step.actionLabel}</button>
+            )}
+            {step.id === 'guess' && (
+              <div className="exploration-choice-row">
+                {guessControls.map((control) => (
+                  <button
+                    key={control.value}
+                    className={control.value === activeValue ? 'on' : ''}
+                    onClick={() => onChange(control.value)}
+                  >
+                    {control.label}
+                  </button>
+                ))}
+              </div>
+            )}
+            {step.id === 'play' && (
+              <div className="exploration-choice-row wrap">
+                {scene.controls.slice(0, 4).map((control) => (
+                  <button
+                    key={control.value}
+                    className={control.value === activeValue ? 'on' : ''}
+                    onClick={() => onChange(control.value)}
+                  >
+                    {control.label}
+                  </button>
+                ))}
+                {step.route && (
+                  <button className="primary" onClick={() => onNavigate(step.route!)}>
+                    {step.actionLabel}
+                  </button>
+                )}
+              </div>
+            )}
+            {step.id === 'speak' && (
+              <div className="exploration-choice-row wrap">
+                {speakStarters.map((starter) => (
+                  <span key={starter}>{starter}</span>
+                ))}
+              </div>
+            )}
+            {step.id === 'create' && (
+              <div className="exploration-choice-row wrap">
+                <button className="primary" onClick={() => onNavigate(step.route ?? 'mixer')}>
+                  {step.actionLabel}
+                </button>
+                {topic.actions.filter((action) => action.route !== step.route).slice(0, 2).map((action) => (
+                  <button key={action.label} onClick={() => onNavigate(action.route)}>
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
       </div>
     </div>
@@ -559,8 +672,8 @@ function MiniQuiz({
     <div className="mini-quiz">
       <div className="quiz-summary">
         <div>
-          <h4>本知识点小测</h4>
-          <p>每组 3 题，适合边讲边点答。</p>
+          <h4>本关小挑战</h4>
+          <p>每组 3 题，适合边听边点、边玩边答。</p>
         </div>
         <strong>{correctCount}/{topic.quiz.length}</strong>
       </div>

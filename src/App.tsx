@@ -26,7 +26,7 @@ function Shell() {
 
   useEffect(() => {
     if (mode !== 'teacher' && (route === 'class' || route === 'dashboard')) {
-      navigate('home')
+      navigate('home', { history: 'reset' })
     }
   }, [mode, route, navigate])
 

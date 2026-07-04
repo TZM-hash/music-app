@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.2.0",
   "type": "module",
-  "description": "面向中小学的音乐教学数智工具：虚拟乐器 + 音乐游戏",
+  "description": "面向中小学的音乐探索互动空间：听、玩、创作与闯关",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

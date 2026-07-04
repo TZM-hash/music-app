@@ -8,11 +8,11 @@ import './course.css'
 
 function routeLabel(route: Route): string {
   const labels: Partial<Record<Route, string>> = {
-    theory: '知识库',
-    course: '课程路径',
-    training: '练习中心',
-    library: '曲库谱例',
-    mixer: '混音创编',
+    theory: '探索馆',
+    course: '成长路线',
+    training: '挑战中心',
+    library: '音乐素材',
+    mixer: '混音创作',
     'game-ear': '听辨挑战',
     'game-taiko': '节奏挑战',
     'game-sing': '视唱挑战',
@@ -51,14 +51,14 @@ export default function AdventureMap() {
       <section className="course-head card adventure-head">
         <div>
           <span className="course-kicker">快乐教学 · 边玩边学</span>
-          <h2>乐理闯关岛</h2>
+          <h2>音乐闯关岛</h2>
           <p>
-            把 100+ 个乐理知识点整理成九座音乐小岛：先探索知识，再听演示，最后进入练习或创编挑战。
+            把 100+ 张音乐发现卡整理成九座小岛：先听一听、玩一玩，再进入挑战或创编任务。
           </p>
         </div>
         <div className="map-summary">
           <div><b>{THEORY_QUESTS.length}</b><small>音乐岛屿</small></div>
-          <div><b>{questStats.reduce((sum, item) => sum + item.completed, 0)}</b><small>已闯知识点</small></div>
+          <div><b>{questStats.reduce((sum, item) => sum + item.completed, 0)}</b><small>已闯发现卡</small></div>
           <div><b>{student ? student.avatar : '🎒'}</b><small>{student ? student.name : '匿名冒险'}</small></div>
         </div>
       </section>
@@ -72,13 +72,13 @@ export default function AdventureMap() {
         </div>
         <div className="call-actions">
           <button className="lesson-secondary" onClick={() => navigate('course')}>
-            课程指引
+            成长路线
           </button>
           <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
             {routeLabel(activeQuest.practiceRoute)}
           </button>
           <button className="big-start" onClick={() => navigate('theory')}>
-            探索知识
+            探索发现
           </button>
         </div>
       </section>
@@ -90,7 +90,7 @@ export default function AdventureMap() {
             className={`station quest-card card ${pct >= 100 ? 'done' : ''} ${unlocked ? '' : 'locked'} ${quest.id === activeQuest.id ? 'active' : ''}`}
             onClick={() => unlocked && setActiveQuestId(quest.id)}
             disabled={!unlocked}
-            title={`${quest.title}：${quest.mood}。${quest.topicIds.length} 个知识点 · ${routeLabel(quest.practiceRoute)}`}
+            title={`${quest.title}：${quest.mood}。${quest.topicIds.length} 张发现卡 · ${routeLabel(quest.practiceRoute)}`}
           >
             <span className="station-index">{index + 1}</span>
             <span className="station-icon" style={{ background: quest.color }}>
@@ -98,18 +98,18 @@ export default function AdventureMap() {
             </span>
             <h3>{quest.title}</h3>
             <p>{quest.mood}</p>
-            <div className="station-skill">{quest.topicIds.length} 个知识点 · {routeLabel(quest.practiceRoute)}</div>
+            <div className="station-skill">{quest.topicIds.length} 张发现卡 · {routeLabel(quest.practiceRoute)}</div>
             <div className="station-progress">
               <span style={{ width: `${pct}%`, background: quest.color }} />
             </div>
-            <small>{completed}/{quest.topicIds.length} 个知识点已完成</small>
+            <small>{completed}/{quest.topicIds.length} 张发现卡已点亮</small>
           </button>
         ))}
       </div>
 
       <section className="leader-panel card quest-topic-panel">
         <div>
-          <span className="course-kicker">岛屿知识卡</span>
+          <span className="course-kicker">岛屿发现卡</span>
           <h3>{activeQuest.title}会遇到这些关卡</h3>
         </div>
         <div className="quest-topic-grid">
@@ -123,7 +123,7 @@ export default function AdventureMap() {
         </div>
         <div className="lesson-foot">
           <button className="big-start" onClick={() => navigate('theory')}>
-            进入知识库闯关
+            进入探索馆闯关
           </button>
           <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
             去完成小岛挑战

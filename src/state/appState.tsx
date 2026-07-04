@@ -2,6 +2,13 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
 import { getCurrentStudentId, setCurrentStudentId } from './students'
 import { createTheoryFocus, TheoryFocus } from './theoryFocus'
+import {
+  applyRouteNavigation,
+  backButtonLabel,
+  popRouteHistory,
+  RouteNavigationOptions,
+  RouteHistoryState,
+} from './navigationHistory'
 
 export type AppMode = 'teacher' | 'lecture' | 'student'
 export type Route =
@@ -26,17 +33,21 @@ export type Route =
 interface AppState {
   mode: AppMode
   route: Route
+  returnStack: Route[]
+  canGoBack: boolean
+  backLabel: string
   showNoteNames: boolean
   currentStudentId: string | null
   /** 供游戏使用的当前选中曲目 id（从曲库跳转时带入） */
   activeSongId: string | null
-  /** 从课程路径/闯关岛进入乐理知识库时携带的筛选焦点 */
+  /** 从成长路线/闯关岛进入音乐探索馆时携带的筛选焦点 */
   theoryFocus: TheoryFocus | null
   /** 窄屏时侧边栏是否展开 */
   sidebarOpen: boolean
   setMode: (m: AppMode) => void
-  navigate: (r: Route) => void
-  openTheory: (focus?: TheoryFocus) => void
+  navigate: (r: Route, options?: RouteNavigationOptions) => void
+  openTheory: (focus?: TheoryFocus, options?: RouteNavigationOptions) => void
+  goBack: () => void
   toggleNoteNames: () => void
   selectStudent: (id: string | null) => void
   playSongInGame: (songId: string, route: Route) => void
@@ -75,7 +86,8 @@ function savePrefs(p: Prefs): void {
 export function AppProvider({ children }: { children: ReactNode }) {
   const initial = loadPrefs()
   const [mode, setModeState] = useState<AppMode>(initial.mode)
-  const [route, setRoute] = useState<Route>('home')
+  const [navigation, setNavigation] = useState<RouteHistoryState>({ route: 'home', stack: [] })
+  const { route, stack: returnStack } = navigation
   const [showNoteNames, setShowNoteNames] = useState(initial.showNoteNames)
   const [currentStudentId, setCurrentId] = useState<string | null>(() => getCurrentStudentId())
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
@@ -88,14 +100,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [mode, showNoteNames])
 
   const setMode = useCallback((m: AppMode) => setModeState(m), [])
-  const navigate = useCallback((r: Route) => {
-    setRoute(r)
-    if (r !== 'theory') setTheoryFocus(null)
+  const navigate = useCallback((r: Route, options?: RouteNavigationOptions) => {
+    setNavigation((current) => applyRouteNavigation(current, r, options))
     setSidebarOpen(false) // 导航后自动收起（窄屏）
   }, [])
-  const openTheory = useCallback((focus?: TheoryFocus) => {
+  const openTheory = useCallback((focus?: TheoryFocus, options?: RouteNavigationOptions) => {
     setTheoryFocus(focus ? createTheoryFocus(focus) : null)
-    setRoute('theory')
+    setNavigation((current) => applyRouteNavigation(current, 'theory', options))
+    setSidebarOpen(false)
+  }, [])
+  const goBack = useCallback(() => {
+    setNavigation((current) => popRouteHistory(current))
     setSidebarOpen(false)
   }, [])
   const toggleNoteNames = useCallback(() => setShowNoteNames((v) => !v), [])
@@ -108,7 +123,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const playSongInGame = useCallback((songId: string, r: Route) => {
     setActiveSongId(songId)
-    setRoute(r)
+    setNavigation((current) => applyRouteNavigation(current, r))
+    setSidebarOpen(false)
   }, [])
 
   // 切到非游戏页时清空 activeSong，避免串曲
@@ -116,11 +132,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!route.startsWith('game-')) setActiveSongId(null)
   }, [route])
 
+  // 离开音乐探索馆后清掉筛选焦点，避免下次进入仍停在旧主题。
+  useEffect(() => {
+    if (route !== 'theory' && theoryFocus) setTheoryFocus(null)
+  }, [route, theoryFocus])
+
   return (
     <Ctx.Provider
       value={{
         mode,
         route,
+        returnStack,
+        canGoBack: returnStack.length > 0,
+        backLabel: backButtonLabel(returnStack),
         showNoteNames,
         currentStudentId,
         activeSongId,
@@ -129,6 +153,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setMode,
         navigate,
         openTheory,
+        goBack,
         toggleNoteNames,
         selectStudent,
         playSongInGame,

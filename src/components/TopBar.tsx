@@ -1,34 +1,27 @@
 import { useApp, Route } from '../state/appState'
+import { ROUTE_LABELS } from '../state/navigationHistory'
 import StudentSelector from './StudentSelector'
 
-const ROUTE_TITLE: Record<Route, string> = {
-  home: '学习工作台',
-  lesson: '课时模式',
-  course: '课程路径',
-  training: '专项练习',
-  adventure: '能力进阶',
-  piano: '钢琴示范',
-  drums: '架子鼓',
-  mixer: '混音创编',
-  recorder: '竖笛指法',
-  'game-ear': '听觉训练',
-  'game-taiko': '节奏反应',
-  'game-sing': '视唱训练',
-  'game-read': '识谱训练',
-  library: '曲库谱例',
-  theory: '乐理知识库',
-  class: '学生档案',
-  dashboard: '教学评估',
-}
+const ROUTE_TITLE: Record<Route, string> = ROUTE_LABELS
 
 const MODE_LABEL = {
   teacher: '教师',
-  lecture: '讲解',
+  lecture: '互动投屏',
   student: '学生',
 } as const
 
 export default function TopBar() {
-  const { mode, route, showNoteNames, setMode, toggleNoteNames, toggleSidebar } = useApp()
+  const {
+    mode,
+    route,
+    showNoteNames,
+    canGoBack,
+    backLabel,
+    setMode,
+    toggleNoteNames,
+    toggleSidebar,
+    goBack,
+  } = useApp()
   const isInstrument = route === 'piano' || route === 'drums'
 
   return (
@@ -38,6 +31,13 @@ export default function TopBar() {
         <span />
         <span />
       </button>
+
+      {canGoBack && (
+        <button className="backbtn" onClick={goBack} aria-label={backLabel}>
+          <span aria-hidden="true">←</span>
+          <span>{backLabel}</span>
+        </button>
+      )}
 
       <div className="breadcrumb" aria-label="当前位置">
         <span className="crumb-home">乐动课堂</span>
@@ -70,7 +70,7 @@ export default function TopBar() {
           教师
         </button>
         <button className={mode === 'lecture' ? 'on' : ''} onClick={() => setMode('lecture')}>
-          讲解
+          投屏
         </button>
         <button className={mode === 'student' ? 'on' : ''} onClick={() => setMode('student')}>
           学生

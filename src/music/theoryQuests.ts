@@ -103,7 +103,7 @@ export const THEORY_QUESTS: TheoryQuest[] = [
     id: 'composer-studio',
     title: '作曲小屋',
     icon: '🎨',
-    mood: '把知识变成自己的音乐',
+    mood: '把发现变成自己的音乐',
     stage: 'junior-advanced',
     mission: '从动机、旋律线、节奏创编、固定音型和四小节乐句开始做小作品。',
     topicIds: ['motif', 'melody-contour', 'rhythm-composition', 'question-answer-writing', 'ostinato', 'texture-melody-accompaniment', 'four-bar-phrase-writing', 'arrangement-color'],

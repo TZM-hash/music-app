@@ -316,6 +316,7 @@ export default function EarGame() {
 
       {result && (
         <GameResult
+          gameId={GAME_ID}
           score={result.score}
           stars={result.stars}
           bestScore={best}
@@ -323,6 +324,7 @@ export default function EarGame() {
           newBadges={result.newBadges}
           review={result.review}
           onRetry={start}
+          onContinue={() => navigate('training')}
           onHome={() => navigate('home')}
         />
       )}

@@ -70,12 +70,16 @@
 }
 .result-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
 }
 .btn-primary,
+.btn-secondary,
 .btn-ghost {
   flex: 1;
+  min-width: 120px;
+  min-height: 44px;
   padding: 12px 20px;
   border-radius: 8px;
   font-weight: 700;
@@ -84,6 +88,11 @@
 .btn-primary {
   background: var(--primary);
   color: #fff;
+}
+.btn-secondary {
+  border: 1px solid color-mix(in srgb, var(--primary) 24%, transparent);
+  background: color-mix(in srgb, var(--primary) 12%, var(--bg-panel));
+  color: var(--primary);
 }
 .btn-ghost {
   background: var(--bg-soft);
@@ -200,6 +209,53 @@
 .diagnosis-mini .focus {
   background: rgba(250, 82, 82, 0.14);
 }
+.ability-mini {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(42px, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+.ability-mini span {
+  position: relative;
+  min-height: 82px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--bg-soft);
+  padding: 8px 6px;
+}
+.ability-mini i {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(47, 111, 237, 0.18);
+}
+.ability-mini span.good i {
+  background: rgba(81, 207, 102, 0.22);
+}
+.ability-mini span.warn i {
+  background: rgba(255, 212, 59, 0.25);
+}
+.ability-mini span.focus i {
+  background: rgba(250, 82, 82, 0.16);
+}
+.ability-mini b,
+.ability-mini small {
+  position: relative;
+  z-index: 1;
+}
+.ability-mini b {
+  color: var(--text);
+  font-size: 0.72rem;
+}
+.ability-mini small {
+  color: var(--text-soft);
+  font-weight: 900;
+}
 .review-link {
   display: block;
   margin-top: 16px;
@@ -255,6 +311,61 @@
 }
 .diagnosis-card.focus {
   border-left: 4px solid #fa5252;
+}
+.ability-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.ability-card {
+  padding: 12px;
+  border-radius: 8px;
+  background: var(--bg-soft);
+  text-align: left;
+}
+.ability-card > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.ability-card small {
+  color: var(--text-soft);
+  font-weight: 800;
+}
+.ability-card b {
+  color: var(--primary);
+  font-size: 1.25rem;
+}
+.ability-card span {
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(128, 128, 128, 0.16);
+  margin: 8px 0;
+}
+.ability-card i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+.ability-card.good i {
+  background: var(--accent-2);
+}
+.ability-card.warn i {
+  background: #ffd43b;
+}
+.ability-card.focus i {
+  background: #fa5252;
+}
+.ability-card p {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.45;
 }
 .review-list {
   max-height: 46vh;

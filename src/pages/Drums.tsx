@@ -130,8 +130,17 @@ export default function Drums() {
   // 卸载时清理
   useEffect(() => () => stopRef.current?.(), [])
 
-  const applyPreset = (i: number) => setGrid(PRESETS[i].grid())
-  const clearGrid = () => setGrid(emptyGrid())
+  const hasAnyStep = () => Object.values(gridRef.current).some((steps) => steps.some(Boolean))
+  const applyPreset = (i: number) => {
+    const preset = PRESETS[i]
+    if (hasAnyStep() && !window.confirm(`确定用「${preset.name}」替换当前鼓机循环吗？`)) return
+    setGrid(preset.grid())
+  }
+  const clearGrid = () => {
+    if (!hasAnyStep()) return
+    if (!window.confirm('确定清空当前鼓机循环吗？')) return
+    setGrid(emptyGrid())
+  }
 
   return (
     <div className="instrument-wrap">

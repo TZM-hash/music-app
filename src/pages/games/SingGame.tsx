@@ -308,6 +308,7 @@ export default function SingGame() {
       </div>
       {result && (
         <GameResult
+          gameId={GAME_ID}
           title={result.stars >= 2 ? '唱得真棒！' : '继续练习哦'}
           score={result.score}
           stars={result.stars}
@@ -316,6 +317,7 @@ export default function SingGame() {
           newBadges={result.newBadges}
           review={result.review}
           onRetry={() => song && start(song)}
+          onContinue={() => navigate('training')}
           onHome={() => navigate('home')}
         />
       )}
