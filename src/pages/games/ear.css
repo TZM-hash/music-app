@@ -1,3 +1,4 @@
+/* 练耳 · 霓虹舞台 */
 .ear-stage {
   flex: 1;
   display: flex;
@@ -9,20 +10,26 @@
 .ear-mode-tag {
   padding: 6px 20px;
   border-radius: 999px;
-  background: var(--primary);
-  color: #fff;
+  background: rgba(34, 229, 255, 0.12);
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
   font-weight: 700;
   font-size: 0.95rem;
 }
 .replay-btn {
   padding: 18px 40px;
   border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
+  background: rgba(34, 229, 255, 0.1);
+  border: 3px solid var(--neon-cyan);
+  color: var(--neon-cyan);
   font-size: 1.4rem;
   font-weight: 800;
-  box-shadow: var(--shadow);
-  transition: transform 0.1s;
+  box-shadow: 0 0 20px rgba(34, 229, 255, 0.15);
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s;
+}
+.replay-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(34, 229, 255, 0.3);
 }
 .replay-btn:active {
   transform: scale(0.95);
@@ -36,16 +43,23 @@
 }
 .ear-key {
   flex: 1;
-  background: var(--key-white);
+  background: linear-gradient(180deg, #1c2452 0%, #141b42 85%, #0d1230 100%);
   color: var(--text);
   border-radius: 0 0 10px 10px;
-  box-shadow: var(--shadow);
+  border: 1px solid rgba(138, 149, 201, 0.2);
+  border-top: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 16px;
   font-size: 1.1rem;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s var(--ease-spring), box-shadow 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.ear-key:hover {
+  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.15);
 }
 .ear-key span {
   display: flex;
@@ -57,18 +71,22 @@
 }
 .ear-key small {
   font-size: 0.75rem;
-  color: var(--text-soft);
+  color: var(--text-faint);
 }
 .ear-key:active {
   transform: translateY(2px);
 }
 .ear-key.right {
-  background: var(--accent-2);
-  color: #fff;
+  background: rgba(61, 255, 192, 0.2);
+  border-color: var(--neon-green);
+  box-shadow: 0 0 20px rgba(61, 255, 192, 0.3);
+  color: var(--neon-green);
 }
 .ear-key.wrong {
-  background: #fa5252;
-  color: #fff;
+  background: rgba(255, 84, 112, 0.15);
+  border-color: var(--danger);
+  box-shadow: 0 0 16px rgba(255, 84, 112, 0.2);
+  color: var(--danger);
 }
 
 /* 模式选择 */
@@ -85,19 +103,24 @@
   gap: 6px;
   padding: 18px 20px;
   border-radius: var(--radius);
-  background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  box-shadow: var(--shadow-soft);
   color: var(--text);
-  transition: transform 0.15s;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s, border-color 0.15s;
   min-width: 140px;
 }
 .mode-btn:hover {
   transform: translateY(-4px);
+  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: var(--shadow), 0 0 16px rgba(34, 229, 255, 0.12);
 }
 .mode-btn.on {
-  background: var(--primary);
-  color: #fff;
+  background: rgba(34, 229, 255, 0.12);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
   transform: translateY(-4px);
+  box-shadow: 0 0 16px rgba(34, 229, 255, 0.2);
 }
 .mode-icon {
   font-size: 2rem;
@@ -122,21 +145,31 @@
   min-width: 180px;
   padding: 18px 28px;
   border-radius: var(--radius);
-  background: var(--bg-panel);
-  box-shadow: var(--shadow);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  box-shadow: var(--shadow-soft);
   color: var(--text);
   font-weight: 800;
   font-size: 1.3rem;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s var(--ease-spring), box-shadow 0.15s, border-color 0.15s;
+}
+.ear-option:hover {
+  border-color: rgba(34, 229, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.12);
 }
 .ear-option:active {
   transform: scale(0.95);
 }
 .ear-option.right {
-  background: var(--accent-2);
-  color: #fff;
+  background: rgba(61, 255, 192, 0.15);
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  box-shadow: 0 0 16px rgba(61, 255, 192, 0.25);
 }
 .ear-option.wrong {
-  background: #fa5252;
-  color: #fff;
+  background: rgba(255, 84, 112, 0.1);
+  border-color: var(--danger);
+  color: var(--danger);
+  box-shadow: 0 0 12px rgba(255, 84, 112, 0.15);
 }
