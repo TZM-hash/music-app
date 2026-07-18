@@ -498,6 +498,12 @@ button:focus-visible {
   flex: 1;
   overflow: auto;
   padding: 26px;
+  animation: contentFadeIn 0.3s var(--ease-smooth);
+}
+
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* 通用面板/卡片 */
@@ -512,12 +518,17 @@ button:focus-visible {
 
 .back-btn {
   padding: 8px 18px;
-  border-radius: 8px;
-  background: var(--bg-panel);
-  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 700;
   box-shadow: var(--shadow-soft);
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s;
+}
+.back-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
 }
 
 /* 首页网格 */
@@ -527,7 +538,7 @@ button:focus-visible {
 }
 .home-hero h1 {
   font-size: 2.4rem;
-  color: var(--primary);
+  color: var(--neon-cyan);
 }
 .home-hero p {
   color: var(--text-soft);
@@ -549,19 +560,21 @@ button:focus-visible {
   grid-template-columns: repeat(2, minmax(260px, 1fr));
 }
 .tile {
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   padding: 28px 20px;
   color: #fff;
   text-align: center;
-  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
-  transition: transform 0.15s;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.3);
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 .tile:hover {
   transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 229, 255, 0.15);
 }
 .tile .emoji {
   font-size: 3rem;
@@ -591,21 +604,24 @@ button:focus-visible {
 /* 伴奏开关 */
 .accomp-btn {
   padding: 8px 16px;
-  border-radius: 8px;
-  background: var(--bg-panel);
-  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
   font-weight: 700;
   font-size: 0.9rem;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s var(--ease-spring), box-shadow 0.15s;
 }
 .accomp-btn:hover {
   transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
 }
 .accomp-btn.on {
-  background: var(--accent-2);
-  color: #fff;
+  background: rgba(255, 214, 10, 0.15);
+  border-color: var(--neon-gold);
+  color: var(--neon-gold);
+  box-shadow: 0 0 10px rgba(255, 214, 10, 0.15);
 }
 
 /* 首页状态条 */
@@ -622,15 +638,15 @@ button:focus-visible {
   align-items: center;
   gap: 8px;
   padding: 10px 18px;
-  background: var(--bg-panel);
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--line-neon);
+  border-radius: var(--radius);
   box-shadow: var(--shadow-soft);
   font-size: 0.95rem;
   color: var(--text-soft);
 }
 .status-chip b {
-  color: var(--text);
+  color: var(--neon-cyan);
 }
 .chip-icon {
   font-size: 1.2rem;
@@ -647,7 +663,7 @@ button:focus-visible {
   gap: 16px;
   max-width: 1100px;
   margin: 0 auto 28px;
-  border-left: 4px solid var(--accent);
+  border-left: 4px solid var(--neon-cyan);
 }
 .teaching-panel p {
   margin-top: 4px;
@@ -764,7 +780,7 @@ button:focus-visible {
 }
 .pro-kpi b {
   display: block;
-  color: var(--primary);
+  color: var(--neon-cyan);
   font-size: 1.9rem;
   line-height: 1;
 }
@@ -777,7 +793,7 @@ button:focus-visible {
   grid-template-columns: minmax(260px, 0.9fr) minmax(0, 1.35fr) auto;
   gap: 16px;
   align-items: stretch;
-  border-left: 4px solid var(--primary-2);
+  border-left: 4px solid var(--neon-purple);
 }
 .portfolio-head {
   display: flex;
@@ -802,9 +818,10 @@ button:focus-visible {
   min-height: 74px;
   place-items: center;
   align-content: center;
-  border-radius: 8px;
-  background: var(--bg-soft);
-  color: var(--primary);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.5);
+  color: var(--neon-cyan);
+  border: 1px solid var(--line-neon);
 }
 .portfolio-count b {
   font-size: 1.9rem;
@@ -825,10 +842,11 @@ button:focus-visible {
 .portfolio-chip-row span {
   padding: 7px 10px;
   border-radius: 8px;
-  background: var(--bg-soft);
+  background: rgba(28, 36, 82, 0.4);
   color: var(--text);
   font-size: 0.82rem;
   font-weight: 850;
+  border: 1px solid var(--line-soft);
 }
 .portfolio-work-list {
   display: grid;
@@ -843,10 +861,17 @@ button:focus-visible {
   align-content: start;
   gap: 5px;
   padding: 12px;
-  border-radius: 8px;
-  background: var(--bg-soft);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.4);
   color: var(--text);
   text-align: left;
+  border: 1px solid var(--line-soft);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s var(--ease-spring);
+}
+.portfolio-work-list button:hover {
+  border-color: rgba(34, 229, 255, 0.4);
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.1);
+  transform: translateY(-2px);
 }
 .portfolio-work-list small {
   color: var(--accent);
