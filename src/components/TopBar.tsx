@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useApp, Route } from '../state/appState'
 import { ROUTE_LABELS } from '../state/navigationHistory'
+import { setUISoundEnabled, isUISoundEnabled } from '../music/uiSounds'
 import StudentSelector from './StudentSelector'
 
 const ROUTE_TITLE: Record<Route, string> = ROUTE_LABELS
@@ -10,16 +11,6 @@ const MODE_LABEL = {
   lecture: '互动投屏',
   student: '学生',
 } as const
-
-const SOUND_PREF_KEY = 'music-edu-ui-sound-v1'
-function loadSoundPref(): boolean {
-  try {
-    return localStorage.getItem(SOUND_PREF_KEY) === '1'
-  } catch { return false }
-}
-function saveSoundPref(on: boolean): void {
-  try { localStorage.setItem(SOUND_PREF_KEY, on ? '1' : '0') } catch { /* ignore */ }
-}
 
 export default function TopBar() {
   const {
@@ -34,11 +25,11 @@ export default function TopBar() {
     goBack,
   } = useApp()
   const isInstrument = route === 'piano' || route === 'drums'
-  const [uiSoundOn, setUiSoundOn] = useState(loadSoundPref)
+  const [uiSoundOn, setUiSoundOn] = useState(isUISoundEnabled)
   const toggleUiSound = () => {
     setUiSoundOn((v) => {
       const next = !v
-      saveSoundPref(next)
+      setUISoundEnabled(next)
       return next
     })
   }
