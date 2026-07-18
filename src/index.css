@@ -148,6 +148,8 @@ button {
   border-radius: 8px;
   color: var(--text);
   font-size: 1.15rem;
+  border: 1px solid var(--line-neon);
+  background: rgba(28, 36, 82, 0.5);
 }
 .sidebar-backdrop {
   display: none;
@@ -279,12 +281,12 @@ button {
   gap: 12px;
   min-height: 68px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.78);
-  border-bottom: 1px solid var(--line);
+  background: rgba(6, 8, 20, 0.85);
+  border-bottom: 1px solid var(--line-neon);
   box-shadow: none;
   z-index: 10;
   flex-shrink: 0;
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
 }
 .breadcrumb {
   display: flex;
@@ -312,10 +314,10 @@ button {
   max-width: min(250px, 30vw);
   min-height: 38px;
   padding: 8px 12px;
-  border: 1px solid var(--line-soft);
-  border-radius: 8px;
-  background: color-mix(in srgb, var(--primary) 9%, white);
-  color: var(--primary);
+  border: 1px solid var(--line-neon);
+  border-radius: var(--radius);
+  background: rgba(34, 229, 255, 0.08);
+  color: var(--neon-cyan);
   font-size: 0.9rem;
   font-weight: 900;
   white-space: nowrap;
@@ -328,8 +330,8 @@ button {
 }
 .topbar .backbtn:hover {
   transform: translateY(-1px);
-  border-color: color-mix(in srgb, var(--primary) 26%, var(--line));
-  background: color-mix(in srgb, var(--primary) 13%, white);
+  border-color: rgba(34, 229, 255, 0.5);
+  background: rgba(34, 229, 255, 0.15);
 }
 .topbar .spacer {
   flex: 1;
@@ -337,29 +339,31 @@ button {
 .topbar .toolbtn {
   min-height: 38px;
   padding: 8px 14px;
-  border-radius: 8px;
-  background: var(--bg-soft);
-  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   color: var(--text);
   font-size: 0.9rem;
   font-weight: 800;
-  transition: transform 0.1s, background 0.2s, border-color 0.2s;
+  transition: transform 0.1s var(--ease-spring), background 0.2s, border-color 0.2s, box-shadow 0.15s ease;
 }
 .topbar .toolbtn:hover {
   transform: translateY(-1px);
-  border-color: var(--line);
+  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.15);
 }
 .topbar .toolbtn.active {
-  background: var(--primary);
-  border-color: var(--primary);
-  color: #fff;
+  background: rgba(34, 229, 255, 0.15);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.2);
 }
 .topbar .seg {
   display: flex;
   min-height: 40px;
-  background: var(--bg-soft);
-  border: 1px solid var(--line-soft);
-  border-radius: 8px;
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  border-radius: var(--radius);
   padding: 3px;
   gap: 3px;
 }
@@ -369,11 +373,12 @@ button {
   font-size: 0.88rem;
   font-weight: 800;
   color: var(--text-soft);
+  transition: color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 .topbar .seg button.on {
-  background: var(--bg-panel);
-  color: var(--primary);
-  box-shadow: var(--shadow-soft);
+  background: rgba(34, 229, 255, 0.15);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.2);
 }
 
 .topbar .seg button:focus-visible,
@@ -383,7 +388,7 @@ button {
 .stu-current:focus-visible,
 .stu-option:focus-visible,
 button:focus-visible {
-  outline: 3px solid rgba(47, 111, 237, 0.18);
+  outline: 3px solid rgba(34, 229, 255, 0.3);
   outline-offset: 2px;
 }
 
@@ -397,11 +402,16 @@ button:focus-visible {
   gap: 8px;
   min-height: 38px;
   padding: 7px 12px;
-  border-radius: 8px;
-  background: var(--bg-soft);
-  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 800;
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s;
+}
+.stu-current:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
 }
 .stu-avatar {
   font-size: 1.2rem;
@@ -420,14 +430,15 @@ button:focus-visible {
   top: 110%;
   right: 0;
   z-index: 31;
-  background: var(--bg-panel);
+  background: rgba(13, 18, 48, 0.92);
   border-radius: var(--radius);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-neon);
   box-shadow: var(--shadow);
   padding: 10px;
   min-width: 220px;
   max-height: 360px;
   overflow-y: auto;
+  backdrop-filter: blur(24px);
 }
 .stu-dropdown-title {
   font-size: 0.8rem;
@@ -445,6 +456,7 @@ button:focus-visible {
   color: var(--text);
   font-weight: 600;
   text-align: left;
+  transition: background 0.15s;
 }
 .stu-option-main {
   display: flex;
@@ -458,23 +470,28 @@ button:focus-visible {
   font-weight: 600;
 }
 .stu-option:hover {
-  background: var(--bg-soft);
+  background: rgba(28, 36, 82, 0.6);
 }
 .stu-option.on {
-  background: var(--primary);
-  color: #fff;
+  background: rgba(34, 229, 255, 0.15);
+  color: var(--neon-cyan);
 }
 .stu-option.on .stu-option-main small {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(34, 229, 255, 0.6);
 }
 .stu-manage {
   width: 100%;
   margin-top: 8px;
   padding: 10px;
   border-radius: 8px;
-  background: var(--bg-soft);
+  background: rgba(28, 36, 82, 0.4);
   color: var(--text);
   font-weight: 700;
+  border: 1px solid var(--line-soft);
+  transition: border-color 0.15s;
+}
+.stu-manage:hover {
+  border-color: var(--neon-cyan);
 }
 
 .content {
@@ -1483,9 +1500,9 @@ body::before {
 .topbar {
   min-height: 72px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.68);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.72);
-  box-shadow: 0 14px 36px rgba(38, 51, 77, 0.07);
+  background: rgba(6, 8, 20, 0.85);
+  border-bottom: 1px solid var(--line-neon);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .breadcrumb {
@@ -1508,8 +1525,8 @@ body::before {
   height: 28px;
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.58);
-  border: 1px solid var(--line-soft);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
 }
 
 .topbar-pulse i {
@@ -1531,8 +1548,8 @@ body::before {
 }
 
 .hamburger {
-  border: 1px solid var(--line-soft);
-  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--line-neon);
+  background: rgba(28, 36, 82, 0.5);
 }
 
 .hamburger span {
@@ -1589,15 +1606,15 @@ body::before {
   height: 24px;
   place-items: center;
   border-radius: 50%;
-  background: rgba(107, 92, 255, 0.12);
-  color: var(--primary);
+  background: rgba(160, 107, 255, 0.15);
+  color: var(--neon-purple);
   font-size: 0.8rem;
   font-weight: 950;
 }
 
 .stu-dropdown {
-  border: 1px solid rgba(255, 255, 255, 0.82);
-  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line-neon);
+  background: rgba(13, 18, 48, 0.92);
   backdrop-filter: blur(24px);
 }
 

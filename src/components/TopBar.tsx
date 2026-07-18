@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useApp, Route } from '../state/appState'
 import { ROUTE_LABELS } from '../state/navigationHistory'
 import StudentSelector from './StudentSelector'
@@ -9,6 +10,16 @@ const MODE_LABEL = {
   lecture: '互动投屏',
   student: '学生',
 } as const
+
+const SOUND_PREF_KEY = 'music-edu-ui-sound-v1'
+function loadSoundPref(): boolean {
+  try {
+    return localStorage.getItem(SOUND_PREF_KEY) === '1'
+  } catch { return false }
+}
+function saveSoundPref(on: boolean): void {
+  try { localStorage.setItem(SOUND_PREF_KEY, on ? '1' : '0') } catch { /* ignore */ }
+}
 
 export default function TopBar() {
   const {
@@ -23,6 +34,14 @@ export default function TopBar() {
     goBack,
   } = useApp()
   const isInstrument = route === 'piano' || route === 'drums'
+  const [uiSoundOn, setUiSoundOn] = useState(loadSoundPref)
+  const toggleUiSound = () => {
+    setUiSoundOn((v) => {
+      const next = !v
+      saveSoundPref(next)
+      return next
+    })
+  }
 
   return (
     <header className="topbar">
@@ -62,6 +81,14 @@ export default function TopBar() {
           音名 {showNoteNames ? '开' : '关'}
         </button>
       )}
+
+      <button
+        className={`toolbtn ${uiSoundOn ? 'active' : ''}`}
+        onClick={toggleUiSound}
+        title={uiSoundOn ? '关闭交互音效' : '开启交互音效'}
+      >
+        {uiSoundOn ? '🔊 音效' : '🔇 音效'}
+      </button>
 
       {mode !== 'lecture' && <StudentSelector />}
 
