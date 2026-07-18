@@ -1641,9 +1641,9 @@ body::before {
   min-height: 360px;
   padding: 34px;
   background:
-    linear-gradient(105deg, rgba(33, 199, 184, 0.14), transparent 34%),
-    linear-gradient(62deg, transparent 44%, rgba(255, 184, 77, 0.14), transparent 72%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(240, 246, 255, 0.72));
+    linear-gradient(105deg, rgba(34, 229, 255, 0.08), transparent 34%),
+    linear-gradient(62deg, transparent 44%, rgba(255, 79, 163, 0.08), transparent 72%),
+    linear-gradient(135deg, rgba(19, 26, 63, 0.94), rgba(6, 8, 20, 0.85));
   overflow: hidden;
 }
 
@@ -1655,8 +1655,8 @@ body::before {
   height: auto;
   border-radius: 0;
   background:
-    repeating-linear-gradient(90deg, transparent 0 24px, rgba(107, 92, 255, 0.05) 24px 25px),
-    linear-gradient(90deg, transparent, rgba(33, 199, 184, 0.1), transparent);
+    repeating-linear-gradient(90deg, transparent 0 24px, rgba(34, 229, 255, 0.03) 24px 25px),
+    linear-gradient(90deg, transparent, rgba(160, 107, 255, 0.06), transparent);
   filter: none;
   opacity: 0.76;
   animation: spectrumFlow 12s linear infinite;
@@ -1677,7 +1677,7 @@ body::before {
 .course-kicker,
 .training-kicker,
 .lesson-kicker {
-  color: var(--accent);
+  color: var(--neon-cyan);
   letter-spacing: 0.12em;
 }
 
@@ -1690,6 +1690,7 @@ body::before {
   line-height: 1.02;
   letter-spacing: 0;
   text-wrap: balance;
+  text-shadow: 0 0 30px rgba(34, 229, 255, 0.15), 0 0 80px rgba(34, 229, 255, 0.05);
 }
 
 .music-hero p {
@@ -1776,12 +1777,12 @@ body::before {
   flex-direction: column;
   gap: 18px;
   padding: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.76);
-  border-radius: 8px;
+  border: 1px solid var(--line-neon);
+  border-radius: var(--radius-lg);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0.5)),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(107, 92, 255, 0.055) 31px 32px),
-    linear-gradient(115deg, rgba(107, 92, 255, 0.1), transparent 42%, rgba(33, 199, 184, 0.1));
+    linear-gradient(180deg, rgba(28, 36, 82, 0.74), rgba(13, 18, 48, 0.6)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(34, 229, 255, 0.04) 31px 32px),
+    linear-gradient(115deg, rgba(34, 229, 255, 0.06), transparent 42%, rgba(160, 107, 255, 0.06));
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -1790,9 +1791,9 @@ body::before {
   content: '';
   position: absolute;
   inset: 20px;
-  border: 1px solid rgba(107, 92, 255, 0.12);
-  border-radius: 8px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  border: 1px solid rgba(34, 229, 255, 0.1);
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, transparent, rgba(34, 229, 255, 0.04), transparent);
 }
 
 .hero-console-head,
@@ -1836,8 +1837,8 @@ body::before {
 .hero-wave i {
   width: 12px;
   border-radius: 999px;
-  background: linear-gradient(180deg, var(--primary), var(--joy));
-  box-shadow: 0 10px 24px rgba(107, 92, 255, 0.2);
+  background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.25);
   animation: pulseBar 1s ease-in-out infinite;
 }
 
@@ -1862,17 +1863,18 @@ body::before {
   min-height: 60px;
   flex-direction: column;
   justify-content: center;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.68);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.6);
   color: var(--text-soft);
   font-size: 0.76rem;
   font-weight: 850;
   text-align: center;
   box-shadow: var(--shadow-soft);
+  border: 1px solid var(--line-neon);
 }
 
 .hero-status-grid b {
-  color: var(--primary);
+  color: var(--neon-cyan);
   font-size: 1.35rem;
   line-height: 1.1;
 }
@@ -1888,11 +1890,12 @@ body::before {
   width: 42px;
   height: 42px;
   place-items: center;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.82);
-  color: var(--primary);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.7);
+  color: var(--neon-cyan);
   font-weight: 950;
   box-shadow: var(--shadow-soft);
+  border: 1px solid var(--line-neon);
 }
 
 .pro-recommend,
@@ -1911,13 +1914,13 @@ body::before {
 .review-home {
   grid-template-columns: 1.1fr 1fr 1fr;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(239, 247, 255, 0.72)),
-    var(--bg-panel);
+    linear-gradient(135deg, rgba(19, 26, 63, 0.88), rgba(13, 18, 48, 0.78)),
+    var(--bg-card);
 }
 
 .review-block {
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid var(--line-neon);
+  background: rgba(28, 36, 82, 0.5);
 }
 
 .review-list button,
@@ -2194,8 +2197,8 @@ body::before {
   grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
   align-items: center;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(240, 247, 255, 0.76)),
-    repeating-linear-gradient(0deg, transparent 0 34px, rgba(58, 111, 255, 0.075) 34px 35px);
+    linear-gradient(135deg, rgba(19, 26, 63, 0.94), rgba(6, 8, 20, 0.85)),
+    repeating-linear-gradient(0deg, transparent 0 34px, rgba(34, 229, 255, 0.04) 34px 35px);
 }
 
 .music-hero::before {
@@ -2204,8 +2207,8 @@ body::before {
   height: auto;
   border-radius: 0;
   background:
-    linear-gradient(108deg, transparent 8%, rgba(58, 111, 255, 0.11) 22%, transparent 36%),
-    linear-gradient(72deg, transparent 48%, rgba(33, 199, 184, 0.12) 62%, transparent 78%);
+    linear-gradient(108deg, transparent 8%, rgba(34, 229, 255, 0.06) 22%, transparent 36%),
+    linear-gradient(72deg, transparent 48%, rgba(255, 79, 163, 0.06) 62%, transparent 78%);
   filter: none;
   opacity: 1;
   animation: spectrumFlow 11s linear infinite;
