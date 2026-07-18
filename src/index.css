@@ -465,11 +465,12 @@ button:focus-visible {
 
 /* 通用面板/卡片 */
 .card {
-  background: var(--bg-panel);
+  background: var(--bg-card);
   border-radius: var(--radius);
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   padding: 20px;
+  backdrop-filter: blur(12px);
 }
 
 .back-btn {
@@ -1580,10 +1581,10 @@ body::before {
 }
 
 .card {
-  border: 1px solid rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line-neon);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.68)),
-    var(--bg-panel);
+    linear-gradient(180deg, rgba(19, 26, 63, 0.9), rgba(13, 18, 48, 0.78)),
+    var(--bg-card);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(18px);
 }
@@ -1677,13 +1678,13 @@ body::before {
 .lesson-secondary,
 .lesson-main-head button,
 .lesson-actions button {
-  border: 1px solid rgba(255, 255, 255, 0.76);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line-neon);
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.6);
   color: var(--text);
   font-weight: 900;
-  box-shadow: var(--shadow-soft);
-  transition: transform 0.16s ease, box-shadow 0.16s ease, filter 0.16s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: transform 0.16s var(--ease-spring), box-shadow 0.16s ease, filter 0.16s ease, border-color 0.16s ease;
 }
 
 .hero-actions button,
@@ -1697,8 +1698,8 @@ body::before {
 .hero-actions .primary-action,
 .pro-actions .primary-action {
   border-color: transparent;
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  color: #fff;
+  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
+  color: #060814;
   box-shadow: var(--glow-primary);
 }
 
@@ -1710,8 +1711,9 @@ body::before {
 .song-card:hover,
 .course-tab:hover,
 .station:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow), 0 0 16px rgba(34, 229, 255, 0.15);
+  border-color: rgba(34, 229, 255, 0.5);
 }
 
 .hero-stage {
@@ -1884,10 +1886,10 @@ body::before {
 .lesson-card-grid > div,
 .lesson-summary > div,
 .quest-topic-grid button {
-  border: 1px solid rgba(255, 255, 255, 0.62);
-  background: rgba(255, 255, 255, 0.68);
+  border: 1px solid var(--line-neon);
+  background: rgba(28, 36, 82, 0.5);
   box-shadow: var(--shadow-soft);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .review-list button:hover,
@@ -1897,7 +1899,8 @@ body::before {
 .lesson-steps button:hover,
 .quest-topic-grid button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow), 0 0 12px rgba(34, 229, 255, 0.12);
+  border-color: rgba(34, 229, 255, 0.5);
 }
 
 .pro-status {
@@ -2129,11 +2132,11 @@ body::before {
   left: 292px;
   right: 0;
   top: 72px;
-  height: 3px;
+  height: 2px;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--primary), var(--primary-2), var(--accent-2), transparent);
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-pink), transparent);
   background-size: 220% 100%;
-  opacity: 0.72;
+  opacity: 0.5;
   animation: spectrumFlow 7s linear infinite;
   z-index: 9;
 }
