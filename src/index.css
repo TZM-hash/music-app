@@ -157,15 +157,15 @@ button {
 .sidebar {
   width: 248px;
   flex-shrink: 0;
-  background: rgba(255, 255, 255, 0.88);
-  border-right: 1px solid var(--line);
+  background: rgba(6, 8, 20, 0.92);
+  border-right: 1px solid var(--line-neon);
   box-shadow: none;
   display: flex;
   flex-direction: column;
   padding: 18px 14px;
   overflow-y: auto;
   z-index: 20;
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
 }
 .side-logo {
   display: flex;
@@ -181,11 +181,11 @@ button {
   width: 38px;
   height: 38px;
   place-items: center;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: #fff;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  color: #060814;
   font-size: 1.2rem;
-  box-shadow: 0 10px 22px rgba(47, 111, 237, 0.22);
+  box-shadow: var(--glow-primary);
 }
 .side-logo-text {
   font-size: 1.2rem;
@@ -206,8 +206,11 @@ button {
   font-weight: 800;
   color: var(--text-faint);
   padding: 5px 12px 7px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  border-bottom: 1px solid;
+  border-image: linear-gradient(90deg, var(--neon-cyan), transparent) 1;
+  margin-bottom: 6px;
 }
 .side-item {
   display: flex;
@@ -216,20 +219,23 @@ button {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius);
   color: var(--text);
   font-size: 0.95rem;
   font-weight: 750;
   text-align: left;
-  transition: background 0.15s, color 0.15s, transform 0.1s;
+  transition: background 0.15s, color 0.15s, transform 0.1s, border-color 0.15s;
+  border: 1px solid transparent;
 }
 .side-item:hover {
-  background: var(--bg-soft);
+  background: rgba(28, 36, 82, 0.6);
+  border-color: var(--line-neon);
 }
 .side-item.active {
-  background: #e8f0ff;
-  color: var(--primary);
-  box-shadow: inset 3px 0 0 var(--primary);
+  background: rgba(34, 229, 255, 0.1);
+  color: var(--neon-cyan);
+  box-shadow: inset 3px 0 0 var(--neon-cyan), 0 0 12px rgba(34, 229, 255, 0.1);
+  border-color: rgba(34, 229, 255, 0.25);
 }
 .side-icon {
   display: grid;
@@ -237,19 +243,33 @@ button {
   height: 28px;
   place-items: center;
   border-radius: 8px;
-  background: rgba(105, 115, 134, 0.1);
+  background: rgba(138, 149, 201, 0.1);
   font-size: 1rem;
   text-align: center;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
+}
+.side-item:hover .side-icon {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.2);
 }
 .side-item.active .side-icon {
-  background: var(--primary);
-  color: #fff;
+  background: var(--neon-cyan);
+  color: #060814;
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.4);
 }
 .side-foot {
   padding: 14px 8px 4px;
   font-size: 0.72rem;
   color: var(--text-soft);
   text-align: left;
+}
+.side-foot span {
+  color: var(--neon-cyan);
+  font-weight: 950;
+}
+.side-foot b {
+  font-size: 0.72rem;
+  color: var(--text-faint);
 }
 
 /* 顶部栏 */
@@ -1314,10 +1334,9 @@ body::before {
 .side-logo-icon {
   width: 44px;
   height: 44px;
-  border-radius: 8px;
-  background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.82), transparent 32%),
-    linear-gradient(135deg, var(--primary), var(--primary-2));
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  color: #060814;
   font-size: 1.45rem;
   box-shadow: var(--glow-primary);
 }
@@ -1370,14 +1389,14 @@ body::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(107, 92, 255, 0.11), rgba(33, 199, 184, 0.1));
+  background: linear-gradient(135deg, rgba(34, 229, 255, 0.06), rgba(160, 107, 255, 0.05));
   opacity: 0;
   transition: opacity 0.2s;
 }
 
 .side-item:hover {
-  background: rgba(255, 255, 255, 0.66);
-  border-color: rgba(255, 255, 255, 0.86);
+  background: rgba(28, 36, 82, 0.6);
+  border-color: var(--line-neon);
   color: var(--text);
   transform: translateX(2px);
 }
@@ -1388,10 +1407,10 @@ body::before {
 }
 
 .side-item.active {
-  background: rgba(255, 255, 255, 0.72);
-  border-color: rgba(107, 92, 255, 0.2);
-  color: var(--text);
-  box-shadow: var(--shadow-soft);
+  background: rgba(34, 229, 255, 0.1);
+  border-color: rgba(34, 229, 255, 0.25);
+  color: var(--neon-cyan);
+  box-shadow: inset 3px 0 0 var(--neon-cyan), 0 0 12px rgba(34, 229, 255, 0.1);
 }
 
 .side-icon {
@@ -1399,17 +1418,23 @@ body::before {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.86);
-  color: var(--primary);
+  background: rgba(138, 149, 201, 0.1);
+  color: var(--neon-cyan);
   font-size: 0.9rem;
   font-weight: 950;
-  box-shadow: inset 0 0 0 1px rgba(107, 92, 255, 0.1);
+  box-shadow: none;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
+}
+
+.side-item:hover .side-icon {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.2);
 }
 
 .side-item.active .side-icon {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  color: #fff;
-  box-shadow: var(--glow-primary);
+  background: var(--neon-cyan);
+  color: #060814;
+  box-shadow: 0 0 12px rgba(34, 229, 255, 0.4);
 }
 
 .side-label {
