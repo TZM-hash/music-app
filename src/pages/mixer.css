@@ -14,14 +14,21 @@
 .mix-play {
   padding: 12px 30px;
   border-radius: 999px;
-  background: var(--primary);
-  color: #fff;
+  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
+  color: #060814;
   font-weight: 800;
   font-size: 1.1rem;
-  box-shadow: var(--shadow);
+  border: none;
+  box-shadow: var(--glow-primary);
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s;
+}
+.mix-play:hover {
+  transform: translateY(-2px);
 }
 .mix-play.on {
-  background: #e03131;
+  background: linear-gradient(135deg, #e03131, #c22525);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(224, 49, 49, 0.3);
 }
 .mix-tempo {
   display: flex;
@@ -42,13 +49,15 @@
   min-height: 40px;
   padding: 10px 16px;
   border-radius: 8px;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 700;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
 .mix-btn:hover {
-  background: var(--accent);
-  color: #fff;
+  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.12);
 }
 .mix-hint {
   color: var(--text-soft);
@@ -66,7 +75,7 @@
 .mix-tag {
   display: block;
   margin-bottom: 5px;
-  color: var(--accent);
+  color: var(--neon-cyan);
   font-size: 0.76rem;
   font-weight: 900;
 }
@@ -102,9 +111,9 @@
 .mix-creative-fields input,
 .mix-creative-fields textarea {
   width: 100%;
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.5);
   color: var(--text);
   padding: 9px 10px;
   font: inherit;
@@ -115,7 +124,8 @@
 
 .mix-creative-fields input:focus,
 .mix-creative-fields textarea:focus {
-  border-color: var(--primary);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.15);
 }
 
 .mix-creative-actions {
@@ -127,7 +137,7 @@
 }
 
 .mix-creative-actions small {
-  color: var(--accent);
+  color: var(--neon-cyan);
   font-size: 0.78rem;
   font-weight: 800;
 }
@@ -156,7 +166,7 @@
   height: 18px;
 }
 .ruler-tick.cur {
-  color: var(--primary);
+  color: var(--neon-cyan);
 }
 
 /* 音轨列表 */
@@ -173,8 +183,9 @@
   align-items: center;
   gap: 10px;
   background: var(--bg-panel);
+  border: 1px solid var(--line-neon);
   border-radius: 8px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
   padding: 8px 12px;
   transition: opacity 0.15s;
 }
@@ -192,18 +203,21 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-soft);
   font-size: 1.3rem;
   flex-shrink: 0;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 .track-voice-icon:hover {
-  background: var(--accent);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.15);
 }
 .track-voice-sel,
 .track-note-sel {
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   color: var(--text);
-  border: none;
   border-radius: 8px;
   padding: 7px 8px;
   font-weight: 600;
@@ -222,23 +236,28 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.4);
+  border: 1px solid var(--line-soft);
   color: var(--text-soft);
   font-weight: 800;
   font-size: 0.8rem;
   flex-shrink: 0;
+  transition: border-color 0.15s, color 0.15s;
 }
 .mini-toggle.on-mute {
-  background: #fa5252;
-  color: #fff;
+  background: rgba(250, 82, 82, 0.2);
+  border-color: #fa5252;
+  color: #fa5252;
 }
 .mini-toggle.on-solo {
-  background: #fab005;
-  color: #fff;
+  background: rgba(250, 176, 5, 0.2);
+  border-color: #fab005;
+  color: #fab005;
 }
 .mini-toggle.del:hover {
-  background: #fa5252;
-  color: #fff;
+  background: rgba(250, 82, 82, 0.2);
+  border-color: #fa5252;
+  color: #fa5252;
 }
 .track-vol {
   width: 54px;
@@ -253,22 +272,26 @@
 .mix-cell {
   height: 40px;
   border-radius: 7px;
-  background: var(--bg);
-  transition: transform 0.06s, background 0.1s, box-shadow 0.1s;
+  background: rgba(28, 36, 82, 0.3);
+  border: 1px solid rgba(138, 149, 201, 0.08);
+  transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
+  cursor: pointer;
 }
 .mix-cell.beat {
-  box-shadow: inset 0 0 0 2px rgba(128, 128, 128, 0.22);
+  box-shadow: inset 0 0 0 2px rgba(138, 149, 201, 0.12);
 }
 .mix-cell:hover {
-  filter: brightness(1.1);
+  border-color: rgba(34, 229, 255, 0.3);
 }
 .mix-cell.on {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.2);
+  border-color: transparent;
 }
 .mix-cell.cur {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--neon-cyan);
   outline-offset: -1px;
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.3);
 }
 
 @media (max-width: 900px) {
@@ -309,22 +332,26 @@
   min-height: 36px;
   padding: 7px 14px;
   border-radius: 999px;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.4);
+  border: 1px solid var(--line-soft);
   color: var(--text);
   font-weight: 700;
   font-size: 0.85rem;
+  transition: border-color 0.15s, color 0.15s;
 }
 .preset-chip:hover {
-  background: var(--accent);
-  color: #fff;
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
 }
 .mix-spacer {
   flex: 1;
   min-width: 12px;
 }
 .mix-btn.primary {
-  background: var(--primary);
-  color: #fff;
+  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
+  color: #060814;
+  border: none;
+  box-shadow: var(--glow-primary);
 }
 
 /* 我的作品 */
@@ -337,7 +364,8 @@
 .proj-chip {
   display: inline-flex;
   align-items: center;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.4);
+  border: 1px solid var(--line-soft);
   border-radius: 999px;
   overflow: hidden;
 }
@@ -346,10 +374,10 @@
   color: var(--text);
   font-weight: 700;
   font-size: 0.85rem;
+  transition: background 0.15s;
 }
 .proj-load:hover {
-  background: var(--accent-2);
-  color: #fff;
+  background: rgba(34, 229, 255, 0.1);
 }
 .proj-del {
   min-width: 38px;
@@ -357,10 +385,11 @@
   padding: 7px 10px;
   color: var(--text-soft);
   font-weight: 800;
+  transition: background 0.15s, color 0.15s;
 }
 .proj-del:hover {
-  background: #fa5252;
-  color: #fff;
+  background: rgba(250, 82, 82, 0.2);
+  color: #fa5252;
 }
 
 .mix-creative-feed {
@@ -385,7 +414,12 @@
   min-width: 0;
   overflow: hidden;
   border-radius: 8px;
-  background: var(--bg);
+  background: rgba(28, 36, 82, 0.4);
+  border: 1px solid var(--line-soft);
+  transition: border-color 0.15s;
+}
+.creative-work-item:hover {
+  border-color: var(--neon-cyan);
 }
 
 .creative-work-item > button:first-child {
@@ -417,7 +451,7 @@
 
 .creative-work-item span {
   margin-top: 5px;
-  color: var(--accent);
+  color: var(--neon-cyan);
   font-size: 0.76rem;
   font-weight: 800;
   line-height: 1.35;
@@ -427,27 +461,29 @@
   width: 48px;
   min-height: 40px;
   flex-shrink: 0;
-  background: rgba(250, 82, 82, 0.1);
+  background: rgba(250, 82, 82, 0.08);
   color: #c92a2a;
   font-size: 0.78rem;
   font-weight: 900;
+  transition: background 0.15s, color 0.15s;
 }
 
 .creative-work-del:hover {
-  background: #fa5252;
-  color: #fff;
+  background: rgba(250, 82, 82, 0.2);
+  color: #fa5252;
 }
 
 /* 导出/导入弹窗 */
 .mix-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(6, 8, 20, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 60;
   padding: 24px;
+  backdrop-filter: blur(8px);
 }
 .mix-modal {
   width: 100%;
@@ -468,8 +504,8 @@
   width: 100%;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 2px solid transparent;
-  background: var(--bg);
+  border: 2px solid var(--line-neon);
+  background: rgba(28, 36, 82, 0.5);
   color: var(--text);
   font-family: monospace;
   font-size: 0.85rem;
@@ -478,7 +514,8 @@
   word-break: break-all;
 }
 .mix-share-text:focus {
-  border-color: var(--primary);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.15);
 }
 .mix-modal-actions {
   display: flex;
