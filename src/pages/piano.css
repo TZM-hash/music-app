@@ -1,112 +1,9 @@
+/* 钢琴页 · 霓虹舞台 */
 .instrument-wrap {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   height: 100%;
-}
-.rec-btn.on-accent {
-  background: var(--accent);
-  color: #fff;
-}
-.ctrl-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--bg-panel);
-  border-radius: 999px;
-  box-shadow: var(--shadow);
-}
-.ctrl-label {
-  font-size: 0.85rem;
-  color: var(--text-soft);
-  font-weight: 700;
-}
-.ctrl-val {
-  font-weight: 800;
-  min-width: 32px;
-  text-align: center;
-}
-.mini-btn {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--bg);
-  color: var(--text);
-  font-weight: 800;
-  font-size: 1.1rem;
-}
-.ctrl-group select {
-  background: var(--bg);
-  color: var(--text);
-  border: none;
-  border-radius: 8px;
-  padding: 4px 8px;
-  font-weight: 600;
-}
-.ctrl-group input[type='range'] {
-  width: 100px;
-}
-.beat-dots {
-  display: flex;
-  gap: 4px;
-}
-.beat-dots.dim {
-  opacity: 0.3;
-}
-.beat-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--text-soft);
-  transition: transform 0.08s, background 0.08s;
-}
-.beat-dot.on {
-  background: var(--accent);
-  transform: scale(1.5);
-}
-
-.dim-key {
-  opacity: 0.55;
-}
-.scale-key {
-  box-shadow: var(--shadow), inset 0 -8px 0 -4px var(--accent-2);
-}
-.row2 {
-  margin-top: -4px;
-}
-.patch-picker {
-  display: flex;
-  gap: 4px;
-}
-.patch-btn {
-  padding: 5px 10px;
-  border-radius: 8px;
-  background: var(--bg);
-  color: var(--text);
-  font-weight: 600;
-  font-size: 0.85rem;
-}
-.patch-btn.on {
-  background: var(--primary);
-  color: #fff;
-}
-.chord-group {
-  flex-wrap: wrap;
-}
-.chord-btn {
-  min-width: 44px;
-  padding: 8px 12px;
-  border-radius: 10px;
-  background: var(--accent);
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.95rem;
-  transition: transform 0.06s, filter 0.06s;
-}
-.chord-btn:active {
-  transform: scale(0.94);
-  filter: brightness(1.2);
 }
 
 .instrument-toolbar {
@@ -114,160 +11,351 @@
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-}
-.rec-btn {
-  padding: 10px 20px;
-  border-radius: 999px;
+  padding: 12px 16px;
+  border-radius: var(--radius);
   background: var(--bg-panel);
+  border: 1px solid var(--line-neon);
+}
+
+.instrument-toolbar.row2 {
+  gap: 10px;
+}
+
+.ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ctrl-label {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--text-soft);
+  white-space: nowrap;
+}
+
+.ctrl-val {
+  font-weight: 900;
+  color: var(--neon-cyan);
+  min-width: 32px;
+  text-align: center;
+}
+
+.rec-btn {
+  min-height: 38px;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
   color: var(--text);
-  font-weight: 700;
-  box-shadow: var(--shadow);
+  font-weight: 800;
+  font-size: 0.88rem;
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s ease, border-color 0.15s;
+}
+.rec-btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
 }
 .rec-btn.on {
-  background: #e03131;
-  color: #fff;
+  background: rgba(255, 84, 112, 0.15);
+  border-color: var(--danger);
+  color: var(--danger);
+  box-shadow: 0 0 10px rgba(255, 84, 112, 0.2);
+}
+.rec-btn.on-accent {
+  background: rgba(34, 229, 255, 0.12);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.15);
 }
 .rec-btn:disabled {
   opacity: 0.4;
-  cursor: not-allowed;
-}
-.instrument-toolbar .hint {
-  color: var(--text-soft);
-  font-size: 0.9rem;
+  cursor: default;
 }
 
-.piano-stage {
-  position: relative;
-  flex: 1;
+.mini-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  color: var(--text);
+  font-weight: 900;
+  font-size: 1rem;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mini-btn:hover {
+  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: 0 0 8px rgba(34, 229, 255, 0.15);
+}
+
+select {
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  color: var(--text);
+  font-weight: 700;
+  font-family: inherit;
+}
+
+input[type="range"] {
+  accent-color: var(--neon-cyan);
+  width: 100px;
+}
+
+/* 节拍器指示点 */
+.beat-dots {
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  min-height: 320px;
+  gap: 6px;
+}
+.beat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(138, 149, 201, 0.3);
+  transition: background 0.1s, box-shadow 0.1s;
+}
+.beat-dot.on {
+  background: var(--neon-cyan);
+  box-shadow: 0 0 8px var(--neon-cyan);
+}
+.beat-dots.dim .beat-dot {
+  opacity: 0.3;
 }
 
-/* 可视化气泡层 */
+/* 音色选择器 */
+.patch-picker {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.patch-btn {
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.patch-btn:hover {
+  border-color: rgba(34, 229, 255, 0.5);
+}
+.patch-btn.on {
+  background: rgba(34, 229, 255, 0.12);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(34, 229, 255, 0.15);
+}
+
+/* 和弦按钮 */
+.chord-group {
+  gap: 6px;
+}
+.chord-btn {
+  min-width: 44px;
+  min-height: 36px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: rgba(28, 36, 82, 0.5);
+  border: 1px solid var(--line-neon);
+  color: var(--neon-gold);
+  font-weight: 900;
+  font-size: 0.9rem;
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s var(--ease-spring);
+}
+.chord-btn:hover {
+  border-color: rgba(255, 214, 10, 0.5);
+  box-shadow: 0 0 10px rgba(255, 214, 10, 0.15);
+  transform: translateY(-1px);
+}
+.chord-btn:active {
+  transform: scale(0.95);
+}
+
+/* 钢琴加载状态 */
+.piano-load {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+.piano-load.sampled {
+  color: var(--neon-green);
+}
+.piano-load.loading {
+  color: var(--neon-gold);
+}
+
+/* 舞台区域 */
+.piano-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  border: 1px solid var(--line-neon);
+  overflow: hidden;
+}
+
+/* 可视化层 */
 .viz-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  z-index: 5;
   overflow: hidden;
 }
 .viz-bubble {
   position: absolute;
-  bottom: 300px;
-  width: 54px;
-  height: 54px;
+  bottom: 40%;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
-  transform: translate(-50%, 0) scale(1);
-  transition: transform 0.9s ease-out, opacity 0.9s ease-out;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 800;
-  font-size: 1.3rem;
+  display: grid;
+  place-items: center;
+  font-weight: 950;
+  font-size: 0.85rem;
+  color: #060814;
+  transition: transform 0.9s var(--ease-smooth), opacity 0.9s ease;
+  pointer-events: none;
 }
 
 /* 钢琴本体 */
 .piano {
+  flex: 1;
   position: relative;
-  width: 100%;
-  max-width: 1300px;
-  height: 300px;
-  padding-top: 10px;
-  background: linear-gradient(180deg, #2a2a2a, #1a1a1a);
-  border-radius: 8px 8px 12px 12px;
-  box-shadow: var(--shadow), inset 0 4px 0 0 #c0392b;
-}
-.white-row {
   display: flex;
-  height: 100%;
-  width: 100%;
-  gap: 2px;
-  padding: 0 6px 6px;
+  flex-direction: column;
+  padding: 16px;
+  min-height: 0;
 }
+
+.white-row {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+}
+
 .white-key {
   flex: 1;
-  background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 88%, #e2e2e2 100%);
+  position: relative;
   border-radius: 0 0 8px 8px;
-  box-shadow: inset 0 -6px 8px -4px rgba(0, 0, 0, 0.18), 0 3px 4px rgba(0, 0, 0, 0.25);
+  background: linear-gradient(180deg, #1c2452 0%, #141b42 85%, #0d1230 100%);
+  border: 1px solid rgba(138, 149, 201, 0.2);
+  border-top: none;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 14px;
-  transition: background 0.05s, transform 0.05s, box-shadow 0.05s;
-  border: 1px solid #d8d8d8;
-  border-top: none;
+  padding-bottom: 12px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.08s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  min-height: 120px;
 }
+
+.white-key:hover {
+  background: linear-gradient(180deg, #242e5e 0%, #1a2249 85%, #101638 100%);
+}
+
 .white-key.active {
-  transform: translateY(2px);
-  background: linear-gradient(180deg, #eef2ff 0%, #dfe6ff 100%);
-  box-shadow: inset 0 -3px 6px -3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: var(--note-c);
+  box-shadow: 0 0 20px currentColor, 0 0 60px currentColor, inset 0 0 20px rgba(255, 255, 255, 0.15);
+  transform: scaleY(0.98);
+  border-color: transparent;
 }
+
+.white-key.dim-key {
+  opacity: 0.35;
+}
+
+.white-key.scale-key {
+  border-bottom: 3px solid var(--neon-green);
+}
+
 .key-label {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: var(--text-soft);
+  gap: 2px;
+  pointer-events: none;
 }
 .key-label b {
-  font-size: 1.1rem;
-  color: #555;
+  font-size: 1rem;
+  font-weight: 950;
+  color: var(--text);
 }
 .key-label small {
-  font-size: 0.72rem;
-  color: #999;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-faint);
 }
 .white-key.active .key-label b,
 .white-key.active .key-label small {
-  color: #3b5bdb;
+  color: #060814;
 }
 
 .black-row {
   position: absolute;
-  top: 10px;
-  left: 6px;
-  right: 6px;
+  top: 16px;
+  left: 16px;
+  right: 16px;
   display: flex;
-  height: 60%;
-  gap: 2px;
+  gap: 3px;
+  z-index: 3;
   pointer-events: none;
 }
+
 .black-slot {
   flex: 1;
-  position: relative;
-}
-.black-key {
-  position: absolute;
-  right: -18%;
-  width: 62%;
-  height: 100%;
-  background: linear-gradient(180deg, #4a4a4a 0%, #1c1c1c 70%, #000 100%);
-  border-radius: 0 0 6px 6px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), inset 0 -3px 4px rgba(255, 255, 255, 0.1);
-  pointer-events: auto;
-  z-index: 2;
-  transition: transform 0.05s;
-}
-.black-key.active {
-  transform: translateY(3px);
-  background: linear-gradient(180deg, #5c7cfa 0%, #3b5bdb 100%);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: flex-end;
+  padding-right: calc(0.5% - 2px);
 }
 
-/* 音源加载状态 */
-.piano-load {
-  font-size: 0.85rem;
-  font-weight: 700;
-  padding: 6px 12px;
-  border-radius: 999px;
+.black-key {
+  width: 62%;
+  height: 60%;
+  min-height: 80px;
+  border-radius: 0 0 6px 6px;
+  background: linear-gradient(180deg, #0a0e24 0%, #060814 100%);
+  border: 1px solid rgba(138, 149, 201, 0.15);
+  border-top: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.08s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
-.piano-load.loading {
-  color: var(--text-soft);
+
+.black-key:hover {
+  background: linear-gradient(180deg, #121738 0%, #0a0e24 100%);
 }
-.piano-load.sampled {
-  color: var(--accent-2);
+
+.black-key.active {
+  background: var(--note-c);
+  box-shadow: 0 0 20px currentColor, 0 0 50px currentColor;
+  transform: scaleY(0.96);
+  border-color: transparent;
 }
-.piano-load.fallback {
-  color: var(--text-soft);
+
+.black-key.dim-key {
+  opacity: 0.25;
+}
+
+/* 响应式：触屏加大琴键 */
+@media (pointer: coarse) {
+  .white-key {
+    min-height: 160px;
+  }
+  .black-key {
+    min-height: 100px;
+  }
 }
