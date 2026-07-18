@@ -249,22 +249,42 @@ let crash: Tone.MetalSynth | null = null
 
 function initDrums() {
   if (kick) return
-  kick = new Tone.MembraneSynth({ octaves: 6, pitchDecay: 0.05 }).toDestination()
-  tom = new Tone.MembraneSynth({ octaves: 4, pitchDecay: 0.1 }).toDestination()
+  // 底鼓：低频冲击 + 弹性
+  kick = new Tone.MembraneSynth({
+    octaves: 8,
+    pitchDecay: 0.06,
+    envelope: { attack: 0.001, decay: 0.35, sustain: 0, release: 0.1 },
+  }).toDestination()
+  kick.volume.value = -2
+
+  // 嗵鼓
+  tom = new Tone.MembraneSynth({
+    octaves: 4,
+    pitchDecay: 0.1,
+    envelope: { attack: 0.001, decay: 0.25, sustain: 0, release: 0.1 },
+  }).toDestination()
+  tom.volume.value = -4
+
+  // 军鼓：白噪声 + body 共鸣
   snare = new Tone.NoiseSynth({
     noise: { type: 'white' },
     envelope: { attack: 0.001, decay: 0.2, sustain: 0 },
   }).toDestination()
+  snare.volume.value = -6
+
+  // 踩镲：更清脆
   hihat = new Tone.MetalSynth({
-    envelope: { attack: 0.001, decay: 0.1, release: 0.01 },
-    harmonicity: 5.1,
-    resonance: 4000,
+    envelope: { attack: 0.001, decay: 0.06, release: 0.01 },
+    harmonicity: 6.1,
+    resonance: 5000,
   }).toDestination()
-  hihat.volume.value = -12
+  hihat.volume.value = -14
+
+  // 吊镲：更持久的 shimmer
   crash = new Tone.MetalSynth({
-    envelope: { attack: 0.001, decay: 1, release: 0.3 },
+    envelope: { attack: 0.001, decay: 1.2, release: 0.4 },
     harmonicity: 5.1,
-    resonance: 3000,
+    resonance: 3500,
   }).toDestination()
   crash.volume.value = -14
 }
@@ -298,8 +318,12 @@ let kaSynth: Tone.NoiseSynth | null = null
 
 export function taikoDON(): void {
   if (!donSynth) {
-    donSynth = new Tone.MembraneSynth({ octaves: 8, pitchDecay: 0.02 }).toDestination()
-    donSynth.volume.value = -2
+    donSynth = new Tone.MembraneSynth({
+      octaves: 10,
+      pitchDecay: 0.03,
+      envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.15 },
+    }).toDestination()
+    donSynth.volume.value = -1
   }
   donSynth.triggerAttackRelease('C2', '4n')
 }
@@ -307,10 +331,10 @@ export function taikoDON(): void {
 export function taikoKA(): void {
   if (!kaSynth) {
     kaSynth = new Tone.NoiseSynth({
-      noise: { type: 'white' },
-      envelope: { attack: 0.001, decay: 0.08, sustain: 0 },
+      noise: { type: 'pink' },
+      envelope: { attack: 0.001, decay: 0.06, sustain: 0 },
     }).toDestination()
-    kaSynth.volume.value = -4
+    kaSynth.volume.value = -3
   }
   kaSynth.triggerAttackRelease('8n', Tone.now())
 }
@@ -578,6 +602,25 @@ export function stopAccompaniment(): void {
 export function isAccompanimentOn(): boolean {
   return accompId !== null
 }
+// —— 木琴音色 ——
+let xylophoneSynth: Tone.PolySynth | null = null
+
+function getXylophoneSynth(): Tone.PolySynth {
+  if (!xylophoneSynth) {
+    xylophoneSynth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: 'sine' },
+      envelope: { attack: 0.001, decay: 0.35, sustain: 0, release: 0.5 },
+    }).toDestination()
+    xylophoneSynth.volume.value = -4
+  }
+  return xylophoneSynth
+}
+
+/** 播放木琴音 */
+export function playXylophone(note: string): void {
+  getXylophoneSynth().triggerAttackRelease(note, '8n')
+}
+
 // —— 全局停止：切换页面时调用，确保没有后台音频残留 ——
 export function stopAllAudio(): void {
   stopMetronome()
