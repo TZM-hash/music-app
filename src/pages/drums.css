@@ -26,7 +26,7 @@
 .drum-pad {
   border-radius: 50%;
   aspect-ratio: 1;
-  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.08), #232a52);
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.08), #f2f2f7);
   border: 3px solid rgba(136, 144, 184, 0.25);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 -3px 6px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -41,8 +41,8 @@
   cursor: pointer;
 }
 .drum-pad:hover {
-  border-color: rgba(77, 208, 232, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 16px rgba(77, 208, 232, 0.12);
+  border-color: rgba(0, 122, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 16px rgba(0, 122, 255, 0.12);
 }
 .drum-pad .drum-label {
   font-size: 1.2rem;
@@ -74,8 +74,8 @@
 .seq-play {
   padding: 12px 26px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
   font-weight: 800;
   font-size: 1.05rem;
   border: none;
@@ -155,7 +155,7 @@
   box-shadow: inset 0 0 0 2px rgba(136, 144, 184, 0.15);
 }
 .seq-cell:hover {
-  border-color: rgba(77, 208, 232, 0.3);
+  border-color: rgba(0, 122, 255, 0.3);
 }
 .seq-cell.on {
   border-color: transparent;
@@ -165,5 +165,5 @@
   outline: 3px solid var(--neon-cyan);
   outline-offset: -1px;
   transform: scaleY(1.08);
-  box-shadow: 0 0 12px rgba(77, 208, 232, 0.3);
+  box-shadow: 0 0 12px rgba(0, 122, 255, 0.3);
 }

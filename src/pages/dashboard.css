@@ -18,8 +18,8 @@
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(110deg, rgba(152, 136, 224, 0.12), transparent 34%),
-    linear-gradient(70deg, transparent 48%, rgba(77, 208, 232, 0.12), transparent 78%),
+    linear-gradient(110deg, rgba(175, 82, 222, 0.12), transparent 34%),
+    linear-gradient(70deg, transparent 48%, rgba(0, 122, 255, 0.12), transparent 78%),
     repeating-linear-gradient(0deg, transparent 0 28px, rgba(136, 144, 184, 0.06) 28px 29px);
   opacity: 0.82;
 }
@@ -83,8 +83,8 @@
   transform: translateY(-2px);
 }
 .dash-focus button.on {
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
   box-shadow: var(--glow-primary);
 }
 .kpi-row {
@@ -109,7 +109,7 @@
   border-radius: 999px;
   background: repeating-linear-gradient(
     90deg,
-    rgba(77, 208, 232, 0.2) 0 7px,
+    rgba(0, 122, 255, 0.2) 0 7px,
     transparent 7px 15px
   );
   opacity: 0.44;

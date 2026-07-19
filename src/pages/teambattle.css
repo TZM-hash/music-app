@@ -51,11 +51,11 @@
 }
 
 .team-score.left {
-  background: linear-gradient(90deg, rgba(77, 208, 232, 0.3), rgba(77, 208, 232, 0.15));
+  background: linear-gradient(90deg, rgba(0, 122, 255, 0.3), rgba(0, 122, 255, 0.15));
 }
 
 .team-score.right {
-  background: linear-gradient(90deg, rgba(224, 96, 120, 0.15), rgba(224, 96, 120, 0.3));
+  background: linear-gradient(90deg, rgba(255, 59, 48, 0.15), rgba(255, 59, 48, 0.3));
 }
 
 .team-name {
@@ -137,21 +137,21 @@
 }
 
 .battle-btn.left {
-  border-color: #4dd0e8;
-  background: rgba(77, 208, 232, 0.15);
-  color: #4dd0e8;
+  border-color: #007aff;
+  background: rgba(0, 122, 255, 0.15);
+  color: #007aff;
 }
 .battle-btn.left:hover {
-  box-shadow: 0 0 20px rgba(77, 208, 232, 0.3);
+  box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
 }
 
 .battle-btn.right {
-  border-color: #e06078;
-  background: rgba(224, 96, 120, 0.15);
-  color: #e06078;
+  border-color: #ff3b30;
+  background: rgba(255, 59, 48, 0.15);
+  color: #ff3b30;
 }
 .battle-btn.right:hover {
-  box-shadow: 0 0 20px rgba(224, 96, 120, 0.3);
+  box-shadow: 0 0 20px rgba(255, 59, 48, 0.3);
 }
 
 .battle-btn.skip {

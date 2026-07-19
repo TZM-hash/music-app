@@ -26,7 +26,7 @@
   width: 52px;
   height: 80px;
   border-radius: 8px;
-  background: linear-gradient(180deg, #141a38 0%, #0f1222 100%);
+  background: linear-gradient(180deg, #e5e5ea 0%, #f2f2f7 100%);
   border: 1px solid rgba(136, 144, 184, 0.15);
   border-top: none;
   cursor: pointer;
@@ -42,15 +42,15 @@
 }
 
 .xylo-semi-bar:hover {
-  background: linear-gradient(180deg, #121738 0%, #141a38 100%);
+  background: linear-gradient(180deg, #121738 0%, #e5e5ea 100%);
 }
 
 .xylo-semi-bar.active {
-  background: var(--bar-color, #4dd0e8);
-  box-shadow: 0 0 20px var(--bar-color, #4dd0e8), 0 0 50px var(--bar-color, #4dd0e8);
+  background: var(--bar-color, #007aff);
+  box-shadow: 0 0 20px var(--bar-color, #007aff), 0 0 50px var(--bar-color, #007aff);
   transform: scaleY(0.96);
   border-color: transparent;
-  color: #0f1222;
+  color: #f2f2f7;
 }
 
 /* 主琴条 */
@@ -63,7 +63,7 @@
 .xylo-bar {
   width: 72px;
   border-radius: 10px 10px 12px 12px;
-  background: linear-gradient(180deg, #232a52 0%, #141b42 85%, #161b33 100%);
+  background: linear-gradient(180deg, #f2f2f7 0%, #141b42 85%, #ffffff 100%);
   border: 1px solid rgba(136, 144, 184, 0.2);
   border-top: none;
   cursor: pointer;
@@ -95,8 +95,8 @@
 }
 
 .xylo-bar.active {
-  background: var(--bar-color, #4dd0e8);
-  box-shadow: 0 0 20px var(--bar-color, #4dd0e8), 0 0 60px var(--bar-color, #4dd0e8), inset 0 0 20px rgba(255, 255, 255, 0.15);
+  background: var(--bar-color, #007aff);
+  box-shadow: 0 0 20px var(--bar-color, #007aff), 0 0 60px var(--bar-color, #007aff), inset 0 0 20px rgba(255, 255, 255, 0.15);
   transform: scaleY(0.97) translateY(2px);
   border-color: transparent;
 }
@@ -121,7 +121,7 @@
 
 .xylo-bar.active .xylo-bar-label b,
 .xylo-bar.active .xylo-bar-label small {
-  color: #0f1222;
+  color: #f2f2f7;
 }
 
 .xylo-bar .rk-key {
@@ -134,7 +134,7 @@
 }
 
 .xylo-bar.active .rk-key {
-  color: #0f1222;
+  color: #f2f2f7;
   background: rgba(0, 0, 0, 0.15);
 }
 

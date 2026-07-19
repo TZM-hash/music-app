@@ -14,8 +14,8 @@
 .mix-play {
   padding: 12px 30px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
   font-weight: 800;
   font-size: 1.1rem;
   border: none;
@@ -56,8 +56,8 @@
   transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
 }
 .mix-btn:hover {
-  border-color: rgba(77, 208, 232, 0.5);
-  box-shadow: 0 0 8px rgba(77, 208, 232, 0.12);
+  border-color: rgba(0, 122, 255, 0.5);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.12);
 }
 .mix-hint {
   color: var(--text-soft);
@@ -125,7 +125,7 @@
 .mix-creative-fields input:focus,
 .mix-creative-fields textarea:focus {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 8px rgba(77, 208, 232, 0.15);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.15);
 }
 
 .mix-creative-actions {
@@ -211,7 +211,7 @@
 }
 .track-voice-icon:hover {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 8px rgba(77, 208, 232, 0.15);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.15);
 }
 .track-voice-sel,
 .track-note-sel {
@@ -281,17 +281,17 @@
   box-shadow: inset 0 0 0 2px rgba(136, 144, 184, 0.12);
 }
 .mix-cell:hover {
-  border-color: rgba(77, 208, 232, 0.3);
+  border-color: rgba(0, 122, 255, 0.3);
 }
 .mix-cell.on {
   background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-  box-shadow: 0 0 10px rgba(77, 208, 232, 0.2);
+  box-shadow: 0 0 10px rgba(0, 122, 255, 0.2);
   border-color: transparent;
 }
 .mix-cell.cur {
   outline: 3px solid var(--neon-cyan);
   outline-offset: -1px;
-  box-shadow: 0 0 8px rgba(77, 208, 232, 0.3);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
 }
 
 @media (max-width: 900px) {
@@ -348,8 +348,8 @@
   min-width: 12px;
 }
 .mix-btn.primary {
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
   border: none;
   box-shadow: var(--glow-primary);
 }
@@ -377,7 +377,7 @@
   transition: background 0.15s;
 }
 .proj-load:hover {
-  background: rgba(77, 208, 232, 0.1);
+  background: rgba(0, 122, 255, 0.1);
 }
 .proj-del {
   min-width: 38px;
@@ -515,7 +515,7 @@
 }
 .mix-share-text:focus {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 8px rgba(77, 208, 232, 0.15);
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.15);
 }
 .mix-modal-actions {
   display: flex;

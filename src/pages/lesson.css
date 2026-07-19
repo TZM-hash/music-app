@@ -13,7 +13,7 @@
   gap: 28px;
   padding: 28px;
   background:
-    linear-gradient(135deg, rgba(77, 208, 232, 0.08), rgba(80, 208, 160, 0.07)),
+    linear-gradient(135deg, rgba(0, 122, 255, 0.08), rgba(52, 199, 89, 0.07)),
     rgba(35, 42, 82, 0.5);
 }
 
@@ -47,7 +47,7 @@
   border: 1px solid var(--line-neon);
   border-radius: 8px;
   background: rgba(35, 42, 82, 0.78);
-  box-shadow: 0 16px 34px rgba(77, 208, 232, 0.08);
+  box-shadow: 0 16px 34px rgba(0, 122, 255, 0.08);
 }
 
 .lesson-progress-card b {
@@ -109,7 +109,7 @@
 
 .lesson-select select:focus {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 0 3px rgba(77, 208, 232, 0.12);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.12);
 }
 
 .lesson-topic-brief {
@@ -185,18 +185,18 @@
 }
 
 .lesson-steps button.on {
-  border-color: rgba(77, 208, 232, 0.28);
-  background: rgba(77, 208, 232, 0.12);
+  border-color: rgba(0, 122, 255, 0.28);
+  background: rgba(0, 122, 255, 0.12);
   color: var(--neon-cyan);
 }
 
 .lesson-steps button.on > span {
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
 }
 
 .lesson-steps button.done > span {
-  background: rgba(77, 208, 232, 0.12);
+  background: rgba(0, 122, 255, 0.12);
   color: var(--neon-cyan);
 }
 
@@ -234,8 +234,8 @@
 .lesson-main-head button,
 .lesson-actions .primary-action {
   border: none;
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
 }
 
 .lesson-section {
@@ -312,7 +312,7 @@
   height: 26px;
   place-items: center;
   border-radius: 8px;
-  background: rgba(77, 208, 232, 0.12);
+  background: rgba(0, 122, 255, 0.12);
   color: var(--neon-cyan);
   flex-shrink: 0;
 }
@@ -322,7 +322,7 @@
   margin-bottom: 10px;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(77, 208, 232, 0.12);
+  background: rgba(0, 122, 255, 0.12);
   color: var(--neon-cyan);
   font-size: 0.78rem;
   font-weight: 900;
@@ -392,12 +392,12 @@
 }
 
 .lesson-quiz-card button.right {
-  background: rgba(80, 208, 160, 0.14);
+  background: rgba(52, 199, 89, 0.14);
   color: var(--neon-green);
 }
 
 .lesson-quiz-card button.wrong {
-  background: rgba(232, 120, 160, 0.14);
+  background: rgba(255, 45, 85, 0.14);
   color: var(--neon-pink);
 }
 

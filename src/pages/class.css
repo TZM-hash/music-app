@@ -27,8 +27,8 @@
   transition: transform 0.1s;
 }
 .avatar-choice.on {
-  background: rgba(77, 208, 232, 0.12);
-  outline: 2px solid rgba(77, 208, 232, 0.32);
+  background: rgba(0, 122, 255, 0.12);
+  outline: 2px solid rgba(0, 122, 255, 0.32);
   transform: scale(1.1);
 }
 .add-row input {
@@ -46,8 +46,8 @@
 .add-btn {
   padding: 12px 28px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
-  color: #0f1222;
+  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  color: #f2f2f7;
   font-weight: 800;
 }
 .data-tools {
@@ -62,7 +62,7 @@
   margin-top: 10px;
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(77, 208, 232, 0.12);
+  background: rgba(0, 122, 255, 0.12);
   color: var(--neon-cyan);
   font-size: 0.9rem;
   font-weight: 700;
@@ -87,7 +87,7 @@
   transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 .stu-card.active {
-  outline: 3px solid rgba(77, 208, 232, 0.26);
+  outline: 3px solid rgba(0, 122, 255, 0.26);
 }
 .stu-card:hover {
   transform: translateY(-3px);
@@ -111,7 +111,7 @@
   display: inline-block;
   margin-left: 6px;
   font-size: 0.7rem;
-  background: rgba(77, 208, 232, 0.12);
+  background: rgba(0, 122, 255, 0.12);
   color: var(--neon-cyan);
   padding: 1px 8px;
   border-radius: 6px;
@@ -149,6 +149,6 @@
   font-weight: 700;
 }
 .stu-select-btn.on {
-  background: rgba(232, 200, 80, 0.14);
+  background: rgba(255, 149, 0, 0.14);
   color: var(--neon-gold);
 }
