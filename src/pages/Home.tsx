@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -258,19 +259,7 @@ export default function Home() {
           <div className="review-block daily">
             <span className="pro-kicker">今日挑战</span>
             <h3>{dailyChallenge.length} 个混合小挑战</h3>
-            <div className="review-list compact">
-              {dailyChallenge.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => navigate('training')}
-                >
-                  <b>{item.itemTitle}</b>
-                  <small>
-                    {item.category} · {item.question}
-                  </small>
-                </button>
-              ))}
-            </div>
+            <DailyCards items={dailyChallenge} onGo={() => navigate('training')} />
           </div>
           <div className="review-block">
             <span className="pro-kicker">回放点</span>
@@ -424,6 +413,43 @@ export default function Home() {
           ))}
         </section>
       )}
+    </div>
+  )
+}
+
+function DailyCards({ items, onGo }: { items: { id?: string; itemTitle: string; category: string; question: string }[]; onGo: () => void }) {
+  const [flipped, setFlipped] = useState<Set<number>>(new Set())
+
+  const toggle = (i: number) => {
+    setFlipped((prev) => {
+      const next = new Set(prev)
+      if (next.has(i)) next.delete(i)
+      else next.add(i)
+      return next
+    })
+  }
+
+  return (
+    <div className="daily-cards">
+      {items.map((item, i) => (
+        <button
+          key={item.id}
+          className={`daily-card ${flipped.has(i) ? 'flipped' : ''}`}
+          onClick={() => { toggle(i); if (!flipped.has(i)) setTimeout(onGo, 600) }}
+        >
+          {!flipped.has(i) ? (
+            <div className="daily-card-back">
+              <span className="daily-card-icon">🎵</span>
+              <span className="daily-card-label">挑战 {i + 1}</span>
+            </div>
+          ) : (
+            <div className="daily-card-front">
+              <b>{item.itemTitle}</b>
+              <small>{item.category}</small>
+            </div>
+          )}
+        </button>
+      ))}
     </div>
   )
 }
