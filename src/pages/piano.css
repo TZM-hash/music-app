@@ -1,4 +1,4 @@
-/* 钢琴页 · 清爽深色 */
+/* 钢琴页 · iOS 风格 */
 .instrument-wrap {
   display: flex;
   flex-direction: column;
@@ -45,7 +45,7 @@
   min-height: 38px;
   padding: 8px 14px;
   border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--line);
   color: var(--text);
   font-weight: 800;
@@ -55,14 +55,15 @@
 .rec-btn:hover {
   transform: translateY(-1px);
   border-color: rgba(0, 122, 255, 0.4);
+  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 .rec-btn.on {
-  background: rgba(255, 59, 48, 0.15);
+  background: rgba(255, 59, 48, 0.12);
   border-color: var(--danger);
   color: var(--danger);
 }
 .rec-btn.on-accent {
-  background: rgba(0, 122, 255, 0.12);
+  background: rgba(0, 122, 255, 0.1);
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
 }
@@ -75,7 +76,7 @@
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--line);
   color: var(--text);
   font-weight: 900;
@@ -86,13 +87,14 @@
 }
 .mini-btn:hover {
   border-color: rgba(0, 122, 255, 0.4);
+  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 
 select {
   min-height: 36px;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--line);
   color: var(--text);
   font-weight: 700;
@@ -113,8 +115,8 @@ input[type="range"] {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.03);
-  transition: background 0.1s, box-shadow 0.1s;
+  background: rgba(0, 0, 0, 0.12);
+  transition: background 0.1s;
 }
 .beat-dot.on {
   background: var(--neon-cyan);
@@ -133,18 +135,18 @@ input[type="range"] {
   min-height: 36px;
   padding: 6px 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--line);
   color: var(--text);
   font-weight: 700;
   font-size: 0.85rem;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s;
 }
 .patch-btn:hover {
   border-color: rgba(0, 122, 255, 0.4);
 }
 .patch-btn.on {
-  background: rgba(0, 122, 255, 0.12);
+  background: rgba(0, 122, 255, 0.1);
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
 }
@@ -158,12 +160,12 @@ input[type="range"] {
   min-height: 36px;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--line);
   color: var(--neon-gold);
   font-weight: 900;
   font-size: 0.9rem;
-  transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s var(--ease-spring);
+  transition: border-color 0.15s, transform 0.1s var(--ease-spring);
 }
 .chord-btn:hover {
   border-color: rgba(255, 149, 0, 0.4);
@@ -219,44 +221,43 @@ input[type="range"] {
   place-items: center;
   font-weight: 950;
   font-size: 0.85rem;
-  color: #f2f2f7;
+  color: #1c1c1e;
   transition: transform 0.9s var(--ease-smooth), opacity 0.9s ease;
   pointer-events: none;
 }
 
-/* 钢琴本体：居中，不拉伸到全宽 */
+/* ===== 钢琴键盘：用 grid 精确布局 ===== */
 .piano {
   position: relative;
   width: 100%;
-  max-width: 1200px;
-  height: 280px;
+  max-width: 1100px;
+  height: 260px;
   background: linear-gradient(180deg, #1c1c1e, #000000);
   border-radius: 8px 8px 12px 12px;
   box-shadow: var(--shadow), inset 0 4px 0 0 #8a2a2a;
-  padding: 10px 6px 6px;
-}
-
-.white-row {
-  display: flex;
-  height: 100%;
-  width: 100%;
+  padding: 8px 6px 6px;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: repeat(var(--white-count, 21), 1fr);
   gap: 2px;
 }
 
+/* 白键：grid 列布局 */
 .white-key {
-  flex: 1;
-  position: relative;
-  border-radius: 0 0 8px 8px;
+  grid-row: 1;
+  border-radius: 0 0 6px 6px;
   background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 88%, #e2e2e2 100%);
   border: 1px solid #d8d8d8;
   border-top: none;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 14px;
+  padding-bottom: 12px;
   cursor: pointer;
-  transition: background 0.08s, box-shadow 0.08s, transform 0.05s;
-  box-shadow: inset 0 -6px 8px -4px rgba(0, 0, 0, 0.15), 0 3px 4px rgba(0, 0, 0, 0.2);
+  transition: background 0.08s, transform 0.05s;
+  box-shadow: inset 0 -4px 6px -3px rgba(0, 0, 0, 0.12), 0 2px 3px rgba(0, 0, 0, 0.15);
+  position: relative;
+  z-index: 1;
 }
 
 .white-key:hover {
@@ -265,7 +266,6 @@ input[type="range"] {
 
 .white-key.active {
   background: #007aff;
-  box-shadow: inset 0 -3px 6px -3px rgba(0, 0, 0, 0.2);
   transform: translateY(2px);
   border-color: transparent;
 }
@@ -282,16 +282,16 @@ input[type="range"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
   pointer-events: none;
 }
 .key-label b {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 950;
   color: #1c1c1e;
 }
 .key-label small {
-  font-size: 0.68rem;
+  font-size: 0.62rem;
   font-weight: 700;
   color: #636366;
 }
@@ -300,37 +300,22 @@ input[type="range"] {
   color: #ffffff;
 }
 
-.black-row {
-  position: absolute;
-  top: 10px;
-  left: 6px;
-  right: 6px;
-  display: flex;
-  gap: 2px;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.black-slot {
-  flex: 1;
-  position: relative;
-  z-index: 10;
-}
-
+/* 黑键：用 grid 放在白键之间的列上 */
 .black-key {
-  position: absolute;
-  right: -18%;
-  width: 62%;
-  height: 60%;
-  border-radius: 0 0 6px 6px;
+  grid-row: 1;
+  border-radius: 0 0 5px 5px;
   background: linear-gradient(180deg, #4a4a4a 0%, #1c1c1c 70%, #000000 100%);
   border: 1px solid #1a1a1a;
   border-top: none;
   cursor: pointer;
-  pointer-events: auto;
-  z-index: 10;
-  transition: background 0.08s, box-shadow 0.08s, transform 0.05s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), inset 0 -3px 4px rgba(255, 255, 255, 0.1);
+  transition: background 0.08s, transform 0.05s;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4), inset 0 -2px 3px rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 2;
+  height: 60%;
+  width: 62%;
+  justify-self: end;
+  margin-right: -31%; /* 让黑键跨在白键边界上 */
 }
 
 .black-key:hover {
@@ -339,7 +324,7 @@ input[type="range"] {
 
 .black-key.active {
   background: #007aff;
-  transform: translateY(3px);
+  transform: translateY(2px);
   border-color: transparent;
 }
 
@@ -350,6 +335,6 @@ input[type="range"] {
 /* 触屏加大琴键 */
 @media (pointer: coarse) {
   .piano {
-    height: 320px;
+    height: 300px;
   }
 }

@@ -411,50 +411,47 @@ export default function Piano() {
 
       <div className="piano-stage">
         <Visualizer bursts={bursts} />
-        <div className="piano">
-          <div className="white-row">
-            {WHITES.map((n) => (
+        <div className="piano" style={{ '--white-count': WHITES.length } as React.CSSProperties}>
+          {/* 白键：grid 列布局，每个白键占一列 */}
+          {WHITES.map((n) => (
+            <button
+              key={n.note}
+              className={`white-key ${active.has(n.note) ? 'active' : ''} ${
+                inScale(n) ? '' : 'dim-key'
+              } ${scaleNotes.length > 0 && inScale(n) ? 'scale-key' : ''}`}
+              style={{ gridColumn: WHITES.indexOf(n) + 1 }}
+              onPointerDown={(e) => pressWithVel(n, e.clientY, e.currentTarget)}
+              onPointerUp={() => release(n)}
+              onPointerLeave={() => active.has(n.note) && release(n)}
+            >
+              {showNoteNames && (
+                <span className="key-label">
+                  <b>{n.jianpu}</b>
+                  <small>{n.name}</small>
+                </span>
+              )}
+            </button>
+          ))}
+
+          {/* 黑键：放在对应白键列的右边缘，跨列显示 */}
+          {WHITES.map((w, i) => {
+            const blackAfter = ALL.find(
+              (n) => n.isBlack && n.note[0] === w.name && n.note.slice(-1) === w.note.slice(-1)
+            )
+            if (!blackAfter || w.name === 'E' || w.name === 'B' || i >= WHITES.length - 1) return null
+            return (
               <button
-                key={n.note}
-                className={`white-key ${active.has(n.note) ? 'active' : ''} ${
-                  inScale(n) ? '' : 'dim-key'
-                } ${scaleNotes.length > 0 && inScale(n) ? 'scale-key' : ''}`}
-                onPointerDown={(e) => pressWithVel(n, e.clientY, e.currentTarget)}
-                onPointerUp={() => release(n)}
-                onPointerLeave={() => active.has(n.note) && release(n)}
-              >
-                {showNoteNames && (
-                  <span className="key-label">
-                    <b>{n.jianpu}</b>
-                    <small>{n.name}</small>
-                  </span>
-                )}
-              </button>
-            ))}
-          </div>
-          <div className="black-row">
-            {WHITES.map((w, i) => {
-              const blackAfter = ALL.find(
-                (n) => n.isBlack && n.note[0] === w.name && n.note.slice(-1) === w.note.slice(-1)
-              )
-              const showBlack =
-                blackAfter && w.name !== 'E' && w.name !== 'B' && i < WHITES.length - 1
-              return (
-                <div className="black-slot" key={w.note}>
-                  {showBlack && (
-                    <button
-                      className={`black-key ${active.has(blackAfter!.note) ? 'active' : ''} ${
-                        inScale(blackAfter!) ? '' : 'dim-key'
-                      }`}
-                      onPointerDown={(e) => pressWithVel(blackAfter!, e.clientY, e.currentTarget)}
-                      onPointerUp={() => release(blackAfter!)}
-                      onPointerLeave={() => active.has(blackAfter!.note) && release(blackAfter!)}
-                    />
-                  )}
-                </div>
-              )
-            })}
-          </div>
+                key={blackAfter.note}
+                className={`black-key ${active.has(blackAfter.note) ? 'active' : ''} ${
+                  inScale(blackAfter) ? '' : 'dim-key'
+                }`}
+                style={{ gridColumn: i + 1 }}
+                onPointerDown={(e) => pressWithVel(blackAfter, e.clientY, e.currentTarget)}
+                onPointerUp={() => release(blackAfter)}
+                onPointerLeave={() => active.has(blackAfter.note) && release(blackAfter)}
+              />
+            )
+          })}
         </div>
       </div>
     </div>
