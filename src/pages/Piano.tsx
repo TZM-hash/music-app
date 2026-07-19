@@ -419,7 +419,6 @@ export default function Piano() {
                 className={`white-key ${active.has(n.note) ? 'active' : ''} ${
                   inScale(n) ? '' : 'dim-key'
                 } ${scaleNotes.length > 0 && inScale(n) ? 'scale-key' : ''}`}
-                style={active.has(n.note) ? { background: n.color } : undefined}
                 onPointerDown={(e) => pressWithVel(n, e.clientY, e.currentTarget)}
                 onPointerUp={() => release(n)}
                 onPointerLeave={() => active.has(n.note) && release(n)}
@@ -447,9 +446,6 @@ export default function Piano() {
                       className={`black-key ${active.has(blackAfter!.note) ? 'active' : ''} ${
                         inScale(blackAfter!) ? '' : 'dim-key'
                       }`}
-                      style={
-                        active.has(blackAfter!.note) ? { background: blackAfter!.color } : undefined
-                      }
                       onPointerDown={(e) => pressWithVel(blackAfter!, e.clientY, e.currentTarget)}
                       onPointerUp={() => release(blackAfter!)}
                       onPointerLeave={() => active.has(blackAfter!.note) && release(blackAfter!)}

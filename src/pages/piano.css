@@ -264,7 +264,7 @@ input[type="range"] {
 }
 
 .white-key.active {
-  background: var(--note-c);
+  background: #007aff;
   box-shadow: inset 0 -3px 6px -3px rgba(0, 0, 0, 0.2);
   transform: translateY(2px);
   border-color: transparent;
@@ -336,7 +336,7 @@ input[type="range"] {
 }
 
 .black-key.active {
-  background: var(--note-c);
+  background: #007aff;
   transform: translateY(3px);
   border-color: transparent;
 }
