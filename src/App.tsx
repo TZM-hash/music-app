@@ -39,13 +39,16 @@ function Shell() {
     stopAllAudio()
   }, [route])
 
+  const isInstrument = route === 'piano' || route === 'drums' || route === 'recorder' || route === 'xylophone'
+  const isGame = route.startsWith('game-')
+
   return (
     <div className={`app ${sidebarOpen ? 'sidebar-open' : ''}`}>
       <Sidebar />
       {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
       <div className="main-col">
         <TopBar />
-        <div className={`content route-${route}`}>
+        <div className={`content route-${route} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''}`}>
           {route === 'home' && <Home />}
           {route === 'lesson' && <LessonMode />}
           {route === 'piano' && <Piano />}

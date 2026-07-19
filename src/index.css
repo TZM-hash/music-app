@@ -505,6 +505,70 @@ button:focus-visible {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* 乐器页转场：琴键从下方弹入 */
+.content-instrument .white-key,
+.content-instrument .black-key,
+.content-instrument .xylo-bar,
+.content-instrument .xylo-semi-bar {
+  animation: keySlideUp 0.4s var(--ease-spring) both;
+}
+.content-instrument .white-key:nth-child(1) { animation-delay: 0.02s; }
+.content-instrument .white-key:nth-child(2) { animation-delay: 0.04s; }
+.content-instrument .white-key:nth-child(3) { animation-delay: 0.06s; }
+.content-instrument .white-key:nth-child(4) { animation-delay: 0.08s; }
+.content-instrument .white-key:nth-child(5) { animation-delay: 0.10s; }
+.content-instrument .white-key:nth-child(6) { animation-delay: 0.12s; }
+.content-instrument .white-key:nth-child(7) { animation-delay: 0.14s; }
+.content-instrument .white-key:nth-child(8) { animation-delay: 0.16s; }
+.content-instrument .white-key:nth-child(9) { animation-delay: 0.18s; }
+.content-instrument .white-key:nth-child(10) { animation-delay: 0.20s; }
+.content-instrument .xylo-bar:nth-child(1) { animation-delay: 0.02s; }
+.content-instrument .xylo-bar:nth-child(2) { animation-delay: 0.04s; }
+.content-instrument .xylo-bar:nth-child(3) { animation-delay: 0.06s; }
+.content-instrument .xylo-bar:nth-child(4) { animation-delay: 0.08s; }
+.content-instrument .xylo-bar:nth-child(5) { animation-delay: 0.10s; }
+.content-instrument .xylo-bar:nth-child(6) { animation-delay: 0.12s; }
+.content-instrument .xylo-bar:nth-child(7) { animation-delay: 0.14s; }
+.content-instrument .xylo-bar:nth-child(8) { animation-delay: 0.16s; }
+.content-instrument .xylo-bar:nth-child(9) { animation-delay: 0.18s; }
+.content-instrument .xylo-bar:nth-child(10) { animation-delay: 0.20s; }
+
+@keyframes keySlideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* 游戏页转场：中心缩放入场 */
+.content-game .game-wrap,
+.content-game .taiko-stage,
+.content-game .echo-stage,
+.content-game .sing-stage {
+  animation: gameZoomIn 0.35s var(--ease-smooth) both;
+}
+
+@keyframes gameZoomIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 内容页转场：卡片从右往左滑入 */
+.content .card {
+  animation: cardSlideIn 0.3s var(--ease-smooth) both;
+}
+.content .card:nth-child(1) { animation-delay: 0.02s; }
+.content .card:nth-child(2) { animation-delay: 0.06s; }
+.content .card:nth-child(3) { animation-delay: 0.10s; }
+.content .card:nth-child(4) { animation-delay: 0.14s; }
+.content .card:nth-child(5) { animation-delay: 0.18s; }
+.content .card:nth-child(6) { animation-delay: 0.22s; }
+.content .card:nth-child(7) { animation-delay: 0.26s; }
+.content .card:nth-child(8) { animation-delay: 0.30s; }
+
+@keyframes cardSlideIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
 /* 通用面板/卡片 */
 .card {
   background: var(--bg-card);
