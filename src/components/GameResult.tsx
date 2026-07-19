@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Stars from './Stars'
 import { buildMusicAbilitySignals } from '../state/musicAbilities'
+import { celebrate } from './Celebration'
+import { playUI } from '../music/uiSounds'
 import './gameResult.css'
 
 export interface ReviewRow {
@@ -54,6 +56,8 @@ export default function GameResult({
   continueLabel = '回到挑战中心',
 }: Props) {
   const [showReview, setShowReview] = useState(false)
+  const scoreRef = useRef<HTMLDivElement>(null)
+  const hasCelebrated = useRef(false)
   const wrongRows = review?.rows?.filter((r) => !r.ok) ?? []
   const hasReview = !!review && ((review.rows?.length ?? 0) > 0 || (review.stats?.length ?? 0) > 0)
   const diagnosis = buildDiagnosis(stars, review)
@@ -66,6 +70,39 @@ export default function GameResult({
     advice: review?.advice,
   })
 
+  // 分数滚动动画
+  useEffect(() => {
+    const el = scoreRef.current
+    if (!el) return
+    const target = score
+    const duration = 800
+    const start = performance.now()
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      el.textContent = `${Math.round(target * eased)} 分`
+      if (t < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [score])
+
+  // 庆祝触发
+  useEffect(() => {
+    if (hasCelebrated.current) return
+    hasCelebrated.current = true
+    if (isNewBest) {
+      playUI('fanfare')
+      celebrate('epic')
+    } else if (stars >= 3) {
+      playUI('fanfare')
+      celebrate('large')
+    } else if (stars >= 1) {
+      playUI('star')
+      celebrate('small')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <div className="result-overlay">
       <div className={`result-card ${showReview ? 'wide' : ''}`}>
@@ -75,7 +112,7 @@ export default function GameResult({
             <div className="result-stars">
               <Stars count={stars} />
             </div>
-            <div className="result-score">{score} 分</div>
+            <div className="result-score" ref={scoreRef}>{score} 分</div>
             {isNewBest && <div className="new-best">🎉 新纪录！</div>}
             {!isNewBest && bestScore != null && bestScore > 0 && (
               <div className="best-line">最高分 {bestScore}</div>
