@@ -307,13 +307,14 @@ input[type="range"] {
   right: 6px;
   display: flex;
   gap: 2px;
-  z-index: 3;
+  z-index: 10;
   pointer-events: none;
 }
 
 .black-slot {
   flex: 1;
   position: relative;
+  z-index: 10;
 }
 
 .black-key {
@@ -327,6 +328,7 @@ input[type="range"] {
   border-top: none;
   cursor: pointer;
   pointer-events: auto;
+  z-index: 10;
   transition: background 0.08s, box-shadow 0.08s, transform 0.05s;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), inset 0 -3px 4px rgba(255, 255, 255, 0.1);
 }
