@@ -16,6 +16,16 @@
   --neon-purple: #af52de;
   --neon-green: #34c759;
 
+  /* 童趣糖果色 */
+  --candy-red: #ff6b6b;
+  --candy-orange: #ffa94d;
+  --candy-yellow: #ffd43b;
+  --candy-green: #69db7c;
+  --candy-teal: #3bc9db;
+  --candy-blue: #4dabf7;
+  --candy-purple: #9775fa;
+  --candy-pink: #f783ac;
+
   /* 音符专属色 */
   --note-c: #007aff;
   --note-d: #34c759;
@@ -48,6 +58,8 @@
   --radius: 12px;
   --radius-lg: 16px;
   --radius-sm: 8px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
 
   /* 阴影（iOS 风格：轻微、弥散） */
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
@@ -86,8 +98,9 @@ body,
 body {
   font-family: var(--font);
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(0, 122, 255, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(175, 82, 222, 0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 15% 20%, rgba(255, 107, 107, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 15%, rgba(77, 171, 247, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 85%, rgba(105, 219, 124, 0.03) 0%, transparent 40%),
     var(--bg-deep);
   color: var(--text);
   overflow: hidden;
@@ -182,11 +195,11 @@ button {
   width: 38px;
   height: 38px;
   place-items: center;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--neon-cyan), var(--primary-2));
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
   color: #fff;
   font-size: 1.2rem;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+  box-shadow: 0 3px 10px rgba(77, 171, 247, 0.25);
 }
 .side-logo-text {
   font-size: 1.2rem;
@@ -220,7 +233,7 @@ button {
   width: 100%;
   min-height: 44px;
   padding: 10px 12px;
-  border-radius: var(--radius);
+  border-radius: 14px;
   color: var(--text);
   font-size: 0.95rem;
   font-weight: 750;
@@ -233,28 +246,29 @@ button {
   border-color: rgba(0, 122, 255, 0.12);
 }
 .side-item.active {
-  background: rgba(0, 122, 255, 0.1);
-  color: var(--neon-cyan);
-  box-shadow: inset 3px 0 0 var(--neon-cyan);
-  border-color: rgba(0, 122, 255, 0.15);
+  background: rgba(77, 171, 247, 0.1);
+  color: var(--candy-blue);
+  box-shadow: inset 3px 0 0 var(--candy-blue);
+  border-color: rgba(77, 171, 247, 0.2);
 }
 .side-icon {
   display: grid;
   width: 28px;
   height: 28px;
   place-items: center;
-  border-radius: 8px;
+  border-radius: 10px;
   background: rgba(0, 0, 0, 0.04);
   font-size: 1rem;
   text-align: center;
   transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
 }
 .side-item:hover .side-icon {
-  transform: scale(1.1);
+  transform: scale(1.15) rotate(-5deg);
 }
 .side-item.active .side-icon {
-  background: var(--neon-cyan);
+  background: var(--candy-blue);
   color: #fff;
+  box-shadow: 0 2px 8px rgba(77, 171, 247, 0.3);
 }
 .side-foot {
   padding: 14px 8px 4px;
@@ -1427,11 +1441,11 @@ body::before {
 .side-logo-icon {
   width: 44px;
   height: 44px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--neon-cyan), var(--primary-2));
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
   color: #fff;
   font-size: 1.45rem;
-  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.2);
+  box-shadow: 0 3px 10px rgba(77, 171, 247, 0.25);
 }
 
 .side-logo-text,
@@ -1482,14 +1496,14 @@ body::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(0, 122, 255, 0.04), rgba(90, 200, 250, 0.03));
+  background: linear-gradient(135deg, rgba(77, 171, 247, 0.04), rgba(151, 117, 250, 0.03));
   opacity: 0;
   transition: opacity 0.2s;
 }
 
 .side-item:hover {
-  background: rgba(0, 122, 255, 0.06);
-  border-color: rgba(0, 122, 255, 0.12);
+  background: rgba(77, 171, 247, 0.06);
+  border-color: rgba(77, 171, 247, 0.12);
   color: var(--text);
   transform: translateX(2px);
 }
@@ -1500,19 +1514,19 @@ body::before {
 }
 
 .side-item.active {
-  background: rgba(0, 122, 255, 0.1);
-  border-color: rgba(0, 122, 255, 0.15);
-  color: var(--neon-cyan);
-  box-shadow: inset 3px 0 0 var(--neon-cyan);
+  background: rgba(77, 171, 247, 0.1);
+  border-color: rgba(77, 171, 247, 0.2);
+  color: var(--candy-blue);
+  box-shadow: inset 3px 0 0 var(--candy-blue);
 }
 
 .side-icon {
   position: relative;
   width: 34px;
   height: 34px;
-  border-radius: 8px;
+  border-radius: 10px;
   background: rgba(0, 0, 0, 0.04);
-  color: var(--neon-cyan);
+  color: var(--candy-blue);
   font-size: 0.9rem;
   font-weight: 950;
   box-shadow: none;
@@ -1520,12 +1534,13 @@ body::before {
 }
 
 .side-item:hover .side-icon {
-  transform: scale(1.1);
+  transform: scale(1.15) rotate(-5deg);
 }
 
 .side-item.active .side-icon {
-  background: var(--neon-cyan);
+  background: var(--candy-blue);
   color: #fff;
+  box-shadow: 0 2px 8px rgba(77, 171, 247, 0.3);
 }
 
 .side-label {
@@ -2284,15 +2299,16 @@ body::before {
 
 body {
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(0, 122, 255, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(175, 82, 222, 0.02) 0%, transparent 50%),
+    radial-gradient(ellipse at 15% 20%, rgba(255, 107, 107, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 85% 15%, rgba(77, 171, 247, 0.04) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 85%, rgba(105, 219, 124, 0.03) 0%, transparent 40%),
     var(--bg-deep);
 }
 
 body::before {
   background-image:
-    radial-gradient(circle at 25% 25%, rgba(0, 122, 255, 0.02) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(255, 45, 85, 0.01) 0%, transparent 50%);
+    radial-gradient(circle at 25% 25%, rgba(255, 212, 59, 0.02) 0%, transparent 40%),
+    radial-gradient(circle at 75% 75%, rgba(247, 131, 172, 0.02) 0%, transparent 40%);
   background-size: 100% 100%;
   opacity: 0.78;
   mask-image: none;
@@ -8139,10 +8155,424 @@ body::before {
   }
 }
 
-/* ===== 霓虹舞台 · 全局工具 ===== */
-.glow-cyan { box-shadow: var(--glow-primary); }
-.glow-gold { box-shadow: var(--glow-gold); }
-.glow-pink { box-shadow: var(--glow-pink); }
+/* ===== 童趣元素 ===== */
+
+/* 飘浮装饰（首页背景） */
+.music-home::before {
+  content: '♪ ♫ ♪ ♫ ♪';
+  position: fixed;
+  top: 80px;
+  right: 40px;
+  font-size: 2rem;
+  color: rgba(0, 0, 0, 0.04);
+  pointer-events: none;
+  letter-spacing: 20px;
+  animation: floatNotes 8s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes floatNotes {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-12px) rotate(2deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(-8px) rotate(-2deg); }
+}
+
+/* 星星闪烁装饰 */
+.music-home::after {
+  content: '✦ ✧ ✦ ✧ ✦';
+  position: fixed;
+  bottom: 60px;
+  left: 300px;
+  font-size: 1.2rem;
+  color: rgba(255, 149, 0, 0.08);
+  pointer-events: none;
+  letter-spacing: 30px;
+  animation: twinkle 4s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.2; }
+}
+
+/* 按钮 Q 弹效果 */
+.rec-btn,
+.patch-btn,
+.chord-btn,
+.mini-btn,
+.mix-btn,
+.seq-btn,
+.preset-btn,
+.big-start,
+.battle-btn,
+.level-picker button,
+.daily-card,
+.read-opt,
+.ear-option,
+.ear-key,
+.mode-btn,
+.tile,
+.station,
+.course-tab {
+  transition: transform 0.12s var(--ease-spring), box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.rec-btn:active,
+.patch-btn:active,
+.chord-btn:active,
+.mini-btn:active,
+.mix-btn:active,
+.seq-btn:active,
+.preset-btn:active,
+.big-start:active,
+.battle-btn:active,
+.level-picker button:active,
+.daily-card:active,
+.read-opt:active,
+.ear-option:active,
+.ear-key:active,
+.mode-btn:active {
+  transform: scale(0.93);
+}
+
+/* 卡片 hover 微微弹跳 */
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* 星星获得动画 */
+@keyframes starPop {
+  0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+  60% { transform: scale(1.3) rotate(10deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* 徽章弹入 */
+@keyframes badgeBounce {
+  0% { transform: scale(0) translateY(20px); opacity: 0; }
+  60% { transform: scale(1.15) translateY(-4px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* 音符气泡上浮 */
+@keyframes noteFloat {
+  0% { transform: translateY(0) scale(0.8); opacity: 0; }
+  20% { opacity: 1; }
+  100% { transform: translateY(-80px) scale(1.1); opacity: 0; }
+}
+
+/* 连击火焰 */
+@keyframes comboFlame {
+  0%, 100% { transform: scale(1) rotate(-2deg); }
+  50% { transform: scale(1.05) rotate(2deg); }
+}
+
+/* 进度条流光 */
+.progress-ring-core b,
+.pro-kpi b {
+  animation: numberGlow 3s ease-in-out infinite;
+}
+
+@keyframes numberGlow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* 首页主入口卡片彩色渐变 */
+.home-entry-group.primary button:nth-child(1) { border-left: 4px solid var(--candy-blue); }
+.home-entry-group.primary button:nth-child(2) { border-left: 4px solid var(--candy-purple); }
+.home-entry-group.primary button:nth-child(3) { border-left: 4px solid var(--candy-green); }
+.home-entry-group.primary button:nth-child(4) { border-left: 4px solid var(--candy-orange); }
+
+/* 顶栏脉冲波形改糖果色 */
+.topbar-pulse i {
+  background: linear-gradient(180deg, var(--candy-blue), var(--candy-purple));
+  border-radius: 999px;
+  animation: pulseBar 1s ease-in-out infinite;
+}
+
+/* 节拍器指示点改糖果色 */
+.beat-dot.on {
+  background: var(--candy-yellow);
+  box-shadow: 0 0 6px rgba(255, 212, 59, 0.4);
+}
+
+/* 翻牌卡片改糖果色 */
+.daily-card.flipped {
+  border-color: var(--candy-blue);
+  background: rgba(77, 171, 247, 0.06);
+}
+.daily-card-front b {
+  color: var(--candy-blue);
+}
+
+/* 大开始按钮改糖果色 */
+.big-start {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(77, 171, 247, 0.3);
+}
+.big-start:hover {
+  box-shadow: 0 6px 24px rgba(77, 171, 247, 0.4);
+  transform: translateY(-2px);
+}
+
+/* 主按钮改糖果色 */
+.primary-action,
+.hero-actions .primary-action,
+.pro-actions .primary-action {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(77, 171, 247, 0.25);
+}
+
+/* 侧边栏 logo 改糖果色 */
+.side-logo-icon {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  box-shadow: 0 3px 10px rgba(77, 171, 247, 0.25);
+}
+
+/* 学生头像改糖果色 */
+.stu-avatar {
+  background: rgba(151, 117, 250, 0.12);
+  color: var(--candy-purple);
+}
+
+/* 太鼓 DON/KA 按钮改糖果色 */
+.key-don {
+  border-color: rgba(255, 107, 107, 0.4);
+  background: radial-gradient(circle at 50% 36%, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.08));
+}
+.key-don:active {
+  box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+  border-color: var(--candy-red);
+}
+.key-ka {
+  border-color: rgba(77, 171, 247, 0.4);
+  background: radial-gradient(circle at 50% 36%, rgba(77, 171, 247, 0.2), rgba(77, 171, 247, 0.08));
+}
+.key-ka:active {
+  box-shadow: 0 0 20px rgba(77, 171, 247, 0.3);
+  border-color: var(--candy-blue);
+}
+
+/* 判定文字改糖果色 */
+.taiko-judge.great {
+  color: var(--candy-yellow);
+}
+.taiko-judge.good {
+  color: var(--candy-teal);
+}
+
+/* 魂值条改糖果色 */
+.soul-fill {
+  background: linear-gradient(90deg, var(--candy-green), var(--candy-teal));
+}
+.soul-fill.cleared {
+  background: linear-gradient(90deg, var(--candy-yellow), var(--candy-orange), var(--candy-red));
+}
+
+/* 混音器有音格子改糖果色 */
+.mix-cell.on {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+}
+
+/* 鼓机格子改糖果色 */
+.seq-cell.on {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+}
+
+/* 播放头改糖果色 */
+.mix-cell.cur {
+  outline: 3px solid var(--candy-yellow);
+}
+.seq-cell.cur {
+  outline: 3px solid var(--candy-yellow);
+}
+
+/* 进度环改糖果色 */
+.progress-ring {
+  --ring-color: var(--candy-blue);
+}
+
+/* 乐谱音符改糖果色 */
+.single-staff .note-head.filled {
+  fill: var(--candy-blue);
+}
+.single-staff .note-stem {
+  stroke: var(--candy-blue);
+}
+
+/* 五线谱演示音符改糖果色 */
+.staff-demo ellipse {
+  fill: var(--candy-blue);
+}
+
+/* 乐理探索步骤序号改糖果色 */
+.exploration-index {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  color: #fff;
+}
+
+/* 发现卡片关键词改糖果色 */
+.keyword-a { background: rgba(77, 171, 247, 0.12); color: var(--candy-blue); }
+.keyword-b { background: rgba(105, 219, 124, 0.12); color: var(--candy-green); }
+.keyword-c { background: rgba(151, 117, 250, 0.12); color: var(--candy-purple); }
+.keyword-d { background: rgba(255, 169, 77, 0.12); color: var(--candy-orange); }
+
+/* 答案对错改糖果色 */
+.mini-quiz button.right {
+  background: rgba(105, 219, 124, 0.15);
+  border-color: var(--candy-green);
+  color: var(--candy-green);
+}
+.mini-quiz button.wrong {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: var(--candy-red);
+  color: var(--candy-red);
+}
+
+/* 读谱对错改糖果色 */
+.read-opt.right {
+  background: rgba(105, 219, 124, 0.15);
+  border-color: var(--candy-green);
+  box-shadow: 0 0 12px rgba(105, 219, 124, 0.2);
+}
+.read-opt.wrong {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: var(--candy-red);
+}
+
+/* 练耳对错改糖果色 */
+.ear-key.right {
+  background: rgba(105, 219, 124, 0.15);
+  border-color: var(--candy-green);
+}
+.ear-key.wrong {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: var(--candy-red);
+}
+.ear-option.right {
+  background: rgba(105, 219, 124, 0.15);
+  border-color: var(--candy-green);
+}
+.ear-option.wrong {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: var(--candy-red);
+}
+
+/* 结算页分数改糖果色 */
+.result-score {
+  color: var(--candy-yellow);
+}
+
+/* 新纪录改糖果色 */
+.new-best {
+  color: var(--candy-pink);
+}
+
+/* 能力条改糖果色 */
+.ability-card.good span i { background: var(--candy-green); }
+.ability-card.warn span i { background: var(--candy-yellow); }
+.ability-card.focus span i { background: var(--candy-red); }
+.ability-mini span.good i { background: var(--candy-green); }
+.ability-mini span.warn i { background: var(--candy-yellow); }
+.ability-mini span.focus i { background: var(--candy-red); }
+
+/* 诊断标签改糖果色 */
+.diagnosis-mini .good { background: rgba(105, 219, 124, 0.1); color: var(--candy-green); }
+.diagnosis-mini .warn { background: rgba(255, 212, 59, 0.1); color: var(--candy-yellow); }
+.diagnosis-mini .focus { background: rgba(255, 107, 107, 0.1); color: var(--candy-red); }
+.diagnosis-card.good { border-left: 4px solid var(--candy-green); }
+.diagnosis-card.warn { border-left: 4px solid var(--candy-yellow); }
+.diagnosis-card.focus { border-left: 4px solid var(--candy-red); }
+
+/* 徽章改糖果色 */
+.badge-pop {
+  background: rgba(255, 212, 59, 0.08);
+  border: 1px solid rgba(255, 212, 59, 0.2);
+}
+.badge-pop small {
+  color: var(--candy-yellow);
+}
+
+/* 班级对战改糖果色 */
+.battle-btn.left {
+  border-color: var(--candy-blue);
+  background: rgba(77, 171, 247, 0.12);
+  color: var(--candy-blue);
+}
+.battle-btn.right {
+  border-color: var(--candy-red);
+  background: rgba(255, 107, 107, 0.12);
+  color: var(--candy-red);
+}
+.team-score.left {
+  background: linear-gradient(90deg, rgba(77, 171, 247, 0.2), rgba(77, 171, 247, 0.08));
+}
+.team-score.right {
+  background: linear-gradient(90deg, rgba(255, 107, 107, 0.08), rgba(255, 107, 107, 0.2));
+}
+
+/* 闯关岛进度改糖果色 */
+.station.done {
+  outline: 3px solid rgba(255, 212, 59, 0.4);
+}
+.station.active {
+  outline: 3px solid rgba(77, 171, 247, 0.4);
+}
+
+/* 站点图标改糖果色 */
+.station-icon {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+}
+
+/* 课程图标改糖果色 */
+.course-icon {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+}
+
+/* 训练图标改糖果色 */
+.training-icon {
+  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+}
+
+/* KPI 数字改糖果色 */
+.pro-kpi b {
+  color: var(--candy-blue);
+}
+
+/* 作品集计数改糖果色 */
+.portfolio-count {
+  color: var(--candy-blue);
+}
+
+/* 挑战中心标题改糖果色 */
+.training-kicker {
+  color: var(--candy-blue);
+}
+
+/* 成长路线标题改糖果色 */
+.course-kicker {
+  color: var(--candy-purple);
+}
+
+/* 乐理标题改糖果色 */
+.theory-kicker {
+  color: var(--candy-teal);
+}
+
+/* 课堂标题改糖果色 */
+.lesson-kicker {
+  color: var(--candy-orange);
+}
+
+/* 首页标题改糖果色 */
+.pro-kicker {
+  color: var(--candy-blue);
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
