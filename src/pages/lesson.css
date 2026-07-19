@@ -14,7 +14,7 @@
   padding: 28px;
   background:
     linear-gradient(135deg, rgba(0, 122, 255, 0.08), rgba(52, 199, 89, 0.07)),
-    rgba(0, 0, 0, 0.5);
+    rgba(0, 0, 0, 0.05);
 }
 
 .lesson-kicker {
@@ -46,7 +46,7 @@
   padding: 18px;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.78);
+  background: rgba(0, 0, 0, 0.08);
   box-shadow: 0 16px 34px rgba(0, 122, 255, 0.08);
 }
 
@@ -98,7 +98,7 @@
   min-height: 42px;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text);
   font: inherit;
   font-size: 0.92rem;
@@ -115,7 +115,7 @@
 .lesson-topic-brief {
   padding: 16px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .lesson-topic-brief span {
@@ -157,7 +157,7 @@
   padding: 12px;
   border: 1px solid transparent;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text);
   text-align: left;
 }
@@ -169,7 +169,7 @@
   height: 30px;
   place-items: center;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text-soft);
   font-weight: 900;
 }
@@ -225,7 +225,7 @@
   padding: 10px 14px;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--neon-cyan);
   font-weight: 900;
   box-shadow: var(--shadow-soft);
@@ -249,7 +249,7 @@
 .demo-board {
   padding: 18px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .prompt-panel b,
@@ -280,7 +280,7 @@
   padding: 16px;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .lesson-card-grid p,
@@ -301,7 +301,7 @@
   gap: 9px;
   padding: 11px 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text);
   font-weight: 800;
 }
@@ -343,7 +343,7 @@
   margin-bottom: 0;
   padding: 16px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .lesson-quiz-list {
@@ -360,7 +360,7 @@
   padding: 14px;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .lesson-quiz-card > span {
@@ -385,7 +385,7 @@
   min-height: 38px;
   padding: 8px 10px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text);
   font-weight: 850;
   text-align: left;

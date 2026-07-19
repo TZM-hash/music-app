@@ -48,7 +48,7 @@
   min-height: 40px;
   padding: 10px 16px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 700;
@@ -111,7 +111,7 @@
   width: 100%;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text);
   padding: 9px 10px;
   font: inherit;
@@ -200,7 +200,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-soft);
   font-size: 1.3rem;
   flex-shrink: 0;
@@ -211,7 +211,7 @@
 }
 .track-voice-sel,
 .track-note-sel {
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-neon);
   color: var(--text);
   border-radius: 8px;
@@ -232,7 +232,7 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   color: var(--text-soft);
   font-weight: 800;
@@ -268,7 +268,7 @@
 .mix-cell {
   height: 40px;
   border-radius: 7px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(0, 0, 0, 0.08);
   transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
   cursor: pointer;
@@ -337,7 +337,7 @@
   min-height: 36px;
   padding: 7px 14px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   color: var(--text);
   font-weight: 700;
@@ -369,7 +369,7 @@
 .proj-chip {
   display: inline-flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   border-radius: 999px;
   overflow: hidden;
@@ -419,7 +419,7 @@
   min-width: 0;
   overflow: hidden;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   transition: border-color 0.15s;
 }
@@ -510,7 +510,7 @@
   padding: 12px 14px;
   border-radius: 10px;
   border: 2px solid var(--line-neon);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text);
   font-family: monospace;
   font-size: 0.85rem;

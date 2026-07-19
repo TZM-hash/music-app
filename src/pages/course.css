@@ -39,7 +39,7 @@
   min-width: 170px;
   padding: 14px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   text-align: center;
 }
 
@@ -146,7 +146,7 @@
 .outcome-row span {
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text);
   font-weight: 700;
   font-size: 0.9rem;
@@ -175,7 +175,7 @@
   padding: 14px;
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.6)),
+    linear-gradient(135deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.02)),
     repeating-linear-gradient(90deg, transparent 0 30px, rgba(0, 122, 255, 0.055) 30px 31px);
 }
 
@@ -247,7 +247,7 @@
   gap: 14px;
   padding: 14px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .step-index {
@@ -276,7 +276,7 @@
 .lesson-secondary {
   padding: 10px 16px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-neon);
   color: var(--neon-cyan);
   font-weight: 800;
@@ -309,7 +309,7 @@
   min-width: 92px;
   padding: 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   text-align: center;
 }
 
@@ -454,7 +454,7 @@
   margin-top: auto;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   font-weight: 800;
   font-size: 0.82rem;
 }
@@ -464,7 +464,7 @@
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .station-progress span {
@@ -499,7 +499,7 @@
   gap: 6px;
   padding: 13px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text);
   text-align: left;
 }
@@ -538,7 +538,7 @@
   min-width: 180px;
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
 }
 
 .leader-chip span {

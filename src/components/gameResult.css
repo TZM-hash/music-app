@@ -117,11 +117,11 @@
 }
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: var(--glow-primary), 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--glow-primary), 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 .btn-secondary {
   border: 1px solid var(--line-neon);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   color: var(--text);
 }
 .btn-secondary:hover {
@@ -167,7 +167,7 @@
 .level-picker button {
   padding: 8px 18px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   font-weight: 700;
@@ -212,7 +212,7 @@
 }
 .big-start:hover {
   transform: translateY(-2px);
-  box-shadow: var(--glow-primary), 0 8px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--glow-primary), 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* 结果回顾 */
@@ -227,7 +227,7 @@
 .result-advice {
   margin-top: 12px;
   padding: 10px 16px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   border-radius: 8px;
   color: var(--text);
@@ -244,7 +244,7 @@
 .diagnosis-mini span {
   padding: 7px 10px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   color: var(--text-soft);
   font-size: 0.86rem;
   font-weight: 700;
@@ -280,7 +280,7 @@
   gap: 4px;
   overflow: hidden;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   padding: 8px 6px;
 }
@@ -335,7 +335,7 @@
   text-align: center;
   padding: 12px 16px;
   border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-neon);
 }
 .review-stat b {
@@ -374,7 +374,7 @@
 .diagnosis-card {
   padding: 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   text-align: left;
 }
 .diagnosis-card small {
@@ -405,7 +405,7 @@
 .ability-card {
   padding: 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   border: 1px solid var(--line-soft);
   text-align: left;
 }
@@ -467,7 +467,7 @@
   gap: 10px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.04);
   font-size: 0.92rem;
 }
 .review-row.bad {

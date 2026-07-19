@@ -18,7 +18,7 @@
   width: 82px;
   height: 82px;
   border-radius: 14px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.03);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
@@ -77,14 +77,14 @@
   gap: 8px;
   padding: 20px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
-  border: 1px solid var(--line-neon);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.03), rgba(0, 0, 0, 0.02));
+  border: 1px solid var(--line);
 }
 .recorder-mouth {
   width: 40px;
   height: 26px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--line-neon);
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--line);
   border-radius: 8px 8px 4px 4px;
 }
 .recorder-foot {

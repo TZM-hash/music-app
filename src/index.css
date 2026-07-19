@@ -36,8 +36,8 @@
 
   /* 文字 */
   --text: #1c1c1e;
-  --text-soft: #636366;
-  --text-faint: #aeaeb2;
+  --text-soft: #48484a;
+  --text-faint: #8e8e93;
 
   /* 线条 */
   --line: rgba(0, 0, 0, 0.08);
@@ -1214,7 +1214,7 @@ button:focus-visible {
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.04);
     z-index: 15;
   }
   .topbar {
@@ -2055,7 +2055,7 @@ body::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(107, 92, 255, 0.1), rgba(33, 199, 184, 0.12));
+  background: linear-gradient(135deg, rgba(0, 122, 255, 0.04), rgba(90, 200, 250, 0.03));
   opacity: 0;
   transition: opacity 0.2s;
 }
@@ -2074,7 +2074,7 @@ body::before {
 }
 
 .work-card span {
-  background: rgba(255, 255, 255, 0.72);
+  background: rgba(0, 122, 255, 0.06);
   color: var(--primary);
 }
 
@@ -2095,36 +2095,35 @@ body::before {
 .lib-view-tabs button.on,
 .picker-cats button.on,
 .diff-btns button.on {
-  border-color: rgba(107, 92, 255, 0.24);
-  background: rgba(107, 92, 255, 0.12);
+  border-color: rgba(0, 122, 255, 0.24);
+  background: rgba(0, 122, 255, 0.08);
   color: var(--primary);
 }
 
 .theory-cats button.on,
 .encyclopedia-tabs button.on {
-  border-color: rgba(33, 199, 184, 0.26);
-  background: rgba(33, 199, 184, 0.13);
-  color: var(--accent);
+  border-color: rgba(0, 122, 255, 0.26);
+  background: rgba(0, 122, 255, 0.08);
+  color: var(--primary);
 }
 
 .piano {
   background:
-    linear-gradient(180deg, rgba(47, 55, 83, 0.98), rgba(18, 24, 38, 0.98));
-  box-shadow: var(--shadow), inset 0 5px 0 rgba(114, 224, 199, 0.8);
+    linear-gradient(180deg, #e5e5ea, #d1d1d6);
+  box-shadow: var(--shadow), inset 0 5px 0 var(--neon-cyan);
 }
 
 .white-key.active {
-  background: linear-gradient(180deg, #f3f1ff 0%, #d9f8f1 100%);
+  background: linear-gradient(180deg, var(--note-c), #5ac8fa);
 }
 
 .black-key.active {
-  background: linear-gradient(180deg, var(--primary), #342a9f);
+  background: linear-gradient(180deg, var(--note-c), #007aff);
 }
 
 .taiko-canvas {
   background:
-    linear-gradient(120deg, rgba(255, 184, 77, 0.16), transparent 28%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.86), rgba(238, 247, 255, 0.76));
+    linear-gradient(180deg, #ffffff, #f2f2f7);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2273,8 +2272,8 @@ body::before {
   --warning: #ff9500;
   --danger: #ff3b30;
   --text: #1c1c1e;
-  --text-soft: #636366;
-  --text-faint: #aeaeb2;
+  --text-soft: #48484a;
+  --text-faint: #8e8e93;
   --line: rgba(0, 0, 0, 0.08);
   --line-soft: rgba(0, 0, 0, 0.04);
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);

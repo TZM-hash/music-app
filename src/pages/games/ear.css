@@ -41,12 +41,12 @@
 }
 .ear-key {
   flex: 1;
-  background: linear-gradient(180deg, #f2f2f7 0%, #141b42 85%, #ffffff 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f2f2f7 85%, #e5e5ea 100%);
   color: var(--text);
   border-radius: 0 0 10px 10px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-top: none;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -98,7 +98,7 @@
   gap: 6px;
   padding: 18px 20px;
   border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
@@ -139,7 +139,7 @@
   min-width: 180px;
   padding: 18px 28px;
   border-radius: var(--radius);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
