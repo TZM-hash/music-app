@@ -4,6 +4,7 @@ import { stopAllAudio } from './music/audioEngine'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
 import Celebration from './components/Celebration'
+import ErrorBoundary from './components/ErrorBoundary'
 import Home from './pages/Home'
 import LessonMode from './pages/LessonMode'
 import Piano from './pages/Piano'
@@ -49,26 +50,28 @@ function Shell() {
       <div className="main-col">
         <TopBar />
         <div className={`content route-${route} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''}`}>
-          {route === 'home' && <Home />}
-          {route === 'lesson' && <LessonMode />}
-          {route === 'piano' && <Piano />}
-          {route === 'drums' && <Drums />}
-          {route === 'mixer' && <Mixer />}
-          {route === 'recorder' && <Recorder />}
-          {route === 'xylophone' && <Xylophone />}
-          {route === 'game-ear' && <EarGame />}
-          {route === 'game-echo' && <EchoGame />}
-          {route === 'game-taiko' && <TaikoGame />}
-          {route === 'game-sing' && <SingGame />}
-          {route === 'game-read' && <ReadGame />}
-          {route === 'library' && <Library />}
-          {route === 'theory' && <Theory />}
-          {route === 'course' && <CourseCenter />}
-          {route === 'training' && <TrainingCenter />}
-          {route === 'adventure' && <AdventureMap />}
-          {mode === 'teacher' && route === 'class' && <ClassRoster />}
-          {mode === 'teacher' && route === 'dashboard' && <Dashboard />}
-          {mode === 'teacher' && route === 'battle' && <TeamBattle />}
+          <ErrorBoundary onReset={() => navigate('home', { history: 'reset' })}>
+            {route === 'home' && <Home />}
+            {route === 'lesson' && <LessonMode />}
+            {route === 'piano' && <Piano />}
+            {route === 'drums' && <Drums />}
+            {route === 'mixer' && <Mixer />}
+            {route === 'recorder' && <Recorder />}
+            {route === 'xylophone' && <Xylophone />}
+            {route === 'game-ear' && <EarGame />}
+            {route === 'game-echo' && <EchoGame />}
+            {route === 'game-taiko' && <TaikoGame />}
+            {route === 'game-sing' && <SingGame />}
+            {route === 'game-read' && <ReadGame />}
+            {route === 'library' && <Library />}
+            {route === 'theory' && <Theory />}
+            {route === 'course' && <CourseCenter />}
+            {route === 'training' && <TrainingCenter />}
+            {route === 'adventure' && <AdventureMap />}
+            {mode === 'teacher' && route === 'class' && <ClassRoster />}
+            {mode === 'teacher' && route === 'dashboard' && <Dashboard />}
+            {mode === 'teacher' && route === 'battle' && <TeamBattle />}
+          </ErrorBoundary>
         </div>
       </div>
       <Celebration />

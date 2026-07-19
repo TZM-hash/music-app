@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ensureAudio, triggerVoice, VoiceKind, VOICE_INFO, setVolume } from '../music/audioEngine'
+import { ensureAudio, triggerVoice, VoiceKind, VOICE_INFO, setVolume, startTransportLoop, scheduleVisual } from '../music/audioEngine'
 import { useApp } from '../state/appState'
 import {
   loadCreativeWorks,
@@ -208,26 +208,19 @@ export default function Mixer() {
   const togglePlay = async () => {
     await ensureAudio()
     if (playing) { stop(); return }
+    // 跑在 Tone.Transport 上：采样级精确，切后台自动暂停；摇摆用 Transport.swing 表达
     let step = 0
-    let timer = 0
-    const schedule = () => {
-      const base = (60 / bpm / 4) * 1000
-      // 摇摆：偶数步稍长、奇数步稍短
-      const isOff = step % 2 === 1
-      const sw = swingRef.current
-      const interval = isOff ? base * (1 - sw) : base * (1 + sw)
+    stopRef.current = startTransportLoop(bpm, '16n', (time) => {
       const ts = tracksRef.current
       const soloOn = ts.some((t) => t.solo)
       for (const t of ts) {
         const audible = soloOn ? t.solo : !t.mute
-        if (audible && t.steps[step]) triggerVoice(t.voice, t.note, t.volume)
+        if (audible && t.steps[step]) triggerVoice(t.voice, t.note, t.volume, time)
       }
-      setCurStep(step)
+      const s = step
+      scheduleVisual(() => setCurStep(s), time)
       step = (step + 1) % STEPS
-      timer = window.setTimeout(schedule, interval)
-    }
-    schedule()
-    stopRef.current = () => window.clearTimeout(timer)
+    }, { swing: swingRef.current * 2 })
     setPlaying(true)
   }
 

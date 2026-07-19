@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ensureAudio, playDrum, DrumKind } from '../music/audioEngine'
+import { ensureAudio, playDrum, DrumKind, startTransportLoop, scheduleVisual } from '../music/audioEngine'
 import './drums.css'
 
 interface Pad {
@@ -112,18 +112,17 @@ export default function Drums() {
       setCurStep(-1)
       return
     }
-    // 按步驱动，支持多轨同时触发
+    // 跑在 Tone.Transport 上：采样级精确，切后台自动暂停
     let step = 0
-    const interval = (60 / bpm / 4) * 1000
-    const id = window.setInterval(() => {
+    stopRef.current = startTransportLoop(bpm, '16n', (time) => {
       const g = gridRef.current
-      if (g.kick[step]) playDrum('kick')
-      if (g.snare[step]) playDrum('snare')
-      if (g.hihat[step]) playDrum('hihat')
-      setCurStep(step)
+      if (g.kick[step]) playDrum('kick', time)
+      if (g.snare[step]) playDrum('snare', time)
+      if (g.hihat[step]) playDrum('hihat', time)
+      const s = step
+      scheduleVisual(() => setCurStep(s), time)
       step = (step + 1) % STEPS
-    }, interval)
-    stopRef.current = () => window.clearInterval(id)
+    })
     setPlaying(true)
   }
 

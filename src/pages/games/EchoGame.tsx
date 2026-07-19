@@ -60,6 +60,20 @@ export default function EchoGame() {
   const echoHits = useRef<{ note: NType; time: number }[]>([])
   const totalRounds = 5
 
+  // 统一登记定时器，组件卸载时全部清理，避免切页后残留回调
+  const timers = useRef<Set<number>>(new Set())
+  const later = useCallback((fn: () => void, ms: number) => {
+    const id = window.setTimeout(() => {
+      timers.current.delete(id)
+      fn()
+    }, ms)
+    timers.current.add(id)
+  }, [])
+  useEffect(() => () => {
+    timers.current.forEach((id) => window.clearTimeout(id))
+    timers.current.clear()
+  }, [])
+
   const pickPattern = useCallback((): EchoPattern => {
     const patterns = cfg.patterns
     return patterns[Math.floor(Math.random() * patterns.length)]
@@ -69,14 +83,14 @@ export default function EchoGame() {
     await ensureAudio()
     const beatMs = (60 / p.bpm) * 1000
     for (const n of p.notes) {
-      setTimeout(() => {
+      later(() => {
         setPlayingNote(n.type)
         if (n.type === 'don') taikoDON()
         else taikoKA()
-        setTimeout(() => setPlayingNote(null), 200)
+        later(() => setPlayingNote(null), 200)
       }, n.beat * beatMs)
     }
-  }, [])
+  }, [later])
 
   const startRound = useCallback((p: EchoPattern) => {
     setPattern(p)
@@ -85,11 +99,11 @@ export default function EchoGame() {
     playPattern(p)
     const beatMs = (60 / p.bpm) * 1000
     const lastBeat = Math.max(...p.notes.map((n) => n.beat))
-    setTimeout(() => {
+    later(() => {
       setPhase('echo')
       startAt.current = performance.now()
     }, (lastBeat + 1) * beatMs + 500)
-  }, [playPattern])
+  }, [playPattern, later])
 
   const start = useCallback(() => {
     setScore(0)
@@ -98,11 +112,11 @@ export default function EchoGame() {
     setResult(null)
     resetCombo()
     playUI('countdown')
-    setTimeout(() => {
+    later(() => {
       const p = pickPattern()
       startRound(p)
     }, 1200)
-  }, [pickPattern, startRound])
+  }, [pickPattern, startRound, later])
 
   const hit = useCallback((type: NType) => {
     if (phase !== 'echo' || !pattern) return
@@ -157,7 +171,7 @@ export default function EchoGame() {
         setJudge({ t: '再听一次', c: 'miss' })
       }
 
-      setTimeout(() => {
+      later(() => {
         setJudge(null)
         const nextRound = round + 1
         if (nextRound >= totalRounds) {
@@ -188,7 +202,7 @@ export default function EchoGame() {
         }
       }, 1500)
     }
-  }, [phase, pattern, round, score, combo, level, pickPattern, startRound])
+  }, [phase, pattern, round, score, combo, level, pickPattern, startRound, later])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

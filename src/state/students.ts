@@ -56,14 +56,23 @@ export function loadRoster(): Student[] {
 
 let idCounter = 0
 function nextId(prefix: string): string {
+  // 基于「现有数据中最大序号 + 自增计数」生成，删除记录后再新增也不会撞号
   idCounter += 1
-  return `${prefix}-${loadCounterBase() + idCounter}`
+  return `${prefix}-${maxSeq(prefix) + idCounter}`
 }
-// 用现有数据规模作为 id 基数，避免随机数
-function loadCounterBase(): number {
-  const r = read<Student[]>(ROSTER_KEY, [])
-  const s = read<Session[]>(SESSIONS_KEY, [])
-  return r.length + s.length + 1
+// 扫描现有 id 中该前缀的最大序号（兼容 stu-seed-N 等旧格式）
+function maxSeq(prefix: string): number {
+  const re = new RegExp(`^${prefix}-(?:seed-)?(\\d+)$`)
+  let max = 0
+  const scan = (list: { id: string }[]) => {
+    for (const item of list) {
+      const m = re.exec(item.id)
+      if (m) max = Math.max(max, parseInt(m[1], 10))
+    }
+  }
+  scan(read<Student[]>(ROSTER_KEY, []))
+  scan(read<Session[]>(SESSIONS_KEY, []))
+  return max
 }
 
 function seedStudents(): Student[] {
@@ -120,7 +129,8 @@ export function loadSessions(): Session[] {
 
 export function addSession(s: Omit<Session, 'id' | 'seq'>): Session {
   const all = loadSessions()
-  const seq = all.length + 1
+  // 取现有最大 seq + 1，删除会话后再新增也不会撞号
+  const seq = all.reduce((max, x) => Math.max(max, x.seq), 0) + 1
   const session: Session = { ...s, id: `sess-${seq}`, seq }
   all.push(session)
   write(SESSIONS_KEY, all)

@@ -1,11 +1,26 @@
 // 音频引擎 2.0：音色切换 · 和弦 · 太鼓音效 · 节拍器
-import * as Tone from 'tone'
+// 按需导入 Tone.js，避免把整个库打进单文件包
+import {
+  start as toneStart,
+  now as toneNow,
+  Draw,
+  FMSynth,
+  Loop,
+  MembraneSynth,
+  MetalSynth,
+  NoiseSynth,
+  PolySynth,
+  Reverb,
+  Sampler,
+  Synth,
+  Transport,
+} from 'tone'
 
 let started = false
 
 export async function ensureAudio(): Promise<void> {
   if (started) return
-  await Tone.start()
+  await toneStart()
   started = true
 }
 
@@ -18,9 +33,9 @@ let currentVolume = -6
 export type PianoLoadState = 'idle' | 'loading' | 'sampled' | 'fallback'
 let pianoLoadState: PianoLoadState = 'idle'
 let pianoLoadListeners: ((s: PianoLoadState) => void)[] = []
-let pianoSampler: Tone.Sampler | null = null
-let pianoFallback: Tone.PolySynth | null = null
-let pianoReverb: Tone.Reverb | null = null
+let pianoSampler: Sampler | null = null
+let pianoFallback: PolySynth | null = null
+let pianoReverb: Reverb | null = null
 
 export function onPianoLoad(cb: (s: PianoLoadState) => void): () => void {
   pianoLoadListeners.push(cb)
@@ -34,9 +49,9 @@ function setPianoState(s: PianoLoadState) {
   pianoLoadListeners.forEach((c) => c(s))
 }
 
-function buildPianoFallback(): Tone.PolySynth {
+function buildPianoFallback(): PolySynth {
   // 增强合成：FM 合成 + 轻微 lowpass，比纯三角波温暖厚实
-  const synth = new Tone.PolySynth(Tone.FMSynth, {
+  const synth = new PolySynth(FMSynth, {
     harmonicity: 2.5,
     modulationIndex: 6,
     oscillator: { type: 'triangle' },
@@ -47,19 +62,23 @@ function buildPianoFallback(): Tone.PolySynth {
   return synth
 }
 
-/** 预加载钢琴采样（在用户首次进入钢琴页时调用） */
+/**
+ * 预加载钢琴采样（在用户首次进入钢琴页时调用）。
+ * 采样来自 tonejs.github.io CDN —— 需要联网；离线或加载失败（8 秒超时）
+ * 会自动降级为内置 FM 合成音色，功能不受影响，只是音色不同。
+ */
 export function preloadPiano(): void {
   if (pianoLoadState !== 'idle') return
   setPianoState('loading')
 
   // 混响让钢琴更有空间感
-  pianoReverb = new Tone.Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
+  pianoReverb = new Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
   pianoFallback = buildPianoFallback().connect(pianoReverb)
   pianoFallback.volume.value = currentVolume
 
   // Salamander Grand Piano 采样（Tone.js 官方 CDN 示例音源）
   try {
-    pianoSampler = new Tone.Sampler({
+    pianoSampler = new Sampler({
       urls: {
         A0: 'A0.mp3', C1: 'C1.mp3', 'D#1': 'Ds1.mp3', 'F#1': 'Fs1.mp3',
         A1: 'A1.mp3', C2: 'C2.mp3', 'D#2': 'Ds2.mp3', 'F#2': 'Fs2.mp3',
@@ -89,39 +108,39 @@ export function preloadPiano(): void {
 }
 
 /** 返回当前可用的钢琴发声对象 */
-function getPianoVoice(): Tone.Sampler | Tone.PolySynth {
+function getPianoVoice(): Sampler | PolySynth {
   if (pianoLoadState === 'idle') preloadPiano()
   if (pianoSampler && pianoLoadState === 'sampled') return pianoSampler
   return pianoFallback ?? (pianoFallback = buildPianoFallback().toDestination())
 }
 
 // 其它音色仍用 PolySynth
-const synths: Record<Exclude<TonePatch, 'piano'>, Tone.PolySynth | null> = {
+const synths: Record<Exclude<TonePatch, 'piano'>, PolySynth | null> = {
   musicbox: null,
   strings: null,
   organ: null,
 }
 
-function getOtherSynth(patch: Exclude<TonePatch, 'piano'>): Tone.PolySynth {
+function getOtherSynth(patch: Exclude<TonePatch, 'piano'>): PolySynth {
   if (!synths[patch]) {
     const vol = currentVolume
     switch (patch) {
       case 'musicbox':
-        synths.musicbox = new Tone.PolySynth(Tone.Synth, {
+        synths.musicbox = new PolySynth(Synth, {
           oscillator: { type: 'sine' },
           envelope: { attack: 0.002, decay: 0.1, sustain: 0, release: 0.6 },
         }).toDestination()
         synths.musicbox.volume.value = vol - 6
         break
       case 'strings':
-        synths.strings = new Tone.PolySynth(Tone.Synth, {
+        synths.strings = new PolySynth(Synth, {
           oscillator: { type: 'sawtooth' },
           envelope: { attack: 0.3, decay: 0.4, sustain: 0.6, release: 1.8 },
         }).toDestination()
         synths.strings.volume.value = vol - 4
         break
       case 'organ':
-        synths.organ = new Tone.PolySynth(Tone.Synth, {
+        synths.organ = new PolySynth(Synth, {
           oscillator: { type: 'fmsine' },
           envelope: { attack: 0.01, decay: 0.1, sustain: 0.8, release: 0.3 },
         }).toDestination()
@@ -161,7 +180,6 @@ export const PATCH_INFO: Record<TonePatch, { name: string; icon: string }> = {
 let sustainOn = false
 let sustainSeconds = 2.5 // 延音时长（秒），可调
 const DEFAULT_RELEASE = 0.4 // 关闭延音时的默认释放
-const physicallyHeld = new Set<string>()
 
 // 把当前的 release 时长应用到钢琴音源
 function applyPianoRelease(): void {
@@ -199,7 +217,6 @@ export function playNote(note: string, duration = '4n', velocity = 0.85, patch?:
 export function attackNote(note: string, velocity = 0.85, patch?: TonePatch): void {
   const p = patch ?? currentPatch
   if (p === 'piano') {
-    physicallyHeld.add(note)
     getPianoVoice().triggerAttack(note, undefined, velocity)
   } else {
     getOtherSynth(p).triggerAttack(note, undefined, velocity)
@@ -209,7 +226,6 @@ export function attackNote(note: string, velocity = 0.85, patch?: TonePatch): vo
 export function releaseNote(note: string, patch?: TonePatch): void {
   const p = patch ?? currentPatch
   if (p === 'piano') {
-    physicallyHeld.delete(note)
     // 无论是否延音都触发释放；release 时长决定余音长度（延音开=长，关=短）
     getPianoVoice().triggerRelease(note)
   } else {
@@ -241,16 +257,16 @@ export function playChord(root: string, quality: 'maj' | 'min', duration = '2n')
 // —— 打击乐 ——
 type DrumKind = 'kick' | 'snare' | 'hihat' | 'tom' | 'clap' | 'crash'
 
-let kick: Tone.MembraneSynth | null = null
-let snare: Tone.NoiseSynth | null = null
-let hihat: Tone.MetalSynth | null = null
-let tom: Tone.MembraneSynth | null = null
-let crash: Tone.MetalSynth | null = null
+let kick: MembraneSynth | null = null
+let snare: NoiseSynth | null = null
+let hihat: MetalSynth | null = null
+let tom: MembraneSynth | null = null
+let crash: MetalSynth | null = null
 
 function initDrums() {
   if (kick) return
   // 底鼓：低频冲击 + 弹性
-  kick = new Tone.MembraneSynth({
+  kick = new MembraneSynth({
     octaves: 8,
     pitchDecay: 0.06,
     envelope: { attack: 0.001, decay: 0.35, sustain: 0, release: 0.1 },
@@ -258,7 +274,7 @@ function initDrums() {
   kick.volume.value = -2
 
   // 嗵鼓
-  tom = new Tone.MembraneSynth({
+  tom = new MembraneSynth({
     octaves: 4,
     pitchDecay: 0.1,
     envelope: { attack: 0.001, decay: 0.25, sustain: 0, release: 0.1 },
@@ -266,14 +282,14 @@ function initDrums() {
   tom.volume.value = -4
 
   // 军鼓：白噪声 + body 共鸣
-  snare = new Tone.NoiseSynth({
+  snare = new NoiseSynth({
     noise: { type: 'white' },
     envelope: { attack: 0.001, decay: 0.2, sustain: 0 },
   }).toDestination()
   snare.volume.value = -6
 
   // 踩镲：更清脆
-  hihat = new Tone.MetalSynth({
+  hihat = new MetalSynth({
     envelope: { attack: 0.001, decay: 0.06, release: 0.01 },
     harmonicity: 6.1,
     resonance: 5000,
@@ -281,7 +297,7 @@ function initDrums() {
   hihat.volume.value = -14
 
   // 吊镲：更持久的 shimmer
-  crash = new Tone.MetalSynth({
+  crash = new MetalSynth({
     envelope: { attack: 0.001, decay: 1.2, release: 0.4 },
     harmonicity: 5.1,
     resonance: 3500,
@@ -289,36 +305,36 @@ function initDrums() {
   crash.volume.value = -14
 }
 
-export function playDrum(kind: DrumKind): void {
+export function playDrum(kind: DrumKind, time?: number): void {
   initDrums()
   switch (kind) {
     case 'kick':
-      kick!.triggerAttackRelease('C1', '8n')
+      kick!.triggerAttackRelease('C1', '8n', time)
       break
     case 'tom':
-      tom!.triggerAttackRelease('G2', '8n')
+      tom!.triggerAttackRelease('G2', '8n', time)
       break
     case 'snare':
     case 'clap':
-      snare!.triggerAttackRelease('8n', Tone.now())
+      snare!.triggerAttackRelease('8n', time)
       break
     case 'hihat':
-      hihat!.triggerAttackRelease('C6', '16n')
+      hihat!.triggerAttackRelease('C6', '16n', time)
       break
     case 'crash':
-      crash!.triggerAttackRelease('C6', '2n')
+      crash!.triggerAttackRelease('C6', '2n', time)
       break
   }
 }
 export type { DrumKind }
 
 // —— 太鼓音效（咚/咔） ——
-let donSynth: Tone.MembraneSynth | null = null
-let kaSynth: Tone.NoiseSynth | null = null
+let donSynth: MembraneSynth | null = null
+let kaSynth: NoiseSynth | null = null
 
 export function taikoDON(): void {
   if (!donSynth) {
-    donSynth = new Tone.MembraneSynth({
+    donSynth = new MembraneSynth({
       octaves: 10,
       pitchDecay: 0.03,
       envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.15 },
@@ -330,58 +346,97 @@ export function taikoDON(): void {
 
 export function taikoKA(): void {
   if (!kaSynth) {
-    kaSynth = new Tone.NoiseSynth({
+    kaSynth = new NoiseSynth({
       noise: { type: 'pink' },
       envelope: { attack: 0.001, decay: 0.06, sustain: 0 },
     }).toDestination()
     kaSynth.volume.value = -3
   }
-  kaSynth.triggerAttackRelease('8n', Tone.now())
+  kaSynth.triggerAttackRelease('8n', toneNow())
+}
+
+// —— Transport 共享管理 ——
+// 节拍器/伴奏/鼓循环都跑在 Transport 上（采样级精确，切后台自动暂停）。
+// 多个循环可能同时存在，用引用计数决定 Transport 的启停。
+let transportUsers = 0
+function startTransport(): void {
+  if (transportUsers === 0 && Transport.state !== 'started') Transport.start()
+  transportUsers++
+}
+function stopTransport(): void {
+  transportUsers = Math.max(0, transportUsers - 1)
+  if (transportUsers === 0) Transport.stop()
+}
+
+/** 把 UI 回调（setState 等）对齐到音频时间轴上执行，避免视觉与声音错位 */
+export function scheduleVisual(fn: () => void, time: number): void {
+  Draw.schedule(() => fn(), time)
+}
+
+/**
+ * 在 Transport 上启动一个定时循环，返回停止函数。
+ * callback 收到的 time 是音频时间轴时间，应传给 triggerAttackRelease 等以保证精确发声。
+ * swing: 0..1，把奇数步（off-beat）往后推的比例（Transport.swingSubdivision 粒度）。
+ */
+export function startTransportLoop(
+  bpm: number,
+  interval: string,
+  callback: (time: number) => void,
+  opts?: { swing?: number }
+): () => void {
+  Transport.bpm.value = bpm
+  Transport.swing = opts?.swing ?? 0
+  const loop = new Loop(callback, interval)
+  loop.start(0)
+  startTransport()
+  return () => {
+    loop.stop()
+    loop.dispose()
+    Transport.swing = 0
+    stopTransport()
+  }
 }
 
 // —— 节拍器 ——
-let metroId: number | null = null
-let metroClick: Tone.MembraneSynth | null = null
+let stopMetro: (() => void) | null = null
+let metroClick: MembraneSynth | null = null
 
 export function startMetronome(bpm: number, onBeat?: (beat: number) => void): void {
   stopMetronome()
   if (!metroClick) {
-    metroClick = new Tone.MembraneSynth({ octaves: 2, pitchDecay: 0.008 }).toDestination()
+    metroClick = new MembraneSynth({ octaves: 2, pitchDecay: 0.008 }).toDestination()
     metroClick.volume.value = -8
   }
-  const interval = (60 / bpm) * 1000
   let beat = 0
-  const tick = () => {
-    metroClick!.triggerAttackRelease(beat % 4 === 0 ? 'C4' : 'C3', '32n')
-    onBeat?.(beat % 4)
+  stopMetro = startTransportLoop(bpm, '4n', (time) => {
+    const b = beat % 4
+    metroClick!.triggerAttackRelease(b === 0 ? 'C4' : 'C3', '32n', time)
+    if (onBeat) scheduleVisual(() => onBeat(b), time)
     beat++
-  }
-  tick()
-  metroId = window.setInterval(tick, interval)
+  })
 }
 
 export function stopMetronome(): void {
-  if (metroId !== null) {
-    window.clearInterval(metroId)
-    metroId = null
+  if (stopMetro) {
+    stopMetro()
+    stopMetro = null
   }
 }
 
-/** 播放一个预设的打击节奏循环（回调每次 tick 返回当前步序号） */
+/** 播放一个预设的打击节奏循环（回调每次 tick 收到当前步序号，已对齐音频时间轴） */
 export function playDrumLoop(
   pattern: ('kick' | 'snare' | 'hihat' | null)[],
   bpm: number,
   onStep?: (step: number) => void
 ): () => void {
-  const interval = (60 / bpm / 4) * 1000 // 16分音符
   let step = 0
-  const id = window.setInterval(() => {
-    const hit = pattern[step % pattern.length]
-    if (hit) playDrum(hit)
-    onStep?.(step % pattern.length)
+  return startTransportLoop(bpm, '16n', (time) => {
+    const s = step % pattern.length
+    const hit = pattern[s]
+    if (hit) playDrum(hit, time)
+    if (onStep) scheduleVisual(() => onStep(s), time)
     step++
-  }, interval)
-  return () => window.clearInterval(id)
+  })
 }
 
 // —— 混音器音源 ——
@@ -401,46 +456,46 @@ export type VoiceKind =
   | 'synth'
   | 'organ2'
 
-const mixSynths: Partial<Record<VoiceKind, Tone.PolySynth | Tone.Synth>> = {}
+const mixSynths: Partial<Record<VoiceKind, PolySynth | Synth>> = {}
 
-function getMixSynth(kind: VoiceKind): Tone.PolySynth | Tone.Synth {
+function getMixSynth(kind: VoiceKind): PolySynth | Synth {
   if (mixSynths[kind]) return mixSynths[kind]!
-  let s: Tone.PolySynth | Tone.Synth
+  let s: PolySynth | Synth
   switch (kind) {
     case 'bass':
-      s = new Tone.Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.4 } }).toDestination()
+      s = new Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.4 } }).toDestination()
       break
     case 'bell':
-      s = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.002, decay: 0.3, sustain: 0, release: 0.5 } }).toDestination()
+      s = new PolySynth(Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.002, decay: 0.3, sustain: 0, release: 0.5 } }).toDestination()
       break
     case 'pluck':
-      s = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.002, decay: 0.15, sustain: 0, release: 0.2 } }).toDestination()
+      s = new PolySynth(Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.002, decay: 0.15, sustain: 0, release: 0.2 } }).toDestination()
       break
     case 'marimba':
-      s = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.3 } }).toDestination()
+      s = new PolySynth(Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.3 } }).toDestination()
       break
     case 'synth':
-      s = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.3 } }).toDestination()
+      s = new PolySynth(Synth, { oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.3 } }).toDestination()
       break
     case 'organ2':
-      s = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'fmsine' }, envelope: { attack: 0.02, decay: 0.1, sustain: 0.8, release: 0.3 } }).toDestination()
+      s = new PolySynth(Synth, { oscillator: { type: 'fmsine' }, envelope: { attack: 0.02, decay: 0.1, sustain: 0.8, release: 0.3 } }).toDestination()
       break
     default: // piano
-      s = new Tone.PolySynth(Tone.Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.005, decay: 0.3, sustain: 0.3, release: 0.8 } }).toDestination()
+      s = new PolySynth(Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.005, decay: 0.3, sustain: 0.3, release: 0.8 } }).toDestination()
   }
   mixSynths[kind] = s
   return s
 }
 
-/** 混音器触发一个音源的一步（可指定音高、音量 dB） */
-export function triggerVoice(kind: VoiceKind, note: string, volumeDb: number): void {
+/** 混音器触发一个音源的一步（可指定音高、音量 dB、音频时间轴时间） */
+export function triggerVoice(kind: VoiceKind, note: string, volumeDb: number, time?: number): void {
   if (kind === 'kick' || kind === 'snare' || kind === 'hihat' || kind === 'tom' || kind === 'crash' || kind === 'clap') {
-    playDrum(kind === 'clap' ? 'clap' : kind)
+    playDrum(kind === 'clap' ? 'clap' : kind, time)
     return
   }
   const synth = getMixSynth(kind)
   synth.volume.value = volumeDb
-  synth.triggerAttackRelease(note, '16n')
+  synth.triggerAttackRelease(note, '16n', time)
 }
 
 export const VOICE_INFO: Record<VoiceKind, { name: string; icon: string; pitched: boolean; defaultNote: string }> = {
@@ -472,9 +527,9 @@ const DEFAULT_PROG: Chord[] = [
   { root: 'F3', quality: 'maj' },
 ]
 
-let accompId: number | null = null
-let padSynth: Tone.PolySynth | null = null
-let bassSynth: Tone.Synth | null = null
+let stopAccomp: (() => void) | null = null
+let padSynth: PolySynth | null = null
+let bassSynth: Synth | null = null
 
 const chromaticScale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 function chordNotes(root: string, quality: 'maj' | 'min'): string[] {
@@ -553,61 +608,58 @@ export function startAccompaniment(bpm: number, prog?: Chord[]): void {
   stopAccompaniment()
   const chords = prog && prog.length > 0 ? prog : DEFAULT_PROG
   if (!padSynth) {
-    padSynth = new Tone.PolySynth(Tone.Synth, {
+    padSynth = new PolySynth(Synth, {
       oscillator: { type: 'triangle' },
       envelope: { attack: 0.08, decay: 0.3, sustain: 0.5, release: 0.8 },
     }).toDestination()
     padSynth.volume.value = -18
   }
   if (!bassSynth) {
-    bassSynth = new Tone.Synth({
+    bassSynth = new Synth({
       oscillator: { type: 'sine' },
       envelope: { attack: 0.02, decay: 0.2, sustain: 0.5, release: 0.3 },
     }).toDestination()
     bassSynth.volume.value = -14
   }
-  const beatMs = (60 / bpm) * 1000
-  const sixteenth = beatMs / 4
   let sixteenthCount = 0
-  const tick = () => {
+  stopAccomp = startTransportLoop(bpm, '16n', (time) => {
     const step16 = sixteenthCount % 16
     const barIndex = Math.floor(sixteenthCount / 16) % chords.length
     const ch = chords[barIndex]
 
     if (step16 === 0) {
-      padSynth!.triggerAttackRelease(chordNotes(ch.root, ch.quality), (beatMs * 3.6) / 1000)
-      bassSynth!.triggerAttackRelease(bassOf(ch.root), (beatMs * 0.9) / 1000)
+      padSynth!.triggerAttackRelease(chordNotes(ch.root, ch.quality), '1m', time)
+      bassSynth!.triggerAttackRelease(bassOf(ch.root), '8n', time)
     }
     if (step16 === 8) {
-      bassSynth!.triggerAttackRelease(bassOf(ch.root), (beatMs * 0.9) / 1000)
+      bassSynth!.triggerAttackRelease(bassOf(ch.root), '8n', time)
     }
 
-    if (step16 % 8 === 0) playDrum('kick')
-    if (step16 === 4 || step16 === 12) playDrum('snare')
-    if (step16 % 2 === 0) playDrum('hihat')
+    if (step16 % 8 === 0) playDrum('kick', time)
+    if (step16 === 4 || step16 === 12) playDrum('snare', time)
+    if (step16 % 2 === 0) playDrum('hihat', time)
 
     sixteenthCount++
-  }
-  accompId = window.setInterval(tick, sixteenth)
+  })
 }
 
 export function stopAccompaniment(): void {
-  if (accompId !== null) {
-    window.clearInterval(accompId)
-    accompId = null
+  if (stopAccomp) {
+    stopAccomp()
+    stopAccomp = null
     padSynth?.releaseAll?.()
   }
 }
 
 export function isAccompanimentOn(): boolean {
-  return accompId !== null
+  return stopAccomp !== null
 }
 // —— 木琴音色 ——
-let xylophoneSynth: Tone.PolySynth | null = null
+let xylophoneSynth: PolySynth | null = null
 
-function getXylophoneSynth(): Tone.PolySynth {
+function getXylophoneSynth(): PolySynth {
   if (!xylophoneSynth) {
-    xylophoneSynth = new Tone.PolySynth(Tone.Synth, {
+    xylophoneSynth = new PolySynth(Synth, {
       oscillator: { type: 'sine' },
       envelope: { attack: 0.001, decay: 0.35, sustain: 0, release: 0.5 },
     }).toDestination()

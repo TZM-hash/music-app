@@ -1,4 +1,4 @@
-import type { DemoKind, TheoryStageId, TheoryTopic } from './theoryCatalog'
+import type { DemoKind, TheoryTopic } from './theoryCatalog'
 
 type TopicDraft = Omit<TheoryTopic, 'actions' | 'demo'> & {
   demo: DemoKind

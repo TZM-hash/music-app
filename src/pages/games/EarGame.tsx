@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { buildNotes, whiteNotes, NoteInfo } from '../../music/notes'
 import { ensureAudio, playNote, playChord } from '../../music/audioEngine'
 import { recordResult, loadProgress, BADGE_INFO } from '../../state/progress'
@@ -66,6 +66,20 @@ export default function EarGame() {
   const cfg = LEVELS[level - 1]
   const keys = useMemo(() => whiteNotes(buildNotes(4, cfg.octaves)), [cfg.octaves])
 
+  // 统一登记定时器，组件卸载时全部清理，避免切页后残留回调
+  const timers = useRef<Set<number>>(new Set())
+  const later = useCallback((fn: () => void, ms: number) => {
+    const id = window.setTimeout(() => {
+      timers.current.delete(id)
+      fn()
+    }, ms)
+    timers.current.add(id)
+  }, [])
+  useEffect(() => () => {
+    timers.current.forEach((id) => window.clearTimeout(id))
+    timers.current.clear()
+  }, [])
+
   const chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
   const transpose = (note: string, semis: number): string => {
     const name = note.slice(0, -1)
@@ -79,7 +93,7 @@ export default function EarGame() {
     if (mode === 'single') {
       const t = keys[Math.floor(Math.random() * keys.length)]
       setTarget(t)
-      setTimeout(() => playNote(t.note, '2n'), 200)
+      later(() => playNote(t.note, '2n'), 200)
     } else if (mode === 'interval') {
       const base = keys[Math.floor(Math.random() * Math.max(1, keys.length - 4))]
       const semis = INTERVAL_STEPS[Math.floor(Math.random() * INTERVAL_STEPS.length)]
@@ -90,10 +104,10 @@ export default function EarGame() {
       const opts = shuffle([answer, ...pickN(others, 3)])
       const play = () => {
         playNote(base.note, '4n')
-        setTimeout(() => playNote(second, '4n'), 550)
+        later(() => playNote(second, '4n'), 550)
       }
       setQuestion({ answer, options: opts, play })
-      setTimeout(play, 200)
+      later(play, 200)
     } else {
       // chord
       const base = keys[Math.floor(Math.random() * Math.max(1, keys.length - 4))]
@@ -101,9 +115,9 @@ export default function EarGame() {
       const answer = quality === 'maj' ? '大调（明亮）' : '小调（忧伤）'
       const play = () => playChord(base.note, quality, '2n')
       setQuestion({ answer, options: ['大调（明亮）', '小调（忧伤）'], play })
-      setTimeout(play, 200)
+      later(play, 200)
     }
-  }, [mode, keys])
+  }, [mode, keys, later])
 
   const start = useCallback(async () => {
     await ensureAudio()
@@ -127,7 +141,7 @@ export default function EarGame() {
 
   const advance = useCallback(
     (nextScore: number, nextCorrect: number) => {
-      setTimeout(() => {
+      later(() => {
         const next = round + 1
         setFeedback({})
         setChoiceFb({})
@@ -162,7 +176,7 @@ export default function EarGame() {
         }
       }, 1100)
     },
-    [round, level, pickTarget]
+    [round, level, pickTarget, later]
   )
 
   // 单音作答

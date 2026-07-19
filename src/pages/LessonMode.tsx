@@ -55,7 +55,6 @@ export default function LessonMode() {
   const activeTopic = filteredTopics.find((topic) => topic.id === topicId) ?? filteredTopics[0] ?? THEORY_TOPICS[0]
   const activeStep = LESSON_STEPS[stepIndex]
   const questions = lessonQuestions(activeTopic)
-  const answeredCount = Object.keys(answers).length
   const correctCount = questions.reduce(
     (total, question, index) => total + (answers[index] === question.answer ? 1 : 0),
     0

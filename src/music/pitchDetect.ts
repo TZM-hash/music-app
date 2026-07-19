@@ -101,20 +101,25 @@ function autoCorrelate(buf: Float32Array, sampleRate: number): { freq: number; c
   const trimmed = buf.subarray(r1, r2)
   const n = trimmed.length
 
-  // 自相关
+  // 只计算人声范围内的 lag（70Hz–1100Hz），省去大量无用的自相关计算
+  const minLag = Math.max(2, Math.floor(sampleRate / 1100))
+  const maxLag = Math.min(n - 1, Math.ceil(sampleRate / 70))
+  if (maxLag <= minLag) return { freq: -1, clarity: 0 }
+
+  // 自相关（仅人声 lag 区间）
   const c = new Array(n).fill(0)
-  for (let lag = 0; lag < n; lag++) {
+  for (let lag = minLag; lag <= maxLag; lag++) {
     let sum = 0
     for (let i = 0; i < n - lag; i++) sum += trimmed[i] * trimmed[i + lag]
     c[lag] = sum
   }
 
   // 找第一个上升后的最大峰
-  let d = 0
-  while (d < n - 1 && c[d] > c[d + 1]) d++
+  let d = minLag
+  while (d < maxLag && c[d] > c[d + 1]) d++
   let maxval = -1
   let maxpos = -1
-  for (let i = d; i < n; i++) {
+  for (let i = d; i <= maxLag; i++) {
     if (c[i] > maxval) {
       maxval = c[i]
       maxpos = i
@@ -132,7 +137,8 @@ function autoCorrelate(buf: Float32Array, sampleRate: number): { freq: number; c
   if (a) T0 = T0 - b / (2 * a)
 
   const freq = sampleRate / T0
-  const clarity = Math.min(1, maxval / (c[0] || 1))
+  // clarity 相对 lag=0 的总能量归一（lag=0 未计算，用首样本近似上界）
+  const clarity = Math.min(1, maxval / (c[0] || rms * rms * n || 1))
   // 过滤人声范围外（约 70Hz–1100Hz）
   if (freq < 70 || freq > 1100) return { freq: -1, clarity }
   return { freq, clarity }

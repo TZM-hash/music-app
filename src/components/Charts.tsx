@@ -171,13 +171,6 @@ export function Radar({
     return [cx + Math.cos(a) * radius, cy + Math.sin(a) * radius]
   }
   const rings = [0.25, 0.5, 0.75, 1]
-  const dataPath =
-    axes
-      .map((ax, i) => {
-        const [x, y] = pt(i, R * ax.value)
-        return `${i === 0 ? 'M' : 'L'}${x},${y}`
-      })
-      .join(' ') + ' Z'
 
   return (
     <svg viewBox="0 0 100 100" width={size} height={size} className="radar">

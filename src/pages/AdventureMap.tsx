@@ -40,7 +40,6 @@ export default function AdventureMap() {
     })
   }, [progress.bestScores])
 
-  const activeStat = questStats.find((item) => item.quest.id === activeQuest.id) ?? questStats[0]
   const previewTopics = activeQuest.topicIds
     .map((id) => getTheoryTopic(id))
     .filter(Boolean)

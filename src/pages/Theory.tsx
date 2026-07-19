@@ -623,7 +623,6 @@ function MiniQuiz({
     quizPage * questionsPerPage,
     quizPage * questionsPerPage + questionsPerPage
   )
-  const answeredCount = Object.keys(pickedByQuestion).length
   const correctCount = topic.quiz.reduce(
     (total, q, questionIndex) => total + (pickedByQuestion[questionIndex] === q.answer ? 1 : 0),
     0

@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import { ensureAudio, taikoDON, taikoKA, playNote, startAccompaniment, stopAccompaniment, inferChords } from '../../music/audioEngine'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { taikoDON, taikoKA, playNote, startAccompaniment, stopAccompaniment, inferChords } from '../../music/audioEngine'
 import { recordResult, loadProgress, BADGE_INFO } from '../../state/progress'
 import { useApp } from '../../state/appState'
 import { Song } from '../../music/songs'
@@ -39,6 +39,8 @@ export default function TaikoGame() {
   const startAt = useRef(0)
   const st = useRef({ score: 0, combo: 0, maxC: 0, great: 0, good: 0, miss: 0, soul: 0 })
   const hitFlash = useRef(0)
+  const countdownTimer = useRef<number | null>(null)
+  const judgeTimer = useRef<number | null>(null)
   const cfg = DIFFS[difficulty - 1]
 
   const buildChart = useCallback((s: Song): Note[] => {
@@ -95,8 +97,17 @@ export default function TaikoGame() {
     setScore(0); setCombo(0); setSoul(0); setResult(null); setSong(s)
     resetCombo()
     playUI('countdown')
+    if (countdownTimer.current !== null) window.clearInterval(countdownTimer.current)
     let c = 3; setCountdown(3)
-    const t = setInterval(() => { c--; if (c <= 0) { clearInterval(t); setCountdown(0); setPhase('play'); startAt.current = performance.now(); startAccompaniment(s.bpm, s.chords ?? inferChords(s.melody, s.beatsPerBar)) } else setCountdown(c) }, 700)
+    countdownTimer.current = window.setInterval(() => {
+      c--
+      if (c <= 0) {
+        if (countdownTimer.current !== null) window.clearInterval(countdownTimer.current)
+        countdownTimer.current = null
+        setCountdown(0); setPhase('play'); startAt.current = performance.now()
+        startAccompaniment(s.bpm, s.chords ?? inferChords(s.melody, s.beatsPerBar))
+      } else setCountdown(c)
+    }, 700)
   }, [buildChart])
 
   useEffect(() => {
@@ -143,7 +154,8 @@ export default function TaikoGame() {
     else { s.combo = 0; s.soul = Math.max(0, s.soul - 2); setJudge({ t: '不可', c: 'miss' }); resetCombo() }
     s.maxC = Math.max(s.maxC, s.combo); setScore(s.score); setCombo(s.combo); setSoul(s.soul)
     if (best.note) playNote(best.note, '16n')
-    setTimeout(() => setJudge(null), 300)
+    if (judgeTimer.current !== null) window.clearTimeout(judgeTimer.current)
+    judgeTimer.current = window.setTimeout(() => { judgeTimer.current = null; setJudge(null) }, 300)
   }, [phase])
 
   useEffect(() => {
@@ -155,7 +167,11 @@ export default function TaikoGame() {
     window.addEventListener('keydown', down); return () => window.removeEventListener('keydown', down)
   }, [hit])
 
-  useEffect(() => () => stopAccompaniment(), [])
+  useEffect(() => () => {
+    stopAccompaniment()
+    if (countdownTimer.current !== null) window.clearInterval(countdownTimer.current)
+    if (judgeTimer.current !== null) window.clearTimeout(judgeTimer.current)
+  }, [])
 
   const best = loadProgress().bestScores[GAME_ID] ?? 0
 

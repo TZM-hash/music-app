@@ -4,6 +4,10 @@ node_modules/
 # 构建产物
 dist/
 *.tsbuildinfo
+# 打包好的单文件发布包（请通过 Release 附件分发，不要提交进仓库）
+乐动课堂.html
+# 产品介绍文档
+乐理课堂软件介绍.docx
 
 # 编辑器/系统
 .DS_Store

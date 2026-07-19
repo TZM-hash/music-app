@@ -13,7 +13,7 @@ import './class.css'
 
 export default function ClassRoster() {
   const { currentStudentId, selectStudent, navigate } = useApp()
-  const [version, setVersion] = useState(0)
+  const [, setVersion] = useState(0)
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(AVATAR_CHOICES[0])
   const [notice, setNotice] = useState<string | null>(null)

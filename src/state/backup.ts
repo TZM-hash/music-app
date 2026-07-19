@@ -10,6 +10,9 @@ const BACKUP_KEYS = [
   'music-edu-mixer-projects-v1',
   'music-edu-prefs-v1',
   'music-edu-piano-prefs-v1',
+  'music-edu-theory-review-v1',
+  'music-edu-creative-works-v1',
+  'music-edu-ui-sound-v1',
 ]
 
 interface ClassroomBackup {
