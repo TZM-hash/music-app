@@ -23,6 +23,7 @@ import TrainingCenter from './pages/TrainingCenter'
 import AdventureMap from './pages/AdventureMap'
 import ClassRoster from './pages/ClassRoster'
 import Dashboard from './pages/Dashboard'
+import TeamBattle from './pages/TeamBattle'
 
 function Shell() {
   const { mode, route, sidebarOpen, setSidebarOpen, navigate } = useApp()
@@ -64,6 +65,7 @@ function Shell() {
           {route === 'adventure' && <AdventureMap />}
           {mode === 'teacher' && route === 'class' && <ClassRoster />}
           {mode === 'teacher' && route === 'dashboard' && <Dashboard />}
+          {mode === 'teacher' && route === 'battle' && <TeamBattle />}
         </div>
       </div>
       <Celebration />

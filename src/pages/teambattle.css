@@ -1,0 +1,207 @@
+/* 班级对战 · 清爽深色 */
+.battle-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 20px;
+  padding: 20px;
+}
+
+.battle-start {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.battle-start h2 {
+  font-size: 2.4rem;
+  color: var(--neon-cyan);
+}
+
+.battle-start p {
+  color: var(--text-soft);
+  max-width: 480px;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* 比分条 */
+.battle-scorebar {
+  display: flex;
+  align-items: center;
+  height: 60px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 2px solid var(--line);
+  background: var(--bg-panel);
+}
+
+.team-score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  padding: 0 20px;
+  transition: width 0.5s var(--ease-smooth);
+  min-width: 80px;
+}
+
+.team-score.left {
+  background: linear-gradient(90deg, rgba(77, 208, 232, 0.3), rgba(77, 208, 232, 0.15));
+}
+
+.team-score.right {
+  background: linear-gradient(90deg, rgba(224, 96, 120, 0.15), rgba(224, 96, 120, 0.3));
+}
+
+.team-name {
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.team-points {
+  font-size: 1.8rem;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
+
+.battle-vs {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--bg-raised);
+  border: 3px solid var(--line);
+  font-weight: 950;
+  font-size: 1.2rem;
+  color: var(--text-soft);
+  flex-shrink: 0;
+  z-index: 2;
+  margin: 0 -10px;
+}
+
+/* 题目区 */
+.battle-question {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  text-align: center;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+}
+
+.battle-round {
+  font-size: 0.9rem;
+  color: var(--text-faint);
+  font-weight: 700;
+}
+
+.battle-question h3 {
+  font-size: 2rem;
+  color: var(--text);
+}
+
+.battle-question p {
+  font-size: 1.1rem;
+  color: var(--text-soft);
+  max-width: 500px;
+  line-height: 1.6;
+}
+
+/* 记分按钮 */
+.battle-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.battle-btn {
+  min-height: 64px;
+  padding: 16px 32px;
+  border-radius: var(--radius);
+  font-size: 1.2rem;
+  font-weight: 900;
+  border: 3px solid;
+  cursor: pointer;
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s;
+}
+
+.battle-btn.left {
+  border-color: #4dd0e8;
+  background: rgba(77, 208, 232, 0.15);
+  color: #4dd0e8;
+}
+.battle-btn.left:hover {
+  box-shadow: 0 0 20px rgba(77, 208, 232, 0.3);
+}
+
+.battle-btn.right {
+  border-color: #e06078;
+  background: rgba(224, 96, 120, 0.15);
+  color: #e06078;
+}
+.battle-btn.right:hover {
+  box-shadow: 0 0 20px rgba(224, 96, 120, 0.3);
+}
+
+.battle-btn.skip {
+  border-color: var(--line);
+  background: var(--bg-panel);
+  color: var(--text-soft);
+}
+
+.battle-btn:active {
+  transform: scale(0.95);
+}
+
+.battle-end {
+  align-self: center;
+  min-height: 44px;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+/* 胜利页 */
+.battle-winner {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.winner-crown {
+  font-size: 4rem;
+  animation: crownBounce 1s var(--ease-bounce) infinite;
+}
+
+@keyframes crownBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.battle-winner h2 {
+  font-size: 2.4rem;
+}
+
+.winner-score {
+  font-size: 3rem;
+  font-weight: 950;
+  font-variant-numeric: tabular-nums;
+}
