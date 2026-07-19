@@ -5,6 +5,9 @@ import { useApp } from '../../state/appState'
 import { Song } from '../../music/songs'
 import SongPicker from '../../components/SongPicker'
 import GameResult, { ReviewData } from '../../components/GameResult'
+import { hitCombo, resetCombo, getComboColor } from '../../state/combo'
+import { celebrate } from '../../components/Celebration'
+import { playUI } from '../../music/uiSounds'
 import '../../components/gameResult.css'
 import './taiko.css'
 
@@ -59,6 +62,10 @@ export default function TaikoGame() {
     const s = st.current; const total = notes.current.length
     const acc = total === 0 ? 0 : (s.great + s.good * 0.5) / total
     const cleared = s.soul >= 50
+    if (cleared) {
+      celebrate('large')
+      playUI('fanfare')
+    }
     const stars = !cleared ? (acc >= 0.3 ? 1 : 0) : acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : 1
     const r = recordResult(GAME_ID, difficulty, stars, s.score, { accuracy: acc, songId: song?.id })
     const hitPct = total === 0 ? 0 : Math.round(((s.great + s.good) / total) * 100)
@@ -86,6 +93,8 @@ export default function TaikoGame() {
   const startPlay = useCallback((s: Song) => {
     notes.current = buildChart(s); st.current = { score: 0, combo: 0, maxC: 0, great: 0, good: 0, miss: 0, soul: 0 }
     setScore(0); setCombo(0); setSoul(0); setResult(null); setSong(s)
+    resetCombo()
+    playUI('countdown')
     let c = 3; setCountdown(3)
     const t = setInterval(() => { c--; if (c <= 0) { clearInterval(t); setCountdown(0); setPhase('play'); startAt.current = performance.now(); startAccompaniment(s.bpm, s.chords ?? inferChords(s.melody, s.beatsPerBar)) } else setCountdown(c) }, 700)
   }, [buildChart])
@@ -105,7 +114,7 @@ export default function TaikoGame() {
       if (hitFlash.current > 0) { ctx.beginPath(); ctx.arc(HIT_X, laneY, ringR + hitFlash.current * 20, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,220,100,${hitFlash.current * 0.4})`; ctx.fill(); hitFlash.current -= 0.06 }
       for (const n of notes.current) {
         if (n.hit) continue; const x = HIT_X + (n.time - now) * SPEED
-        if (x < -40 || x > W + 40) { if (!n.judged && n.time - now < -W_MS) { n.judged = true; st.current.combo = 0; st.current.soul = Math.max(0, st.current.soul - 3); setCombo(0) } continue }
+        if (x < -40 || x > W + 40) { if (!n.judged && n.time - now < -W_MS) { n.judged = true; st.current.combo = 0; st.current.soul = Math.max(0, st.current.soul - 3); setCombo(0); resetCombo() } continue }
         const r = n.big ? 30 : 22
         ctx.beginPath(); ctx.arc(x, laneY, r, 0, Math.PI * 2)
         ctx.fillStyle = n.type === 'don' ? '#f25050' : '#5aa0f0'; ctx.fill()
@@ -129,9 +138,9 @@ export default function TaikoGame() {
     if (!best || bestD > W_MS || best.type !== type) return
     best.hit = true; best.judged = true; const s = st.current; const mult = best.big ? 2 : 1
     hitFlash.current = 1
-    if (bestD <= W_G) { s.great++; s.combo++; s.score += (300 + s.combo * 8) * mult; s.soul = Math.min(100, s.soul + 6); setJudge({ t: '良', c: 'great' }) }
-    else if (bestD <= W_OK) { s.good++; s.combo++; s.score += (150 + s.combo * 4) * mult; s.soul = Math.min(100, s.soul + 3); setJudge({ t: '可', c: 'good' }) }
-    else { s.combo = 0; s.soul = Math.max(0, s.soul - 2); setJudge({ t: '不可', c: 'miss' }) }
+    if (bestD <= W_G) { s.great++; s.combo++; s.score += (300 + s.combo * 8) * mult; s.soul = Math.min(100, s.soul + 6); setJudge({ t: '良', c: 'great' }); hitCombo() }
+    else if (bestD <= W_OK) { s.good++; s.combo++; s.score += (150 + s.combo * 4) * mult; s.soul = Math.min(100, s.soul + 3); setJudge({ t: '可', c: 'good' }); hitCombo() }
+    else { s.combo = 0; s.soul = Math.max(0, s.soul - 2); setJudge({ t: '不可', c: 'miss' }); resetCombo() }
     s.maxC = Math.max(s.maxC, s.combo); setScore(s.score); setCombo(s.combo); setSoul(s.soul)
     if (best.note) playNote(best.note, '16n')
     setTimeout(() => setJudge(null), 300)
@@ -157,14 +166,14 @@ export default function TaikoGame() {
   return (<div className="game-wrap">
     <div className="game-hud">
       <div className="hud-item">{score}<small>得分</small></div>
-      <div className="hud-item" style={{ color: combo >= 10 ? '#ff922b' : undefined }}>{combo}<small>连击</small></div>
+      <div className="hud-item" style={{ color: combo >= 20 ? getComboColor('rainbow') : combo >= 10 ? getComboColor('gold') : combo >= 5 ? getComboColor('fire') : undefined }}>{combo}<small>连击</small></div>
       {phase === 'play' && <div className="soul-gauge"><div className="soul-track"><div className={`soul-fill ${soul >= 50 ? 'cleared' : ''}`} style={{ width: `${soul}%` }} /><span className="soul-mark" /></div><span className="soul-label">{soul >= 50 ? '🔥 过关' : '魂'}</span></div>}
       <div className="rh-song">🎵 {song?.title}</div>
     </div>
     {countdown > 0 && <div className="taiko-countdown"><div className="count-num">{countdown}</div></div>}
     {phase === 'play' && <div className="taiko-stage">
       {judge && <div className={`taiko-judge ${judge.c}`}>{judge.t}</div>}
-      {combo >= 10 && <div className="taiko-combo">{combo}🔥</div>}
+      {combo >= 5 && <div className="taiko-combo" style={{ color: combo >= 20 ? getComboColor('rainbow') : combo >= 10 ? getComboColor('gold') : getComboColor('fire'), textShadow: `0 0 20px ${combo >= 20 ? getComboColor('rainbow') : combo >= 10 ? getComboColor('gold') : getComboColor('fire')}` }}>{combo}🔥</div>}
       <canvas ref={canvasRef} className="taiko-canvas" />
       <div className="taiko-2keys">
         <button className="key-don" onPointerDown={() => hit('don')}><span>🥁 咚</span><small>F / 空格</small></button>
