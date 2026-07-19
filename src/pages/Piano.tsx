@@ -58,7 +58,7 @@ function savePianoPrefs(p: PianoPrefs): void {
 export default function Piano() {
   const { showNoteNames } = useApp()
   const initialPrefs = loadPianoPrefs()
-  const [octave, setOctave] = useState(3) // 起始八度
+  const [octave, setOctave] = useState(4) // 起始八度（中央 C 区）
   const [octaveSpan, setOctaveSpan] = useState(3) // 显示几个八度
   const [scale, setScale] = useState<keyof typeof SCALES>('none')
   const [patch, setPatchState] = useState<TonePatch>('piano')
@@ -165,25 +165,24 @@ export default function Piano() {
 
   // 电脑键盘弹奏（映射固定为 C4 区，随 octave 偏移）
   useEffect(() => {
-    const shift = (octave - 4) * 12
-    const transpose = (noteName: string): string => {
-      if (shift === 0) return noteName
-      const m = /^([A-G]#?)(\d)$/.exec(noteName)
-      if (!m) return noteName
-      return `${m[1]}${parseInt(m[2], 10) + (octave - 4)}`
-    }
     const down = (e: KeyboardEvent) => {
       if (e.repeat) return
       const base = KEYBOARD_MAP[e.key.toLowerCase()]
       if (!base) return
-      const target = transpose(base)
+      const shift = (octave - 4) * 12
+      const m = /^([A-G]#?)(\d)$/.exec(base)
+      if (!m) return
+      const target = `${m[1]}${parseInt(m[2], 10) + shift}`
       const info = ALL.find((n) => n.note === target)
       if (info) press(info)
     }
     const up = (e: KeyboardEvent) => {
       const base = KEYBOARD_MAP[e.key.toLowerCase()]
       if (!base) return
-      const target = transpose(base)
+      const shift = (octave - 4) * 12
+      const m = /^([A-G]#?)(\d)$/.exec(base)
+      if (!m) return
+      const target = `${m[1]}${parseInt(m[2], 10) + shift}`
       const info = ALL.find((n) => n.note === target)
       if (info) release(info)
     }
