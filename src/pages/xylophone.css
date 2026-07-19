@@ -1,0 +1,151 @@
+/* 木琴 · 霓虹舞台 */
+.xylo-stage {
+  flex: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 0;
+  border-radius: var(--radius-lg);
+  background: var(--bg-panel);
+  border: 1px solid var(--line-neon);
+  overflow: hidden;
+  padding: 20px 20px 30px;
+}
+
+/* 半音条（后排） */
+.xylo-semi-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  padding-left: 40px;
+}
+
+.xylo-semi-bar {
+  width: 52px;
+  height: 80px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #0a0e24 0%, #060814 100%);
+  border: 1px solid rgba(138, 149, 201, 0.15);
+  border-top: none;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 6px;
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s ease, background 0.15s;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.xylo-semi-bar:hover {
+  background: linear-gradient(180deg, #121738 0%, #0a0e24 100%);
+}
+
+.xylo-semi-bar.active {
+  background: var(--bar-color, #22e5ff);
+  box-shadow: 0 0 20px var(--bar-color, #22e5ff), 0 0 50px var(--bar-color, #22e5ff);
+  transform: scaleY(0.96);
+  border-color: transparent;
+  color: #060814;
+}
+
+/* 主琴条 */
+.xylo-bars {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+}
+
+.xylo-bar {
+  width: 72px;
+  border-radius: 10px 10px 12px 12px;
+  background: linear-gradient(180deg, #1c2452 0%, #141b42 85%, #0d1230 100%);
+  border: 1px solid rgba(138, 149, 201, 0.2);
+  border-top: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 14px;
+  gap: 4px;
+  transition: transform 0.1s var(--ease-spring), box-shadow 0.15s ease, background 0.15s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+/* 琴条高度：低音长，高音短 */
+.xylo-bar:nth-child(1) { height: 240px; }
+.xylo-bar:nth-child(2) { height: 228px; }
+.xylo-bar:nth-child(3) { height: 216px; }
+.xylo-bar:nth-child(4) { height: 204px; }
+.xylo-bar:nth-child(5) { height: 192px; }
+.xylo-bar:nth-child(6) { height: 180px; }
+.xylo-bar:nth-child(7) { height: 168px; }
+.xylo-bar:nth-child(8) { height: 156px; }
+.xylo-bar:nth-child(9) { height: 144px; }
+.xylo-bar:nth-child(10) { height: 132px; }
+
+.xylo-bar:hover {
+  background: linear-gradient(180deg, #242e5e 0%, #1a2249 85%, #101638 100%);
+}
+
+.xylo-bar.active {
+  background: var(--bar-color, #22e5ff);
+  box-shadow: 0 0 20px var(--bar-color, #22e5ff), 0 0 60px var(--bar-color, #22e5ff), inset 0 0 20px rgba(255, 255, 255, 0.15);
+  transform: scaleY(0.97) translateY(2px);
+  border-color: transparent;
+}
+
+.xylo-bar-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+}
+.xylo-bar-label b {
+  font-size: 1.1rem;
+  font-weight: 950;
+  color: var(--text);
+}
+.xylo-bar-label small {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-faint);
+}
+
+.xylo-bar.active .xylo-bar-label b,
+.xylo-bar.active .xylo-bar-label small {
+  color: #060814;
+}
+
+.xylo-bar .rk-key {
+  font-size: 0.62rem;
+  color: var(--text-faint);
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: rgba(138, 149, 201, 0.1);
+}
+
+.xylo-bar.active .rk-key {
+  color: #060814;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+@media (pointer: coarse) {
+  .xylo-bar {
+    width: 80px;
+  }
+  .xylo-bar:nth-child(1) { height: 280px; }
+  .xylo-bar:nth-child(10) { height: 160px; }
+  .xylo-semi-bar {
+    width: 60px;
+    height: 100px;
+  }
+}

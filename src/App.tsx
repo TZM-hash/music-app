@@ -10,6 +10,7 @@ import Piano from './pages/Piano'
 import Drums from './pages/Drums'
 import Mixer from './pages/Mixer'
 import Recorder from './pages/Recorder'
+import Xylophone from './pages/Xylophone'
 import EarGame from './pages/games/EarGame'
 import TaikoGame from './pages/games/TaikoGame'
 import SingGame from './pages/games/SingGame'
@@ -49,6 +50,7 @@ function Shell() {
           {route === 'drums' && <Drums />}
           {route === 'mixer' && <Mixer />}
           {route === 'recorder' && <Recorder />}
+          {route === 'xylophone' && <Xylophone />}
           {route === 'game-ear' && <EarGame />}
           {route === 'game-taiko' && <TaikoGame />}
           {route === 'game-sing' && <SingGame />}

@@ -21,6 +21,7 @@ export const ROUTE_LABELS: Record<Route, string> = {
   drums: '架子鼓',
   mixer: '混音创作',
   recorder: '竖笛',
+  xylophone: '木琴',
   'game-ear': '听感挑战',
   'game-taiko': '节奏反应',
   'game-sing': '跟唱挑战',

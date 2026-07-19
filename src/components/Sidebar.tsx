@@ -30,6 +30,7 @@ const GROUPS: NavGroup[] = [
       { route: 'drums', icon: '鼓', label: '架子鼓', hint: '节拍互动' },
       { route: 'mixer', icon: '混', label: '混音创作', hint: '编曲节奏格' },
       { route: 'recorder', icon: '笛', label: '竖笛', hint: '指法与旋律' },
+      { route: 'xylophone', icon: '木', label: '木琴', hint: '清脆打击旋律' },
     ],
   },
   {

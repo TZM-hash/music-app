@@ -21,6 +21,7 @@ export type Route =
   | 'drums'
   | 'mixer'
   | 'recorder'
+  | 'xylophone'
   | 'game-ear'
   | 'game-taiko'
   | 'game-sing'
