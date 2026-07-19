@@ -389,16 +389,48 @@
   transform: translateY(-3px);
 }
 
+.station {
+  animation: islandFloat 3s ease-in-out infinite;
+}
+.station:nth-child(2n) {
+  animation-delay: 0.5s;
+}
+.station:nth-child(3n) {
+  animation-delay: 1s;
+}
+
+@keyframes islandFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
 .station.locked {
-  opacity: 0.55;
+  opacity: 0.4;
+  filter: grayscale(0.5);
+}
+
+.station.locked .station-icon {
+  filter: grayscale(0.8);
 }
 
 .station.done {
-  outline: 3px solid rgba(232, 200, 80, 0.28);
+  outline: 3px solid rgba(232, 200, 80, 0.4);
+  box-shadow: 0 0 20px rgba(232, 200, 80, 0.15);
 }
 
 .station.active {
-  outline: 3px solid rgba(77, 208, 232, 0.24);
+  outline: 3px solid rgba(77, 208, 232, 0.4);
+  box-shadow: 0 0 20px rgba(77, 208, 232, 0.15);
+  animation: islandFloat 3s ease-in-out infinite, activePulse 2s ease-in-out infinite;
+}
+
+@keyframes activePulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(77, 208, 232, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(77, 208, 232, 0.3); }
+}
+
+.station-progress span {
+  box-shadow: 0 0 6px currentColor;
 }
 
 .station-index {
