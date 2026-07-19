@@ -251,12 +251,10 @@ button {
 }
 .side-item:hover .side-icon {
   transform: scale(1.1);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.15);
 }
 .side-item.active .side-icon {
   background: var(--neon-cyan);
   color: #fff;
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.25);
 }
 .side-foot {
   padding: 14px 8px 4px;
@@ -349,13 +347,11 @@ button {
 .topbar .toolbtn:hover {
   transform: translateY(-1px);
   border-color: rgba(0, 122, 255, 0.3);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 .topbar .toolbtn.active {
   background: rgba(0, 122, 255, 0.1);
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.15);
 }
 .topbar .seg {
   display: flex;
@@ -377,7 +373,6 @@ button {
 .topbar .seg button.on {
   background: rgba(0, 122, 255, 0.1);
   color: var(--neon-cyan);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 
 .topbar .seg button:focus-visible,
@@ -410,7 +405,6 @@ button:focus-visible {
 }
 .stu-current:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 .stu-avatar {
   font-size: 1.2rem;
@@ -591,7 +585,6 @@ button:focus-visible {
 }
 .back-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 
 /* 首页网格 */
@@ -637,7 +630,7 @@ button:focus-visible {
 }
 .tile:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 8px rgba(0, 122, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 .tile .emoji {
   font-size: 3rem;
@@ -678,13 +671,11 @@ button:focus-visible {
 }
 .accomp-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 .accomp-btn.on {
   background: rgba(255, 149, 0, 0.12);
   border-color: var(--neon-gold);
   color: var(--neon-gold);
-  box-shadow: 0 0 6px rgba(255, 149, 0, 0.1);
 }
 
 /* 首页状态条 */
@@ -933,7 +924,6 @@ button:focus-visible {
 }
 .portfolio-work-list button:hover {
   border-color: rgba(0, 122, 255, 0.3);
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.1);
   transform: translateY(-2px);
 }
 .portfolio-work-list small {
@@ -1531,13 +1521,11 @@ body::before {
 
 .side-item:hover .side-icon {
   transform: scale(1.1);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.15);
 }
 
 .side-item.active .side-icon {
   background: var(--neon-cyan);
   color: #fff;
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.25);
 }
 
 .side-label {
@@ -1838,7 +1826,7 @@ body::before {
 .course-tab:hover,
 .station:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow), 0 0 8px rgba(0, 122, 255, 0.1);
+  box-shadow: var(--shadow);
   border-color: rgba(0, 122, 255, 0.3);
 }
 
@@ -1921,7 +1909,6 @@ body::before {
   width: 12px;
   border-radius: 999px;
   background: linear-gradient(180deg, var(--neon-cyan), var(--primary-2));
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.15);
   animation: pulseBar 1s ease-in-out infinite;
 }
 
@@ -2025,7 +2012,7 @@ body::before {
 .lesson-steps button:hover,
 .quest-topic-grid button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow), 0 0 8px rgba(0, 122, 255, 0.1);
+  box-shadow: var(--shadow);
   border-color: rgba(0, 122, 255, 0.3);
 }
 
@@ -2171,7 +2158,6 @@ body::before {
 
 .daily-card:hover {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.1);
 }
 
 .daily-card-back,

@@ -50,7 +50,6 @@
   border-color: rgba(255, 59, 48, 0.4);
 }
 .key-don:active {
-  box-shadow: 0 0 30px rgba(255, 59, 48, 0.5), 0 0 80px rgba(255, 59, 48, 0.2);
   border-color: #f25050;
 }
 .key-ka {
@@ -58,7 +57,6 @@
   border-color: rgba(90, 200, 250, 0.4);
 }
 .key-ka:active {
-  box-shadow: 0 0 30px rgba(90, 200, 250, 0.5), 0 0 80px rgba(90, 200, 250, 0.2);
   border-color: #5aa0f0;
 }
 
@@ -124,11 +122,9 @@
   border-radius: 999px;
   background: linear-gradient(90deg, var(--neon-green), var(--neon-cyan));
   transition: width 0.2s;
-  box-shadow: 0 0 8px rgba(52, 199, 89, 0.3);
 }
 .soul-fill.cleared {
   background: linear-gradient(90deg, var(--neon-gold), #ff922b, #f25050);
-  box-shadow: 0 0 12px rgba(255, 146, 43, 0.5);
 }
 .soul-mark {
   position: absolute;

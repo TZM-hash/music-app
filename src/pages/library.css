@@ -172,7 +172,6 @@
 .encyclopedia-menu-row:hover {
   transform: translateY(-2px);
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(77,208,232,0.12);
 }
 .song-menu-row.active,
 .encyclopedia-menu-row.active {
@@ -361,7 +360,6 @@
 .song-card:hover {
   transform: translateY(-4px);
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(77,208,232,0.12);
 }
 .song-card-top {
   height: 84px;

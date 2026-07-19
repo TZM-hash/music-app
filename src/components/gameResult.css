@@ -19,7 +19,7 @@
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   border: 1px solid var(--line-neon);
-  box-shadow: var(--shadow), 0 0 40px rgba(0, 122, 255, 0.1);
+  box-shadow: var(--shadow);
   padding: 32px 44px;
   text-align: center;
   min-width: 320px;
@@ -126,7 +126,6 @@
 }
 .btn-secondary:hover {
   border-color: rgba(0, 122, 255, 0.5);
-  box-shadow: 0 0 10px rgba(0, 122, 255, 0.12);
 }
 .btn-ghost {
   background: transparent;
@@ -182,7 +181,6 @@
   background: rgba(0, 122, 255, 0.12);
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(0, 122, 255, 0.15);
 }
 .start-hint {
   flex: 1;
@@ -373,7 +371,6 @@
   from { opacity: 0; transform: translateX(-20px); }
   to { opacity: 1; transform: translateX(0); }
 }
-}
 .diagnosis-card {
   padding: 12px;
   border-radius: 8px;
@@ -439,19 +436,15 @@
   height: 100%;
   border-radius: inherit;
   background: var(--neon-cyan);
-  box-shadow: 0 0 6px rgba(0, 122, 255, 0.4);
 }
 .ability-card.good i {
   background: var(--neon-green);
-  box-shadow: 0 0 6px rgba(52, 199, 89, 0.4);
 }
 .ability-card.warn i {
   background: var(--neon-gold);
-  box-shadow: 0 0 6px rgba(255, 149, 0, 0.4);
 }
 .ability-card.focus i {
   background: var(--danger);
-  box-shadow: 0 0 6px rgba(255, 59, 48, 0.4);
 }
 .ability-card p {
   color: var(--text-soft);

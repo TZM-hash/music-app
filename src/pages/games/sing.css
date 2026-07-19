@@ -52,7 +52,6 @@
   background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
   border-radius: 999px;
   transition: width 0.2s;
-  box-shadow: 0 0 8px rgba(0, 122, 255, 0.3);
 }
 
 /* 权限页 */

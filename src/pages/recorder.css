@@ -31,7 +31,6 @@
 }
 .recorder-key:hover {
   border-color: rgba(0, 122, 255, 0.5);
-  box-shadow: 0 0 10px rgba(0, 122, 255, 0.12);
 }
 .recorder-key b {
   font-size: 1.6rem;
@@ -53,7 +52,6 @@
   background: rgba(0, 122, 255, 0.15);
   border-color: var(--neon-cyan);
   transform: scale(0.96);
-  box-shadow: 0 0 20px rgba(0, 122, 255, 0.3);
 }
 .recorder-key.on b,
 .recorder-key.on small,
@@ -114,7 +112,6 @@
   background: var(--neon-gold);
   border-color: var(--neon-gold);
   color: #f2f2f7;
-  box-shadow: 0 0 12px rgba(255, 149, 0, 0.4);
 }
 .hole.thumb {
   border-style: dashed;

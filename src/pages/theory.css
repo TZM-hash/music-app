@@ -591,7 +591,6 @@
 
 .lab-key.active {
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 12px rgba(0, 122, 255, 0.2);
 }
 
 .lab-key b {
@@ -640,7 +639,6 @@
 .articulation-demo div.active {
   outline: 3px solid rgba(0, 122, 255, 0.3);
   background: rgba(0, 122, 255, 0.1);
-  box-shadow: 0 0 16px rgba(0, 122, 255, 0.15);
 }
 
 .duration-demo b {
@@ -690,7 +688,6 @@
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
   transform: scale(1.12);
-  box-shadow: 0 0 16px rgba(0, 122, 255, 0.2);
 }
 
 .meter-demo span.medium {
@@ -816,7 +813,6 @@
   background: rgba(0, 122, 255, 0.15);
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
-  box-shadow: 0 0 12px rgba(0, 122, 255, 0.2);
 }
 
 .dynamics-demo b {

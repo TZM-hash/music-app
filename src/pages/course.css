@@ -415,22 +415,11 @@
 
 .station.done {
   outline: 3px solid rgba(255, 149, 0, 0.4);
-  box-shadow: 0 0 20px rgba(255, 149, 0, 0.15);
 }
 
 .station.active {
   outline: 3px solid rgba(0, 122, 255, 0.4);
-  box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
-  animation: islandFloat 3s ease-in-out infinite, activePulse 2s ease-in-out infinite;
-}
-
-@keyframes activePulse {
-  0%, 100% { box-shadow: 0 0 20px rgba(0, 122, 255, 0.15); }
-  50% { box-shadow: 0 0 30px rgba(0, 122, 255, 0.3); }
-}
-
-.station-progress span {
-  box-shadow: 0 0 6px currentColor;
+  animation: islandFloat 3s ease-in-out infinite;
 }
 
 .station-index {

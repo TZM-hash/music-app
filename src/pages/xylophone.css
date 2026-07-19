@@ -47,7 +47,6 @@
 
 .xylo-semi-bar.active {
   background: var(--bar-color, #007aff);
-  box-shadow: 0 0 20px var(--bar-color, #007aff), 0 0 50px var(--bar-color, #007aff);
   transform: scaleY(0.96);
   border-color: transparent;
   color: #f2f2f7;
@@ -96,7 +95,6 @@
 
 .xylo-bar.active {
   background: var(--bar-color, #007aff);
-  box-shadow: 0 0 20px var(--bar-color, #007aff), 0 0 60px var(--bar-color, #007aff), inset 0 0 20px rgba(255, 255, 255, 0.15);
   transform: scaleY(0.97) translateY(2px);
   border-color: transparent;
 }

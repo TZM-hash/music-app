@@ -56,7 +56,6 @@
 }
 .read-opt:hover {
   border-color: rgba(0, 122, 255, 0.5);
-  box-shadow: 0 0 12px rgba(0, 122, 255, 0.12);
 }
 .read-opt:active {
   transform: scale(0.95);
@@ -80,7 +79,6 @@
 .read-opt.right {
   background: rgba(52, 199, 89, 0.15);
   border-color: var(--neon-green);
-  box-shadow: 0 0 20px rgba(52, 199, 89, 0.3);
 }
 .read-opt.right b,
 .read-opt.right small,
@@ -90,7 +88,6 @@
 .read-opt.wrong {
   background: rgba(255, 59, 48, 0.1);
   border-color: var(--danger);
-  box-shadow: 0 0 16px rgba(255, 59, 48, 0.2);
 }
 .read-opt.wrong b,
 .read-opt.wrong small {

@@ -42,7 +42,7 @@
 }
 .drum-pad:hover {
   border-color: rgba(0, 122, 255, 0.4);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 16px rgba(0, 122, 255, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 .drum-pad .drum-label {
   font-size: 1.2rem;
@@ -56,7 +56,6 @@
 }
 .drum-pad.hit {
   transform: scale(0.9);
-  box-shadow: 0 0 30px currentColor, 0 0 80px currentColor;
   border-color: currentColor;
 }
 
@@ -88,7 +87,6 @@
 .seq-play.on {
   background: #ff3b30;
   color: #fff;
-  box-shadow: 0 0 20px rgba(224, 49, 49, 0.3);
 }
 .seq-presets {
   display: flex;
@@ -165,16 +163,9 @@
   outline: 3px solid var(--neon-cyan);
   outline-offset: -1px;
   transform: scaleY(1.08);
-  box-shadow: 0 0 12px rgba(0, 122, 255, 0.3);
-  animation: playheadPulse 0.6s ease-in-out infinite;
 }
 
-@keyframes playheadPulse {
-  0%, 100% { box-shadow: 0 0 12px rgba(0, 122, 255, 0.3); }
-  50% { box-shadow: 0 0 20px rgba(0, 122, 255, 0.5); }
-}
-
-/* 有音格子在播放头处发光 */
+/* 有音格子在播放头处高亮 */
 .seq-cell.cur.on {
-  box-shadow: 0 0 16px rgba(0, 122, 255, 0.5), 0 0 40px rgba(0, 122, 255, 0.2);
+  box-shadow: var(--shadow-soft);
 }

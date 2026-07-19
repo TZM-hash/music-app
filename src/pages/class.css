@@ -92,7 +92,6 @@
 .stu-card:hover {
   transform: translateY(-3px);
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(77,208,232,0.12);
 }
 .stu-card-head {
   display: flex;
