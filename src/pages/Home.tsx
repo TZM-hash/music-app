@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -305,23 +305,23 @@ export default function Home() {
 
       <section className="pro-status">
         <div className="pro-kpi card">
-          <b>{THEORY_TOPICS.length}</b>
+          <b><CountUp target={THEORY_TOPICS.length} /></b>
           <span>音乐发现卡</span>
         </div>
         <div className="pro-kpi card">
-          <b>{THEORY_STAGES.length}</b>
+          <b><CountUp target={THEORY_STAGES.length} /></b>
           <span>成长阶段</span>
         </div>
         <div className="pro-kpi card">
-          <b>{isLectureMode ? allSongs().length : theoryPracticeCount}</b>
+          <b><CountUp target={isLectureMode ? allSongs().length : theoryPracticeCount} /></b>
           <span>{isLectureMode ? '素材旋律' : '已玩发现'}</span>
         </div>
         <div className="pro-kpi card">
-          <b>{isLectureMode ? ENCYCLOPEDIA_ENTRIES.length : overview.totalSessions}</b>
+          <b><CountUp target={isLectureMode ? ENCYCLOPEDIA_ENTRIES.length : overview.totalSessions} /></b>
           <span>{isLectureMode ? '音乐故事' : '挑战记录'}</span>
         </div>
         <div className="pro-kpi card">
-          <b>{creativeWorkCount}</b>
+          <b><CountUp target={creativeWorkCount} /></b>
           <span>创作作品</span>
         </div>
       </section>
@@ -452,4 +452,25 @@ function DailyCards({ items, onGo }: { items: { id?: string; itemTitle: string; 
       ))}
     </div>
   )
+}
+
+function CountUp({ target, duration = 600 }: { target: number; duration?: number }) {
+  const [value, setValue] = useState(0)
+  const ref = useRef<HTMLSpanElement>(null)
+  const hasAnimated = useRef(false)
+
+  useEffect(() => {
+    if (hasAnimated.current) return
+    hasAnimated.current = true
+    const start = performance.now()
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / duration)
+      const eased = 1 - Math.pow(1 - t, 3)
+      setValue(Math.round(target * eased))
+      if (t < 1) requestAnimationFrame(step)
+    }
+    requestAnimationFrame(step)
+  }, [target, duration])
+
+  return <span ref={ref}>{value}</span>
 }

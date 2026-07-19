@@ -355,6 +355,24 @@
   grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
   gap: 10px;
   margin: 14px 0;
+  animation: slideInLeft 0.4s var(--ease-smooth) both;
+  animation-delay: 0.3s;
+}
+
+.ability-panel {
+  animation: slideInLeft 0.4s var(--ease-smooth) both;
+  animation-delay: 0.5s;
+}
+
+.review-list {
+  animation: slideInLeft 0.4s var(--ease-smooth) both;
+  animation-delay: 0.7s;
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
 }
 .diagnosis-card {
   padding: 12px;
