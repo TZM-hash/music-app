@@ -230,9 +230,9 @@ input[type="range"] {
   width: 100%;
   max-width: 1200px;
   height: 280px;
-  background: linear-gradient(180deg, #f2f2f7, #e5e5ea);
+  background: linear-gradient(180deg, #1c1c1e, #000000);
   border-radius: 8px 8px 12px 12px;
-  box-shadow: var(--shadow), inset 0 4px 0 0 var(--neon-cyan);
+  box-shadow: var(--shadow), inset 0 4px 0 0 #8a2a2a;
   padding: 10px 6px 6px;
 }
 
@@ -247,8 +247,8 @@ input[type="range"] {
   flex: 1;
   position: relative;
   border-radius: 0 0 8px 8px;
-  background: linear-gradient(180deg, #ffffff 0%, #f2f2f7 100%);
-  border: 1px solid #b0b0c0;
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 88%, #e2e2e2 100%);
+  border: 1px solid #d8d8d8;
   border-top: none;
   display: flex;
   align-items: flex-end;
@@ -297,7 +297,7 @@ input[type="range"] {
 }
 .white-key.active .key-label b,
 .white-key.active .key-label small {
-  color: #f2f2f7;
+  color: #ffffff;
 }
 
 .black-row {
@@ -322,17 +322,17 @@ input[type="range"] {
   width: 62%;
   height: 60%;
   border-radius: 0 0 6px 6px;
-  background: linear-gradient(180deg, #2c2c2e 0%, #1c1c1e 100%);
-  border: 1px solid #1c1c1e;
+  background: linear-gradient(180deg, #4a4a4a 0%, #1c1c1c 70%, #000000 100%);
+  border: 1px solid #1a1a1a;
   border-top: none;
   cursor: pointer;
   pointer-events: auto;
   transition: background 0.08s, box-shadow 0.08s, transform 0.05s;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5), inset 0 -3px 4px rgba(255, 255, 255, 0.1);
 }
 
 .black-key:hover {
-  background: linear-gradient(180deg, #3a3a3c 0%, #2c2c2e 100%);
+  background: linear-gradient(180deg, #5a5a5a 0%, #2c2c2c 70%, #1a1a1a 100%);
 }
 
 .black-key.active {
