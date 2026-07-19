@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './state/appState'
 import { stopAllAudio } from './music/audioEngine'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
+import Celebration from './components/Celebration'
 import Home from './pages/Home'
 import LessonMode from './pages/LessonMode'
 import Piano from './pages/Piano'
@@ -61,6 +62,7 @@ function Shell() {
           {mode === 'teacher' && route === 'dashboard' && <Dashboard />}
         </div>
       </div>
+      <Celebration />
     </div>
   )
 }
