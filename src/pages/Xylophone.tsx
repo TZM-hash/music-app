@@ -12,24 +12,24 @@ interface XyloNote {
 }
 
 const NOTES: XyloNote[] = [
-  { note: 'C4', name: 'C', jianpu: '1', key: 'a', color: '#4dd0e8' },
-  { note: 'D4', name: 'D', jianpu: '2', key: 's', color: '#50d0a0' },
-  { note: 'E4', name: 'E', jianpu: '3', key: 'd', color: '#e8c850' },
-  { note: 'F4', name: 'F', jianpu: '4', key: 'f', color: '#e878a0' },
-  { note: 'G4', name: 'G', jianpu: '5', key: 'g', color: '#9888e0' },
-  { note: 'A4', name: 'A', jianpu: '6', key: 'h', color: '#e09050' },
-  { note: 'B4', name: 'B', jianpu: '7', key: 'j', color: '#68a8e0' },
-  { note: 'C5', name: 'C', jianpu: '1·', key: 'k', color: '#4dd0e8' },
-  { note: 'D5', name: 'D', jianpu: '2·', key: 'l', color: '#50d0a0' },
-  { note: 'E5', name: 'E', jianpu: '3·', key: ';', color: '#e8c850' },
+  { note: 'C4', name: 'C', jianpu: '1', key: 'a', color: '#007aff' },
+  { note: 'D4', name: 'D', jianpu: '2', key: 's', color: '#34c759' },
+  { note: 'E4', name: 'E', jianpu: '3', key: 'd', color: '#ff9500' },
+  { note: 'F4', name: 'F', jianpu: '4', key: 'f', color: '#ff2d55' },
+  { note: 'G4', name: 'G', jianpu: '5', key: 'g', color: '#af52de' },
+  { note: 'A4', name: 'A', jianpu: '6', key: 'h', color: '#ff6b35' },
+  { note: 'B4', name: 'B', jianpu: '7', key: 'j', color: '#5ac8fa' },
+  { note: 'C5', name: 'C', jianpu: '1·', key: 'k', color: '#007aff' },
+  { note: 'D5', name: 'D', jianpu: '2·', key: 'l', color: '#34c759' },
+  { note: 'E5', name: 'E', jianpu: '3·', key: ';', color: '#ff9500' },
 ]
 
 const SEMI_NOTES: XyloNote[] = [
-  { note: 'C#4', name: 'C#', jianpu: '#1', key: 'w', color: '#1ab8cc' },
-  { note: 'D#4', name: 'D#', jianpu: '#2', key: 'e', color: '#2cd4a0' },
-  { note: 'F#4', name: 'F#', jianpu: '#4', key: 't', color: '#d43d80' },
-  { note: 'G#4', name: 'G#', jianpu: '#5', key: 'y', color: '#8055cc' },
-  { note: 'A#4', name: 'A#', jianpu: '#6', key: 'u', color: '#cc7035' },
+  { note: 'C#4', name: 'C#', jianpu: '#1', key: 'w', color: '#0066cc' },
+  { note: 'D#4', name: 'D#', jianpu: '#2', key: 'e', color: '#28a745' },
+  { note: 'F#4', name: 'F#', jianpu: '#4', key: 't', color: '#cc2952' },
+  { note: 'G#4', name: 'G#', jianpu: '#5', key: 'y', color: '#8b3dc7' },
+  { note: 'A#4', name: 'A#', jianpu: '#6', key: 'u', color: '#cc5529' },
 ]
 
 export default function Xylophone() {

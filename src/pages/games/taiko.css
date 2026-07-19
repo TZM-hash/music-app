@@ -46,19 +46,19 @@
 .key-don small, .key-ka small { font-size: 0.85rem; opacity: 0.7; background: rgba(0,0,0,0.3); padding: 2px 16px; border-radius: 999px; }
 .key-don:active, .key-ka:active { transform: scale(0.94); }
 .key-don {
-  background: radial-gradient(circle at 50% 36%, rgba(242, 80, 80, 0.3), rgba(198, 40, 40, 0.15));
-  border-color: rgba(242, 80, 80, 0.4);
+  background: radial-gradient(circle at 50% 36%, rgba(255, 59, 48, 0.3), rgba(198, 40, 40, 0.15));
+  border-color: rgba(255, 59, 48, 0.4);
 }
 .key-don:active {
-  box-shadow: 0 0 30px rgba(242, 80, 80, 0.5), 0 0 80px rgba(242, 80, 80, 0.2);
+  box-shadow: 0 0 30px rgba(255, 59, 48, 0.5), 0 0 80px rgba(255, 59, 48, 0.2);
   border-color: #f25050;
 }
 .key-ka {
-  background: radial-gradient(circle at 50% 36%, rgba(90, 160, 240, 0.3), rgba(41, 89, 160, 0.15));
-  border-color: rgba(90, 160, 240, 0.4);
+  background: radial-gradient(circle at 50% 36%, rgba(90, 200, 250, 0.3), rgba(41, 89, 160, 0.15));
+  border-color: rgba(90, 200, 250, 0.4);
 }
 .key-ka:active {
-  box-shadow: 0 0 30px rgba(90, 160, 240, 0.5), 0 0 80px rgba(90, 160, 240, 0.2);
+  box-shadow: 0 0 30px rgba(90, 200, 250, 0.5), 0 0 80px rgba(90, 200, 250, 0.2);
   border-color: #5aa0f0;
 }
 
@@ -73,7 +73,6 @@
   pointer-events: none;
   z-index: 5;
   animation: taikoJudge 0.3s var(--ease-bounce);
-  text-shadow: 0 0 20px currentColor;
 }
 @keyframes taikoJudge {
   from {
@@ -83,11 +82,9 @@
 }
 .taiko-judge.great {
   color: var(--neon-gold);
-  text-shadow: 0 0 20px rgba(255, 149, 0, 0.5);
 }
 .taiko-judge.good {
   color: var(--neon-cyan);
-  text-shadow: 0 0 16px rgba(0, 122, 255, 0.4);
 }
 .taiko-judge.miss {
   color: var(--danger);
@@ -100,7 +97,6 @@
   font-size: 1.8rem;
   font-weight: 900;
   color: var(--neon-gold);
-  text-shadow: 0 0 16px rgba(255, 149, 0, 0.3);
   pointer-events: none;
 }
 
@@ -117,7 +113,7 @@
   position: relative;
   flex: 1;
   height: 22px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   border-radius: 999px;
   overflow: hidden;
@@ -160,7 +156,6 @@
   font-size: 8rem;
   font-weight: 900;
   color: var(--neon-cyan);
-  text-shadow: 0 0 40px rgba(0, 122, 255, 0.4), 0 0 100px rgba(0, 122, 255, 0.15);
   animation: countPop 0.7s var(--ease-bounce);
 }
 @keyframes countPop {
@@ -184,7 +179,7 @@
 .taiko-setup select {
   padding: 8px 16px;
   border-radius: 999px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-size: 1rem;

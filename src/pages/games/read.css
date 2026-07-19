@@ -43,7 +43,7 @@
   width: 76px;
   height: 84px;
   border-radius: 14px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 2px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);

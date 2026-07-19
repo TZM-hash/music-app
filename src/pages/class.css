@@ -22,7 +22,7 @@
   width: 40px;
   height: 40px;
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   font-size: 1.3rem;
   transition: transform 0.1s;
 }
@@ -35,7 +35,7 @@
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid var(--line-neon);
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: var(--text);
   font-size: 1rem;
   outline: none;
@@ -46,7 +46,7 @@
 .add-btn {
   padding: 12px 28px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  background: var(--neon-cyan);
   color: #f2f2f7;
   font-weight: 800;
 }
@@ -144,7 +144,7 @@
   width: 100%;
   padding: 10px;
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   color: var(--text);
   font-weight: 700;
 }

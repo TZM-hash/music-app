@@ -46,7 +46,7 @@
   background: linear-gradient(180deg, #f2f2f7 0%, #141b42 85%, #ffffff 100%);
   color: var(--text);
   border-radius: 0 0 10px 10px;
-  border: 1px solid rgba(136, 144, 184, 0.2);
+  border: 1px solid rgba(0, 0, 0, 0.2);
   border-top: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   display: flex;
@@ -103,7 +103,7 @@
   gap: 6px;
   padding: 18px 20px;
   border-radius: var(--radius);
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
@@ -145,7 +145,7 @@
   min-width: 180px;
   padding: 18px 28px;
   border-radius: var(--radius);
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);

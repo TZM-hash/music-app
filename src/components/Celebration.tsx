@@ -19,8 +19,8 @@ interface Particle {
 
 type Level = 'small' | 'medium' | 'large' | 'epic'
 
-const COLORS = ['#4dd0e8', '#e878a0', '#e8c850', '#9888e0', '#50d0a0', '#e09050']
-const GOLD_COLORS = ['#e8c850', '#ffed4a', '#fff3b0', '#ffb800']
+const COLORS = ['#007aff', '#ff2d55', '#ff9500', '#af52de', '#34c759', '#ff6b35']
+const GOLD_COLORS = ['#ff9500', '#ffed4a', '#fff3b0', '#ffb800']
 
 let spawnFn: ((level: Level, x?: number, y?: number) => void) | null = null
 

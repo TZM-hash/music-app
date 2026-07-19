@@ -14,8 +14,8 @@ export interface BattleState {
 }
 
 let state: BattleState = {
-  left: { name: '蓝队', score: 0, color: '#4dd0e8' },
-  right: { name: '红队', score: 0, color: '#e06078' },
+  left: { name: '蓝队', score: 0, color: '#007aff' },
+  right: { name: '红队', score: 0, color: '#ff3b30' },
   round: 0,
   totalRounds: 10,
   active: false,
@@ -27,8 +27,8 @@ export function getBattleState(): BattleState {
 
 export function startBattle(totalRounds = 10): void {
   state = {
-    left: { name: '蓝队', score: 0, color: '#4dd0e8' },
-    right: { name: '红队', score: 0, color: '#e06078' },
+    left: { name: '蓝队', score: 0, color: '#007aff' },
+    right: { name: '红队', score: 0, color: '#ff3b30' },
     round: 0,
     totalRounds,
     active: true,

@@ -18,7 +18,7 @@
   width: 82px;
   height: 82px;
   border-radius: 14px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
@@ -79,20 +79,20 @@
   gap: 8px;
   padding: 20px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(35, 42, 82, 0.6), rgba(22, 27, 51, 0.5));
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.5));
   border: 1px solid var(--line-neon);
 }
 .recorder-mouth {
   width: 40px;
   height: 26px;
-  background: rgba(136, 144, 184, 0.2);
+  background: rgba(0, 0, 0, 0.2);
   border: 1px solid var(--line-neon);
   border-radius: 8px 8px 4px 4px;
 }
 .recorder-foot {
   width: 30px;
   height: 20px;
-  background: rgba(136, 144, 184, 0.15);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 4px 4px 10px 10px;
   margin-top: 4px;
 }
@@ -100,8 +100,8 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(136, 144, 184, 0.25);
-  background: rgba(15, 18, 34, 0.6);
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  background: rgba(242, 242, 247, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -137,8 +137,8 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid rgba(136, 144, 184, 0.25);
-  background: rgba(15, 18, 34, 0.6);
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  background: rgba(242, 242, 247, 0.6);
 }
 .legend-dot.pressed {
   background: var(--neon-gold);

@@ -14,7 +14,7 @@
 .mix-play {
   padding: 12px 30px;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  background: var(--neon-cyan);
   color: #f2f2f7;
   font-weight: 800;
   font-size: 1.1rem;
@@ -26,7 +26,7 @@
   transform: translateY(-2px);
 }
 .mix-play.on {
-  background: linear-gradient(135deg, #e03131, #c22525);
+  background: #ff3b30;
   color: #fff;
   box-shadow: 0 0 20px rgba(224, 49, 49, 0.3);
 }
@@ -49,7 +49,7 @@
   min-height: 40px;
   padding: 10px 16px;
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 700;
@@ -113,7 +113,7 @@
   width: 100%;
   border: 1px solid var(--line-neon);
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: var(--text);
   padding: 9px 10px;
   font: inherit;
@@ -203,7 +203,7 @@
   width: 38px;
   height: 38px;
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-soft);
   font-size: 1.3rem;
   flex-shrink: 0;
@@ -215,7 +215,7 @@
 }
 .track-voice-sel,
 .track-note-sel {
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   border-radius: 8px;
@@ -236,7 +236,7 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--line-soft);
   color: var(--text-soft);
   font-weight: 800;
@@ -272,13 +272,13 @@
 .mix-cell {
   height: 40px;
   border-radius: 7px;
-  background: rgba(35, 42, 82, 0.3);
-  border: 1px solid rgba(136, 144, 184, 0.08);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   transition: background 0.1s, box-shadow 0.1s, border-color 0.1s;
   cursor: pointer;
 }
 .mix-cell.beat {
-  box-shadow: inset 0 0 0 2px rgba(136, 144, 184, 0.12);
+  box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.12);
 }
 .mix-cell:hover {
   border-color: rgba(0, 122, 255, 0.3);
@@ -332,7 +332,7 @@
   min-height: 36px;
   padding: 7px 14px;
   border-radius: 999px;
-  background: rgba(35, 42, 82, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--line-soft);
   color: var(--text);
   font-weight: 700;
@@ -348,7 +348,7 @@
   min-width: 12px;
 }
 .mix-btn.primary {
-  background: linear-gradient(135deg, var(--neon-cyan), #5ac8fa);
+  background: var(--neon-cyan);
   color: #f2f2f7;
   border: none;
   box-shadow: var(--glow-primary);
@@ -364,7 +364,7 @@
 .proj-chip {
   display: inline-flex;
   align-items: center;
-  background: rgba(35, 42, 82, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--line-soft);
   border-radius: 999px;
   overflow: hidden;
@@ -414,7 +414,7 @@
   min-width: 0;
   overflow: hidden;
   border-radius: 8px;
-  background: rgba(35, 42, 82, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--line-soft);
   transition: border-color 0.15s;
 }
@@ -477,7 +477,7 @@
 .mix-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 18, 34, 0.8);
+  background: rgba(242, 242, 247, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -505,7 +505,7 @@
   padding: 12px 14px;
   border-radius: 10px;
   border: 2px solid var(--line-neon);
-  background: rgba(35, 42, 82, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: var(--text);
   font-family: monospace;
   font-size: 0.85rem;
