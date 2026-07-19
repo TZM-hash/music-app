@@ -1,47 +1,31 @@
+/* ============================================================
+   设计令牌（唯一来源）
+   语义色用 --primary/--accent/--success 等；
+   --candy-* / --neon-* 为遗留调色板别名，仅供旧页面 css 引用，新代码勿用。
+   ============================================================ */
 :root {
   --font: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
 
-  /* iOS 主题风格 */
+  /* 背景 */
+  --bg: #f2f2f7;
   --bg-deep: #f2f2f7;
-  --bg-panel: #ffffff;
+  --bg-panel: rgba(255, 255, 255, 0.88);
   --bg-card: #ffffff;
   --bg-raised: #ffffff;
   --bg-soft: rgba(0, 0, 0, 0.03);
   --bg-solid: #ffffff;
+  --bg-ink: #1c1c1e;
 
-  /* iOS 系统色 */
-  --neon-cyan: #007aff;
-  --neon-pink: #ff2d55;
-  --neon-gold: #ff9500;
-  --neon-purple: #af52de;
-  --neon-green: #34c759;
-
-  /* 童趣糖果色 */
-  --candy-red: #ff6b6b;
-  --candy-orange: #ffa94d;
-  --candy-yellow: #ffd43b;
-  --candy-green: #69db7c;
-  --candy-teal: #3bc9db;
-  --candy-blue: #4dabf7;
-  --candy-purple: #9775fa;
-  --candy-pink: #f783ac;
-
-  /* 音符专属色 */
-  --note-c: #007aff;
-  --note-d: #34c759;
-  --note-e: #ff9500;
-  --note-f: #ff2d55;
-  --note-g: #af52de;
-  --note-a: #ff6b35;
-  --note-b: #5ac8fa;
-
-  /* 语义色 */
+  /* 语义色（iOS 系统色） */
   --primary: #007aff;
   --primary-2: #5ac8fa;
   --accent: #ff9500;
   --accent-2: #ff2d55;
+  --joy: #ff2d55;
+  --mint: #34c759;
   --hot: #ff2d55;
   --success: #34c759;
+  --warning: #ff9500;
   --danger: #ff3b30;
 
   /* 文字 */
@@ -55,17 +39,18 @@
   --line-neon: rgba(0, 122, 255, 0.15);
 
   /* 圆角 */
-  --radius: 12px;
+  --radius: 8px;
   --radius-lg: 16px;
   --radius-sm: 8px;
   --radius-xl: 24px;
   --radius-full: 999px;
 
-  /* 阴影（iOS 风格：轻微、弥散） */
+  /* 阴影 */
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
   --glow: 0 0 0 1px rgba(0, 122, 255, 0.15);
   --glow-primary: 0 0 0 1px rgba(0, 122, 255, 0.2), 0 4px 16px rgba(0, 122, 255, 0.12);
+  --glow-mint: 0 0 0 1px rgba(52, 199, 89, 0.2), 0 4px 16px rgba(52, 199, 89, 0.1);
   --glow-gold: 0 0 0 1px rgba(255, 149, 0, 0.2), 0 4px 16px rgba(255, 149, 0, 0.12);
   --glow-pink: 0 0 0 1px rgba(255, 45, 85, 0.2), 0 4px 16px rgba(255, 45, 85, 0.12);
 
@@ -81,6 +66,30 @@
   /* 琴键 */
   --key-white: #ffffff;
   --key-black: #1c1c1e;
+
+  /* 遗留调色板别名：值已重映射为 iOS 系统色，旧页面 css 继续引用即可，新代码请用 --primary 等语义名 */
+  --neon-cyan: #007aff;
+  --neon-pink: #ff2d55;
+  --neon-gold: #ff9500;
+  --neon-purple: #af52de;
+  --neon-green: #34c759;
+  --candy-red: #ff3b30;
+  --candy-orange: #ff9500;
+  --candy-yellow: #ffcc00;
+  --candy-green: #34c759;
+  --candy-teal: #5ac8fa;
+  --candy-blue: #007aff;
+  --candy-purple: #af52de;
+  --candy-pink: #ff2d55;
+
+  /* 音符专属色 */
+  --note-c: #007aff;
+  --note-d: #34c759;
+  --note-e: #ff9500;
+  --note-f: #ff2d55;
+  --note-g: #af52de;
+  --note-a: #ff6b35;
+  --note-b: #5ac8fa;
 }
 
 * {
@@ -196,7 +205,7 @@ button {
   height: 38px;
   place-items: center;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
   color: #fff;
   font-size: 1.2rem;
   box-shadow: 0 3px 10px rgba(77, 171, 247, 0.25);
@@ -773,6 +782,217 @@ button:focus-visible {
   max-width: 1240px;
   margin: 0 auto;
 }
+
+/* —— 首页问候头 —— */
+.home-greet {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 10px 6px 2px;
+}
+.home-greet-date {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text-faint);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.home-greet h1 {
+  margin: 0 0 8px;
+  color: var(--text);
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.home-greet p {
+  max-width: 640px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.home-greet-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+  padding-bottom: 4px;
+}
+.home-greet-actions button {
+  padding: 10px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.12s var(--ease-spring), box-shadow 0.15s ease;
+}
+.home-greet-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+.home-greet-actions button:active {
+  transform: scale(0.96);
+}
+
+/* —— 首页大入口卡片 —— */
+.home-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.home-entry-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.15s var(--ease-spring), box-shadow 0.2s ease;
+}
+.home-entry-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--entry-tone, var(--primary));
+}
+.home-entry-card.blue { --entry-tone: #007aff; }
+.home-entry-card.purple { --entry-tone: #af52de; }
+.home-entry-card.orange { --entry-tone: #ff9500; }
+.home-entry-card.green { --entry-tone: #34c759; }
+.home-entry-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+.home-entry-card:active {
+  transform: scale(0.985);
+}
+.home-entry-icon {
+  display: grid;
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--entry-tone) 12%, transparent);
+  font-size: 1.7rem;
+  transition: transform 0.2s var(--ease-spring);
+}
+.home-entry-card:hover .home-entry-icon {
+  transform: scale(1.12) rotate(-4deg);
+}
+.home-entry-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 3px;
+}
+.home-entry-copy b {
+  color: var(--text);
+  font-size: 1.05rem;
+  line-height: 1.2;
+}
+.home-entry-copy small {
+  color: var(--text-faint);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+.home-entry-arrow {
+  margin-left: auto;
+  color: var(--text-faint);
+  font-size: 1.6rem;
+  font-weight: 300;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+.home-entry-card:hover .home-entry-arrow {
+  transform: translateX(3px);
+  color: var(--entry-tone);
+}
+
+/* —— 继续上次 —— */
+.home-continue {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 14px 18px;
+}
+.home-continue-head {
+  flex-shrink: 0;
+}
+.home-continue-head h3 {
+  margin-top: 3px;
+  color: var(--text);
+  font-size: 1rem;
+}
+.home-continue-row {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  background: var(--bg-soft);
+  text-align: left;
+  transition: background 0.15s ease, transform 0.12s var(--ease-spring);
+}
+.home-continue-row:hover {
+  background: rgba(0, 122, 255, 0.05);
+  transform: translateX(2px);
+}
+.home-continue-icon {
+  display: grid;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  background: rgba(0, 122, 255, 0.1);
+  font-size: 1.35rem;
+}
+.home-continue-info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+.home-continue-info b {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+.home-continue-info small {
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+.home-continue-stars {
+  display: flex;
+  gap: 2px;
+  margin-left: auto;
+  font-style: normal;
+}
+.home-continue-stars i {
+  color: rgba(0, 0, 0, 0.12);
+  font-size: 1.05rem;
+  font-style: normal;
+}
+.home-continue-stars i.on {
+  color: var(--accent);
+}
+.home-continue-go {
+  flex-shrink: 0;
+  color: var(--primary);
+  font-size: 0.88rem;
+  font-weight: 800;
+}
 .pro-hero {
   display: flex;
   align-items: center;
@@ -1283,6 +1503,20 @@ button:focus-visible {
   .portfolio-empty > div {
     justify-content: flex-start;
   }
+  .home-greet {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .home-entry-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-continue {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .home-continue-stars {
+    margin-left: 0;
+  }
 }
 
 /* 手机：进一步压缩 */
@@ -1377,50 +1611,7 @@ button:focus-visible {
   }
 }
 
-/* ===== 2026 visual refresh: youthful music lab ===== */
-:root {
-  --font: 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', system-ui, sans-serif;
-  --bg: #f3f7fb;
-  --bg-panel: rgba(255, 255, 255, 0.82);
-  --bg-soft: rgba(232, 241, 248, 0.82);
-  --primary: #6b5cff;
-  --primary-2: #21c7b8;
-  --accent: #10a998;
-  --accent-2: #ffb84d;
-  --joy: #ff6f91;
-  --mint: #72e0c7;
-  --text: #162033;
-  --text-soft: #657086;
-  --text-faint: #9ba6b8;
-  --line: rgba(94, 110, 137, 0.18);
-  --line-soft: rgba(94, 110, 137, 0.11);
-  --radius: 8px;
-  --shadow: 0 22px 55px rgba(38, 51, 77, 0.14);
-  --shadow-soft: 0 10px 24px rgba(38, 51, 77, 0.08);
-  --glow-primary: 0 18px 42px rgba(107, 92, 255, 0.24);
-  --glow-mint: 0 16px 38px rgba(33, 199, 184, 0.2);
-}
-
-body {
-  background:
-    linear-gradient(112deg, rgba(33, 199, 184, 0.18), transparent 32%),
-    linear-gradient(245deg, rgba(107, 92, 255, 0.16), transparent 36%),
-    repeating-linear-gradient(0deg, transparent 0 23px, rgba(22, 32, 51, 0.04) 23px 24px),
-    linear-gradient(135deg, #f9fcff 0%, #edf6f7 44%, #f6f3ff 100%);
-}
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(22, 32, 51, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(22, 32, 51, 0.035) 1px, transparent 1px);
-  background-size: 42px 42px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent 78%);
-}
-
+/* ===== 组件尺寸层（原 2026 refresh，调色板已并入顶部令牌） ===== */
 .app {
   isolation: isolate;
 }
@@ -1428,8 +1619,9 @@ body::before {
 .sidebar {
   width: 292px;
   padding: 18px 14px;
-  background: rgba(255, 255, 255, 0.82);
-  border-right: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-right: 1px solid var(--line-soft);
   box-shadow: none;
 }
 
@@ -1442,7 +1634,7 @@ body::before {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
   color: #fff;
   font-size: 1.45rem;
   box-shadow: 0 3px 10px rgba(77, 171, 247, 0.25);
@@ -1502,8 +1694,8 @@ body::before {
 }
 
 .side-item:hover {
-  background: rgba(77, 171, 247, 0.06);
-  border-color: rgba(77, 171, 247, 0.12);
+  background: rgba(0, 0, 0, 0.04);
+  border-color: transparent;
   color: var(--text);
   transform: translateX(2px);
 }
@@ -1514,10 +1706,10 @@ body::before {
 }
 
 .side-item.active {
-  background: rgba(77, 171, 247, 0.1);
-  border-color: rgba(77, 171, 247, 0.2);
-  color: var(--candy-blue);
-  box-shadow: inset 3px 0 0 var(--candy-blue);
+  background: rgba(0, 122, 255, 0.1);
+  border-color: rgba(0, 122, 255, 0.16);
+  color: var(--primary);
+  box-shadow: inset 3px 0 0 var(--primary);
 }
 
 .side-icon {
@@ -1526,9 +1718,9 @@ body::before {
   height: 34px;
   border-radius: 10px;
   background: rgba(0, 0, 0, 0.04);
-  color: var(--candy-blue);
-  font-size: 0.9rem;
-  font-weight: 950;
+  color: var(--primary);
+  font-size: 1.15rem;
+  line-height: 1;
   box-shadow: none;
   transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
 }
@@ -1538,9 +1730,9 @@ body::before {
 }
 
 .side-item.active .side-icon {
-  background: var(--candy-blue);
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(77, 171, 247, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
 .side-label {
@@ -1589,9 +1781,10 @@ body::before {
 .topbar {
   min-height: 72px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.82);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--line-soft);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.04);
 }
 
 .breadcrumb {
@@ -1667,16 +1860,16 @@ body::before {
 }
 
 .topbar .backbtn {
-  background: rgba(0, 122, 255, 0.06);
-  color: var(--neon-cyan);
+  background: rgba(0, 122, 255, 0.08);
+  color: var(--primary);
 }
 
 .topbar .toolbtn.active,
 .topbar .seg button.on,
 .stu-option.on {
-  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  background: var(--primary);
   color: #fff;
-  box-shadow: var(--glow-primary);
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
 }
 
 .topbar .seg {
@@ -1712,10 +1905,14 @@ body::before {
 }
 
 .card {
-  border: 1px solid var(--line);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius-lg);
   background: var(--bg-card);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(18px);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.card:hover {
+  box-shadow: var(--shadow);
 }
 
 .pro-home {
@@ -2271,62 +2468,13 @@ body::before {
   }
 }
 
-/* ===== iOS 主题 · 覆盖层 ===== */
-:root {
-  --bg: #f2f2f7;
-  --bg-panel: rgba(255, 255, 255, 0.88);
-  --bg-soft: rgba(0, 0, 0, 0.03);
-  --bg-ink: #1c1c1e;
-  --primary: #007aff;
-  --primary-2: #5ac8fa;
-  --accent: #ff9500;
-  --accent-2: #ff2d55;
-  --joy: #ff2d55;
-  --mint: #34c759;
-  --success: #34c759;
-  --warning: #ff9500;
-  --danger: #ff3b30;
-  --text: #1c1c1e;
-  --text-soft: #48484a;
-  --text-faint: #8e8e93;
-  --line: rgba(0, 0, 0, 0.08);
-  --line-soft: rgba(0, 0, 0, 0.04);
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
-  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.06);
-  --glow-primary: 0 0 0 1px rgba(0, 122, 255, 0.2), 0 4px 16px rgba(0, 122, 255, 0.12);
-  --glow-mint: 0 0 0 1px rgba(52, 199, 89, 0.2), 0 4px 16px rgba(52, 199, 89, 0.1);
-}
-
+/* ===== iOS 主题 · 环境背景（令牌已并入顶部 :root） ===== */
 body {
   background:
     radial-gradient(ellipse at 15% 20%, rgba(255, 107, 107, 0.04) 0%, transparent 40%),
     radial-gradient(ellipse at 85% 15%, rgba(77, 171, 247, 0.04) 0%, transparent 40%),
     radial-gradient(ellipse at 50% 85%, rgba(105, 219, 124, 0.03) 0%, transparent 40%),
     var(--bg-deep);
-}
-
-body::before {
-  background-image:
-    radial-gradient(circle at 25% 25%, rgba(255, 212, 59, 0.02) 0%, transparent 40%),
-    radial-gradient(circle at 75% 75%, rgba(247, 131, 172, 0.02) 0%, transparent 40%);
-  background-size: 100% 100%;
-  opacity: 0.78;
-  mask-image: none;
-}
-
-.app::after {
-  content: '';
-  position: fixed;
-  left: 292px;
-  right: 0;
-  top: 72px;
-  height: 2px;
-  pointer-events: none;
-  background: linear-gradient(90deg, transparent, var(--neon-cyan), var(--neon-purple), var(--neon-pink), transparent);
-  background-size: 220% 100%;
-  opacity: 0.25;
-  animation: spectrumFlow 7s linear infinite;
-  z-index: 9;
 }
 
 @keyframes spectrumFlow {
@@ -8155,47 +8303,7 @@ body::before {
   }
 }
 
-/* ===== 童趣元素 ===== */
-
-/* 飘浮装饰（首页背景） */
-.music-home::before {
-  content: '♪ ♫ ♪ ♫ ♪';
-  position: fixed;
-  top: 80px;
-  right: 40px;
-  font-size: 2rem;
-  color: rgba(0, 0, 0, 0.04);
-  pointer-events: none;
-  letter-spacing: 20px;
-  animation: floatNotes 8s ease-in-out infinite;
-  z-index: 0;
-}
-
-@keyframes floatNotes {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-12px) rotate(2deg); }
-  50% { transform: translateY(0) rotate(0deg); }
-  75% { transform: translateY(-8px) rotate(-2deg); }
-}
-
-/* 星星闪烁装饰 */
-.music-home::after {
-  content: '✦ ✧ ✦ ✧ ✦';
-  position: fixed;
-  bottom: 60px;
-  left: 300px;
-  font-size: 1.2rem;
-  color: rgba(255, 149, 0, 0.08);
-  pointer-events: none;
-  letter-spacing: 30px;
-  animation: twinkle 4s ease-in-out infinite;
-  z-index: 0;
-}
-
-@keyframes twinkle {
-  0%, 100% { opacity: 0.08; }
-  50% { opacity: 0.2; }
-}
+/* ===== iOS 强调色与反馈动效 ===== */
 
 /* 按钮 Q 弹效果 */
 .rec-btn,
@@ -8237,10 +8345,7 @@ body::before {
   transform: scale(0.93);
 }
 
-/* 卡片 hover 微微弹跳 */
-.card:hover {
-  transform: translateY(-2px);
-}
+/* 卡片 hover 阴影加深（见 .card 基础规则） */
 
 /* 星星获得动画 */
 @keyframes starPop {
@@ -8280,298 +8385,283 @@ body::before {
   50% { opacity: 0.7; }
 }
 
-/* 首页主入口卡片彩色渐变 */
-.home-entry-group.primary button:nth-child(1) { border-left: 4px solid var(--candy-blue); }
-.home-entry-group.primary button:nth-child(2) { border-left: 4px solid var(--candy-purple); }
-.home-entry-group.primary button:nth-child(3) { border-left: 4px solid var(--candy-green); }
-.home-entry-group.primary button:nth-child(4) { border-left: 4px solid var(--candy-orange); }
+/* 首页主入口卡片彩色边 */
+.home-entry-group.primary button:nth-child(1) { border-left: 4px solid var(--primary); }
+.home-entry-group.primary button:nth-child(2) { border-left: 4px solid #af52de; }
+.home-entry-group.primary button:nth-child(3) { border-left: 4px solid var(--success); }
+.home-entry-group.primary button:nth-child(4) { border-left: 4px solid var(--accent); }
 
-/* 顶栏脉冲波形改糖果色 */
+/* 顶栏脉冲波形 */
 .topbar-pulse i {
-  background: linear-gradient(180deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
   border-radius: 999px;
   animation: pulseBar 1s ease-in-out infinite;
 }
 
-/* 节拍器指示点改糖果色 */
+/* 节拍器指示点 */
 .beat-dot.on {
-  background: var(--candy-yellow);
-  box-shadow: 0 0 6px rgba(255, 212, 59, 0.4);
+  background: var(--accent);
+  box-shadow: 0 0 6px rgba(255, 149, 0, 0.4);
 }
 
-/* 翻牌卡片改糖果色 */
+/* 翻牌卡片 */
 .daily-card.flipped {
-  border-color: var(--candy-blue);
-  background: rgba(77, 171, 247, 0.06);
+  border-color: rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.05);
 }
 .daily-card-front b {
-  color: var(--candy-blue);
+  color: var(--primary);
 }
 
-/* 大开始按钮改糖果色 */
+/* 大开始按钮 */
 .big-start {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 4px 16px rgba(77, 171, 247, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3);
 }
 .big-start:hover {
-  box-shadow: 0 6px 24px rgba(77, 171, 247, 0.4);
-  transform: translateY(-2px);
+  background: #0071eb;
+  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.38);
+  transform: translateY(-1px);
 }
 
-/* 主按钮改糖果色 */
+/* 主按钮 */
 .primary-action,
 .hero-actions .primary-action,
 .pro-actions .primary-action {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
   color: #fff;
-  box-shadow: 0 3px 12px rgba(77, 171, 247, 0.25);
+  box-shadow: 0 3px 10px rgba(0, 122, 255, 0.25);
 }
 
-/* 侧边栏 logo 改糖果色 */
+/* 侧边栏 logo */
 .side-logo-icon {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
-  box-shadow: 0 3px 10px rgba(77, 171, 247, 0.25);
+  background: var(--primary);
+  box-shadow: 0 3px 10px rgba(0, 122, 255, 0.3);
 }
 
-/* 学生头像改糖果色 */
+/* 学生头像 */
 .stu-avatar {
-  background: rgba(151, 117, 250, 0.12);
-  color: var(--candy-purple);
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--primary);
 }
 
-/* 太鼓 DON/KA 按钮改糖果色 */
+/* 太鼓 DON/KA 按钮 */
 .key-don {
-  border-color: rgba(255, 107, 107, 0.4);
-  background: radial-gradient(circle at 50% 36%, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.08));
+  border-color: rgba(255, 59, 48, 0.4);
+  background: radial-gradient(circle at 50% 36%, rgba(255, 59, 48, 0.16), rgba(255, 59, 48, 0.05));
 }
 .key-don:active {
-  box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
-  border-color: var(--candy-red);
+  box-shadow: 0 0 20px rgba(255, 59, 48, 0.28);
+  border-color: var(--danger);
 }
 .key-ka {
-  border-color: rgba(77, 171, 247, 0.4);
-  background: radial-gradient(circle at 50% 36%, rgba(77, 171, 247, 0.2), rgba(77, 171, 247, 0.08));
+  border-color: rgba(0, 122, 255, 0.4);
+  background: radial-gradient(circle at 50% 36%, rgba(0, 122, 255, 0.16), rgba(0, 122, 255, 0.05));
 }
 .key-ka:active {
-  box-shadow: 0 0 20px rgba(77, 171, 247, 0.3);
-  border-color: var(--candy-blue);
+  box-shadow: 0 0 20px rgba(0, 122, 255, 0.28);
+  border-color: var(--primary);
 }
 
-/* 判定文字改糖果色 */
+/* 判定文字 */
 .taiko-judge.great {
-  color: var(--candy-yellow);
+  color: var(--accent);
 }
 .taiko-judge.good {
-  color: var(--candy-teal);
+  color: var(--primary-2);
 }
 
-/* 魂值条改糖果色 */
+/* 魂值条 */
 .soul-fill {
-  background: linear-gradient(90deg, var(--candy-green), var(--candy-teal));
+  background: linear-gradient(90deg, var(--success), var(--primary-2));
 }
 .soul-fill.cleared {
-  background: linear-gradient(90deg, var(--candy-yellow), var(--candy-orange), var(--candy-red));
+  background: linear-gradient(90deg, var(--accent), #ff9f0a, var(--danger));
 }
 
-/* 混音器有音格子改糖果色 */
+/* 混音器有音格子 */
 .mix-cell.on {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
 }
 
-/* 鼓机格子改糖果色 */
+/* 鼓机格子 */
 .seq-cell.on {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
 }
 
-/* 播放头改糖果色 */
+/* 播放头 */
 .mix-cell.cur {
-  outline: 3px solid var(--candy-yellow);
+  outline: 3px solid var(--accent);
 }
 .seq-cell.cur {
-  outline: 3px solid var(--candy-yellow);
+  outline: 3px solid var(--accent);
 }
 
-/* 进度环改糖果色 */
+/* 进度环 */
 .progress-ring {
-  --ring-color: var(--candy-blue);
+  --ring-color: var(--primary);
 }
 
-/* 乐谱音符改糖果色 */
+/* 乐谱音符 */
 .single-staff .note-head.filled {
-  fill: var(--candy-blue);
+  fill: var(--primary);
 }
 .single-staff .note-stem {
-  stroke: var(--candy-blue);
+  stroke: var(--primary);
 }
 
-/* 五线谱演示音符改糖果色 */
+/* 五线谱演示音符 */
 .staff-demo ellipse {
-  fill: var(--candy-blue);
+  fill: var(--primary);
 }
 
-/* 乐理探索步骤序号改糖果色 */
+/* 乐理探索步骤序号 */
 .exploration-index {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: var(--primary);
   color: #fff;
 }
 
-/* 发现卡片关键词改糖果色 */
-.keyword-a { background: rgba(77, 171, 247, 0.12); color: var(--candy-blue); }
-.keyword-b { background: rgba(105, 219, 124, 0.12); color: var(--candy-green); }
-.keyword-c { background: rgba(151, 117, 250, 0.12); color: var(--candy-purple); }
-.keyword-d { background: rgba(255, 169, 77, 0.12); color: var(--candy-orange); }
+/* 发现卡片关键词 */
+.keyword-a { background: rgba(0, 122, 255, 0.1); color: var(--primary); }
+.keyword-b { background: rgba(52, 199, 89, 0.1); color: var(--success); }
+.keyword-c { background: rgba(175, 82, 222, 0.1); color: #af52de; }
+.keyword-d { background: rgba(255, 149, 0, 0.1); color: var(--accent); }
 
-/* 答案对错改糖果色 */
+/* 答案对错 */
 .mini-quiz button.right {
-  background: rgba(105, 219, 124, 0.15);
-  border-color: var(--candy-green);
-  color: var(--candy-green);
+  background: rgba(52, 199, 89, 0.12);
+  border-color: var(--success);
+  color: #248a3d;
 }
 .mini-quiz button.wrong {
-  background: rgba(255, 107, 107, 0.1);
-  border-color: var(--candy-red);
-  color: var(--candy-red);
+  background: rgba(255, 59, 48, 0.08);
+  border-color: var(--danger);
+  color: var(--danger);
 }
 
-/* 读谱对错改糖果色 */
+/* 读谱对错 */
 .read-opt.right {
-  background: rgba(105, 219, 124, 0.15);
-  border-color: var(--candy-green);
-  box-shadow: 0 0 12px rgba(105, 219, 124, 0.2);
+  background: rgba(52, 199, 89, 0.12);
+  border-color: var(--success);
+  box-shadow: 0 0 12px rgba(52, 199, 89, 0.18);
 }
 .read-opt.wrong {
-  background: rgba(255, 107, 107, 0.1);
-  border-color: var(--candy-red);
+  background: rgba(255, 59, 48, 0.08);
+  border-color: var(--danger);
 }
 
-/* 练耳对错改糖果色 */
+/* 练耳对错 */
 .ear-key.right {
-  background: rgba(105, 219, 124, 0.15);
-  border-color: var(--candy-green);
+  background: rgba(52, 199, 89, 0.12);
+  border-color: var(--success);
 }
 .ear-key.wrong {
-  background: rgba(255, 107, 107, 0.1);
-  border-color: var(--candy-red);
+  background: rgba(255, 59, 48, 0.08);
+  border-color: var(--danger);
 }
 .ear-option.right {
-  background: rgba(105, 219, 124, 0.15);
-  border-color: var(--candy-green);
+  background: rgba(52, 199, 89, 0.12);
+  border-color: var(--success);
 }
 .ear-option.wrong {
-  background: rgba(255, 107, 107, 0.1);
-  border-color: var(--candy-red);
+  background: rgba(255, 59, 48, 0.08);
+  border-color: var(--danger);
 }
 
-/* 结算页分数改糖果色 */
+/* 结算页分数 */
 .result-score {
-  color: var(--candy-yellow);
+  color: var(--primary);
 }
 
-/* 新纪录改糖果色 */
+/* 新纪录 */
 .new-best {
-  color: var(--candy-pink);
+  color: var(--accent-2);
 }
 
-/* 能力条改糖果色 */
-.ability-card.good span i { background: var(--candy-green); }
-.ability-card.warn span i { background: var(--candy-yellow); }
-.ability-card.focus span i { background: var(--candy-red); }
-.ability-mini span.good i { background: var(--candy-green); }
-.ability-mini span.warn i { background: var(--candy-yellow); }
-.ability-mini span.focus i { background: var(--candy-red); }
+/* 能力条 */
+.ability-card.good span i { background: var(--success); }
+.ability-card.warn span i { background: var(--accent); }
+.ability-card.focus span i { background: var(--danger); }
+.ability-mini span.good i { background: var(--success); }
+.ability-mini span.warn i { background: var(--accent); }
+.ability-mini span.focus i { background: var(--danger); }
 
-/* 诊断标签改糖果色 */
-.diagnosis-mini .good { background: rgba(105, 219, 124, 0.1); color: var(--candy-green); }
-.diagnosis-mini .warn { background: rgba(255, 212, 59, 0.1); color: var(--candy-yellow); }
-.diagnosis-mini .focus { background: rgba(255, 107, 107, 0.1); color: var(--candy-red); }
-.diagnosis-card.good { border-left: 4px solid var(--candy-green); }
-.diagnosis-card.warn { border-left: 4px solid var(--candy-yellow); }
-.diagnosis-card.focus { border-left: 4px solid var(--candy-red); }
+/* 诊断标签 */
+.diagnosis-mini .good { background: rgba(52, 199, 89, 0.1); color: #248a3d; }
+.diagnosis-mini .warn { background: rgba(255, 149, 0, 0.1); color: #c93400; }
+.diagnosis-mini .focus { background: rgba(255, 59, 48, 0.1); color: var(--danger); }
+.diagnosis-card.good { border-left: 4px solid var(--success); }
+.diagnosis-card.warn { border-left: 4px solid var(--accent); }
+.diagnosis-card.focus { border-left: 4px solid var(--danger); }
 
-/* 徽章改糖果色 */
+/* 徽章 */
 .badge-pop {
-  background: rgba(255, 212, 59, 0.08);
-  border: 1px solid rgba(255, 212, 59, 0.2);
+  background: rgba(255, 149, 0, 0.08);
+  border: 1px solid rgba(255, 149, 0, 0.22);
 }
 .badge-pop small {
-  color: var(--candy-yellow);
+  color: var(--accent);
 }
 
-/* 班级对战改糖果色 */
+/* 班级对战 */
 .battle-btn.left {
-  border-color: var(--candy-blue);
-  background: rgba(77, 171, 247, 0.12);
-  color: var(--candy-blue);
+  border-color: rgba(0, 122, 255, 0.5);
+  background: rgba(0, 122, 255, 0.1);
+  color: var(--primary);
 }
 .battle-btn.right {
-  border-color: var(--candy-red);
-  background: rgba(255, 107, 107, 0.12);
-  color: var(--candy-red);
+  border-color: rgba(255, 59, 48, 0.5);
+  background: rgba(255, 59, 48, 0.1);
+  color: var(--danger);
 }
 .team-score.left {
-  background: linear-gradient(90deg, rgba(77, 171, 247, 0.2), rgba(77, 171, 247, 0.08));
+  background: linear-gradient(90deg, rgba(0, 122, 255, 0.16), rgba(0, 122, 255, 0.05));
 }
 .team-score.right {
-  background: linear-gradient(90deg, rgba(255, 107, 107, 0.08), rgba(255, 107, 107, 0.2));
+  background: linear-gradient(90deg, rgba(255, 59, 48, 0.05), rgba(255, 59, 48, 0.16));
 }
 
-/* 闯关岛进度改糖果色 */
+/* 闯关岛进度 */
 .station.done {
-  outline: 3px solid rgba(255, 212, 59, 0.4);
+  outline: 3px solid rgba(255, 149, 0, 0.45);
 }
 .station.active {
-  outline: 3px solid rgba(77, 171, 247, 0.4);
+  outline: 3px solid rgba(0, 122, 255, 0.4);
 }
 
-/* 站点图标改糖果色 */
+/* 站点图标 */
 .station-icon {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: rgba(0, 122, 255, 0.1);
 }
 
-/* 课程图标改糖果色 */
+/* 课程图标 */
 .course-icon {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: rgba(0, 122, 255, 0.1);
 }
 
-/* 训练图标改糖果色 */
+/* 训练图标 */
 .training-icon {
-  background: linear-gradient(135deg, var(--candy-blue), var(--candy-purple));
+  background: rgba(0, 122, 255, 0.1);
 }
 
-/* KPI 数字改糖果色 */
+/* KPI 数字 */
 .pro-kpi b {
-  color: var(--candy-blue);
+  color: var(--primary);
 }
 
-/* 作品集计数改糖果色 */
+/* 作品集计数 */
 .portfolio-count {
-  color: var(--candy-blue);
+  color: var(--primary);
 }
 
-/* 挑战中心标题改糖果色 */
-.training-kicker {
-  color: var(--candy-blue);
-}
-
-/* 成长路线标题改糖果色 */
-.course-kicker {
-  color: var(--candy-purple);
-}
-
-/* 乐理标题改糖果色 */
-.theory-kicker {
-  color: var(--candy-teal);
-}
-
-/* 课堂标题改糖果色 */
-.lesson-kicker {
-  color: var(--candy-orange);
-}
-
-/* 首页标题改糖果色 */
+/* 各页 kicker 统一 iOS 蓝 */
+.training-kicker,
+.course-kicker,
+.theory-kicker,
+.lesson-kicker,
 .pro-kicker {
-  color: var(--candy-blue);
+  color: var(--primary);
 }
 
 @media (prefers-reduced-motion: reduce) {

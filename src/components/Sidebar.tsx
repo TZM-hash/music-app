@@ -17,37 +17,37 @@ const GROUPS: NavGroup[] = [
   {
     title: '课堂主线',
     items: [
-      { route: 'lesson', icon: '课', label: '互动课堂', hint: '听玩创一节课' },
-      { route: 'theory', icon: '谱', label: '音乐探索馆', hint: '分级发现与挑战' },
-      { route: 'course', icon: '阶', label: '成长路线', hint: '按阶段去探索' },
-      { route: 'training', icon: '练', label: '挑战中心', hint: '听辨、读谱、跟唱、节奏' },
-      { route: 'game-echo', icon: '复', label: '节奏复制', hint: '听节奏跟着敲' },
+      { route: 'lesson', icon: '📖', label: '互动课堂', hint: '听玩创一节课' },
+      { route: 'theory', icon: '🎵', label: '音乐探索馆', hint: '分级发现与挑战' },
+      { route: 'course', icon: '🗺️', label: '成长路线', hint: '按阶段去探索' },
+      { route: 'training', icon: '🎯', label: '挑战中心', hint: '听辨、读谱、跟唱、节奏' },
+      { route: 'game-echo', icon: '🔁', label: '节奏复制', hint: '听节奏跟着敲' },
     ],
   },
   {
     title: '创作工具',
     items: [
-      { route: 'piano', icon: '琴', label: '钢琴', hint: '音高、音阶与和弦' },
-      { route: 'drums', icon: '鼓', label: '架子鼓', hint: '节拍互动' },
-      { route: 'mixer', icon: '混', label: '混音创作', hint: '编曲节奏格' },
-      { route: 'recorder', icon: '笛', label: '竖笛', hint: '指法与旋律' },
-      { route: 'xylophone', icon: '木', label: '木琴', hint: '清脆打击旋律' },
+      { route: 'piano', icon: '🎹', label: '钢琴', hint: '音高、音阶与和弦' },
+      { route: 'drums', icon: '🥁', label: '架子鼓', hint: '节拍互动' },
+      { route: 'mixer', icon: '🎛️', label: '混音创作', hint: '编曲节奏格' },
+      { route: 'recorder', icon: '🪈', label: '竖笛', hint: '指法与旋律' },
+      { route: 'xylophone', icon: '🎶', label: '木琴', hint: '清脆打击旋律' },
     ],
   },
   {
     title: '素材与记录',
     items: [
-      { route: 'library', icon: '库', label: '素材库', hint: '歌曲与故事素材' },
-      { route: 'adventure', icon: '图', label: '闯关地图', hint: '音乐岛成长路线' },
+      { route: 'library', icon: '📚', label: '素材库', hint: '歌曲与故事素材' },
+      { route: 'adventure', icon: '🏝️', label: '闯关地图', hint: '音乐岛成长路线' },
     ],
   },
   {
     title: '班级陪伴',
     teacherOnly: true,
     items: [
-      { route: 'class', icon: '班', label: '学生档案', hint: '名单与个人记录' },
-      { route: 'dashboard', icon: '评', label: '成长观察', hint: '班级表现看板' },
-      { route: 'battle', icon: '⚔', label: '班级对战', hint: '分组互动竞赛' },
+      { route: 'class', icon: '👥', label: '学生档案', hint: '名单与个人记录' },
+      { route: 'dashboard', icon: '📊', label: '成长观察', hint: '班级表现看板' },
+      { route: 'battle', icon: '⚔️', label: '班级对战', hint: '分组互动竞赛' },
     ],
   },
 ]
@@ -60,7 +60,7 @@ export default function Sidebar() {
     <aside className="sidebar">
       <button className="side-logo" onClick={() => openMainRoute('home')}>
         <span className="side-logo-icon" aria-hidden="true">
-          ♪
+          🎵
         </span>
         <span>
           <span className="side-logo-text">乐动课堂</span>
@@ -73,7 +73,7 @@ export default function Sidebar() {
           className={`side-item ${route === 'home' ? 'active' : ''}`}
           onClick={() => openMainRoute('home')}
         >
-          <span className="side-icon">台</span>
+          <span className="side-icon">🏠</span>
           <span className="side-label">
             <b>今日探索</b>
             <small>推荐路线与最近记录</small>
