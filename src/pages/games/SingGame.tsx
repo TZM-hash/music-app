@@ -6,6 +6,7 @@ import { useApp } from '../../state/appState'
 import { Song } from '../../music/songs'
 import SongPicker from '../../components/SongPicker'
 import GameResult, { ReviewData } from '../../components/GameResult'
+import { playUI } from '../../music/uiSounds'
 import '../../components/gameResult.css'
 import './sing.css'
 
@@ -92,6 +93,7 @@ export default function SingGame() {
     setSong(s)
     setError(null)
     setPhase('perm')
+    playUI('countdown')
     try {
       await ensureAudio()
       detector.current = new PitchDetector()
