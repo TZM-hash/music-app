@@ -80,7 +80,7 @@ export default function TeamBattle() {
 
   if (showWinner) {
     const winnerName = winner === 'left' ? battle.left.name : winner === 'right' ? battle.right.name : '平局'
-    const winnerColor = winner === 'left' ? battle.left.color : winner === 'right' ? battle.right.color : '#e0e4f0'
+    const winnerColor = winner === 'left' ? battle.left.color : winner === 'right' ? battle.right.color : '#1c1c1e'
     return (
       <div className="battle-wrap">
         <div className="battle-winner">
