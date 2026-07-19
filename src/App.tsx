@@ -12,6 +12,7 @@ import Mixer from './pages/Mixer'
 import Recorder from './pages/Recorder'
 import Xylophone from './pages/Xylophone'
 import EarGame from './pages/games/EarGame'
+import EchoGame from './pages/games/EchoGame'
 import TaikoGame from './pages/games/TaikoGame'
 import SingGame from './pages/games/SingGame'
 import ReadGame from './pages/games/ReadGame'
@@ -52,6 +53,7 @@ function Shell() {
           {route === 'recorder' && <Recorder />}
           {route === 'xylophone' && <Xylophone />}
           {route === 'game-ear' && <EarGame />}
+          {route === 'game-echo' && <EchoGame />}
           {route === 'game-taiko' && <TaikoGame />}
           {route === 'game-sing' && <SingGame />}
           {route === 'game-read' && <ReadGame />}

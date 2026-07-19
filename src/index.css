@@ -149,7 +149,7 @@ button {
   color: var(--text);
   font-size: 1.15rem;
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
 }
 .sidebar-backdrop {
   display: none;
@@ -159,7 +159,7 @@ button {
 .sidebar {
   width: 248px;
   flex-shrink: 0;
-  background: rgba(6, 8, 20, 0.92);
+  background: rgba(15, 18, 34, 0.92);
   border-right: 1px solid var(--line-neon);
   box-shadow: none;
   display: flex;
@@ -185,7 +185,7 @@ button {
   place-items: center;
   border-radius: 10px;
   background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-  color: #060814;
+  color: #0f1222;
   font-size: 1.2rem;
   box-shadow: var(--glow-primary);
 }
@@ -230,14 +230,14 @@ button {
   border: 1px solid transparent;
 }
 .side-item:hover {
-  background: rgba(28, 36, 82, 0.6);
+  background: rgba(35, 42, 82, 0.6);
   border-color: var(--line-neon);
 }
 .side-item.active {
-  background: rgba(34, 229, 255, 0.1);
+  background: rgba(77, 208, 232, 0.1);
   color: var(--neon-cyan);
-  box-shadow: inset 3px 0 0 var(--neon-cyan), 0 0 12px rgba(34, 229, 255, 0.1);
-  border-color: rgba(34, 229, 255, 0.25);
+  box-shadow: inset 3px 0 0 var(--neon-cyan), 0 0 12px rgba(77, 208, 232, 0.1);
+  border-color: rgba(77, 208, 232, 0.25);
 }
 .side-icon {
   display: grid;
@@ -245,19 +245,19 @@ button {
   height: 28px;
   place-items: center;
   border-radius: 8px;
-  background: rgba(138, 149, 201, 0.1);
+  background: rgba(136, 144, 184, 0.1);
   font-size: 1rem;
   text-align: center;
   transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease;
 }
 .side-item:hover .side-icon {
   transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(34, 229, 255, 0.2);
+  box-shadow: 0 0 8px rgba(77, 208, 232, 0.2);
 }
 .side-item.active .side-icon {
   background: var(--neon-cyan);
-  color: #060814;
-  box-shadow: 0 0 12px rgba(34, 229, 255, 0.4);
+  color: #0f1222;
+  box-shadow: 0 0 12px rgba(77, 208, 232, 0.4);
 }
 .side-foot {
   padding: 14px 8px 4px;
@@ -281,7 +281,7 @@ button {
   gap: 12px;
   min-height: 68px;
   padding: 12px 24px;
-  background: rgba(6, 8, 20, 0.85);
+  background: rgba(15, 18, 34, 0.85);
   border-bottom: 1px solid var(--line-neon);
   box-shadow: none;
   z-index: 10;
@@ -316,7 +316,7 @@ button {
   padding: 8px 12px;
   border: 1px solid var(--line-neon);
   border-radius: var(--radius);
-  background: rgba(34, 229, 255, 0.08);
+  background: rgba(77, 208, 232, 0.08);
   color: var(--neon-cyan);
   font-size: 0.9rem;
   font-weight: 900;
@@ -330,8 +330,8 @@ button {
 }
 .topbar .backbtn:hover {
   transform: translateY(-1px);
-  border-color: rgba(34, 229, 255, 0.5);
-  background: rgba(34, 229, 255, 0.15);
+  border-color: rgba(77, 208, 232, 0.5);
+  background: rgba(77, 208, 232, 0.15);
 }
 .topbar .spacer {
   flex: 1;
@@ -340,7 +340,7 @@ button {
   min-height: 38px;
   padding: 8px 14px;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-size: 0.9rem;
@@ -349,19 +349,19 @@ button {
 }
 .topbar .toolbtn:hover {
   transform: translateY(-1px);
-  border-color: rgba(34, 229, 255, 0.5);
-  box-shadow: 0 0 10px rgba(34, 229, 255, 0.15);
+  border-color: rgba(77, 208, 232, 0.5);
+  box-shadow: 0 0 10px rgba(77, 208, 232, 0.15);
 }
 .topbar .toolbtn.active {
-  background: rgba(34, 229, 255, 0.15);
+  background: rgba(77, 208, 232, 0.15);
   border-color: var(--neon-cyan);
   color: var(--neon-cyan);
-  box-shadow: 0 0 12px rgba(34, 229, 255, 0.2);
+  box-shadow: 0 0 12px rgba(77, 208, 232, 0.2);
 }
 .topbar .seg {
   display: flex;
   min-height: 40px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   border-radius: var(--radius);
   padding: 3px;
@@ -376,9 +376,9 @@ button {
   transition: color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 .topbar .seg button.on {
-  background: rgba(34, 229, 255, 0.15);
+  background: rgba(77, 208, 232, 0.15);
   color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(34, 229, 255, 0.2);
+  box-shadow: 0 0 10px rgba(77, 208, 232, 0.2);
 }
 
 .topbar .seg button:focus-visible,
@@ -388,7 +388,7 @@ button {
 .stu-current:focus-visible,
 .stu-option:focus-visible,
 button:focus-visible {
-  outline: 3px solid rgba(34, 229, 255, 0.3);
+  outline: 3px solid rgba(77, 208, 232, 0.3);
   outline-offset: 2px;
 }
 
@@ -403,7 +403,7 @@ button:focus-visible {
   min-height: 38px;
   padding: 7px 12px;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 800;
@@ -411,7 +411,7 @@ button:focus-visible {
 }
 .stu-current:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
+  box-shadow: 0 0 10px rgba(77, 208, 232, 0.12);
 }
 .stu-avatar {
   font-size: 1.2rem;
@@ -430,7 +430,7 @@ button:focus-visible {
   top: 110%;
   right: 0;
   z-index: 31;
-  background: rgba(13, 18, 48, 0.92);
+  background: rgba(22, 27, 51, 0.92);
   border-radius: var(--radius);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow);
@@ -470,21 +470,21 @@ button:focus-visible {
   font-weight: 600;
 }
 .stu-option:hover {
-  background: rgba(28, 36, 82, 0.6);
+  background: rgba(35, 42, 82, 0.6);
 }
 .stu-option.on {
-  background: rgba(34, 229, 255, 0.15);
+  background: rgba(77, 208, 232, 0.15);
   color: var(--neon-cyan);
 }
 .stu-option.on .stu-option-main small {
-  color: rgba(34, 229, 255, 0.6);
+  color: rgba(77, 208, 232, 0.6);
 }
 .stu-manage {
   width: 100%;
   margin-top: 8px;
   padding: 10px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-weight: 700;
   border: 1px solid var(--line-soft);
@@ -519,7 +519,7 @@ button:focus-visible {
 .back-btn {
   padding: 8px 18px;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 700;
@@ -528,7 +528,7 @@ button:focus-visible {
 }
 .back-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
+  box-shadow: 0 0 10px rgba(77, 208, 232, 0.12);
 }
 
 /* 首页网格 */
@@ -574,7 +574,7 @@ button:focus-visible {
 }
 .tile:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 229, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(77, 208, 232, 0.15);
 }
 .tile .emoji {
   font-size: 3rem;
@@ -605,7 +605,7 @@ button:focus-visible {
 .accomp-btn {
   padding: 8px 16px;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
@@ -615,13 +615,13 @@ button:focus-visible {
 }
 .accomp-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
+  box-shadow: 0 0 10px rgba(77, 208, 232, 0.12);
 }
 .accomp-btn.on {
-  background: rgba(255, 214, 10, 0.15);
+  background: rgba(232, 200, 80, 0.15);
   border-color: var(--neon-gold);
   color: var(--neon-gold);
-  box-shadow: 0 0 10px rgba(255, 214, 10, 0.15);
+  box-shadow: 0 0 10px rgba(232, 200, 80, 0.15);
 }
 
 /* 首页状态条 */
@@ -819,7 +819,7 @@ button:focus-visible {
   place-items: center;
   align-content: center;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   color: var(--neon-cyan);
   border: 1px solid var(--line-neon);
 }
@@ -842,7 +842,7 @@ button:focus-visible {
 .portfolio-chip-row span {
   padding: 7px 10px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-size: 0.82rem;
   font-weight: 850;
@@ -862,15 +862,15 @@ button:focus-visible {
   gap: 5px;
   padding: 12px;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   text-align: left;
   border: 1px solid var(--line-soft);
   transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s var(--ease-spring);
 }
 .portfolio-work-list button:hover {
-  border-color: rgba(34, 229, 255, 0.4);
-  box-shadow: 0 0 12px rgba(34, 229, 255, 0.1);
+  border-color: rgba(77, 208, 232, 0.4);
+  box-shadow: 0 0 12px rgba(77, 208, 232, 0.1);
   transform: translateY(-2px);
 }
 .portfolio-work-list small {
@@ -1378,7 +1378,7 @@ body::before {
   height: 44px;
   border-radius: 10px;
   background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
-  color: #060814;
+  color: #0f1222;
   font-size: 1.45rem;
   box-shadow: var(--glow-primary);
 }
@@ -1431,13 +1431,13 @@ body::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(34, 229, 255, 0.06), rgba(160, 107, 255, 0.05));
+  background: linear-gradient(135deg, rgba(77, 208, 232, 0.06), rgba(152, 136, 224, 0.05));
   opacity: 0;
   transition: opacity 0.2s;
 }
 
 .side-item:hover {
-  background: rgba(28, 36, 82, 0.6);
+  background: rgba(35, 42, 82, 0.6);
   border-color: var(--line-neon);
   color: var(--text);
   transform: translateX(2px);
@@ -1449,10 +1449,10 @@ body::before {
 }
 
 .side-item.active {
-  background: rgba(34, 229, 255, 0.1);
-  border-color: rgba(34, 229, 255, 0.25);
+  background: rgba(77, 208, 232, 0.1);
+  border-color: rgba(77, 208, 232, 0.25);
   color: var(--neon-cyan);
-  box-shadow: inset 3px 0 0 var(--neon-cyan), 0 0 12px rgba(34, 229, 255, 0.1);
+  box-shadow: inset 3px 0 0 var(--neon-cyan), 0 0 12px rgba(77, 208, 232, 0.1);
 }
 
 .side-icon {
@@ -1460,7 +1460,7 @@ body::before {
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: rgba(138, 149, 201, 0.1);
+  background: rgba(136, 144, 184, 0.1);
   color: var(--neon-cyan);
   font-size: 0.9rem;
   font-weight: 950;
@@ -1470,13 +1470,13 @@ body::before {
 
 .side-item:hover .side-icon {
   transform: scale(1.1);
-  box-shadow: 0 0 8px rgba(34, 229, 255, 0.2);
+  box-shadow: 0 0 8px rgba(77, 208, 232, 0.2);
 }
 
 .side-item.active .side-icon {
   background: var(--neon-cyan);
-  color: #060814;
-  box-shadow: 0 0 12px rgba(34, 229, 255, 0.4);
+  color: #0f1222;
+  box-shadow: 0 0 12px rgba(77, 208, 232, 0.4);
 }
 
 .side-label {
@@ -1525,7 +1525,7 @@ body::before {
 .topbar {
   min-height: 72px;
   padding: 12px 24px;
-  background: rgba(6, 8, 20, 0.85);
+  background: rgba(15, 18, 34, 0.85);
   border-bottom: 1px solid var(--line-neon);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -1550,7 +1550,7 @@ body::before {
   height: 28px;
   padding: 4px 8px;
   border-radius: 999px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
 }
 
@@ -1574,7 +1574,7 @@ body::before {
 
 .hamburger {
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
 }
 
 .hamburger span {
@@ -1631,7 +1631,7 @@ body::before {
   height: 24px;
   place-items: center;
   border-radius: 50%;
-  background: rgba(160, 107, 255, 0.15);
+  background: rgba(152, 136, 224, 0.15);
   color: var(--neon-purple);
   font-size: 0.8rem;
   font-weight: 950;
@@ -1639,7 +1639,7 @@ body::before {
 
 .stu-dropdown {
   border: 1px solid var(--line-neon);
-  background: rgba(13, 18, 48, 0.92);
+  background: rgba(22, 27, 51, 0.92);
   backdrop-filter: blur(24px);
 }
 
@@ -1650,7 +1650,7 @@ body::before {
 .card {
   border: 1px solid var(--line-neon);
   background:
-    linear-gradient(180deg, rgba(19, 26, 63, 0.9), rgba(13, 18, 48, 0.78)),
+    linear-gradient(180deg, rgba(28, 34, 68, 0.9), rgba(22, 27, 51, 0.78)),
     var(--bg-card);
   box-shadow: var(--shadow-soft);
   backdrop-filter: blur(18px);
@@ -1666,9 +1666,9 @@ body::before {
   min-height: 360px;
   padding: 34px;
   background:
-    linear-gradient(105deg, rgba(34, 229, 255, 0.08), transparent 34%),
-    linear-gradient(62deg, transparent 44%, rgba(255, 79, 163, 0.08), transparent 72%),
-    linear-gradient(135deg, rgba(19, 26, 63, 0.94), rgba(6, 8, 20, 0.85));
+    linear-gradient(105deg, rgba(77, 208, 232, 0.08), transparent 34%),
+    linear-gradient(62deg, transparent 44%, rgba(232, 120, 160, 0.08), transparent 72%),
+    linear-gradient(135deg, rgba(28, 34, 68, 0.94), rgba(15, 18, 34, 0.85));
   overflow: hidden;
 }
 
@@ -1680,8 +1680,8 @@ body::before {
   height: auto;
   border-radius: 0;
   background:
-    repeating-linear-gradient(90deg, transparent 0 24px, rgba(34, 229, 255, 0.03) 24px 25px),
-    linear-gradient(90deg, transparent, rgba(160, 107, 255, 0.06), transparent);
+    repeating-linear-gradient(90deg, transparent 0 24px, rgba(77, 208, 232, 0.03) 24px 25px),
+    linear-gradient(90deg, transparent, rgba(152, 136, 224, 0.06), transparent);
   filter: none;
   opacity: 0.76;
   animation: spectrumFlow 12s linear infinite;
@@ -1715,7 +1715,7 @@ body::before {
   line-height: 1.02;
   letter-spacing: 0;
   text-wrap: balance;
-  text-shadow: 0 0 30px rgba(34, 229, 255, 0.15), 0 0 80px rgba(34, 229, 255, 0.05);
+  text-shadow: 0 0 30px rgba(77, 208, 232, 0.15), 0 0 80px rgba(77, 208, 232, 0.05);
 }
 
 .music-hero p {
@@ -1748,7 +1748,7 @@ body::before {
 .lesson-actions button {
   border: 1px solid var(--line-neon);
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.6);
+  background: rgba(35, 42, 82, 0.6);
   color: var(--text);
   font-weight: 900;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -1766,8 +1766,8 @@ body::before {
 .hero-actions .primary-action,
 .pro-actions .primary-action {
   border-color: transparent;
-  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
-  color: #060814;
+  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
+  color: #0f1222;
   box-shadow: var(--glow-primary);
 }
 
@@ -1780,8 +1780,8 @@ body::before {
 .course-tab:hover,
 .station:hover {
   transform: translateY(-3px);
-  box-shadow: var(--shadow), 0 0 16px rgba(34, 229, 255, 0.15);
-  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: var(--shadow), 0 0 16px rgba(77, 208, 232, 0.15);
+  border-color: rgba(77, 208, 232, 0.5);
 }
 
 .hero-stage {
@@ -1805,9 +1805,9 @@ body::before {
   border: 1px solid var(--line-neon);
   border-radius: var(--radius-lg);
   background:
-    linear-gradient(180deg, rgba(28, 36, 82, 0.74), rgba(13, 18, 48, 0.6)),
-    repeating-linear-gradient(0deg, transparent 0 31px, rgba(34, 229, 255, 0.04) 31px 32px),
-    linear-gradient(115deg, rgba(34, 229, 255, 0.06), transparent 42%, rgba(160, 107, 255, 0.06));
+    linear-gradient(180deg, rgba(35, 42, 82, 0.74), rgba(22, 27, 51, 0.6)),
+    repeating-linear-gradient(0deg, transparent 0 31px, rgba(77, 208, 232, 0.04) 31px 32px),
+    linear-gradient(115deg, rgba(77, 208, 232, 0.06), transparent 42%, rgba(152, 136, 224, 0.06));
   box-shadow: var(--shadow);
   overflow: hidden;
 }
@@ -1816,9 +1816,9 @@ body::before {
   content: '';
   position: absolute;
   inset: 20px;
-  border: 1px solid rgba(34, 229, 255, 0.1);
+  border: 1px solid rgba(77, 208, 232, 0.1);
   border-radius: var(--radius);
-  background: linear-gradient(90deg, transparent, rgba(34, 229, 255, 0.04), transparent);
+  background: linear-gradient(90deg, transparent, rgba(77, 208, 232, 0.04), transparent);
 }
 
 .hero-console-head,
@@ -1863,7 +1863,7 @@ body::before {
   width: 12px;
   border-radius: 999px;
   background: linear-gradient(180deg, var(--neon-cyan), var(--neon-purple));
-  box-shadow: 0 0 12px rgba(34, 229, 255, 0.25);
+  box-shadow: 0 0 12px rgba(77, 208, 232, 0.25);
   animation: pulseBar 1s ease-in-out infinite;
 }
 
@@ -1889,7 +1889,7 @@ body::before {
   flex-direction: column;
   justify-content: center;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.6);
+  background: rgba(35, 42, 82, 0.6);
   color: var(--text-soft);
   font-size: 0.76rem;
   font-weight: 850;
@@ -1916,7 +1916,7 @@ body::before {
   height: 42px;
   place-items: center;
   border-radius: var(--radius);
-  background: rgba(28, 36, 82, 0.7);
+  background: rgba(35, 42, 82, 0.7);
   color: var(--neon-cyan);
   font-weight: 950;
   box-shadow: var(--shadow-soft);
@@ -1939,13 +1939,13 @@ body::before {
 .review-home {
   grid-template-columns: 1.1fr 1fr 1fr;
   background:
-    linear-gradient(135deg, rgba(19, 26, 63, 0.88), rgba(13, 18, 48, 0.78)),
+    linear-gradient(135deg, rgba(28, 34, 68, 0.88), rgba(22, 27, 51, 0.78)),
     var(--bg-card);
 }
 
 .review-block {
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
 }
 
 .review-list button,
@@ -1957,7 +1957,7 @@ body::before {
 .lesson-summary > div,
 .quest-topic-grid button {
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   box-shadow: var(--shadow-soft);
   transition: transform 0.15s var(--ease-spring), box-shadow 0.15s ease, border-color 0.15s ease;
 }
@@ -1969,8 +1969,8 @@ body::before {
 .lesson-steps button:hover,
 .quest-topic-grid button:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow), 0 0 12px rgba(34, 229, 255, 0.12);
-  border-color: rgba(34, 229, 255, 0.5);
+  box-shadow: var(--shadow), 0 0 12px rgba(77, 208, 232, 0.12);
+  border-color: rgba(77, 208, 232, 0.5);
 }
 
 .pro-status {
@@ -2222,8 +2222,8 @@ body::before {
   grid-template-columns: minmax(0, 1fr) minmax(320px, 430px);
   align-items: center;
   background:
-    linear-gradient(135deg, rgba(19, 26, 63, 0.94), rgba(6, 8, 20, 0.85)),
-    repeating-linear-gradient(0deg, transparent 0 34px, rgba(34, 229, 255, 0.04) 34px 35px);
+    linear-gradient(135deg, rgba(28, 34, 68, 0.94), rgba(15, 18, 34, 0.85)),
+    repeating-linear-gradient(0deg, transparent 0 34px, rgba(77, 208, 232, 0.04) 34px 35px);
 }
 
 .music-hero::before {
@@ -2232,8 +2232,8 @@ body::before {
   height: auto;
   border-radius: 0;
   background:
-    linear-gradient(108deg, transparent 8%, rgba(34, 229, 255, 0.06) 22%, transparent 36%),
-    linear-gradient(72deg, transparent 48%, rgba(255, 79, 163, 0.06) 62%, transparent 78%);
+    linear-gradient(108deg, transparent 8%, rgba(77, 208, 232, 0.06) 22%, transparent 36%),
+    linear-gradient(72deg, transparent 48%, rgba(232, 120, 160, 0.06) 62%, transparent 78%);
   filter: none;
   opacity: 1;
   animation: spectrumFlow 11s linear infinite;

@@ -39,7 +39,7 @@
   min-width: 170px;
   padding: 14px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   text-align: center;
 }
 
@@ -146,7 +146,7 @@
 .outcome-row span {
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-weight: 700;
   font-size: 0.9rem;
@@ -161,7 +161,7 @@
 .course-focus span {
   padding: 7px 10px;
   border-radius: 8px;
-  background: rgba(34, 229, 255, 0.12);
+  background: rgba(77, 208, 232, 0.12);
   color: var(--neon-cyan);
   font-size: 0.82rem;
   font-weight: 800;
@@ -175,8 +175,8 @@
   padding: 14px;
   border-radius: 8px;
   background:
-    linear-gradient(135deg, rgba(28, 36, 82, 0.72), rgba(28, 36, 82, 0.6)),
-    repeating-linear-gradient(90deg, transparent 0 30px, rgba(34, 229, 255, 0.055) 30px 31px);
+    linear-gradient(135deg, rgba(35, 42, 82, 0.72), rgba(35, 42, 82, 0.6)),
+    repeating-linear-gradient(90deg, transparent 0 30px, rgba(77, 208, 232, 0.055) 30px 31px);
 }
 
 .course-spectrum-block {
@@ -227,10 +227,10 @@
   width: 38px;
   height: 38px;
   place-items: center;
-  border: 2px solid rgba(34, 229, 255, 0.5);
+  border: 2px solid rgba(77, 208, 232, 0.5);
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
-  color: #060814;
+  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
+  color: #0f1222;
   box-shadow: var(--shadow-soft);
 }
 
@@ -247,7 +247,7 @@
   gap: 14px;
   padding: 14px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
 }
 
 .step-index {
@@ -257,8 +257,8 @@
   width: 34px;
   height: 34px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
-  color: #060814;
+  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
+  color: #0f1222;
   font-weight: 900;
 }
 
@@ -276,7 +276,7 @@
 .lesson-secondary {
   padding: 10px 16px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--neon-cyan);
   font-weight: 800;
@@ -309,7 +309,7 @@
   min-width: 92px;
   padding: 12px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   text-align: center;
 }
 
@@ -352,7 +352,7 @@
   margin-top: 10px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: rgba(61, 255, 192, 0.14);
+  background: rgba(80, 208, 160, 0.14);
   color: var(--text);
   font-weight: 900;
 }
@@ -394,11 +394,11 @@
 }
 
 .station.done {
-  outline: 3px solid rgba(255, 214, 10, 0.28);
+  outline: 3px solid rgba(232, 200, 80, 0.28);
 }
 
 .station.active {
-  outline: 3px solid rgba(34, 229, 255, 0.24);
+  outline: 3px solid rgba(77, 208, 232, 0.24);
 }
 
 .station-index {
@@ -433,7 +433,7 @@
   margin-top: auto;
   padding: 6px 10px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   font-weight: 800;
   font-size: 0.82rem;
 }
@@ -443,7 +443,7 @@
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
 }
 
 .station-progress span {
@@ -478,7 +478,7 @@
   gap: 6px;
   padding: 13px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   text-align: left;
 }
@@ -517,7 +517,7 @@
   min-width: 180px;
   padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
 }
 
 .leader-chip span {
@@ -528,8 +528,8 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
-  color: #060814;
+  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
+  color: #0f1222;
   font-weight: 900;
 }
 

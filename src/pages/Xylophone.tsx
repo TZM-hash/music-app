@@ -12,16 +12,16 @@ interface XyloNote {
 }
 
 const NOTES: XyloNote[] = [
-  { note: 'C4', name: 'C', jianpu: '1', key: 'a', color: '#22e5ff' },
-  { note: 'D4', name: 'D', jianpu: '2', key: 's', color: '#3dffc0' },
-  { note: 'E4', name: 'E', jianpu: '3', key: 'd', color: '#ffd60a' },
-  { note: 'F4', name: 'F', jianpu: '4', key: 'f', color: '#ff4fa3' },
-  { note: 'G4', name: 'G', jianpu: '5', key: 'g', color: '#a06bff' },
-  { note: 'A4', name: 'A', jianpu: '6', key: 'h', color: '#ff8c42' },
-  { note: 'B4', name: 'B', jianpu: '7', key: 'j', color: '#4fc3ff' },
-  { note: 'C5', name: 'C', jianpu: '1·', key: 'k', color: '#22e5ff' },
-  { note: 'D5', name: 'D', jianpu: '2·', key: 'l', color: '#3dffc0' },
-  { note: 'E5', name: 'E', jianpu: '3·', key: ';', color: '#ffd60a' },
+  { note: 'C4', name: 'C', jianpu: '1', key: 'a', color: '#4dd0e8' },
+  { note: 'D4', name: 'D', jianpu: '2', key: 's', color: '#50d0a0' },
+  { note: 'E4', name: 'E', jianpu: '3', key: 'd', color: '#e8c850' },
+  { note: 'F4', name: 'F', jianpu: '4', key: 'f', color: '#e878a0' },
+  { note: 'G4', name: 'G', jianpu: '5', key: 'g', color: '#9888e0' },
+  { note: 'A4', name: 'A', jianpu: '6', key: 'h', color: '#e09050' },
+  { note: 'B4', name: 'B', jianpu: '7', key: 'j', color: '#68a8e0' },
+  { note: 'C5', name: 'C', jianpu: '1·', key: 'k', color: '#4dd0e8' },
+  { note: 'D5', name: 'D', jianpu: '2·', key: 'l', color: '#50d0a0' },
+  { note: 'E5', name: 'E', jianpu: '3·', key: ';', color: '#e8c850' },
 ]
 
 const SEMI_NOTES: XyloNote[] = [

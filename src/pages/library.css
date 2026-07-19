@@ -18,7 +18,7 @@
   padding: 12px 18px;
   border-radius: 8px;
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   color: var(--text);
   font-size: 1rem;
   outline: none;
@@ -40,7 +40,7 @@
 .lib-new {
   padding: 12px 22px;
   border-radius: 8px;
-  background: rgba(34, 229, 255, 0.12);
+  background: rgba(77, 208, 232, 0.12);
   color: var(--neon-cyan);
   border: 1px solid var(--neon-cyan);
   font-weight: 800;
@@ -53,7 +53,7 @@
   gap: 4px;
   padding: 5px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
 }
@@ -67,13 +67,13 @@
   font-weight: 900;
 }
 .lib-view-tabs button.on {
-  background: rgba(34, 229, 255, 0.12);
+  background: rgba(77, 208, 232, 0.12);
   color: var(--neon-cyan);
 }
 .lib-view-tabs span {
   padding: 1px 8px;
   border-radius: 6px;
-  background: rgba(6, 8, 20, 0.4);
+  background: rgba(15, 18, 34, 0.4);
   font-size: 0.78rem;
 }
 
@@ -88,22 +88,22 @@
   gap: 8px;
   padding: 8px 16px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
   font-weight: 700;
 }
 .lib-tabs button.on {
-  background: rgba(34, 229, 255, 0.12);
+  background: rgba(77, 208, 232, 0.12);
   color: var(--neon-cyan);
 }
 .encyclopedia-tabs button.on {
-  background: rgba(34, 229, 255, 0.12);
+  background: rgba(77, 208, 232, 0.12);
   color: var(--neon-cyan);
 }
 .tab-count {
-  background: rgba(6, 8, 20, 0.4);
+  background: rgba(15, 18, 34, 0.4);
   border-radius: 6px;
   padding: 1px 9px;
   font-size: 0.8rem;
@@ -116,15 +116,15 @@
 .encyclopedia-stage-row button {
   padding: 7px 12px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   color: var(--text);
   font-weight: 800;
   box-shadow: var(--shadow-soft);
 }
 .encyclopedia-stage-row button.on {
-  background: rgba(255, 214, 10, 0.14);
-  border-color: rgba(255, 214, 10, 0.3);
+  background: rgba(232, 200, 80, 0.14);
+  border-color: rgba(232, 200, 80, 0.3);
   color: var(--neon-gold);
 }
 
@@ -154,7 +154,7 @@
   border: 1px solid var(--line-neon);
   border-left: 4px solid var(--neon-cyan);
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   box-shadow: var(--shadow-soft);
   color: var(--text);
   text-align: left;
@@ -172,13 +172,13 @@
 .encyclopedia-menu-row:hover {
   transform: translateY(-2px);
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(34,229,255,0.12);
+  box-shadow: 0 0 10px rgba(77,208,232,0.12);
 }
 .song-menu-row.active,
 .encyclopedia-menu-row.active {
-  border-color: rgba(34, 229, 255, 0.34);
-  background: rgba(34, 229, 255, 0.08);
-  box-shadow: inset 0 0 0 1px rgba(34, 229, 255, 0.16), var(--shadow-soft);
+  border-color: rgba(77, 208, 232, 0.34);
+  background: rgba(77, 208, 232, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(77, 208, 232, 0.16), var(--shadow-soft);
 }
 .song-menu-icon {
   display: grid;
@@ -233,7 +233,7 @@
 .song-menu-title .song-custom-tag {
   position: static;
   flex-shrink: 0;
-  background: rgba(34, 229, 255, 0.12);
+  background: rgba(77, 208, 232, 0.12);
   color: var(--neon-cyan);
 }
 .song-menu-meta {
@@ -248,7 +248,7 @@
 .encyclopedia-menu-head span {
   padding: 5px 8px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-size: 0.78rem;
   font-weight: 800;
@@ -325,7 +325,7 @@
   overflow: auto;
   padding: 10px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
 }
 .library-detail-actions {
   margin-top: auto;
@@ -361,7 +361,7 @@
 .song-card:hover {
   transform: translateY(-4px);
   border-color: var(--neon-cyan);
-  box-shadow: 0 0 10px rgba(34,229,255,0.12);
+  box-shadow: 0 0 10px rgba(77,208,232,0.12);
 }
 .song-card-top {
   height: 84px;
@@ -412,7 +412,7 @@
 .sa-btn {
   padding: 8px 14px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-weight: 700;
   font-size: 0.9rem;
@@ -422,18 +422,18 @@
   filter: brightness(1.05);
 }
 .sa-btn.primary {
-  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
-  color: #060814;
+  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
+  color: #0f1222;
   border: none;
   flex: 1;
 }
 .sa-btn.playing {
   background: var(--neon-gold);
-  color: #060814;
+  color: #0f1222;
 }
 .sa-btn.danger {
   background: var(--neon-pink);
-  color: #060814;
+  color: #0f1222;
 }
 .encyclopedia-grid {
   display: grid;
@@ -480,7 +480,7 @@
 .fact-list span {
   padding: 6px 9px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-size: 0.8rem;
   font-weight: 800;
@@ -489,7 +489,7 @@
   padding: 10px 12px;
   border-left: 4px solid var(--neon-cyan);
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   line-height: 1.5;
 }
@@ -511,18 +511,18 @@
 .encyclopedia-quiz button {
   padding: 7px 10px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   color: var(--text);
   font-size: 0.82rem;
   font-weight: 800;
 }
 .encyclopedia-quiz button.right {
   background: var(--neon-gold);
-  color: #060814;
+  color: #0f1222;
 }
 .encyclopedia-quiz button.wrong {
   background: var(--neon-pink);
-  color: #060814;
+  color: #0f1222;
 }
 
 @media (max-width: 980px) {
@@ -576,7 +576,7 @@
 .score-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(6, 8, 20, 0.6);
+  background: rgba(15, 18, 34, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -602,7 +602,7 @@
 }
 .score-mode-seg {
   display: flex;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   border-radius: 8px;
   padding: 4px;
   gap: 4px;
@@ -614,14 +614,14 @@
   color: var(--text-soft);
 }
 .score-mode-seg button.on {
-  background: linear-gradient(135deg, var(--neon-cyan), #1a9fd4);
-  color: #060814;
+  background: linear-gradient(135deg, var(--neon-cyan), #3aa8c8);
+  color: #0f1222;
 }
 .score-close {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   font-weight: 800;
   color: var(--text);
 }
@@ -645,7 +645,7 @@
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   color: var(--text);
   font-size: 1.1rem;
   font-weight: 700;
@@ -666,7 +666,7 @@
   padding: 12px 16px;
   border-radius: 8px;
   border: 1px solid var(--line-neon);
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   color: var(--text);
   font-size: 1rem;
   font-family: monospace;
@@ -677,7 +677,7 @@
   border-color: var(--neon-cyan);
 }
 .imp-preview {
-  background: rgba(28, 36, 82, 0.4);
+  background: rgba(35, 42, 82, 0.4);
   border-radius: 8px;
   padding: 12px;
 }

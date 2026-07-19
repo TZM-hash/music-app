@@ -1,0 +1,65 @@
+/* 节奏复制 · 清爽深色 */
+.echo-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 24px;
+  min-height: 0;
+}
+
+.echo-listen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.echo-drum-anim {
+  display: grid;
+  place-items: center;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(35, 42, 82, 0.5);
+  border: 3px solid var(--line);
+}
+
+.echo-drum {
+  font-size: 4rem;
+  transition: transform 0.1s var(--ease-spring), filter 0.1s;
+}
+
+.echo-drum.hit-don {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 20px rgba(242, 80, 80, 0.5));
+}
+
+.echo-drum.hit-ka {
+  transform: scale(1.3);
+  filter: drop-shadow(0 0 20px rgba(90, 160, 240, 0.5));
+}
+
+.echo-listen p,
+.echo-play p,
+.echo-judge p {
+  font-size: 1.3rem;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.echo-play {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.echo-judge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

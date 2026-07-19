@@ -41,9 +41,9 @@ function getTier(c: number): ComboTier {
 
 export function getComboColor(tier: ComboTier): string {
   switch (tier) {
-    case 'rainbow': return '#ff4fa3'
-    case 'gold': return '#ffd60a'
-    case 'fire': return '#ff8c42'
+    case 'rainbow': return '#e878a0'
+    case 'gold': return '#e8c850'
+    case 'fire': return '#e09050'
     default: return '#eef2ff'
   }
 }

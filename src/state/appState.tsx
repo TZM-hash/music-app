@@ -23,6 +23,8 @@ export type Route =
   | 'recorder'
   | 'xylophone'
   | 'game-ear'
+  | 'game-echo'
+  | 'battle'
   | 'game-taiko'
   | 'game-sing'
   | 'game-read'

@@ -18,7 +18,7 @@
   width: 82px;
   height: 82px;
   border-radius: 14px;
-  background: rgba(28, 36, 82, 0.5);
+  background: rgba(35, 42, 82, 0.5);
   border: 1px solid var(--line-neon);
   box-shadow: var(--shadow-soft);
   color: var(--text);
@@ -30,8 +30,8 @@
   transition: transform 0.08s var(--ease-spring), background 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 .recorder-key:hover {
-  border-color: rgba(34, 229, 255, 0.5);
-  box-shadow: 0 0 10px rgba(34, 229, 255, 0.12);
+  border-color: rgba(77, 208, 232, 0.5);
+  box-shadow: 0 0 10px rgba(77, 208, 232, 0.12);
 }
 .recorder-key b {
   font-size: 1.6rem;
@@ -50,10 +50,10 @@
   font-weight: 700;
 }
 .recorder-key.on {
-  background: rgba(34, 229, 255, 0.15);
+  background: rgba(77, 208, 232, 0.15);
   border-color: var(--neon-cyan);
   transform: scale(0.96);
-  box-shadow: 0 0 20px rgba(34, 229, 255, 0.3);
+  box-shadow: 0 0 20px rgba(77, 208, 232, 0.3);
 }
 .recorder-key.on b,
 .recorder-key.on small,
@@ -79,20 +79,20 @@
   gap: 8px;
   padding: 20px;
   border-radius: var(--radius-lg);
-  background: linear-gradient(180deg, rgba(28, 36, 82, 0.6), rgba(13, 18, 48, 0.5));
+  background: linear-gradient(180deg, rgba(35, 42, 82, 0.6), rgba(22, 27, 51, 0.5));
   border: 1px solid var(--line-neon);
 }
 .recorder-mouth {
   width: 40px;
   height: 26px;
-  background: rgba(138, 149, 201, 0.2);
+  background: rgba(136, 144, 184, 0.2);
   border: 1px solid var(--line-neon);
   border-radius: 8px 8px 4px 4px;
 }
 .recorder-foot {
   width: 30px;
   height: 20px;
-  background: rgba(138, 149, 201, 0.15);
+  background: rgba(136, 144, 184, 0.15);
   border-radius: 4px 4px 10px 10px;
   margin-top: 4px;
 }
@@ -100,8 +100,8 @@
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  border: 2px solid rgba(138, 149, 201, 0.25);
-  background: rgba(6, 8, 20, 0.6);
+  border: 2px solid rgba(136, 144, 184, 0.25);
+  background: rgba(15, 18, 34, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,8 +113,8 @@
 .hole.pressed {
   background: var(--neon-gold);
   border-color: var(--neon-gold);
-  color: #060814;
-  box-shadow: 0 0 12px rgba(255, 214, 10, 0.4);
+  color: #0f1222;
+  box-shadow: 0 0 12px rgba(232, 200, 80, 0.4);
 }
 .hole.thumb {
   border-style: dashed;
@@ -137,8 +137,8 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid rgba(138, 149, 201, 0.25);
-  background: rgba(6, 8, 20, 0.6);
+  border: 2px solid rgba(136, 144, 184, 0.25);
+  background: rgba(15, 18, 34, 0.6);
 }
 .legend-dot.pressed {
   background: var(--neon-gold);

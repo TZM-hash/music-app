@@ -21,6 +21,7 @@ const GROUPS: NavGroup[] = [
       { route: 'theory', icon: '谱', label: '音乐探索馆', hint: '分级发现与挑战' },
       { route: 'course', icon: '阶', label: '成长路线', hint: '按阶段去探索' },
       { route: 'training', icon: '练', label: '挑战中心', hint: '听辨、读谱、跟唱、节奏' },
+      { route: 'game-echo', icon: '复', label: '节奏复制', hint: '听节奏跟着敲' },
     ],
   },
   {
