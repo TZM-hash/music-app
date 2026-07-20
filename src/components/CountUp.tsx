@@ -12,13 +12,15 @@ export default function CountUp({ target, duration = 700 }: { target: number; du
     }
     hasAnimated.current = true
     const start = performance.now()
+    let raf = 0
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
       const eased = 1 - Math.pow(1 - t, 3)
       setValue(Math.round(target * eased))
-      if (t < 1) requestAnimationFrame(step)
+      if (t < 1) raf = requestAnimationFrame(step)
     }
-    requestAnimationFrame(step)
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
   }, [target, duration])
 
   return <span>{value}</span>

@@ -31,8 +31,11 @@ function pickCreateAction(topic: TheoryTopic): TheoryTopic['actions'][number] {
 }
 
 export function buildExplorationLoop(topic: TheoryTopic, scene: DemoScene): ExplorationStep[] {
-  const firstControl = scene.controls[0]
-  const compareControl = scene.controls[1] ?? scene.controls[0]
+  // 数据不全时给兜底文案，避免空 controls/keyPoints 直接 TypeError 白屏
+  const firstControl = scene.controls[0] ?? ({ label: '声音' } as DemoScene['controls'][number])
+  const compareControl = scene.controls[1] ?? firstControl
+  const keyPointA = topic.keyPoints[0] ?? '我听到的变化'
+  const keyPointB = topic.keyPoints[1] ?? keyPointA
   const playAction = pickPlayAction(topic)
   const createAction = pickCreateAction(topic)
 
@@ -58,7 +61,7 @@ export function buildExplorationLoop(topic: TheoryTopic, scene: DemoScene): Expl
       title: '玩一玩',
       badge: '动手体验',
       prompt: `切换下面的声音按钮，让耳朵、眼睛和身体一起找规律。`,
-      microGoal: `亲手试玩${scene.controls.slice(0, 3).map((control) => control.label).join('、')}`,
+      microGoal: `亲手试玩${scene.controls.slice(0, 3).map((control) => control.label).join('、') || '声音按钮'}`,
       actionLabel: playAction ? `去${playAction.label}` : '切换试玩',
       route: playAction?.route,
     },
@@ -75,7 +78,7 @@ export function buildExplorationLoop(topic: TheoryTopic, scene: DemoScene): Expl
       id: 'speak',
       title: '说一说',
       badge: '表达分享',
-      prompt: `用自己的话说出一个发现：${topic.keyPoints[0]}、${topic.keyPoints[1]}，或者你听到的感受。`,
+      prompt: `用自己的话说出一个发现：${keyPointA}、${keyPointB}，或者你听到的感受。`,
       microGoal: '说出我听到、看到、想到的一个变化',
       actionLabel: '表达感受',
     },

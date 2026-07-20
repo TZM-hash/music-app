@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
 import { getCurrentStudentId, setCurrentStudentId } from './students'
 import { createTheoryFocus, TheoryFocus } from './theoryFocus'
+import type { TheoryStageId } from '../music/theoryCatalog'
 import {
   applyRouteNavigation,
   backButtonLabel,
@@ -45,13 +46,17 @@ interface AppState {
   currentStudentId: string | null
   /** 供游戏使用的当前选中曲目 id（从曲库跳转时带入） */
   activeSongId: string | null
-  /** 从成长路线/闯关岛进入音乐探索馆时携带的筛选焦点 */
+  /** 从成长路线/学段总览进入音乐探索馆时携带的筛选焦点 */
   theoryFocus: TheoryFocus | null
+  /** 从学段总览进入互动课堂时携带的学段（lesson 为学习主轴） */
+  lessonStage: TheoryStageId | null
   /** 窄屏时侧边栏是否展开 */
   sidebarOpen: boolean
   setMode: (m: AppMode) => void
   navigate: (r: Route, options?: RouteNavigationOptions) => void
   openTheory: (focus?: TheoryFocus, options?: RouteNavigationOptions) => void
+  /** 进入互动课堂，可携带学段（让顶部 tab 自动落到该学段） */
+  openLesson: (stage?: TheoryStageId, options?: RouteNavigationOptions) => void
   goBack: () => void
   toggleNoteNames: () => void
   selectStudent: (id: string | null) => void
@@ -98,6 +103,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [currentStudentId, setCurrentId] = useState<string | null>(() => getCurrentStudentId())
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
   const [theoryFocus, setTheoryFocus] = useState<TheoryFocus | null>(null)
+  const [lessonStage, setLessonStage] = useState<TheoryStageId | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // 偏好持久化
@@ -114,6 +120,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const openTheory = useCallback((focus?: TheoryFocus, options?: RouteNavigationOptions) => {
     setTheoryFocus(focus ? createTheoryFocus(focus) : null)
     setNavigation((current) => applyRouteNavigation(current, 'theory', options))
+    setNavDirection('forward')
+    setSidebarOpen(false)
+  }, [])
+  const openLesson = useCallback((stage?: TheoryStageId, options?: RouteNavigationOptions) => {
+    if (stage) setLessonStage(stage)
+    setNavigation((current) => applyRouteNavigation(current, 'lesson', options))
     setNavDirection('forward')
     setSidebarOpen(false)
   }, [])
@@ -147,6 +159,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (route !== 'theory' && theoryFocus) setTheoryFocus(null)
   }, [route, theoryFocus])
 
+  // 离开互动课堂后清掉携带的学段，避免下次进入仍强制回到旧学段。
+  useEffect(() => {
+    if (route !== 'lesson' && lessonStage) setLessonStage(null)
+  }, [route, lessonStage])
+
   return (
     <Ctx.Provider
       value={{
@@ -160,10 +177,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
         currentStudentId,
         activeSongId,
         theoryFocus,
+        lessonStage,
         sidebarOpen,
         setMode,
         navigate,
         openTheory,
+        openLesson,
         goBack,
         toggleNoteNames,
         selectStudent,

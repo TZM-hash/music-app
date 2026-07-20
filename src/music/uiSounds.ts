@@ -28,7 +28,19 @@ export function isUISoundEnabled(): boolean {
   return enabled
 }
 
-/** 播放 UI 音效（只在开启时发声） */
+// UI 音效内部延迟定时器注册表：切页时统一清理，防止离开页面后仍发声
+const uiTimers = new Set<number>()
+
+/** 登记一个可被 stopUISounds 清理的延迟回调 */
+export function uiLater(fn: () => void, ms: number): void {
+  const id = window.setTimeout(() => {
+    uiTimers.delete(id)
+    fn()
+  }, ms)
+  uiTimers.add(id)
+}
+
+/** 播放 UI 音效（只在开启时发声）。延迟音符经统一登记，切页时由 stopUISounds 清理 */
 export async function playUI(name: UISoundName): Promise<void> {
   if (!enabled) return
   await ensureAudio()
@@ -36,8 +48,8 @@ export async function playUI(name: UISoundName): Promise<void> {
     case 'correct':
       // 明亮上行琶音 C-E-G（300ms 内完成）
       playNote('C5', '32n', 0.5)
-      setTimeout(() => playNote('E5', '32n', 0.5), 80)
-      setTimeout(() => playNote('G5', '32n', 0.5), 160)
+      uiLater(() => playNote('E5', '32n', 0.5), 80)
+      uiLater(() => playNote('G5', '32n', 0.5), 160)
       break
     case 'fanfare':
       // 胜利号角：三和弦 C-E-G-C + 低频冲击
@@ -46,13 +58,13 @@ export async function playUI(name: UISoundName): Promise<void> {
       playNote('G4', '2n', 0.6)
       playNote('C5', '2n', 0.7)
       playDrum('kick')
-      setTimeout(() => playDrum('crash'), 200)
+      uiLater(() => playDrum('crash'), 200)
       break
     case 'countdown':
       // 鼓点递进（最后一击加铜钹）
       playDrum('kick')
-      setTimeout(() => playDrum('kick'), 400)
-      setTimeout(() => {
+      uiLater(() => playDrum('kick'), 400)
+      uiLater(() => {
         playDrum('kick')
         playDrum('crash')
       }, 800)
@@ -64,8 +76,14 @@ export async function playUI(name: UISoundName): Promise<void> {
     case 'combo':
       // 金属铃声音高递进
       playNote('C6', '32n', 0.4)
-      setTimeout(() => playNote('E6', '32n', 0.4), 60)
-      setTimeout(() => playNote('G6', '32n', 0.45), 120)
+      uiLater(() => playNote('E6', '32n', 0.4), 60)
+      uiLater(() => playNote('G6', '32n', 0.45), 120)
       break
   }
+}
+
+/** 清掉所有尚未触发的 UI 音效延迟音符（切页时调用，避免"幽灵发声"） */
+export function stopUISounds(): void {
+  uiTimers.forEach((id) => window.clearTimeout(id))
+  uiTimers.clear()
 }

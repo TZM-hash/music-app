@@ -72,9 +72,11 @@ export function preloadPiano(): void {
   setPianoState('loading')
 
   // 混响让钢琴更有空间感
-  pianoReverb = new Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
-  pianoFallback = buildPianoFallback().connect(pianoReverb)
-  pianoFallback.volume.value = currentVolume
+  if (!pianoReverb) pianoReverb = new Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
+  if (!pianoFallback) {
+    pianoFallback = buildPianoFallback().connect(pianoReverb)
+    pianoFallback.volume.value = currentVolume
+  }
 
   // Salamander Grand Piano 采样（Tone.js 官方 CDN 示例音源）
   try {
@@ -111,7 +113,13 @@ export function preloadPiano(): void {
 function getPianoVoice(): Sampler | PolySynth {
   if (pianoLoadState === 'idle') preloadPiano()
   if (pianoSampler && pianoLoadState === 'sampled') return pianoSampler
-  return pianoFallback ?? (pianoFallback = buildPianoFallback().toDestination())
+  if (!pianoFallback) {
+    // 兜底路径：preloadPiano 未执行到时，保证只有一个 fallback 实例
+    if (!pianoReverb) pianoReverb = new Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
+    pianoFallback = buildPianoFallback().connect(pianoReverb)
+    pianoFallback.volume.value = currentVolume
+  }
+  return pianoFallback
 }
 
 // 其它音色仍用 PolySynth
@@ -123,28 +131,27 @@ const synths: Record<Exclude<TonePatch, 'piano'>, PolySynth | null> = {
 
 function getOtherSynth(patch: Exclude<TonePatch, 'piano'>): PolySynth {
   if (!synths[patch]) {
-    const vol = currentVolume
     switch (patch) {
       case 'musicbox':
         synths.musicbox = new PolySynth(Synth, {
           oscillator: { type: 'sine' },
           envelope: { attack: 0.002, decay: 0.1, sustain: 0, release: 0.6 },
         }).toDestination()
-        synths.musicbox.volume.value = vol - 6
+        synths.musicbox.volume.value = currentVolume - 6
         break
       case 'strings':
         synths.strings = new PolySynth(Synth, {
           oscillator: { type: 'sawtooth' },
           envelope: { attack: 0.3, decay: 0.4, sustain: 0.6, release: 1.8 },
         }).toDestination()
-        synths.strings.volume.value = vol - 4
+        synths.strings.volume.value = currentVolume - 4
         break
       case 'organ':
         synths.organ = new PolySynth(Synth, {
           oscillator: { type: 'fmsine' },
           envelope: { attack: 0.01, decay: 0.1, sustain: 0.8, release: 0.3 },
         }).toDestination()
-        synths.organ.volume.value = vol - 2
+        synths.organ.volume.value = currentVolume - 2
         break
     }
   }
@@ -155,13 +162,24 @@ export function setPatch(patch: TonePatch): void {
   currentPatch = patch
 }
 
+// 各音色相对钢琴的响度偏移（dB），setVolume 时必须保留，避免音色平衡被破坏
+const PATCH_VOLUME_OFFSET: Record<Exclude<TonePatch, 'piano'>, number> = {
+  musicbox: -6,
+  strings: -4,
+  organ: -2,
+}
+
 export function setVolume(v: number): void {
   currentVolume = v
   if (pianoFallback) pianoFallback.volume.value = v
   if (pianoSampler) pianoSampler.volume.value = v
   for (const p of Object.keys(synths) as Exclude<TonePatch, 'piano'>[]) {
-    if (synths[p]) synths[p]!.volume.value = v
+    if (synths[p]) synths[p]!.volume.value = v + PATCH_VOLUME_OFFSET[p]
   }
+}
+
+export function getVolume(): number {
+  return currentVolume
 }
 
 export function getCurrentPatch(): TonePatch {
@@ -357,15 +375,29 @@ export function taikoKA(): void {
 
 // —— Transport 共享管理 ——
 // 节拍器/伴奏/鼓循环都跑在 Transport 上（采样级精确，切后台自动暂停）。
-// 多个循环可能同时存在，用引用计数决定 Transport 的启停。
-let transportUsers = 0
-function startTransport(): void {
-  if (transportUsers === 0 && Transport.state !== 'started') Transport.start()
-  transportUsers++
+// Transport 是全局单例（bpm/swing 只有一份），多循环直接共用会互相覆盖设置、
+// 引用计数也会因重复 stop 失衡，因此所有循环统一登记到 TransportLoopManager：
+// - bpm/swing 由最后注册的活跃循环决定，停止后自动回退到上一个循环的设置
+// - 引用计数天然平衡（每注册一次 +1，注销一次 -1）
+// - stopAllAudio() 可一键停掉所有循环，切页不再有残留
+interface LoopEntry {
+  loop: Loop
+  bpm: number
+  swing: number
+  stopped: boolean
 }
-function stopTransport(): void {
-  transportUsers = Math.max(0, transportUsers - 1)
-  if (transportUsers === 0) Transport.stop()
+const transportLoops: LoopEntry[] = []
+
+function refreshTransportSettings(): void {
+  const active = transportLoops.filter((e) => !e.stopped)
+  const last = active[active.length - 1]
+  Transport.bpm.value = last ? last.bpm : 120
+  Transport.swing = last ? last.swing : 0
+  if (active.length === 0) {
+    if (Transport.state !== 'stopped') Transport.stop()
+  } else if (Transport.state !== 'started') {
+    Transport.start()
+  }
 }
 
 /** 把 UI 回调（setState 等）对齐到音频时间轴上执行，避免视觉与声音错位 */
@@ -374,7 +406,7 @@ export function scheduleVisual(fn: () => void, time: number): void {
 }
 
 /**
- * 在 Transport 上启动一个定时循环，返回停止函数。
+ * 在 Transport 上启动一个定时循环，返回停止函数（幂等，可安全多次调用）。
  * callback 收到的 time 是音频时间轴时间，应传给 triggerAttackRelease 等以保证精确发声。
  * swing: 0..1，把奇数步（off-beat）往后推的比例（Transport.swingSubdivision 粒度）。
  */
@@ -384,17 +416,30 @@ export function startTransportLoop(
   callback: (time: number) => void,
   opts?: { swing?: number }
 ): () => void {
-  Transport.bpm.value = bpm
-  Transport.swing = opts?.swing ?? 0
   const loop = new Loop(callback, interval)
   loop.start(0)
-  startTransport()
+  const entry: LoopEntry = { loop, bpm, swing: opts?.swing ?? 0, stopped: false }
+  transportLoops.push(entry)
+  refreshTransportSettings()
   return () => {
+    if (entry.stopped) return
+    entry.stopped = true
     loop.stop()
     loop.dispose()
-    Transport.swing = 0
-    stopTransport()
+    const i = transportLoops.indexOf(entry)
+    if (i >= 0) transportLoops.splice(i, 1)
+    refreshTransportSettings()
   }
+}
+
+/** 停掉 Transport 上的所有循环（切页时由 stopAllAudio 调用） */
+export function stopAllTransportLoops(): void {
+  for (const e of transportLoops.splice(0)) {
+    e.stopped = true
+    e.loop.stop()
+    e.loop.dispose()
+  }
+  refreshTransportSettings()
 }
 
 // —— 节拍器 ——
@@ -677,6 +722,7 @@ export function playXylophone(note: string): void {
 export function stopAllAudio(): void {
   stopMetronome()
   stopAccompaniment()
+  stopAllTransportLoops() // 兜底：停掉鼓机/混音等所有 Transport 循环
   setSustain(false)
   // 释放所有持续中的合成器音
   try {

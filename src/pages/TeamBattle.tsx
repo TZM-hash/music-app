@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { getBattleState, startBattle, scoreTeam, nextRound, endBattle, resetBattle } from '../state/teamBattle'
+import { useBattleState, startBattle, scoreTeam, nextRound, endBattle, resetBattle } from '../state/teamBattle'
 import { celebrate } from '../components/Celebration'
 import { playUI } from '../music/uiSounds'
 import './teambattle.css'
@@ -18,14 +18,14 @@ const QUESTIONS = [
 ]
 
 export default function TeamBattle() {
-  const [battle, setBattle] = useState(getBattleState())
+  // 可订阅 store：比分变化自动刷新，无需手动 setBattle(getBattleState())
+  const battle = useBattleState()
   const [questionIdx, setQuestionIdx] = useState(0)
   const [showWinner, setShowWinner] = useState(false)
   const [winner, setWinner] = useState<'left' | 'right' | 'tie' | null>(null)
 
   const start = useCallback(() => {
     startBattle(QUESTIONS.length)
-    setBattle(getBattleState())
     setQuestionIdx(0)
     setShowWinner(false)
     setWinner(null)
@@ -35,12 +35,10 @@ export default function TeamBattle() {
   const score = useCallback((side: 'left' | 'right') => {
     scoreTeam(side, 10)
     playUI('correct')
-    setBattle(getBattleState())
   }, [])
 
   const next = useCallback(() => {
     const hasMore = nextRound()
-    setBattle(getBattleState())
     if (hasMore) {
       setQuestionIdx((i) => (i + 1) % QUESTIONS.length)
     } else {
@@ -56,7 +54,6 @@ export default function TeamBattle() {
 
   const reset = useCallback(() => {
     resetBattle()
-    setBattle(getBattleState())
     setShowWinner(false)
     setWinner(null)
     setQuestionIdx(0)

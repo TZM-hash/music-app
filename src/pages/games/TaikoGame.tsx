@@ -8,6 +8,7 @@ import GameResult, { ReviewData } from '../../components/GameResult'
 import { hitCombo, resetCombo, getComboColor } from '../../state/combo'
 import { celebrate } from '../../components/Celebration'
 import { playUI } from '../../music/uiSounds'
+import { useTimers } from '../../hooks/useTimers'
 import '../../components/gameResult.css'
 import './taiko.css'
 
@@ -42,6 +43,8 @@ export default function TaikoGame() {
   const countdownTimer = useRef<number | null>(null)
   const judgeTimer = useRef<number | null>(null)
   const cfg = DIFFS[difficulty - 1]
+  // 统一登记定时器，组件卸载时全部清理且回调带卸载保护
+  const { later } = useTimers()
 
   const buildChart = useCallback((s: Song): Note[] => {
     const spb = 60 / s.bpm; const step = spb * cfg.gap * 1000; const lead = 1600
@@ -52,8 +55,9 @@ export default function TaikoGame() {
       const m = mel[i % mel.length]
       const high = parseInt(m.note.slice(-1), 10) >= 5 || m.note.includes('#')
       let type: NType = high ? 'ka' : 'don'
-      if ((i * 7) % 100 < cfg.kaRate * 100) type = type === 'don' ? 'ka' : 'don'
-      out.push({ id: id++, type, big: (i * 13) % 100 < cfg.bigRate * 100, time: lead + i * step, note: m.note, hit: false, judged: false })
+      // ka/big 用随机而非固定公式：每次生成的谱面不同，学生靠背板无法通关
+      if (Math.random() < cfg.kaRate) type = type === 'don' ? 'ka' : 'don'
+      out.push({ id: id++, type, big: Math.random() < cfg.bigRate, time: lead + i * step, note: m.note, hit: false, judged: false })
     }
     return out
   }, [cfg])
@@ -155,8 +159,8 @@ export default function TaikoGame() {
     s.maxC = Math.max(s.maxC, s.combo); setScore(s.score); setCombo(s.combo); setSoul(s.soul)
     if (best.note) playNote(best.note, '16n')
     if (judgeTimer.current !== null) window.clearTimeout(judgeTimer.current)
-    judgeTimer.current = window.setTimeout(() => { judgeTimer.current = null; setJudge(null) }, 300)
-  }, [phase])
+    judgeTimer.current = later(() => { judgeTimer.current = null; setJudge(null) }, 300)
+  }, [phase, later])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -169,6 +173,7 @@ export default function TaikoGame() {
 
   useEffect(() => () => {
     stopAccompaniment()
+    resetCombo() // 清掉全局连击，避免残留到下一个游戏
     if (countdownTimer.current !== null) window.clearInterval(countdownTimer.current)
     if (judgeTimer.current !== null) window.clearTimeout(judgeTimer.current)
   }, [])

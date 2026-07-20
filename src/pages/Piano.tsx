@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { buildNotes, whiteNotes, KEYBOARD_MAP, SCALES, NoteInfo } from '../music/notes'
+import { buildNotes, whiteNotes, KEYBOARD_MAP, SCALES, NoteInfo, transposeNote } from '../music/notes'
 import {
   ensureAudio,
   attackNote,
@@ -18,6 +18,7 @@ import {
   PATCH_INFO,
 } from '../music/audioEngine'
 import { useApp } from '../state/appState'
+import { useMounted, useTimers } from '../hooks/useTimers'
 import Visualizer, { useNoteBursts } from '../components/Visualizer'
 import AccompanimentToggle from '../components/AccompanimentToggle'
 import './piano.css'
@@ -74,17 +75,31 @@ export default function Piano() {
   const WHITES = whiteNotes(ALL)
 
   const [active, setActive] = useState<Set<string>>(new Set())
+  const activeRef = useRef<Set<string>>(new Set())
   const { bursts, push: pushBurst } = useNoteBursts()
   const recording = useRef<{ note: string; t: number; v: number }[]>([])
   const [isRecording, setIsRecording] = useState(false)
   const [hasRecording, setHasRecording] = useState(false)
   const startTime = useRef(0)
+  const mounted = useMounted()
+  const { later } = useTimers()
 
-  // 进入钢琴页即预加载采样，并订阅加载状态
+  // 进入钢琴页即预加载采样，并订阅加载状态（带卸载保护）
   useEffect(() => {
-    ensureAudio().then(() => preloadPiano())
+    ensureAudio().then(() => {
+      if (mounted.current) preloadPiano()
+    })
     return onPianoLoad(setLoadState)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // 卸载时释放所有还在发声的持续音（避免按住琴键切页后音一直响）
+  useEffect(
+    () => () => {
+      activeRef.current.forEach((n) => releaseNote(n))
+    },
+    []
+  )
 
   // 应用已保存的延音设置到音频引擎（进页面时恢复）
   useEffect(() => {
@@ -121,6 +136,7 @@ export default function Piano() {
       const relY = clientY - rect.top
       const vel = Math.min(0.95, Math.max(0.45, relY / rect.height))
       ensureAudio().then(() => attackNote(note.note, vel))
+      activeRef.current.add(note.note)
       setActive((s) => new Set(s).add(note.note))
       pushBurst(noteX(note), note.color, showNoteNames ? note.jianpu : '')
       if (isRecording) {
@@ -134,6 +150,7 @@ export default function Piano() {
   const press = useCallback(
     (note: NoteInfo, vel = 0.8) => {
       ensureAudio().then(() => attackNote(note.note, vel))
+      activeRef.current.add(note.note)
       setActive((s) => new Set(s).add(note.note))
       pushBurst(noteX(note), note.color, showNoteNames ? note.jianpu : '')
       if (isRecording) {
@@ -145,6 +162,7 @@ export default function Piano() {
 
   const release = useCallback((note: NoteInfo) => {
     releaseNote(note.note)
+    activeRef.current.delete(note.note)
     setActive((s) => {
       const n = new Set(s)
       n.delete(note.note)
@@ -152,26 +170,21 @@ export default function Piano() {
     })
   }, [])
 
-  // 电脑键盘弹奏（映射固定为 C4 区，随 octave 偏移）
+  // 电脑键盘弹奏（映射固定为 C4 区，随 octave 半音移调，跨八度正确）
   useEffect(() => {
+    const shift = (octave - 4) * 12
     const down = (e: KeyboardEvent) => {
       if (e.repeat) return
       const base = KEYBOARD_MAP[e.key.toLowerCase()]
       if (!base) return
-      const shift = (octave - 4) * 12
-      const m = /^([A-G]#?)(\d)$/.exec(base)
-      if (!m) return
-      const target = `${m[1]}${parseInt(m[2], 10) + shift}`
+      const target = transposeNote(base, shift)
       const info = ALL.find((n) => n.note === target)
       if (info) press(info)
     }
     const up = (e: KeyboardEvent) => {
       const base = KEYBOARD_MAP[e.key.toLowerCase()]
       if (!base) return
-      const shift = (octave - 4) * 12
-      const m = /^([A-G]#?)(\d)$/.exec(base)
-      if (!m) return
-      const target = `${m[1]}${parseInt(m[2], 10) + shift}`
+      const target = transposeNote(base, shift)
       const info = ALL.find((n) => n.note === target)
       if (info) release(info)
     }
@@ -221,12 +234,13 @@ export default function Piano() {
 
   const playback = async () => {
     await ensureAudio()
+    if (!mounted.current) return
     recording.current.forEach((ev) => {
-      setTimeout(() => {
+      later(() => {
         const info = ALL.find((n) => n.note === ev.note)
         if (info) {
           press(info, ev.v)
-          setTimeout(() => release(info), 300)
+          later(() => release(info), 300)
         }
       }, ev.t)
     })

@@ -14,7 +14,7 @@ export interface RouteHistoryState {
 export const ROUTE_LABELS: Record<Route, string> = {
   home: '今日探索',
   lesson: '互动课堂',
-  course: '成长路线',
+  course: '学段总览',
   training: '挑战中心',
   adventure: '闯关地图',
   piano: '钢琴',

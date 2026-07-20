@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { ensureAudio, triggerVoice, VoiceKind, VOICE_INFO, setVolume, startTransportLoop, scheduleVisual } from '../music/audioEngine'
+import { ensureAudio, triggerVoice, VoiceKind, VOICE_INFO, setVolume, getVolume, startTransportLoop, scheduleVisual } from '../music/audioEngine'
 import { useApp } from '../state/appState'
+import { useMounted } from '../hooks/useTimers'
 import {
   loadCreativeWorks,
   removeCreativeWork,
@@ -177,7 +178,7 @@ export default function Mixer() {
   const [playing, setPlaying] = useState(false)
   const [bpm, setBpm] = useState(110)
   const [swing, setSwing] = useState(0) // 0..0.5 摇摆量
-  const [master, setMaster] = useState(-6)
+  const [master, setMaster] = useState(() => getVolume())
   const [curStep, setCurStep] = useState(-1)
   const [projects, setProjects] = useState<SavedProject[]>(() => loadProjects())
   const [shareCode, setShareCode] = useState<string | null>(null) // 导出弹窗内容
@@ -193,6 +194,7 @@ export default function Mixer() {
   const tracksRef = useRef(tracks)
   const swingRef = useRef(swing)
   const stopRef = useRef<(() => void) | null>(null)
+  const mounted = useMounted()
   tracksRef.current = tracks
   swingRef.current = swing
 
@@ -207,6 +209,7 @@ export default function Mixer() {
 
   const togglePlay = async () => {
     await ensureAudio()
+    if (!mounted.current) return
     if (playing) { stop(); return }
     // 跑在 Tone.Transport 上：采样级精确，切后台自动暂停；摇摆用 Transport.swing 表达
     let step = 0
@@ -218,13 +221,22 @@ export default function Mixer() {
         if (audible && t.steps[step]) triggerVoice(t.voice, t.note, t.volume, time)
       }
       const s = step
-      scheduleVisual(() => setCurStep(s), time)
+      scheduleVisual(() => {
+        if (mounted.current) setCurStep(s)
+      }, time)
       step = (step + 1) % STEPS
     }, { swing: swingRef.current * 2 })
     setPlaying(true)
   }
 
-  useEffect(() => () => stopRef.current?.(), [])
+  // 卸载/切页时停止循环并重置 UI 状态
+  useEffect(
+    () => () => {
+      stopRef.current?.()
+      stopRef.current = null
+    },
+    []
+  )
 
   useEffect(() => {
     setCreativeWorks(loadCreativeWorks(currentStudentId).filter((work) => work.source === 'mixer'))

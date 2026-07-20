@@ -57,7 +57,7 @@ export default function GameResult({
 }: Props) {
   const [showReview, setShowReview] = useState(false)
   const scoreRef = useRef<HTMLDivElement>(null)
-  const hasCelebrated = useRef(false)
+  const hasCelebrated = useRef('')
   const wrongRows = review?.rows?.filter((r) => !r.ok) ?? []
   const hasReview = !!review && ((review.rows?.length ?? 0) > 0 || (review.stats?.length ?? 0) > 0)
   const diagnosis = buildDiagnosis(stars, review)
@@ -77,19 +77,22 @@ export default function GameResult({
     const target = score
     const duration = 800
     const start = performance.now()
+    let raf = 0
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
       const eased = 1 - Math.pow(1 - t, 3)
       el.textContent = `${Math.round(target * eased)} 分`
-      if (t < 1) requestAnimationFrame(step)
+      if (t < 1) raf = requestAnimationFrame(step)
     }
-    requestAnimationFrame(step)
+    raf = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(raf)
   }, [score])
 
-  // 庆祝触发
+  // 庆祝触发：以“本局成绩签名”为 key，原地重开一局（score/stars/isNewBest 变化）时会重新庆祝
   useEffect(() => {
-    if (hasCelebrated.current) return
-    hasCelebrated.current = true
+    const signature = `${score}|${stars}|${isNewBest ? 1 : 0}`
+    if (hasCelebrated.current === signature) return
+    hasCelebrated.current = signature
     if (isNewBest) {
       playUI('fanfare')
       celebrate('epic')

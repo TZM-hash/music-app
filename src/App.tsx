@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AppProvider, useApp } from './state/appState'
 import { stopAllAudio } from './music/audioEngine'
+import { stopUISounds } from './music/uiSounds'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
 import Celebration from './components/Celebration'
@@ -54,9 +55,10 @@ function Shell() {
     }
   }, [mode, route, navigate])
 
-  // 切换页面时停掉一切后台音频（伴奏/节拍器/持续音），避免残留
+  // 切换页面时停掉一切后台音频（伴奏/节拍器/持续音/UI 延迟音效），避免残留
   useEffect(() => {
     stopAllAudio()
+    stopUISounds()
   }, [route])
 
   const isInstrument = displayedRoute === 'piano' || displayedRoute === 'drums' || displayedRoute === 'recorder' || displayedRoute === 'xylophone'

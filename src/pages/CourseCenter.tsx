@@ -1,18 +1,11 @@
 import { useMemo, useState } from 'react'
-import { Route, useApp } from '../state/appState'
+import { useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
 import { THEORY_STAGES, TheoryStageId, filterTheoryTopics } from '../music/theoryCatalog'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
 import '../components/charts.css'
 import './course.css'
-
-interface LessonStep {
-  title: string
-  detail: string
-  route?: Route
-  action?: string
-}
 
 interface CourseUnit {
   id: TheoryStageId
@@ -24,7 +17,6 @@ interface CourseUnit {
   color: string
   categories: string[]
   outcomes: string[]
-  steps: LessonStep[]
 }
 
 const COURSES: CourseUnit[] = [
@@ -38,13 +30,6 @@ const COURSES: CourseUnit[] = [
     color: '#2f9e44',
     categories: ['音高与唱名', '节奏与节拍', '民族与音乐场景'],
     outcomes: ['能分辨高低长短强弱', '能跟稳定拍做反应', '能唱出 1-5 的基本唱名'],
-    steps: [
-      { title: '声音唤醒', detail: '从高低、长短、强弱、音色开始，让学生用手势、脚步或表情回应。', route: 'theory', action: '打开探索馆' },
-      { title: '试玩演示', detail: '用键盘和节奏点感受左低右高、一拍半拍、休止也要心里数拍。', route: 'piano', action: '钢琴探索' },
-      { title: '游戏挑战', detail: '进入节奏反应或听感挑战，用短小游戏看看学生听到了哪些差别。', route: 'training', action: '选择挑战' },
-      { title: '旋律寻宝', detail: '从素材库选熟悉儿歌，找出重复音、高低走向和稳定拍。', route: 'library', action: '查看素材' },
-      { title: '观察提示', detail: '关注学生能否稳定拍手、说出高低变化、唱出 do re mi。' },
-    ],
   },
   {
     id: 'primary-middle',
@@ -56,13 +41,6 @@ const COURSES: CourseUnit[] = [
     color: '#f59f00',
     categories: ['音高与唱名', '节奏与节拍', '记谱与读谱', '速度力度与表情', '曲式结构'],
     outcomes: ['能读基本线间关系', '能说明 2/4、3/4、4/4', '能识别 p、f 和反复记号'],
-    steps: [
-      { title: '线索发现', detail: '按小学中段筛选，让学生依次发现音名、线间、高音谱号和常见拍号。', route: 'theory', action: '筛选小学中段' },
-      { title: '谱面观察', detail: '从素材库打开短曲，先找谱号、拍号、小节线，再读旋律方向。', route: 'library', action: '打开素材库' },
-      { title: '读谱闯关', detail: '进入读谱闯关，让学生把谱面位置和唱名数字对应起来。', route: 'game-read', action: '开始读谱' },
-      { title: '表现处理', detail: '用速度、力度、反复记号让同一旋律产生不同表达。', route: 'piano', action: '声音演示' },
-      { title: '观察提示', detail: '看学生能否自己指出谱号、拍号、小节线、强弱和反复位置。' },
-    ],
   },
   {
     id: 'primary-upper',
@@ -74,13 +52,6 @@ const COURSES: CourseUnit[] = [
     color: '#d6336c',
     categories: ['音高与唱名', '节奏与节拍', '记谱与读谱', '调式与音阶', '音程与和声', '曲式结构', '创作与编配'],
     outcomes: ['能分析附点和切分', '能听出大小调基础色彩', '能描述问答乐句和旋律线'],
-    steps: [
-      { title: '声音串联', detail: '把半音全音、附点、切分、五声音阶和问答乐句放进同一段音乐体验里。', route: 'theory', action: '查看高段探索' },
-      { title: '节奏拆解', detail: '先慢速玩附点、切分、三连音，再进入节奏反应挑战。', route: 'game-taiko', action: '节奏挑战' },
-      { title: '音阶听唱', detail: '用钢琴听 C 大调、五声音阶和大小调色彩，再让学生跟唱短句。', route: 'piano', action: '钢琴探索' },
-      { title: '短句创作', detail: '在混音器或钢琴上设计一个四拍动机，尝试重复或变化。', route: 'mixer', action: '创编应用' },
-      { title: '分享提示', detail: '请学生说出节奏哪里最有趣、旋律怎么走、句尾有没有回家的感觉。' },
-    ],
   },
   {
     id: 'junior-basic',
@@ -92,13 +63,6 @@ const COURSES: CourseUnit[] = [
     color: '#0c8599',
     categories: ['记谱与读谱', '调式与音阶', '音程与和声', '速度力度与表情', '曲式结构', '创作与编配', '民族与音乐场景'],
     outcomes: ['能解释调号和临时记号', '能听辨三和弦色彩', '能说出 AB/ABA 结构'],
-    steps: [
-      { title: '谱面寻路', detail: '先看谱号、调号、拍号和速度，再听旋律、节奏与和声怎样互相配合。', route: 'theory', action: '筛选初中基础' },
-      { title: '和声调色', detail: '用键盘听协和/不协和、大小三和弦和转位，感受稳定与张力。', route: 'piano', action: '和声试玩' },
-      { title: '听感挑战', detail: '进入听感挑战，看看音程和和弦是否已经能被耳朵抓住。', route: 'game-ear', action: '听感挑战' },
-      { title: '结构探路', detail: '从素材库找二段体或三段体，标出熟悉、变化和回来的地方。', route: 'library', action: '分析旋律' },
-      { title: '表达提示', detail: '关注学生能否从谱面线索推断演唱演奏时该怎么处理。' },
-    ],
   },
   {
     id: 'junior-advanced',
@@ -110,18 +74,11 @@ const COURSES: CourseUnit[] = [
     color: '#7048e8',
     categories: ['音高与唱名', '节奏与节拍', '调式与音阶', '音程与和声', '速度力度与表情', '曲式结构', '创作与编配', '民族与音乐场景'],
     outcomes: ['能解释终止和张力解决', '能做四小节乐句设计', '能用音乐要素完成听赏表达'],
-    steps: [
-      { title: '进阶探索', detail: '按初中进阶筛选，玩移调、复合节奏、七和弦、终止式和变奏展开。', route: 'theory', action: '查看进阶探索' },
-      { title: '声音实验', detail: '用钢琴听七和弦和终止式的张力，再比较不同调式色彩。', route: 'piano', action: '听和声' },
-      { title: '创作任务', detail: '在混音器里完成四小节乐句：明确动机、节奏、和声支撑和句尾收束。', route: 'mixer', action: '开始创作' },
-      { title: '作品分享', detail: '用速度、力度、音色、节奏、旋律、结构这些线索聊一聊作品。', route: 'library', action: '参考素材' },
-      { title: '表达提示', detail: '重点看学生能否说明为什么这样写、这样听、这样处理。' },
-    ],
   },
 ]
 
 export default function CourseCenter() {
-  const { navigate, openTheory, mode } = useApp()
+  const { openTheory, openLesson, mode } = useApp()
   const student = getCurrentStudent()
   const [activeId, setActiveId] = useState<TheoryStageId>('primary-lower')
   const active = useMemo(
@@ -138,16 +95,18 @@ export default function CourseCenter() {
     color: active.color,
   }))
   const goTheoryForActiveStage = () => openTheory({ stage: active.id })
+  const goLessonForActiveStage = () => openLesson(active.id)
 
   return (
     <div className="course-page">
       <section className="course-head card">
         <div>
-          <span className="course-kicker">音乐成长路线</span>
-          <h2>从小学到初中的互动探索地图</h2>
+          <span className="course-kicker">学段总览</span>
+          <h2>各学段音乐学习目标与进度</h2>
           <p>
-            每个阶段都连接同一套音乐探索馆：先听见变化，再做声音演示，随后进入游戏挑战、素材旋律和创作应用。
-            {mode === 'teacher' ? '适合老师投屏带着玩。' : '适合学生按阶段闯关。'}
+            查看从小学到初中每个学段的目标、产出与发现卡覆盖进度。选定一个学段后，
+            直接进入对应学段的互动课堂开始上课。
+            {mode === 'teacher' ? '适合老师按学段备课与投屏。' : '适合学生按阶段了解自己学到哪里。'}
           </p>
         </div>
         <div className="course-current">
@@ -215,44 +174,29 @@ export default function CourseCenter() {
               <SpectrumBars values={categorySignals} compact />
             </div>
             <div className="course-node-preview">
-              {active.steps.slice(0, 4).map((step, index) => (
-                <span key={step.title}>
+              {active.outcomes.slice(0, 4).map((outcome, index) => (
+                <span key={outcome}>
                   <b>{index + 1}</b>
-                  {step.title}
+                  {outcome}
                 </span>
               ))}
             </div>
           </div>
 
-          <div className="lesson-flow">
-            {active.steps.map((step, index) => (
-              <div key={step.title} className="lesson-step">
-                <div className="step-index">{index + 1}</div>
-                <div>
-                  <h3>{step.title}</h3>
-                  <p>{step.detail}</p>
-                </div>
-                {step.route && (
-                  <button
-                    className="step-action"
-                    onClick={() => (step.route === 'theory' ? goTheoryForActiveStage() : navigate(step.route!))}
-                  >
-                    {step.action ?? '开始'}
-                  </button>
-                )}
-              </div>
-            ))}
+          <div className="course-goal-block">
+            <div>
+              <span className="course-kicker">本学段产出</span>
+              <p>{active.outcomes.join(' · ')}</p>
+            </div>
+            <small className="course-duration">建议时长：{active.duration}</small>
           </div>
 
           <div className="lesson-foot">
-            <button className="big-start" onClick={() => navigate('lesson')}>
-              开始互动课堂
+            <button className="big-start" onClick={goLessonForActiveStage}>
+              进入这个学段的课堂
             </button>
-            <button className="big-start" onClick={goTheoryForActiveStage}>
+            <button className="lesson-secondary" onClick={goTheoryForActiveStage}>
               进入音乐探索馆
-            </button>
-            <button className="lesson-secondary" onClick={() => navigate('training')}>
-              去挑战中心
             </button>
           </div>
         </section>

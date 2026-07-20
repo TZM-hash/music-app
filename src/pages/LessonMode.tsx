@@ -29,9 +29,9 @@ function lessonQuestions(topic: TheoryTopic) {
 }
 
 export default function LessonMode() {
-  const { navigate, openTheory, mode } = useApp()
+  const { navigate, openTheory, mode, lessonStage } = useApp()
   const student = getCurrentStudent()
-  const [stage, setStage] = useState<StageChoice>('primary-lower')
+  const [stage, setStage] = useState<StageChoice>(lessonStage ?? 'primary-lower')
   const [category, setCategory] = useState<CategoryChoice>('全部')
   const [topicId, setTopicId] = useState(THEORY_TOPICS[0].id)
   const [stepIndex, setStepIndex] = useState(0)
@@ -43,6 +43,11 @@ export default function LessonMode() {
     summary: false,
   })
   const [answers, setAnswers] = useState<Record<number, number>>({})
+
+  // 从学段总览跳转过来时（lessonStage），把顶部 tab 落到该学段
+  useEffect(() => {
+    if (lessonStage) setStage(lessonStage)
+  }, [lessonStage])
 
   const filteredTopics = useMemo(
     () =>
@@ -112,19 +117,31 @@ export default function LessonMode() {
         </div>
       </section>
 
+      {/* 学段切换：作为学习主轴的顶部入口，从学段总览跳来时自动落到对应学段 */}
+      <div className="lesson-stage-tabs" role="tablist" aria-label="学段选择">
+        <button
+          className={stage === '全部' ? 'on' : ''}
+          onClick={() => setStage('全部')}
+          role="tab"
+          aria-selected={stage === '全部'}
+        >
+          全部
+        </button>
+        {THEORY_STAGES.map((item) => (
+          <button
+            key={item.id}
+            className={stage === item.id ? 'on' : ''}
+            onClick={() => setStage(item.id)}
+            role="tab"
+            aria-selected={stage === item.id}
+          >
+            {item.label}
+          </button>
+        ))}
+      </div>
+
       <section className="lesson-planner card">
         <div className="lesson-select">
-          <label>
-            学段
-            <select value={stage} onChange={(event) => setStage(event.target.value as StageChoice)}>
-              <option value="全部">全部学段</option>
-              {THEORY_STAGES.map((item) => (
-                <option key={item.id} value={item.id}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </label>
           <label>
             类别
             <select value={category} onChange={(event) => setCategory(event.target.value)}>
@@ -219,7 +236,7 @@ export default function LessonMode() {
               </div>
               <div className="lesson-actions">
                 <button className="primary-action" onClick={goToTopic}>进入探索馆</button>
-                <button onClick={() => navigate('course')}>查看成长路线</button>
+                <button onClick={() => navigate('course')}>查看学段总览</button>
               </div>
             </div>
           )}

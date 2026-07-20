@@ -3,6 +3,7 @@ import { ensureAudio, playNote } from '../../music/audioEngine'
 import { recordResult, loadProgress, BADGE_INFO } from '../../state/progress'
 import { useApp } from '../../state/appState'
 import GameResult, { ReviewData } from '../../components/GameResult'
+import { useMounted, useTimers } from '../../hooks/useTimers'
 import '../../components/gameResult.css'
 import './read.css'
 
@@ -46,11 +47,18 @@ export default function ReadGame() {
   const cfg = LEVELS[level - 1]
   const pool = cfg.clef === 'treble' ? TREBLE_NOTES : BASS_NOTES
 
+  // 统一登记定时器（卸载即清理 + 回调卸载保护），杜绝切页后"幽灵发声"
+  const { later } = useTimers()
+  const mounted = useMounted()
+
   const pick = useCallback(() => {
     const t = pool[Math.floor(Math.random() * pool.length)]
     setTarget(t)
-    ensureAudio().then(() => setTimeout(() => playNote(t, '4n'), 150))
-  }, [pool])
+    ensureAudio().then(() => {
+      if (!mounted.current) return
+      later(() => playNote(t, '4n'), 150)
+    })
+  }, [pool, later, mounted])
 
   const start = useCallback(async () => {
     await ensureAudio()
@@ -76,7 +84,7 @@ export default function ReadGame() {
       ok: isRight,
     })
     playNote(target, '4n')
-    setTimeout(() => {
+    later(() => {
       setFb({}); setLocked(false)
       const next = round + 1
       if (next >= ROUNDS) {
@@ -105,7 +113,7 @@ export default function ReadGame() {
         setRound(next); pick()
       }
     }, 1000)
-  }, [locked, playing, target, score, correct, round, level, pick])
+  }, [locked, playing, target, score, correct, round, level, pick, later])
 
   const best = loadProgress().bestScores[GAME_ID] ?? 0
 

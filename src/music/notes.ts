@@ -93,6 +93,17 @@ export const SCALES: Record<string, { name: string; notes: string[] }> = {
   aminor: { name: 'a小调', notes: ['A', 'B', 'C', 'D', 'E', 'F', 'G'] },
   pentatonic: { name: '五声音阶(宫)', notes: ['C', 'D', 'E', 'G', 'A'] },
 }
+
+/** 音符按半音移调（支持跨八度，如 B4 + 1 = C5）。解析失败原样返回。 */
+export function transposeNote(note: string, semis: number): string {
+  const m = /^([A-G]#?)(-?\d)$/.exec(note)
+  if (!m) return note
+  const idx = NAMES.indexOf(m[1])
+  if (idx < 0) return note
+  const total = idx + semis
+  const oct = parseInt(m[2], 10) + Math.floor(total / 12)
+  return `${NAMES[((total % 12) + 12) % 12]}${oct}`
+}
 export const KEYBOARD_MAP: Record<string, string> = {
   a: 'C4',
   w: 'C#4',

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { ensureAudio, startAccompaniment, stopAccompaniment, isAccompanimentOn } from '../music/audioEngine'
+import { useMounted } from '../hooks/useTimers'
 
 interface Props {
   bpm: number
@@ -12,9 +13,11 @@ export default function AccompanimentToggle({ bpm, externalStop }: Props) {
   const [on, setOn] = useState(false)
   const bpmRef = useRef(bpm)
   bpmRef.current = bpm
+  const mounted = useMounted()
 
   const toggle = useCallback(async () => {
     await ensureAudio()
+    if (!mounted.current) return
     if (isAccompanimentOn()) {
       stopAccompaniment()
       setOn(false)
@@ -22,15 +25,15 @@ export default function AccompanimentToggle({ bpm, externalStop }: Props) {
       startAccompaniment(bpmRef.current)
       setOn(true)
     }
-  }, [])
+  }, [mounted])
 
-  // 外部停止信号
+  // 外部停止信号（依赖 on，避免状态机脱节：信号为 true 期间用户手动重开也能被正确响应）
   useEffect(() => {
     if (externalStop && on) {
       stopAccompaniment()
       setOn(false)
     }
-  }, [externalStop])
+  }, [externalStop, on])
 
   // 卸载时停止
   useEffect(() => () => stopAccompaniment(), [])

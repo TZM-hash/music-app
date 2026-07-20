@@ -15,18 +15,16 @@ interface NavGroup {
 
 const GROUPS: NavGroup[] = [
   {
-    title: '课堂主线',
+    title: '学习主轴',
     items: [
       { route: 'lesson', icon: '📖', label: '互动课堂', hint: '听玩创一节课' },
-      { route: 'theory', icon: '🎵', label: '音乐探索馆', hint: '分级发现与挑战' },
-      { route: 'course', icon: '🗺️', label: '成长路线', hint: '按阶段去探索' },
-      { route: 'training', icon: '🎯', label: '挑战中心', hint: '听辨、读谱、跟唱、节奏' },
-      { route: 'game-echo', icon: '🔁', label: '节奏复制', hint: '听节奏跟着敲' },
     ],
   },
   {
-    title: '创作工具',
+    title: '工具与乐器',
     items: [
+      { route: 'theory', icon: '🎵', label: '音乐探索馆', hint: '分级发现与挑战' },
+      { route: 'training', icon: '🎯', label: '挑战中心', hint: '听辨、读谱、跟唱、节奏' },
       { route: 'piano', icon: '🎹', label: '钢琴', hint: '音高、音阶与和弦' },
       { route: 'drums', icon: '🥁', label: '架子鼓', hint: '节拍互动' },
       { route: 'mixer', icon: '🎛️', label: '混音创作', hint: '编曲节奏格' },
@@ -38,6 +36,7 @@ const GROUPS: NavGroup[] = [
     title: '素材与记录',
     items: [
       { route: 'library', icon: '📚', label: '素材库', hint: '歌曲与故事素材' },
+      { route: 'course', icon: '🗺️', label: '学段总览', hint: '各学段目标与进度' },
       { route: 'adventure', icon: '🏝️', label: '闯关地图', hint: '音乐岛成长路线' },
     ],
   },
@@ -105,7 +104,7 @@ export default function Sidebar() {
 
       <div className="side-foot">
         <span>v0.6</span>
-        <b>入口已按课堂主线收拢</b>
+        <b>互动课堂为学习主轴</b>
       </div>
     </aside>
   )

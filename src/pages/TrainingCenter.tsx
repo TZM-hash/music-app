@@ -83,6 +83,21 @@ const MODULES: TrainingModule[] = [
     level: 'L2-L4',
     color: '#f25050',
   },
+  {
+    id: 'echo',
+    route: 'game-echo',
+    icon: '🔁',
+    title: '节奏记忆',
+    former: '节奏复制',
+    ability: '节奏记忆',
+    stage: '小学低段起',
+    goal: '先听一段节奏再敲出来，训练节奏短时记忆与准确复现。',
+    reason: '适合在节奏反应之外补充"听→记→复现"的闭环。',
+    playHint: '先听完整段再敲，注意长短音的间隔。',
+    metrics: ['节奏复现', '时值准确', '连击'],
+    level: 'L1-L3',
+    color: '#845ef7',
+  },
 ]
 
 export default function TrainingCenter() {

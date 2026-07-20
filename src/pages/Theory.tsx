@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { useApp } from '../state/appState'
 import { ensureAudio, playNote } from '../music/audioEngine'
+import { stopUISounds, uiLater } from '../music/uiSounds'
+import { useMounted } from '../hooks/useTimers'
 import { recordResult } from '../state/progress'
 import {
   DemoKind,
@@ -40,6 +42,11 @@ export default function Theory() {
   const activeControl =
     demoScene.controls.find((control) => control.value === activeDemoValue) ?? demoScene.controls[0]
 
+  // 切换主题时同步选中该主题的默认控件，避免一帧"旧主题+新控件"的错配
+  useEffect(() => {
+    setActiveDemoValue(demoScene.controls[0]?.value ?? '')
+  }, [active.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (filtered.length > 0 && !filtered.some((topic) => topic.id === activeId)) {
       setActiveId(filtered[0].id)
@@ -62,10 +69,6 @@ export default function Theory() {
     setStage(nextStage)
     if (nextTopic) setActiveId(nextTopic.id)
   }, [theoryFocus])
-
-  useEffect(() => {
-    setActiveDemoValue(getDemoScene(active.demo.kind).controls[0].value)
-  }, [active.id, active.demo.kind])
 
   const clearFilters = () => {
     setCategory('全部')
@@ -625,6 +628,7 @@ function MiniQuiz({
 }) {
   const [pickedByQuestion, setPickedByQuestion] = useState<Record<number, number>>({})
   const [quizPage, setQuizPage] = useState(0)
+  const mounted = useMounted()
   const questionsPerPage = 3
   const pageCount = Math.ceil(topic.quiz.length / questionsPerPage)
   const visibleQuestions = topic.quiz.slice(
@@ -663,6 +667,7 @@ function MiniQuiz({
     }
 
     await ensureAudio()
+    if (!mounted.current) return
     playNote(ok ? 'C5' : 'F3', '8n')
 
     if (recordEnabled && Object.keys(nextPicked).length === topic.quiz.length) {
@@ -738,7 +743,9 @@ function MiniQuiz({
 
 async function playDemo(kind: DemoKind, control: DemoControl) {
   await ensureAudio()
-  const later = (ms: number, fn: () => void) => window.setTimeout(fn, ms)
+  // 经 uiLater 登记：连续点击自动清掉上一段的未触发音符（不叠加），切页时统一静音
+  stopUISounds()
+  const later = (ms: number, fn: () => void) => uiLater(fn, ms)
 
   if (kind === 'chord') {
     control.notes.forEach((note) => playNote(note, '2n', control.value === 'dominant7' ? 0.55 : 0.65))

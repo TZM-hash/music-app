@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import { useCallback, useMemo, useState, useRef } from 'react'
 import { buildNotes, whiteNotes, NoteInfo } from '../../music/notes'
 import { ensureAudio, playNote, playChord } from '../../music/audioEngine'
 import { recordResult, loadProgress, BADGE_INFO } from '../../state/progress'
 import { useApp } from '../../state/appState'
 import GameResult from '../../components/GameResult'
+import { useTimers } from '../../hooks/useTimers'
 import '../../components/gameResult.css'
 import './ear.css'
 
@@ -66,19 +67,8 @@ export default function EarGame() {
   const cfg = LEVELS[level - 1]
   const keys = useMemo(() => whiteNotes(buildNotes(4, cfg.octaves)), [cfg.octaves])
 
-  // 统一登记定时器，组件卸载时全部清理，避免切页后残留回调
-  const timers = useRef<Set<number>>(new Set())
-  const later = useCallback((fn: () => void, ms: number) => {
-    const id = window.setTimeout(() => {
-      timers.current.delete(id)
-      fn()
-    }, ms)
-    timers.current.add(id)
-  }, [])
-  useEffect(() => () => {
-    timers.current.forEach((id) => window.clearTimeout(id))
-    timers.current.clear()
-  }, [])
+  // 统一登记定时器，组件卸载时全部清理且回调带卸载保护，避免切页后残留发声/setState
+  const { later } = useTimers()
 
   const chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
   const transpose = (note: string, semis: number): string => {

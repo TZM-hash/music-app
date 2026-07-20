@@ -177,3 +177,8 @@ export function saveCreativeWork(draft: CreativeWorkDraft): CreativeWork {
 export function removeCreativeWork(id: string): void {
   writeAll(readAll().filter((work) => work.id !== id))
 }
+
+/** 删除某个学生的全部作品（删学生时级联清理） */
+export function removeStudentCreativeWorks(studentId: string): void {
+  writeAll(readAll().filter((work) => work.studentId !== studentId))
+}

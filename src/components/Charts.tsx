@@ -170,6 +170,7 @@ export function Radar({
   size?: number
 }) {
   const n = axes.length
+  if (n === 0) return <div className="chart-empty">暂无数据</div>
   const cx = 50
   const cy = 50
   const R = 38

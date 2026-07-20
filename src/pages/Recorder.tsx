@@ -42,6 +42,14 @@ export default function Recorder() {
     setCurrent((c) => (c?.note === f.note ? null : c))
   }, [])
 
+  // 卸载时释放可能仍在保持的持续音（按住按键切页时不残留）
+  useEffect(
+    () => () => {
+      FINGERINGS.forEach((f) => releaseNote(f.note, 'organ'))
+    },
+    []
+  )
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.repeat) return

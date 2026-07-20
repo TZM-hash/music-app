@@ -199,6 +199,18 @@ export function saveReviewBook(book: ReviewBook): void {
   }
 }
 
+/** 删除某个学生的错题本（删学生时级联清理） */
+export function removeStudentReviewBook(studentId: string): void {
+  try {
+    const books = readStorage()
+    if (!(studentId in books)) return
+    delete books[studentId]
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(books))
+  } catch {
+    /* ignore storage failures */
+  }
+}
+
 function readStorage(): Record<string, ReviewBook> {
   try {
     if (typeof localStorage === 'undefined') return {}

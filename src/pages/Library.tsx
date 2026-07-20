@@ -1,7 +1,9 @@
 import { useMemo, useRef, useState } from 'react'
 import { CATEGORY_INFO, SongCategory, Song } from '../music/songs'
 import { allSongs, upsertCustomSong, newSongId, parseJianpu } from '../music/songLibrary'
-import { ensureAudio, playNote } from '../music/audioEngine'
+import { ensureAudio } from '../music/audioEngine'
+import { useMelodyPreview } from '../hooks/useMelodyPreview'
+import { useMounted } from '../hooks/useTimers'
 import { useApp } from '../state/appState'
 import {
   ENCYCLOPEDIA_CATEGORIES,
@@ -19,8 +21,6 @@ type Filter = SongCategory | 'all'
 type LibraryView = 'songs' | 'encyclopedia'
 type EncyclopediaTypeFilter = EncyclopediaType | 'all'
 type StageFilter = TheoryStageId | 'all'
-
-let previewTimer = 0
 
 export default function Library() {
   const { playSongInGame, currentStudentId, mode } = useApp()
@@ -42,6 +42,9 @@ export default function Library() {
   const [selectedSongId, setSelectedSongId] = useState<string | null>(null)
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
   const resultScrollRef = useRef<HTMLDivElement | null>(null)
+  // 统一的旋律试听：重复点击自动停掉上一段，切页自动静音
+  const previewCtl = useMelodyPreview()
+  const mounted = useMounted()
 
   const resetResultScroll = () => {
     window.requestAnimationFrame(() => {
@@ -74,17 +77,18 @@ export default function Library() {
 
   const preview = async (song: Song) => {
     await ensureAudio()
-    window.clearTimeout(previewTimer)
+    if (!mounted.current) return
+    // 重复点击同一首 = 停止；点另一首自动停掉上一段，绝不叠加
+    if (previewing === song.id) {
+      previewCtl.stop()
+      setPreviewing(null)
+      return
+    }
     setPreviewing(song.id)
-    const spb = 60 / song.bpm
-    let t = 0
-    song.melody.forEach((n) => {
-      if (n.note !== 'rest') {
-        window.setTimeout(() => playNote(n.note, '8n'), t * 1000)
-      }
-      t += n.beats * spb
+    previewCtl.play(song.melody, {
+      bpm: song.bpm,
+      onEnd: () => setPreviewing((cur) => (cur === song.id ? null : cur)),
     })
-    previewTimer = window.setTimeout(() => setPreviewing(null), t * 1000)
   }
 
   const counts = useMemo(() => {
@@ -526,6 +530,22 @@ export default function Library() {
                   <StaffView melody={importPreview} mode="jianpu" beatsPerBar={4} />
                 ) : (
                   <span className="imp-empty">还没有可识别的音符</span>
+                )}
+                {impText.trim() && importPreview.length === 0 && (
+                  <span className="imp-empty">⚠️ 未识别到有效音符：请检查格式（提示：八分和增时线不能混用，如 1_- 会被跳过）</span>
+                )}
+                {impText.trim() && importPreview.length > 0 && (
+                  <button
+                    type="button"
+                    className="sa-btn"
+                    onClick={async () => {
+                      await ensureAudio()
+                      if (!mounted.current) return
+                      previewCtl.play(importPreview, { bpm: impBpm })
+                    }}
+                  >
+                    ▶ 试听导入效果
+                  </button>
                 )}
               </div>
             </div>

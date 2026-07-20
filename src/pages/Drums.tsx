@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { ensureAudio, playDrum, DrumKind, startTransportLoop, scheduleVisual } from '../music/audioEngine'
+import { useMounted } from '../hooks/useTimers'
 import './drums.css'
 
 interface Pad {
@@ -72,6 +73,7 @@ export default function Drums() {
   const [curStep, setCurStep] = useState(-1)
   const gridRef = useRef(grid)
   const stopRef = useRef<(() => void) | null>(null)
+  const mounted = useMounted()
   gridRef.current = grid
 
   const strike = useCallback(async (kind: DrumKind) => {
@@ -105,6 +107,7 @@ export default function Drums() {
 
   const togglePlay = async () => {
     await ensureAudio()
+    if (!mounted.current) return
     if (playing) {
       stopRef.current?.()
       stopRef.current = null
@@ -120,14 +123,22 @@ export default function Drums() {
       if (g.snare[step]) playDrum('snare', time)
       if (g.hihat[step]) playDrum('hihat', time)
       const s = step
-      scheduleVisual(() => setCurStep(s), time)
+      scheduleVisual(() => {
+        if (mounted.current) setCurStep(s)
+      }, time)
       step = (step + 1) % STEPS
     })
     setPlaying(true)
   }
 
-  // 卸载时清理
-  useEffect(() => () => stopRef.current?.(), [])
+  // 卸载/切页时停止循环并重置 UI 状态
+  useEffect(
+    () => () => {
+      stopRef.current?.()
+      stopRef.current = null
+    },
+    []
+  )
 
   const hasAnyStep = () => Object.values(gridRef.current).some((steps) => steps.some(Boolean))
   const applyPreset = (i: number) => {

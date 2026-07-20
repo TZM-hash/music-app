@@ -64,6 +64,8 @@ export function loadProgressStore(): ProgressStore {
     for (const [studentId, progress] of Object.entries(scoped)) {
       store[studentId] = normalizeProgress(progress)
     }
+    // 新 store 已存在：把历史遗留的 legacy 数据清掉，防止"清空后复活"
+    removeLegacyKey()
     return store
   }
 
@@ -72,7 +74,17 @@ export function loadProgressStore(): ProgressStore {
 
   const migrated = { [ANONYMOUS_SCOPE]: normalizeProgress(legacy) }
   writeJson(STORE_KEY, migrated)
+  // 迁移完成后删除 legacy key，避免下次又从旧数据复活
+  removeLegacyKey()
   return migrated
+}
+
+function removeLegacyKey(): void {
+  try {
+    localStorage.removeItem(LEGACY_KEY)
+  } catch {
+    /* ignore */
+  }
 }
 
 export function saveProgressStore(store: ProgressStore): boolean {

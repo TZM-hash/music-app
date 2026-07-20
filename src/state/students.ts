@@ -1,4 +1,8 @@
 // 班级与学生数据层：名册、按学生的练习会话、成就
+import { removeStudentProgress } from './progress'
+import { removeStudentReviewBook } from './theoryReview'
+import { removeStudentCreativeWorks } from './creativeWorks'
+
 const ROSTER_KEY = 'music-edu-roster-v1'
 const SESSIONS_KEY = 'music-edu-sessions-v1'
 const CURRENT_KEY = 'music-edu-current-student-v1'
@@ -43,12 +47,15 @@ function write(key: string, value: unknown): void {
 }
 
 // —— 名册 ——
+const ROSTER_INIT_KEY = 'music-edu-roster-initialized-v1'
+
 export function loadRoster(): Student[] {
   const list = read<Student[]>(ROSTER_KEY, [])
-  if (list.length === 0) {
-    // 首次使用，注入几个示例学生方便体验
+  // 仅在「从未初始化过」时注入示例学生；老师删光后名册保持为空，不再复活
+  if (list.length === 0 && !read<boolean>(ROSTER_INIT_KEY, false)) {
     const demo = seedStudents()
     write(ROSTER_KEY, demo)
+    write(ROSTER_INIT_KEY, true)
     return demo
   }
   return list
@@ -102,6 +109,10 @@ export function removeStudent(id: string): void {
   write(ROSTER_KEY, loadRoster().filter((s) => s.id !== id))
   write(SESSIONS_KEY, loadSessions().filter((s) => s.studentId !== id))
   if (getCurrentStudentId() === id) setCurrentStudentId(null)
+  // 级联清理该学生的全部数据：进度、错题本、创意作品，避免残留和备份带回
+  removeStudentProgress(id)
+  removeStudentReviewBook(id)
+  removeStudentCreativeWorks(id)
 }
 
 export function randomAvatar(index: number): string {

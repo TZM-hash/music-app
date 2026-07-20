@@ -7,6 +7,7 @@ import { Song } from '../../music/songs'
 import SongPicker from '../../components/SongPicker'
 import GameResult, { ReviewData } from '../../components/GameResult'
 import { playUI } from '../../music/uiSounds'
+import { useMounted } from '../../hooks/useTimers'
 import '../../components/gameResult.css'
 import './sing.css'
 
@@ -54,6 +55,7 @@ export default function SingGame() {
   const midiRange = useRef({ min: 55, max: 72 })
 
   const cfg = DIFFS[difficulty - 1]
+  const mounted = useMounted()
 
   // 构建目标序列：把旋律折叠到 C4 附近人声舒适音区
   const buildTargets = useCallback((s: Song): TargetNote[] => {
@@ -72,9 +74,11 @@ export default function SingGame() {
       t += dur
     }
     totalMs.current = t + 1500
-    // 计算音域用于纵轴映射
+    // 计算音域用于纵轴映射（空旋律时给默认音域，避免 Infinity 导致 NaN 渲染崩溃）
     const midis = out.map((o) => o.midi)
-    midiRange.current = { min: Math.min(...midis) - 3, max: Math.max(...midis) + 3 }
+    midiRange.current = midis.length > 0
+      ? { min: Math.min(...midis) - 3, max: Math.max(...midis) + 3 }
+      : { min: 55, max: 72 }
     return out
   }, [])
 
@@ -96,13 +100,20 @@ export default function SingGame() {
     playUI('countdown')
     try {
       await ensureAudio()
-      detector.current = new PitchDetector()
-      await detector.current.start()
+      const det = new PitchDetector()
+      await det.start()
+      // 权限/音频启动期间用户可能已切页：立刻停掉麦克风并放弃后续 setState
+      if (!mounted.current) {
+        det.stop()
+        return
+      }
+      detector.current = det
       beginPlay(s)
     } catch (err) {
+      if (!mounted.current) return
       setError('无法访问麦克风。请在浏览器允许麦克风权限后重试（也可能是设备没有麦克风）。')
     }
-  }, [beginPlay])
+  }, [beginPlay, mounted])
 
   const finish = useCallback(() => {
     cancelAnimationFrame(raf.current)
@@ -242,10 +253,12 @@ export default function SingGame() {
       // 清理旧轨迹
       userTrail.current = userTrail.current.filter((p) => (now - p.t) * PPS < W)
 
-      // 实时分数
+      // 实时分数/进度：整数值变化才 setState，避免 60fps 无意义重渲染
       const acc = stat.current.samples === 0 ? 0 : stat.current.inTune / stat.current.samples
-      setScore(Math.round(acc * 1000))
-      setProgress(Math.min(100, (now / totalMs.current) * 100))
+      const nextScore = Math.round(acc * 1000)
+      const nextProgress = Math.min(100, Math.floor((now / totalMs.current) * 100))
+      setScore((prev) => (prev === nextScore ? prev : nextScore))
+      setProgress((prev) => (prev === nextProgress ? prev : nextProgress))
 
       if (now > totalMs.current) { finish(); return }
       raf.current = requestAnimationFrame(loop)
@@ -254,7 +267,14 @@ export default function SingGame() {
     return () => { cancelAnimationFrame(raf.current); window.removeEventListener('resize', resize) }
   }, [phase, cfg, finish])
 
-  useEffect(() => () => { detector.current?.stop() }, [])
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(raf.current)
+      detector.current?.stop()
+      detector.current = null
+    },
+    []
+  )
 
   const best = loadProgress().bestScores[GAME_ID] ?? 0
 

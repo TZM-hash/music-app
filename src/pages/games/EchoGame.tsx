@@ -6,6 +6,7 @@ import GameResult, { ReviewData } from '../../components/GameResult'
 import { hitCombo, resetCombo, getComboColor } from '../../state/combo'
 import { celebrate } from '../../components/Celebration'
 import { playUI } from '../../music/uiSounds'
+import { useMounted, useTimers } from '../../hooks/useTimers'
 import '../../components/gameResult.css'
 import './echo.css'
 
@@ -58,21 +59,17 @@ export default function EchoGame() {
   const cfg = LEVELS[level - 1]
   const startAt = useRef(0)
   const echoHits = useRef<{ note: NType; time: number }[]>([])
+  // 用 ref 跟踪最新分数/最大连击，避免结算定时器闭包读到旧值
+  const scoreRef = useRef(0)
+  const maxCombo = useRef(0)
   const totalRounds = 5
 
-  // 统一登记定时器，组件卸载时全部清理，避免切页后残留回调
-  const timers = useRef<Set<number>>(new Set())
-  const later = useCallback((fn: () => void, ms: number) => {
-    const id = window.setTimeout(() => {
-      timers.current.delete(id)
-      fn()
-    }, ms)
-    timers.current.add(id)
-  }, [])
-  useEffect(() => () => {
-    timers.current.forEach((id) => window.clearTimeout(id))
-    timers.current.clear()
-  }, [])
+  // 统一登记定时器，组件卸载时全部清理（回调内带卸载保护），避免切页后残留
+  const { later } = useTimers()
+  const mounted = useMounted()
+
+  // 离开页面时重置全局连击，避免残留到下一个游戏
+  useEffect(() => () => resetCombo(), [])
 
   const pickPattern = useCallback((): EchoPattern => {
     const patterns = cfg.patterns
@@ -81,6 +78,7 @@ export default function EchoGame() {
 
   const playPattern = useCallback(async (p: EchoPattern) => {
     await ensureAudio()
+    if (!mounted.current) return
     const beatMs = (60 / p.bpm) * 1000
     for (const n of p.notes) {
       later(() => {
@@ -90,7 +88,7 @@ export default function EchoGame() {
         later(() => setPlayingNote(null), 200)
       }, n.beat * beatMs)
     }
-  }, [later])
+  }, [later, mounted])
 
   const startRound = useCallback((p: EchoPattern) => {
     setPattern(p)
@@ -98,6 +96,10 @@ export default function EchoGame() {
     setPhase('listen')
     playPattern(p)
     const beatMs = (60 / p.bpm) * 1000
+    if (p.notes.length === 0) {
+      later(() => setPhase('echo'), 800)
+      return
+    }
     const lastBeat = Math.max(...p.notes.map((n) => n.beat))
     later(() => {
       setPhase('echo')
@@ -107,6 +109,8 @@ export default function EchoGame() {
 
   const start = useCallback(() => {
     setScore(0)
+    scoreRef.current = 0
+    maxCombo.current = 0
     setCombo(0)
     setRound(0)
     setResult(null)
@@ -163,7 +167,10 @@ export default function EchoGame() {
       if (isGood) {
         const c = hitCombo()
         setCombo(c.count)
-        setScore((s) => s + Math.round(acc * 200) + c.count * 10)
+        maxCombo.current = Math.max(maxCombo.current, c.count)
+        // 本轮得分 = 基础分 + 连击加成，同步到 ref 供结算时使用
+        scoreRef.current += Math.round(acc * 200) + c.count * 10
+        setScore(scoreRef.current)
         setJudge({ t: acc >= 0.9 ? '完美！' : '不错！', c: 'great' })
       } else {
         resetCombo()
@@ -175,7 +182,8 @@ export default function EchoGame() {
         setJudge(null)
         const nextRound = round + 1
         if (nextRound >= totalRounds) {
-          const finalScore = score + Math.round(acc * 200)
+          // 用 ref 中的最新分数结算，与 HUD 显示完全一致
+          const finalScore = scoreRef.current
           const stars = acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : acc >= 0.5 ? 1 : 0
           const r = recordResult(GAME_ID, level, stars, finalScore, { accuracy: acc })
           if (stars >= 2) {
@@ -188,7 +196,7 @@ export default function EchoGame() {
             review: {
               stats: [
                 { label: '本轮正确率', value: `${Math.round(acc * 100)}%` },
-                { label: '最大连击', value: `${combo}` },
+                { label: '最大连击', value: `${maxCombo.current}` },
               ],
               rows,
               advice: acc >= 0.9 ? '节奏感很棒！可以挑战更高难度了。' : acc >= 0.7 ? '不错，注意听准每个音符的间隔。' : '先慢速听几遍，跟着拍子轻轻点。',
@@ -202,7 +210,7 @@ export default function EchoGame() {
         }
       }, 1500)
     }
-  }, [phase, pattern, round, score, combo, level, pickPattern, startRound, later])
+  }, [phase, pattern, round, level, pickPattern, startRound, later])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

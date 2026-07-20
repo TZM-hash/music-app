@@ -9,7 +9,7 @@ import './course.css'
 function routeLabel(route: Route): string {
   const labels: Partial<Record<Route, string>> = {
     theory: '探索馆',
-    course: '成长路线',
+    course: '学段总览',
     training: '挑战中心',
     library: '音乐素材',
     mixer: '混音创作',
@@ -70,8 +70,8 @@ export default function AdventureMap() {
           <div className="quest-reward">完成奖励：{activeQuest.reward}</div>
         </div>
         <div className="call-actions">
-          <button className="lesson-secondary" onClick={() => navigate('course')}>
-            成长路线
+          <button className="lesson-secondary" onClick={() => navigate('lesson')}>
+            互动课堂
           </button>
           <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
             {routeLabel(activeQuest.practiceRoute)}

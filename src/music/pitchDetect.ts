@@ -36,7 +36,8 @@ export class PitchDetector {
   private ctx: AudioContext | null = null
   private analyser: AnalyserNode | null = null
   private stream: MediaStream | null = null
-  private buf = new Float32Array(new ArrayBuffer(2048 * 4))
+  private source: MediaStreamAudioSourceNode | null = null
+  private buf = new Float32Array(2048)
   private sampleRate = 44100
 
   /** 请求麦克风并开始。失败抛错，调用方需捕获给出友好提示 */
@@ -47,17 +48,26 @@ export class PitchDetector {
     this.ctx = new AudioContext()
     this.sampleRate = this.ctx.sampleRate
     const source = this.ctx.createMediaStreamSource(this.stream)
+    this.source = source
     this.analyser = this.ctx.createAnalyser()
     this.analyser.fftSize = 2048
-    this.buf = new Float32Array(new ArrayBuffer(this.analyser.fftSize * 4))
+    this.buf = new Float32Array(this.analyser.fftSize)
     source.connect(this.analyser)
   }
 
   stop(): void {
+    // 断开音频图引用，保证 MediaStream / source 能被 GC
+    try {
+      this.source?.disconnect()
+      this.analyser?.disconnect()
+    } catch {
+      /* ignore */
+    }
     this.stream?.getTracks().forEach((t) => t.stop())
-    this.ctx?.close()
+    this.ctx?.close().catch(() => undefined)
     this.ctx = null
     this.analyser = null
+    this.source = null
     this.stream = null
   }
 
@@ -82,18 +92,19 @@ function autoCorrelate(buf: Float32Array, sampleRate: number): { freq: number; c
   rms = Math.sqrt(rms / SIZE)
   if (rms < 0.01) return { freq: -1, clarity: 0 }
 
-  // 去除首尾低于阈值的部分
+  // 找首尾"明显有信号"的区段（阈值随 RMS 自适应），跳过静音头尾；
+  // 之前逻辑反了（找的是第一个*低于*固定阈值的点），会把有效信号截断
+  const thres = Math.max(0.02, rms * 0.6)
   let r1 = 0
   let r2 = SIZE - 1
-  const thres = 0.2
   for (let i = 0; i < SIZE / 2; i++) {
-    if (Math.abs(buf[i]) < thres) {
+    if (Math.abs(buf[i]) >= thres) {
       r1 = i
       break
     }
   }
   for (let i = 1; i < SIZE / 2; i++) {
-    if (Math.abs(buf[SIZE - i]) < thres) {
+    if (Math.abs(buf[SIZE - i]) >= thres) {
       r2 = SIZE - i
       break
     }
@@ -108,6 +119,8 @@ function autoCorrelate(buf: Float32Array, sampleRate: number): { freq: number; c
 
   // 自相关（仅人声 lag 区间）
   const c = new Array(n).fill(0)
+  let c0 = 0
+  for (let i = 0; i < n; i++) c0 += trimmed[i] * trimmed[i]
   for (let lag = minLag; lag <= maxLag; lag++) {
     let sum = 0
     for (let i = 0; i < n - lag; i++) sum += trimmed[i] * trimmed[i + lag]
@@ -137,8 +150,8 @@ function autoCorrelate(buf: Float32Array, sampleRate: number): { freq: number; c
   if (a) T0 = T0 - b / (2 * a)
 
   const freq = sampleRate / T0
-  // clarity 相对 lag=0 的总能量归一（lag=0 未计算，用首样本近似上界）
-  const clarity = Math.min(1, maxval / (c[0] || rms * rms * n || 1))
+  // clarity 用真实零滞后能量（Σx²）归一；之前分母量纲不匹配，轻声演唱被系统性低估
+  const clarity = Math.min(1, Math.max(0, maxval / (c0 || 1)))
   // 过滤人声范围外（约 70Hz–1100Hz）
   if (freq < 70 || freq > 1100) return { freq: -1, clarity }
   return { freq, clarity }

@@ -290,6 +290,31 @@
   gap: 12px;
 }
 
+/* 学段总览新增：本学段产出 + 建议时长 */
+.course-goal-block {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.course-goal-block p {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.course-duration {
+  color: var(--text-soft);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .adventure-head {
   border-left-color: var(--neon-gold);
 }

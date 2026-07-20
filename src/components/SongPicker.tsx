@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { allSongs } from '../music/songLibrary'
 import { CATEGORY_INFO, SongCategory, Song } from '../music/songs'
-import { ensureAudio, playNote } from '../music/audioEngine'
+import { ensureAudio } from '../music/audioEngine'
+import { useMelodyPreview } from '../hooks/useMelodyPreview'
+import { useMounted } from '../hooks/useTimers'
 import './songPicker.css'
 
 interface DifficultyOption {
@@ -29,8 +31,6 @@ interface Props {
   initialSongId?: string | null
 }
 
-let previewTimer = 0
-
 export default function SongPicker({
   title,
   intro,
@@ -49,6 +49,9 @@ export default function SongPicker({
   const [cat, setCat] = useState<SongCategory | 'all'>('all')
   const [selectedId, setSelectedId] = useState<string>(initialSongId ?? songs[0]?.id ?? '')
   const [previewing, setPreviewing] = useState<string | null>(null)
+  // 统一的旋律试听：重复点击自动停掉上一段，切页自动静音
+  const previewCtl = useMelodyPreview()
+  const mounted = useMounted()
 
   const filtered = songs.filter((s) => cat === 'all' || s.category === cat)
   const selected = songs.find((s) => s.id === selectedId) ?? filtered[0] ?? songs[0]
@@ -56,15 +59,19 @@ export default function SongPicker({
   const preview = async (song: Song, e: React.MouseEvent) => {
     e.stopPropagation()
     await ensureAudio()
-    window.clearTimeout(previewTimer)
+    if (!mounted.current) return
+    // 再点同一首 = 停止；点另一首 = 先停上一段再放（绝不叠加）
+    if (previewing === song.id) {
+      previewCtl.stop()
+      setPreviewing(null)
+      return
+    }
     setPreviewing(song.id)
-    const spb = 60 / song.bpm
-    let t = 0
-    song.melody.slice(0, 8).forEach((n) => {
-      if (n.note !== 'rest') window.setTimeout(() => playNote(n.note, '8n'), t * 1000)
-      t += n.beats * spb
+    previewCtl.play(song.melody, {
+      bpm: song.bpm,
+      maxNotes: 8,
+      onEnd: () => setPreviewing((cur) => (cur === song.id ? null : cur)),
     })
-    previewTimer = window.setTimeout(() => setPreviewing(null), t * 1000)
   }
 
   return (
