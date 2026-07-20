@@ -206,6 +206,14 @@ function DetailedExplanation({ topic }: { topic: TheoryTopic }) {
             </Keyword>
           ))}
         </p>
+        {topic.detail && (
+          <div className="explain-detail">
+            <span className="explain-detail-title">📖 深入讲解</span>
+            {topic.detail.split('\n\n').map((para, i) => (
+              <p key={i}>{para}</p>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useRef, useState, type CSSProperties } from 'react'
 
 export interface Burst {
   id: number
@@ -7,7 +7,23 @@ export interface Burst {
   label: string
 }
 
-// 一个覆盖在乐器上方的可视化层：按键时冒出彩色气泡/涟漪并上浮消失
+/** 管理音符气泡列表：push(x, color, label) 新增一个气泡，约 1 秒后自动移除 */
+export function useNoteBursts(lifeMs = 1000) {
+  const [bursts, setBursts] = useState<Burst[]>([])
+  const nextId = useRef(0)
+  const push = useCallback(
+    (x: number, color: string, label: string) => {
+      const id = nextId.current++
+      setBursts((list) => [...list, { id, x, color, label }])
+      window.setTimeout(() => setBursts((list) => list.filter((item) => item.id !== id)), lifeMs)
+    },
+    [lifeMs]
+  )
+  return { bursts, push }
+}
+
+// 一个覆盖在乐器上方的可视化层：按键时冒出彩色气泡，弹出并上浮消失
+// 钢琴、木琴等乐器共用；气泡动画见 piano.css .viz-bubble（noteFloat）
 export default function Visualizer({ bursts }: { bursts: Burst[] }) {
   return (
     <div className="viz-layer">
@@ -19,24 +35,16 @@ export default function Visualizer({ bursts }: { bursts: Burst[] }) {
 }
 
 function BubbleView({ burst }: { burst: Burst }) {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    requestAnimationFrame(() => {
-      el.style.transform = 'translate(-50%, -220px) scale(1.6)'
-      el.style.opacity = '0'
-    })
-  }, [])
   return (
     <div
-      ref={ref}
       className="viz-bubble"
-      style={{
-        left: `${burst.x * 100}%`,
-        background: burst.color,
-        boxShadow: `0 0 30px ${burst.color}`,
-      }}
+      style={
+        {
+          left: `${burst.x * 100}%`,
+          background: burst.color,
+          boxShadow: `0 0 30px ${burst.color}`,
+        } as CSSProperties
+      }
     >
       {burst.label}
     </div>

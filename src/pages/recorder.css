@@ -52,6 +52,7 @@
   background: rgba(0, 122, 255, 0.15);
   border-color: var(--neon-cyan);
   transform: scale(0.96);
+  box-shadow: 0 0 16px rgba(0, 122, 255, 0.35), var(--shadow-soft);
 }
 .recorder-key.on b,
 .recorder-key.on small,

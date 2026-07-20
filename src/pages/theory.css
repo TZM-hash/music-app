@@ -232,6 +232,31 @@
   line-height: 1.8;
 }
 
+.explain-detail {
+  margin-top: 4px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--primary);
+  border-radius: 0 10px 10px 0;
+  background: rgba(0, 122, 255, 0.05);
+}
+.explain-detail-title {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+.explain-detail p {
+  margin: 0 0 8px;
+  color: var(--text-soft);
+  font-size: 0.92rem;
+  line-height: 1.8;
+}
+.explain-detail p:last-child {
+  margin-bottom: 0;
+}
+
 .keyword {
   display: inline-flex;
   align-items: center;

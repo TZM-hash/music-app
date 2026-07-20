@@ -97,6 +97,7 @@
   background: var(--bar-color, #007aff);
   transform: scaleY(0.97) translateY(2px);
   border-color: transparent;
+  box-shadow: 0 0 18px var(--bar-color, #007aff), 0 0 40px color-mix(in srgb, var(--bar-color, #007aff) 45%, transparent);
 }
 
 .xylo-bar-label {

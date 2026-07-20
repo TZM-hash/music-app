@@ -1,10 +1,11 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent, sessionsOf } from '../state/students'
 import { classOverview } from '../state/stats'
 import { ROUTE_LABELS } from '../state/navigationHistory'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
+import CountUp from '../components/CountUp'
 import '../components/charts.css'
 import { allSongs } from '../music/songLibrary'
 import { THEORY_STAGES, THEORY_TOPICS } from '../music/theoryCatalog'
@@ -466,25 +467,4 @@ function DailyCards({ items, onGo }: { items: { id?: string; itemTitle: string; 
       ))}
     </div>
   )
-}
-
-function CountUp({ target, duration = 600 }: { target: number; duration?: number }) {
-  const [value, setValue] = useState(0)
-  const ref = useRef<HTMLSpanElement>(null)
-  const hasAnimated = useRef(false)
-
-  useEffect(() => {
-    if (hasAnimated.current) return
-    hasAnimated.current = true
-    const start = performance.now()
-    const step = (now: number) => {
-      const t = Math.min(1, (now - start) / duration)
-      const eased = 1 - Math.pow(1 - t, 3)
-      setValue(Math.round(target * eased))
-      if (t < 1) requestAnimationFrame(step)
-    }
-    requestAnimationFrame(step)
-  }, [target, duration])
-
-  return <span ref={ref}>{value}</span>
 }

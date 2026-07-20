@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { ensureAudio, playXylophone } from '../music/audioEngine'
 import { useApp } from '../state/appState'
+import Visualizer, { useNoteBursts } from '../components/Visualizer'
 import './xylophone.css'
 
 interface XyloNote {
@@ -35,8 +36,7 @@ const SEMI_NOTES: XyloNote[] = [
 export default function Xylophone() {
   const { showNoteNames } = useApp()
   const [active, setActive] = useState<Set<string>>(new Set())
-  const [bursts, setBursts] = useState<{ id: number; x: number; color: string; label: string }[]>([])
-  const burstId = useRef(0)
+  const { bursts, push: pushBurst } = useNoteBursts()
   const timers = useRef<Record<string, number>>({})
 
   const strike = useCallback(async (n: XyloNote) => {
@@ -54,10 +54,8 @@ export default function Xylophone() {
 
     const barIndex = NOTES.findIndex((x) => x.note === n.note)
     const xPos = barIndex >= 0 ? (barIndex + 0.5) / NOTES.length : 0.5
-    const id = burstId.current++
-    setBursts((b) => [...b, { id, x: xPos, color: n.color, label: showNoteNames ? n.jianpu : '' }])
-    setTimeout(() => setBursts((b) => b.filter((x) => x.id !== id)), 900)
-  }, [showNoteNames])
+    pushBurst(xPos, n.color, showNoteNames ? n.jianpu : '')
+  }, [showNoteNames, pushBurst])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -80,11 +78,7 @@ export default function Xylophone() {
       </div>
 
       <div className="xylo-stage">
-        <div className="viz-layer">
-          {bursts.map((b) => (
-            <XyloBubble key={b.id} burst={b} />
-          ))}
-        </div>
+        <Visualizer bursts={bursts} />
 
         <div className="xylo-semi-row">
           {SEMI_NOTES.map((n) => (
@@ -116,31 +110,6 @@ export default function Xylophone() {
           ))}
         </div>
       </div>
-    </div>
-  )
-}
-
-function XyloBubble({ burst }: { burst: { id: number; x: number; color: string; label: string } }) {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    requestAnimationFrame(() => {
-      el.style.transform = 'translate(-50%, -180px) scale(1.4)'
-      el.style.opacity = '0'
-    })
-  }, [])
-  return (
-    <div
-      ref={ref}
-      className="viz-bubble"
-      style={{
-        left: `${burst.x * 100}%`,
-        background: burst.color,
-        boxShadow: `0 0 30px ${burst.color}`,
-      }}
-    >
-      {burst.label}
     </div>
   )
 }

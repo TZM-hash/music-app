@@ -34,6 +34,8 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  position: relative;
+  overflow: hidden;
   color: var(--text);
   font-weight: 800;
   transition: transform 0.08s var(--ease-spring), box-shadow 0.12s ease, border-color 0.12s;
@@ -57,6 +59,24 @@
 .drum-pad.hit {
   transform: scale(0.9);
   border-color: currentColor;
+}
+
+/* 敲击涟漪：从鼓面中心扩散 */
+.drum-pad::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--pad-color, #007aff), transparent 70%);
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+  pointer-events: none;
+}
+.drum-pad.hit::after {
+  animation: strikeRipple 0.45s ease-out forwards;
 }
 
 /* 循环机 */

@@ -9,6 +9,7 @@ import { studentStat } from '../state/stats'
 import { exportClassroomBackup, importClassroomBackup } from '../state/backup'
 import { removeStudentProgress } from '../state/progress'
 import { useApp } from '../state/appState'
+import Reveal from '../components/Reveal'
 import './class.css'
 
 export default function ClassRoster() {
@@ -114,11 +115,12 @@ export default function ClassRoster() {
       </div>
 
       <div className="roster-grid">
-        {roster.map((s) => {
+        {roster.map((s, index) => {
           const stat = studentStat(s.id)
           const active = currentStudentId === s.id
           return (
-            <div key={s.id} className={`stu-card card ${active ? 'active' : ''}`}>
+            <Reveal key={s.id} index={index}>
+            <div className={`stu-card card ${active ? 'active' : ''}`}>
               <div className="stu-card-head">
                 <span className="stu-card-avatar">{s.avatar}</span>
                 <div className="stu-card-name">
@@ -155,6 +157,7 @@ export default function ClassRoster() {
                 {active ? '✓ 当前学生' : '设为当前'}
               </button>
             </div>
+            </Reveal>
           )
         })}
       </div>

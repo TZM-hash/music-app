@@ -18,7 +18,7 @@ import {
   PATCH_INFO,
 } from '../music/audioEngine'
 import { useApp } from '../state/appState'
-import Visualizer, { Burst } from '../components/Visualizer'
+import Visualizer, { useNoteBursts } from '../components/Visualizer'
 import AccompanimentToggle from '../components/AccompanimentToggle'
 import './piano.css'
 
@@ -74,8 +74,7 @@ export default function Piano() {
   const WHITES = whiteNotes(ALL)
 
   const [active, setActive] = useState<Set<string>>(new Set())
-  const [bursts, setBursts] = useState<Burst[]>([])
-  const burstId = useRef(0)
+  const { bursts, push: pushBurst } = useNoteBursts()
   const recording = useRef<{ note: string; t: number; v: number }[]>([])
   const [isRecording, setIsRecording] = useState(false)
   const [hasRecording, setHasRecording] = useState(false)
@@ -123,17 +122,12 @@ export default function Piano() {
       const vel = Math.min(0.95, Math.max(0.45, relY / rect.height))
       ensureAudio().then(() => attackNote(note.note, vel))
       setActive((s) => new Set(s).add(note.note))
-      const id = burstId.current++
-      setBursts((b) => [
-        ...b,
-        { id, x: noteX(note), color: note.color, label: showNoteNames ? note.jianpu : '' },
-      ])
-      setTimeout(() => setBursts((b) => b.filter((x) => x.id !== id)), 900)
+      pushBurst(noteX(note), note.color, showNoteNames ? note.jianpu : '')
       if (isRecording) {
         recording.current.push({ note: note.note, t: performance.now() - startTime.current, v: vel })
       }
     },
-    [noteX, showNoteNames, isRecording]
+    [noteX, showNoteNames, isRecording, pushBurst]
   )
 
   // 键盘/回放用的固定力度触发
@@ -141,17 +135,12 @@ export default function Piano() {
     (note: NoteInfo, vel = 0.8) => {
       ensureAudio().then(() => attackNote(note.note, vel))
       setActive((s) => new Set(s).add(note.note))
-      const id = burstId.current++
-      setBursts((b) => [
-        ...b,
-        { id, x: noteX(note), color: note.color, label: showNoteNames ? note.jianpu : '' },
-      ])
-      setTimeout(() => setBursts((b) => b.filter((x) => x.id !== id)), 900)
+      pushBurst(noteX(note), note.color, showNoteNames ? note.jianpu : '')
       if (isRecording) {
         recording.current.push({ note: note.note, t: performance.now() - startTime.current, v: vel })
       }
     },
-    [noteX, showNoteNames, isRecording]
+    [noteX, showNoteNames, isRecording, pushBurst]
   )
 
   const release = useCallback((note: NoteInfo) => {

@@ -24,6 +24,8 @@ export interface EncyclopediaEntry {
   stage: TheoryStageId
   category: string
   summary: string
+  /** 多段正文：背景、特点、代表作、听赏指引（扩写阶段注入） */
+  detail?: string
   keyFacts: string[]
   prompt: string
   relatedTheoryIds: string[]

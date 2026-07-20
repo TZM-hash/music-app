@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Route, useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
+import { useFillOnMount } from '../components/useFillOnMount'
 import '../components/charts.css'
 import './training.css'
 
@@ -88,6 +89,7 @@ export default function TrainingCenter() {
   const { navigate } = useApp()
   const progress = loadProgress()
   const [activeId, setActiveId] = useState(MODULES[0].id)
+  const filled = useFillOnMount()
   const moduleSignals = MODULES.map((m) => ({
     label: m.former.slice(0, 2),
     value: progress.bestScores[m.route] ?? 0,
@@ -174,7 +176,7 @@ export default function TrainingCenter() {
                 ))}
               </div>
               <div className="training-score-track" aria-label={`${m.title}最高分 ${best}`}>
-                <span style={{ width: `${Math.min(100, best)}%`, background: m.color }} />
+                <span style={{ width: filled ? `${Math.min(100, best)}%` : '0%', background: m.color }} />
               </div>
               <div className="training-foot">
                 <b>{best > 0 ? `最高分 ${best}` : '尚未挑战'}</b>

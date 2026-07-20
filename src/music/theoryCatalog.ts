@@ -1,5 +1,6 @@
 import { Route } from '../state/appState'
 import { EXPANDED_THEORY_TOPICS, enrichTheoryTopicQuiz } from './theoryExpansion'
+import { THEORY_CONTENT } from './theoryContent'
 
 export type TheoryStageId =
   | 'primary-lower'
@@ -34,6 +35,8 @@ export interface MiniQuestion {
   q: string
   options: string[]
   answer: number
+  /** 作答后的解析说明（手写题库提供，模板题可缺） */
+  explanation?: string
 }
 
 export interface TheoryTopic {
@@ -44,6 +47,8 @@ export interface TheoryTopic {
   title: string
   subtitle: string
   concept: string
+  /** 深入讲解：2-3 段，含谱例/听赏指引/常见误区（由 theoryContent 合并注入） */
+  detail?: string
   keyPoints: string[]
   demo: {
     kind: DemoKind
@@ -1027,10 +1032,20 @@ const BASE_THEORY_TOPICS: TheoryTopic[] = [
   ),
 ]
 
+/** 合并深化内容：有手写 detail/题库则注入，题库不足 4 道时仍用模板补齐 */
+function applyTopicContent(topic: TheoryTopic): TheoryTopic {
+  const content = THEORY_CONTENT[topic.id]
+  if (!content) return enrichTheoryTopicQuiz(topic)
+  const withDetail = { ...topic, detail: content.detail }
+  return content.quiz.length >= 4
+    ? { ...withDetail, quiz: content.quiz }
+    : enrichTheoryTopicQuiz({ ...withDetail, quiz: content.quiz })
+}
+
 export const THEORY_TOPICS: TheoryTopic[] = [
   ...BASE_THEORY_TOPICS,
   ...EXPANDED_THEORY_TOPICS,
-].map(enrichTheoryTopicQuiz)
+].map(applyTopicContent)
 
 export function getStageLabel(stage: TheoryStageId): string {
   return THEORY_STAGES.find((item) => item.id === stage)?.label ?? stage

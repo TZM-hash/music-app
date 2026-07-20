@@ -222,7 +222,8 @@ input[type="range"] {
   font-weight: 950;
   font-size: 0.85rem;
   color: #1c1c1e;
-  transition: transform 0.9s var(--ease-smooth), opacity 0.9s ease;
+  transform: translate(-50%, 0);
+  animation: noteFloat 1s var(--ease-smooth) forwards;
   pointer-events: none;
 }
 
@@ -245,6 +246,8 @@ input[type="range"] {
 /* 白键：grid 列布局 */
 .white-key {
   grid-row: 1;
+  position: relative;
+  overflow: hidden;
   border-radius: 0 0 6px 6px;
   background: linear-gradient(180deg, #ffffff 0%, #f4f4f4 88%, #e2e2e2 100%);
   border: 1px solid #d8d8d8;
@@ -268,6 +271,26 @@ input[type="range"] {
   background: #007aff;
   transform: translateY(2px);
   border-color: transparent;
+}
+
+/* 按下时键面涟漪扩散 */
+.white-key::after,
+.black-key::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(0, 122, 255, 0.4), transparent 70%);
+  transform: translate(-50%, -50%) scale(0.2);
+  opacity: 0;
+  pointer-events: none;
+}
+.white-key.active::after,
+.black-key.active::after {
+  animation: strikeRipple 0.5s ease-out forwards;
 }
 
 .white-key.dim-key {
@@ -311,6 +334,7 @@ input[type="range"] {
   transition: background 0.08s, transform 0.05s;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.4), inset 0 -2px 3px rgba(255, 255, 255, 0.08);
   position: relative;
+  overflow: hidden;
   z-index: 2;
   height: 60%;
   width: 62%;

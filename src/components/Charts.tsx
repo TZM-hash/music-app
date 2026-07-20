@@ -1,4 +1,5 @@
-import type { CSSProperties } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
+import CountUp from './CountUp'
 
 // 纯 SVG / CSS 图表组件：柱状图、折线图、环形图、雷达图与课堂声谱图（无第三方依赖）
 
@@ -110,6 +111,12 @@ export function Donut({
   const r = 40
   const c = 2 * Math.PI * r
   let offset = 0
+  // 挂载时各段从 0 画出，依次延迟
+  const [drawn, setDrawn] = useState(false)
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setDrawn(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
   return (
     <div className="donut-wrap">
       <svg viewBox="0 0 100 100" width={size} height={size} className="donut">
@@ -126,17 +133,18 @@ export function Donut({
               fill="none"
               stroke={s.color}
               strokeWidth={14}
-              strokeDasharray={`${dash} ${c - dash}`}
+              strokeDasharray={`${drawn ? dash : 0} ${c}`}
               strokeDashoffset={-offset}
               transform="rotate(-90 50 50)"
               className="donut-segment"
+              style={{ transitionDelay: `${i * 120}ms` }}
             />
           )
           offset += dash
           return el
         })}
         <text x={50} y={48} textAnchor="middle" className="donut-total">
-          {total}
+          <CountUp target={total} />
         </text>
         <text x={50} y={60} textAnchor="middle" className="donut-cap">
           次
@@ -222,17 +230,36 @@ export function ProgressRing({
   size?: number
 }) {
   const pct = Math.max(0, Math.min(100, Math.round(value * 100)))
-  const style = {
-    '--ring-value': `${pct * 3.6}deg`,
-    '--ring-color': color,
-    width: size,
-    height: size,
-  } as CSSProperties
+  // SVG 圆环：挂载时从 0 扫描到目标值
+  const r = 42
+  const c = 2 * Math.PI * r
+  const [drawn, setDrawn] = useState(false)
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setDrawn(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
+  const offset = drawn ? c * (1 - pct / 100) : c
 
   return (
-    <div className="progress-ring" style={style} aria-label={`${label} ${pct}%`}>
+    <div className="progress-ring" style={{ width: size, height: size }} aria-label={`${label} ${pct}%`}>
+      <svg viewBox="0 0 100 100" className="progress-ring-svg">
+        <circle cx={50} cy={50} r={r} fill="none" stroke="rgba(0,0,0,0.07)" strokeWidth={9} />
+        <circle
+          cx={50}
+          cy={50}
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth={9}
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={offset}
+          transform="rotate(-90 50 50)"
+          className="progress-ring-arc"
+        />
+      </svg>
       <div className="progress-ring-core">
-        <b>{pct}%</b>
+        <b><CountUp target={pct} />%</b>
         <span>{label}</span>
       </div>
       {caption && <small>{caption}</small>}

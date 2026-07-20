@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { classOverview, classStats, studentStat, GAME_META } from '../state/stats'
 import { BarChart, LineChart, Donut, Radar, ProgressRing, SpectrumBars } from '../components/Charts'
+import CountUp from '../components/CountUp'
+import { useFillOnMount } from '../components/useFillOnMount'
 import '../components/charts.css'
 import { useApp } from '../state/appState'
 import './dashboard.css'
@@ -18,6 +20,7 @@ type FocusGame = 'all' | keyof typeof GAME_META
 export default function Dashboard() {
   const { navigate } = useApp()
   const overview = classOverview()
+  const filled = useFillOnMount()
   const ranking = classStats()
   const [selected, setSelected] = useState<string | null>(ranking[0]?.student.id ?? null)
   const [focusGame, setFocusGame] = useState<FocusGame>('all')
@@ -100,28 +103,28 @@ export default function Dashboard() {
         <div className="kpi card">
           <div className="kpi-icon" style={{ background: '#4dabf7' }}>👥</div>
           <div>
-            <div className="kpi-val">{overview.studentCount}</div>
+            <div className="kpi-val"><CountUp target={overview.studentCount} /></div>
             <div className="kpi-label">班级学生</div>
           </div>
         </div>
         <div className="kpi card">
           <div className="kpi-icon" style={{ background: '#e64980' }}>🎮</div>
           <div>
-            <div className="kpi-val">{overview.totalSessions}</div>
+            <div className="kpi-val"><CountUp target={overview.totalSessions} /></div>
             <div className="kpi-label">累计练习</div>
           </div>
         </div>
         <div className="kpi card">
           <div className="kpi-icon" style={{ background: '#f6c945' }}>⭐</div>
           <div>
-            <div className="kpi-val">{overview.totalStars}</div>
+            <div className="kpi-val"><CountUp target={overview.totalStars} /></div>
             <div className="kpi-label">获得星星</div>
           </div>
         </div>
         <div className="kpi card">
           <div className="kpi-icon" style={{ background: '#20c997' }}>🎯</div>
           <div>
-            <div className="kpi-val">{Math.round(overview.avgAccuracy * 100)}%</div>
+            <div className="kpi-val"><CountUp target={Math.round(overview.avgAccuracy * 100)} />%</div>
             <div className="kpi-label">平均正确率</div>
           </div>
         </div>
@@ -243,7 +246,7 @@ export default function Dashboard() {
                           <div
                             className="skill-fill"
                             style={{
-                              width: `${Math.round((detail.skillByGame[g] ?? 0) * 100)}%`,
+                              width: filled ? `${Math.round((detail.skillByGame[g] ?? 0) * 100)}%` : '0%',
                               background: GAME_COLORS[g],
                             }}
                           />

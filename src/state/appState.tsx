@@ -39,6 +39,8 @@ interface AppState {
   returnStack: Route[]
   canGoBack: boolean
   backLabel: string
+  /** 最近一次导航方向：前进（push）或后退（pop），供转场动画使用 */
+  navDirection: 'forward' | 'back'
   showNoteNames: boolean
   currentStudentId: string | null
   /** 供游戏使用的当前选中曲目 id（从曲库跳转时带入） */
@@ -91,6 +93,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [mode, setModeState] = useState<AppMode>(initial.mode)
   const [navigation, setNavigation] = useState<RouteHistoryState>({ route: 'home', stack: [] })
   const { route, stack: returnStack } = navigation
+  const [navDirection, setNavDirection] = useState<'forward' | 'back'>('forward')
   const [showNoteNames, setShowNoteNames] = useState(initial.showNoteNames)
   const [currentStudentId, setCurrentId] = useState<string | null>(() => getCurrentStudentId())
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
@@ -105,15 +108,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setMode = useCallback((m: AppMode) => setModeState(m), [])
   const navigate = useCallback((r: Route, options?: RouteNavigationOptions) => {
     setNavigation((current) => applyRouteNavigation(current, r, options))
+    setNavDirection('forward')
     setSidebarOpen(false) // 导航后自动收起（窄屏）
   }, [])
   const openTheory = useCallback((focus?: TheoryFocus, options?: RouteNavigationOptions) => {
     setTheoryFocus(focus ? createTheoryFocus(focus) : null)
     setNavigation((current) => applyRouteNavigation(current, 'theory', options))
+    setNavDirection('forward')
     setSidebarOpen(false)
   }, [])
   const goBack = useCallback(() => {
     setNavigation((current) => popRouteHistory(current))
+    setNavDirection('back')
     setSidebarOpen(false)
   }, [])
   const toggleNoteNames = useCallback(() => setShowNoteNames((v) => !v), [])
@@ -127,6 +133,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const playSongInGame = useCallback((songId: string, r: Route) => {
     setActiveSongId(songId)
     setNavigation((current) => applyRouteNavigation(current, r))
+    setNavDirection('forward')
     setSidebarOpen(false)
   }, [])
 
@@ -148,6 +155,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         returnStack,
         canGoBack: returnStack.length > 0,
         backLabel: backButtonLabel(returnStack),
+        navDirection,
         showNoteNames,
         currentStudentId,
         activeSongId,

@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppProvider, useApp } from './state/appState'
 import { stopAllAudio } from './music/audioEngine'
 import TopBar from './components/TopBar'
@@ -27,7 +27,26 @@ import Dashboard from './pages/Dashboard'
 import TeamBattle from './pages/TeamBattle'
 
 function Shell() {
-  const { mode, route, sidebarOpen, setSidebarOpen, navigate } = useApp()
+  const { mode, route, sidebarOpen, setSidebarOpen, navigate, navDirection } = useApp()
+
+  // 路由切换时先播放旧页面退出动画，再挂载新页面
+  const [displayedRoute, setDisplayedRoute] = useState(route)
+  const [leaving, setLeaving] = useState(false)
+  const leaveTimer = useRef<number | null>(null)
+
+  useEffect(() => {
+    if (route === displayedRoute) return
+    if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current)
+    setLeaving(true)
+    leaveTimer.current = window.setTimeout(() => {
+      setDisplayedRoute(route)
+      setLeaving(false)
+      leaveTimer.current = null
+    }, 150)
+    return () => {
+      if (leaveTimer.current !== null) window.clearTimeout(leaveTimer.current)
+    }
+  }, [route, displayedRoute])
 
   useEffect(() => {
     if (mode !== 'teacher' && (route === 'class' || route === 'dashboard')) {
@@ -40,8 +59,8 @@ function Shell() {
     stopAllAudio()
   }, [route])
 
-  const isInstrument = route === 'piano' || route === 'drums' || route === 'recorder' || route === 'xylophone'
-  const isGame = route.startsWith('game-')
+  const isInstrument = displayedRoute === 'piano' || displayedRoute === 'drums' || displayedRoute === 'recorder' || displayedRoute === 'xylophone'
+  const isGame = displayedRoute.startsWith('game-')
 
   return (
     <div className={`app ${sidebarOpen ? 'sidebar-open' : ''}`}>
@@ -49,28 +68,30 @@ function Shell() {
       {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
       <div className="main-col">
         <TopBar />
-        <div className={`content route-${route} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''}`}>
+        <div
+          className={`content route-${displayedRoute} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''} ${leaving ? 'leaving' : ''} ${navDirection === 'back' ? 'nav-back' : 'nav-forward'}`}
+        >
           <ErrorBoundary onReset={() => navigate('home', { history: 'reset' })}>
-            {route === 'home' && <Home />}
-            {route === 'lesson' && <LessonMode />}
-            {route === 'piano' && <Piano />}
-            {route === 'drums' && <Drums />}
-            {route === 'mixer' && <Mixer />}
-            {route === 'recorder' && <Recorder />}
-            {route === 'xylophone' && <Xylophone />}
-            {route === 'game-ear' && <EarGame />}
-            {route === 'game-echo' && <EchoGame />}
-            {route === 'game-taiko' && <TaikoGame />}
-            {route === 'game-sing' && <SingGame />}
-            {route === 'game-read' && <ReadGame />}
-            {route === 'library' && <Library />}
-            {route === 'theory' && <Theory />}
-            {route === 'course' && <CourseCenter />}
-            {route === 'training' && <TrainingCenter />}
-            {route === 'adventure' && <AdventureMap />}
-            {mode === 'teacher' && route === 'class' && <ClassRoster />}
-            {mode === 'teacher' && route === 'dashboard' && <Dashboard />}
-            {mode === 'teacher' && route === 'battle' && <TeamBattle />}
+            {displayedRoute === 'home' && <Home />}
+            {displayedRoute === 'lesson' && <LessonMode />}
+            {displayedRoute === 'piano' && <Piano />}
+            {displayedRoute === 'drums' && <Drums />}
+            {displayedRoute === 'mixer' && <Mixer />}
+            {displayedRoute === 'recorder' && <Recorder />}
+            {displayedRoute === 'xylophone' && <Xylophone />}
+            {displayedRoute === 'game-ear' && <EarGame />}
+            {displayedRoute === 'game-echo' && <EchoGame />}
+            {displayedRoute === 'game-taiko' && <TaikoGame />}
+            {displayedRoute === 'game-sing' && <SingGame />}
+            {displayedRoute === 'game-read' && <ReadGame />}
+            {displayedRoute === 'library' && <Library />}
+            {displayedRoute === 'theory' && <Theory />}
+            {displayedRoute === 'course' && <CourseCenter />}
+            {displayedRoute === 'training' && <TrainingCenter />}
+            {displayedRoute === 'adventure' && <AdventureMap />}
+            {mode === 'teacher' && displayedRoute === 'class' && <ClassRoster />}
+            {mode === 'teacher' && displayedRoute === 'dashboard' && <Dashboard />}
+            {mode === 'teacher' && displayedRoute === 'battle' && <TeamBattle />}
           </ErrorBoundary>
         </div>
       </div>

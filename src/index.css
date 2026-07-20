@@ -586,6 +586,34 @@ button:focus-visible {
   to { opacity: 1; transform: translateX(0); }
 }
 
+/* 页面退出动画：旧页面淡出并轻微位移，方向感知（前进向左、后退向右） */
+.content.leaving {
+  animation: contentLeave 0.15s ease-in forwards;
+}
+.content.nav-back.leaving {
+  animation-name: contentLeaveBack;
+}
+@keyframes contentLeave {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(-14px); }
+}
+@keyframes contentLeaveBack {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(14px); }
+}
+
+/* 滚动渐显：列表项进入视口时上浮显现（见 useReveal hook） */
+.reveal-item {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.reveal-item.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* 通用面板/卡片 */
 .card {
   background: var(--bg-card);
@@ -678,6 +706,13 @@ button:focus-visible {
   display: inline-flex;
   gap: 2px;
   font-size: 1.1rem;
+}
+.stars .star-dim {
+  opacity: 0.25;
+}
+/* 点亮的星星逐颗弹出（starPop 定义见「iOS 强调色与反馈动效」段） */
+.stars .star-lit {
+  animation: starPop 0.5s var(--ease-spring) backwards;
 }
 
 /* 伴奏开关 */
@@ -2349,7 +2384,7 @@ button:focus-visible {
   }
 }
 
-/* 每日挑战翻牌 */
+/* 每日挑战翻牌（真 3D 翻转） */
 .daily-cards {
   display: flex;
   gap: 10px;
@@ -2357,30 +2392,44 @@ button:focus-visible {
 }
 
 .daily-card {
+  position: relative;
   width: 120px;
   height: 100px;
   border-radius: var(--radius);
-  border: 2px solid var(--line);
-  background: rgba(0, 0, 0, 0.03);
   cursor: pointer;
   perspective: 600px;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transform-style: preserve-3d;
+  transition: transform 0.5s var(--ease-spring);
 }
-
-.daily-card:hover {
-  border-color: var(--neon-cyan);
+.daily-card.flipped {
+  transform: rotateY(180deg);
 }
 
 .daily-card-back,
 .daily-card-front {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  width: 100%;
-  height: 100%;
   padding: 8px;
+  border-radius: var(--radius);
+  border: 2px solid var(--line);
+  background: rgba(0, 0, 0, 0.03);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.daily-card-front {
+  transform: rotateY(180deg);
+  border-color: rgba(0, 122, 255, 0.35);
+  background: rgba(0, 122, 255, 0.05);
+}
+
+.daily-card:hover .daily-card-back {
+  border-color: var(--neon-cyan);
 }
 
 .daily-card-icon {
@@ -8361,11 +8410,17 @@ body {
   100% { transform: scale(1) translateY(0); opacity: 1; }
 }
 
-/* 音符气泡上浮 */
+/* 音符气泡上浮（钢琴/木琴共用，见 piano.css .viz-bubble） */
 @keyframes noteFloat {
-  0% { transform: translateY(0) scale(0.8); opacity: 0; }
-  20% { opacity: 1; }
-  100% { transform: translateY(-80px) scale(1.1); opacity: 0; }
+  0% { transform: translate(-50%, 0) scale(0.5); opacity: 0; }
+  18% { transform: translate(-50%, -26px) scale(1.15); opacity: 1; }
+  100% { transform: translate(-50%, -150px) scale(1); opacity: 0; }
+}
+
+/* 敲击涟漪：从键面/鼓面中心扩散的圆形光晕 */
+@keyframes strikeRipple {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.55; }
+  100% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
 }
 
 /* 连击火焰 */

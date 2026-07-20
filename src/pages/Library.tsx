@@ -388,6 +388,13 @@ export default function Library() {
                     <b>{selectedEntry.subtitle}</b>
                     <p>{selectedEntry.summary}</p>
                   </div>
+                  {selectedEntry.detail && (
+                    <div className="encyclopedia-detail-body">
+                      {selectedEntry.detail.split('\n\n').map((para, i) => (
+                        <p key={i}>{para}</p>
+                      ))}
+                    </div>
+                  )}
                   <div className="fact-list">
                     {selectedEntry.keyFacts.map((fact) => (
                       <span key={fact}>{fact}</span>

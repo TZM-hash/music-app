@@ -26,6 +26,10 @@ export interface Song {
   desc?: string
   /** 伴奏和弦进行（每项为一个小节的和弦根音+性质），可选。缺省时引擎自动按旋律推断 */
   chords?: { root: string; quality: 'maj' | 'min' }[]
+  /** 歌词（传统/民歌曲目；版权曲目省略），按乐句用 \n 分行 */
+  lyrics?: string
+  /** 关联的乐理主题 id，可在乐理页与曲库间互相跳转 */
+  relatedTopics?: string[]
 }
 
 export const CATEGORY_INFO: Record<SongCategory, { name: string; icon: string; color: string }> = {
