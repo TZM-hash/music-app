@@ -317,6 +317,20 @@
   font-size: 0.96rem;
 }
 
+.training-stage-signal-note,
+.training-stage-empty {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.training-stage-empty {
+  color: var(--text-soft);
+  opacity: 0.9;
+}
+
 .training-stage-metrics {
   display: flex;
   flex-wrap: wrap;

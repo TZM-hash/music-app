@@ -118,11 +118,6 @@ export default function TrainingCenter() {
       .sort((a, b) => a.best - b.best)[0]?.module ?? MODULES[0]
   const totalBest = MODULES.reduce((sum, m) => sum + (progress.bestScores[m.route] ?? 0), 0)
   const averageBest = Math.round(totalBest / MODULES.length)
-  const activeMetrics = active.metrics.map((metric, index) => ({
-    label: metric.slice(0, 2),
-    value: activeBest > 0 ? Math.max(12, activeBest - index * 14) : 16 + (active.metrics.length - index) * 6,
-    color: active.color,
-  }))
 
   return (
     <div className="training-page">
@@ -131,7 +126,7 @@ export default function TrainingCenter() {
           <span className="training-kicker">统一挑战入口</span>
           <h2>挑战中心</h2>
           <p>
-            这里统一管理听感、读谱、跟唱和节奏四类小游戏。
+            这里统一管理听感、读谱、跟唱、节奏反应和节奏记忆五类小游戏。
             先看推荐和能力目标，再进入具体挑战，避免入口散落到不同页面里。
           </p>
         </div>
@@ -236,7 +231,13 @@ export default function TrainingCenter() {
             />
             <div className="training-stage-spectrum">
               <b>挑战能力信号</b>
-              <SpectrumBars values={activeMetrics} compact />
+              {activeBest > 0 ? (
+                <p className="training-stage-signal-note">
+                  本机最高分 {activeBest}（子项能力需分项练习后才展示）
+                </p>
+              ) : (
+                <p className="training-stage-empty">还没有挑战记录，进入后会留下最高分。</p>
+              )}
             </div>
           </div>
 
