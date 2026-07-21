@@ -9,94 +9,171 @@ interface BarDatum {
   color?: string
 }
 
+function shortLabel(label: string, max = 4) {
+  const text = label.trim()
+  if (!text) return '—'
+  return text.length > max ? `${text.slice(0, max)}…` : text
+}
+
 export function BarChart({ data, height = 200 }: { data: BarDatum[]; height?: number }) {
+  if (data.length === 0) return <div className="chart-empty">暂无数据</div>
   const max = Math.max(1, ...data.map((d) => d.value))
-  const barW = 100 / (data.length * 1.6)
-  const gap = barW * 0.6
-  const chartH = height / 2
+  const W = 420
+  const H = 220
+  const padL = 12
+  const padR = 12
+  const padT = 28
+  const padB = 42
+  const plotW = W - padL - padR
+  const plotH = H - padT - padB
+  const slot = plotW / data.length
+  const barW = Math.min(48, Math.max(18, slot * 0.52))
   return (
-    <svg viewBox={`0 0 100 ${chartH}`} className="chart" preserveAspectRatio="none">
-      {[0.25, 0.5, 0.75].map((tick) => (
-        <line
-          key={tick}
-          x1={0}
-          x2={100}
-          y1={chartH - 8 - tick * (chartH - 14)}
-          y2={chartH - 8 - tick * (chartH - 14)}
-          className="chart-grid"
-        />
-      ))}
-      {data.map((d, i) => {
-        const h = (d.value / max) * (chartH - 14)
-        const x = i * (barW + gap) + gap
-        const y = chartH - h - 8
-        return (
-          <g key={i}>
-            <rect
-              className="chart-bar"
-              x={x}
-              y={y}
-              width={barW}
-              height={h}
-              rx={1.2}
-              fill={d.color ?? 'var(--primary)'}
-              style={{ animationDelay: `${i * 55}ms` }}
+    <div className="chart-shell" style={{ minHeight: height }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="chart"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="柱状图"
+      >
+        {[0.25, 0.5, 0.75, 1].map((tick) => {
+          const y = padT + plotH * (1 - tick)
+          return (
+            <line
+              key={tick}
+              x1={padL}
+              x2={W - padR}
+              y1={y}
+              y2={y}
+              className="chart-grid"
             />
-            <text x={x + barW / 2} y={chartH - 1} className="chart-x" textAnchor="middle">
-              {d.label}
-            </text>
-            <text x={x + barW / 2} y={y - 1.5} className="chart-val" textAnchor="middle">
-              {d.value}
-            </text>
-          </g>
-        )
-      })}
-    </svg>
+          )
+        })}
+        {data.map((d, i) => {
+          const h = d.value > 0 ? Math.max(8, (d.value / max) * plotH) : 0
+          const x = padL + i * slot + (slot - barW) / 2
+          const y = padT + plotH - h
+          const label = shortLabel(d.label, 4)
+          return (
+            <g key={`${d.label}-${i}`}>
+              <rect
+                className="chart-bar"
+                x={x}
+                y={y}
+                width={barW}
+                height={h}
+                rx={7}
+                fill={d.color ?? 'var(--primary)'}
+                style={{ animationDelay: `${i * 55}ms` }}
+              />
+              {d.value > 0 && (
+                <text
+                  x={x + barW / 2}
+                  y={Math.max(14, y - 8)}
+                  className="chart-val"
+                  textAnchor="middle"
+                >
+                  {d.value}
+                </text>
+              )}
+              <text
+                x={x + barW / 2}
+                y={H - 14}
+                className="chart-x"
+                textAnchor="middle"
+              >
+                {label}
+              </text>
+            </g>
+          )
+        })}
+      </svg>
+    </div>
   )
 }
 
 export function LineChart({
   points,
-  height = 160,
+  height = 180,
 }: {
   points: { label: string; value: number }[]
   height?: number
 }) {
   if (points.length === 0) return <div className="chart-empty">暂无数据</div>
-  const max = Math.max(1, ...points.map((p) => p.value))
-  const stepX = points.length > 1 ? 100 / (points.length - 1) : 100
-  const H = height / 2
+  const values = points.map((p) => p.value)
+  const max = Math.max(1, ...values)
+  const min = Math.min(...values)
+  // 给纵轴留出空间，避免全高填满变成“一整块蓝”
+  const range = Math.max(1, max - Math.min(0, min))
+  const top = max + range * 0.18
+  const bottom = Math.max(0, min - range * 0.08)
+  const span = Math.max(1, top - bottom)
+
+  const W = 420
+  const H = 220
+  const padL = 16
+  const padR = 16
+  const padT = 24
+  const padB = 42
+  const plotW = W - padL - padR
+  const plotH = H - padT - padB
   const coords = points.map((p, i) => ({
-    x: i * stepX,
-    y: H - 10 - (p.value / max) * (H - 18),
-    label: p.label,
+    x: padL + (points.length > 1 ? (i / (points.length - 1)) * plotW : plotW / 2),
+    y: padT + plotH - ((p.value - bottom) / span) * plotH,
+    label: shortLabel(p.label.replace(/^#/, '段'), 4),
     value: p.value,
   }))
-  const path = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x},${c.y}`).join(' ')
-  const area = `${path} L100,${H - 6} L0,${H - 6} Z`
+  const path = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(' ')
+  const baseline = padT + plotH
+  const area = `${path} L${coords[coords.length - 1].x.toFixed(1)},${baseline} L${coords[0].x.toFixed(1)},${baseline} Z`
   return (
-    <svg viewBox={`0 0 100 ${H}`} className="chart" preserveAspectRatio="none">
-      {[0.25, 0.5, 0.75].map((tick) => (
-        <line
-          key={tick}
-          x1={0}
-          x2={100}
-          y1={H - 10 - tick * (H - 18)}
-          y2={H - 10 - tick * (H - 18)}
-          className="chart-grid"
+    <div className="chart-shell" style={{ minHeight: height }}>
+      <svg
+        viewBox={`0 0 ${W} ${H}`}
+        className="chart"
+        preserveAspectRatio="xMidYMid meet"
+        role="img"
+        aria-label="折线图"
+      >
+        {[0.25, 0.5, 0.75, 1].map((tick) => {
+          const y = padT + plotH * (1 - tick)
+          return (
+            <line
+              key={tick}
+              x1={padL}
+              x2={W - padR}
+              y1={y}
+              y2={y}
+              className="chart-grid"
+            />
+          )
+        })}
+        <path d={area} className="chart-area" />
+        <path
+          d={path}
+          fill="none"
+          stroke="var(--primary)"
+          strokeWidth={2.8}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          className="chart-line"
         />
-      ))}
-      <path d={area} fill="var(--primary)" opacity={0.15} className="chart-area" />
-      <path d={path} fill="none" stroke="var(--primary)" strokeWidth={1.2} className="chart-line" />
-      {coords.map((c, i) => (
-        <g key={i}>
-          <circle cx={c.x} cy={c.y} r={1.6} fill="var(--primary)" className="chart-dot" />
-          <text x={c.x} y={H - 1} className="chart-x" textAnchor="middle">
-            {c.label}
-          </text>
-        </g>
-      ))}
-    </svg>
+        {coords.map((c, i) => (
+          <g key={`${c.label}-${i}`}>
+            <circle cx={c.x} cy={c.y} r={4} fill="#fff" stroke="var(--primary)" strokeWidth={2.2} className="chart-dot" />
+            {c.value > 0 && (
+              <text x={c.x} y={Math.max(14, c.y - 10)} className="chart-val" textAnchor="middle">
+                {c.value}
+              </text>
+            )}
+            <text x={c.x} y={H - 14} className="chart-x" textAnchor="middle">
+              {c.label}
+            </text>
+          </g>
+        ))}
+      </svg>
+    </div>
   )
 }
 

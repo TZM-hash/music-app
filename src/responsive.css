@@ -886,13 +886,24 @@
     margin-bottom: 10px !important;
   }
 
+  .content.route-dashboard .dashboard.has-data .dash-panel .chart-shell,
   .content.route-dashboard .dashboard.has-data .dash-panel .chart,
   .content.route-dashboard .dashboard.has-data .dash-panel .donut-wrap {
     flex: 1 1 auto !important;
     width: 100% !important;
     min-height: 200px !important;
-    height: 200px !important;
+    height: auto !important;
     max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel .chart {
+    min-height: 200px !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel .chart-x,
+  .content.route-dashboard .dashboard.has-data .dash-panel .chart-val {
+    font-size: 13px !important;
   }
 
   .content.route-dashboard .dashboard.has-data .dash-panel .donut-wrap {

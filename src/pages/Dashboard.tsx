@@ -54,15 +54,33 @@ export default function Dashboard() {
     GAME_IDS
       .map((g) => ({ id: g, count: overview.sessionsByGame[g] ?? 0 }))
       .sort((a, b) => b.count - a.count)[0]?.id ?? GAME_IDS[0]
+
   const signalValues = GAME_IDS.map((g) => ({
     label: GAME_META[g].skill,
     value: overview.sessionsByGame[g] ?? 0,
     color: GAME_COLORS[g],
   }))
+
+  const trendPoints =
+    overview.trend.length > 0
+      ? overview.trend.map((item, index) => ({
+          label: `第${index + 1}段`,
+          value: item.count,
+        }))
+      : [{ label: '暂无', value: 0 }]
+
   const trendBars =
     overview.trend.length > 0
-      ? overview.trend.map((item) => ({ label: item.label, value: item.count, color: 'var(--primary-2)' }))
-      : GAME_IDS.map((g) => ({ label: GAME_META[g].skill, value: overview.sessionsByGame[g] ?? 0, color: GAME_COLORS[g] }))
+      ? overview.trend.map((item, index) => ({
+          label: `第${index + 1}段`,
+          value: item.count,
+          color: 'var(--primary-2)',
+        }))
+      : GAME_IDS.map((g) => ({
+          label: GAME_META[g].skill,
+          value: overview.sessionsByGame[g] ?? 0,
+          color: GAME_COLORS[g],
+        }))
 
   return (
     <div className={`dashboard ${hasData ? 'has-data' : 'no-data'}`}>
@@ -197,10 +215,7 @@ export default function Dashboard() {
             </div>
             <div className="dash-panel card">
               <h3>📈 练习趋势</h3>
-              <LineChart
-                points={overview.trend.map((t) => ({ label: t.label, value: t.count }))}
-                height={180}
-              />
+              <LineChart points={trendPoints} height={200} />
             </div>
           </div>
 
