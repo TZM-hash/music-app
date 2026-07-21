@@ -866,6 +866,7 @@
     height: auto !important;
     max-height: none !important;
     overflow: visible !important;
+    width: 100% !important;
   }
 
   .content.route-dashboard .dashboard.has-data .dash-panel {
@@ -908,16 +909,30 @@
     gap: 12px !important;
     min-height: 0 !important;
     height: auto !important;
+    align-items: stretch !important;
+    width: 100% !important;
   }
 
   .content.route-dashboard .dashboard.has-data .dash-detail,
   .content.route-dashboard .dashboard.has-data .dash-table {
     grid-column: auto !important;
     grid-row: auto !important;
-    min-height: 0 !important;
-    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 100% !important;
+    height: 100% !important;
     max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-table-scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
     overflow: auto !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-detail .detail-body {
+    flex: 1 1 auto !important;
   }
 
   .content.route-dashboard .dashboard.has-data .dash-signal-board,
