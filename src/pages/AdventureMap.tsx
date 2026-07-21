@@ -4,6 +4,7 @@ import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
 import { getTheoryTopic } from '../music/theoryCatalog'
 import { THEORY_QUESTS } from '../music/theoryQuests'
+import { focusFromTheoryTopic } from '../state/reviewDeepLink'
 import './course.css'
 
 function routeLabel(route: Route): string {
@@ -22,7 +23,7 @@ function routeLabel(route: Route): string {
 }
 
 export default function AdventureMap() {
-  const { navigate } = useApp()
+  const { navigate, openTheory } = useApp()
   const progress = loadProgress()
   const student = getCurrentStudent()
   const [activeQuestId, setActiveQuestId] = useState(THEORY_QUESTS[0].id)
@@ -44,6 +45,21 @@ export default function AdventureMap() {
     .map((id) => getTheoryTopic(id))
     .filter(Boolean)
     .slice(0, 6)
+
+  const openExploreTheory = () => {
+    const first = previewTopics[0]
+    if (first) {
+      openTheory(
+        focusFromTheoryTopic({
+          id: first.id,
+          category: first.category,
+          stage: first.stage,
+        })
+      )
+    } else {
+      openTheory()
+    }
+  }
 
   return (
     <div className="adventure-page quest-page">
@@ -76,7 +92,7 @@ export default function AdventureMap() {
           <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
             {routeLabel(activeQuest.practiceRoute)}
           </button>
-          <button className="big-start" onClick={() => navigate('theory')}>
+          <button className="big-start" onClick={openExploreTheory}>
             探索发现
           </button>
         </div>
@@ -113,7 +129,19 @@ export default function AdventureMap() {
         </div>
         <div className="quest-topic-grid">
           {previewTopics.map((topic) => (
-            <button key={topic!.id} onClick={() => navigate('theory')} title={topic!.subtitle}>
+            <button
+              key={topic!.id}
+              onClick={() =>
+                openTheory(
+                  focusFromTheoryTopic({
+                    id: topic!.id,
+                    category: topic!.category,
+                    stage: topic!.stage,
+                  })
+                )
+              }
+              title={topic!.subtitle}
+            >
               <b>{topic!.title}</b>
               <small>{topic!.category} · {topic!.level}</small>
               <span>{topic!.subtitle}</span>
@@ -121,7 +149,7 @@ export default function AdventureMap() {
           ))}
         </div>
         <div className="lesson-foot">
-          <button className="big-start" onClick={() => navigate('theory')}>
+          <button className="big-start" onClick={openExploreTheory}>
             进入探索馆闯关
           </button>
           <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
