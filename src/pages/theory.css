@@ -1,7 +1,10 @@
 .theory-lab {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 16px;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .theory-lab-head {

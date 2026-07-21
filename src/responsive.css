@@ -288,12 +288,16 @@
 @media (min-width: 1024px) and (min-height: 680px) {
   /* 内容区成为高度容器 */
   .content.route-home,
-  .content.route-training {
+  .content.route-training,
+  .content.route-theory,
+  .content.route-lesson {
     overflow: hidden !important;
   }
 
   .content.route-home > *,
-  .content.route-training > * {
+  .content.route-training > *,
+  .content.route-theory > *,
+  .content.route-lesson > * {
     height: 100% !important;
     max-height: 100% !important;
     min-height: 0 !important;
@@ -610,6 +614,89 @@
   .content.route-training .training-stage-footer {
     min-height: 0 !important;
   }
+
+  /* ---------- 探索馆 / 互动课：头 + 主区铺满 ---------- */
+  .content.route-theory .theory-lab,
+  .content.route-lesson .lesson-page {
+    display: grid !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-theory .theory-lab-head,
+  .content.route-lesson .lesson-hero {
+    min-height: 0 !important;
+    padding: 12px 14px !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-theory .theory-lab-head h2,
+  .content.route-lesson .lesson-hero h2 {
+    margin-bottom: 4px !important;
+    font-size: clamp(1.2rem, 1.4vw, 1.5rem) !important;
+  }
+
+  .content.route-theory .theory-lab-head p,
+  .content.route-lesson .lesson-hero p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    font-size: 0.84rem !important;
+  }
+
+  .content.route-theory .theory-layout {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1.58fr) !important;
+    gap: 10px !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-theory .theory-nav,
+  .content.route-theory .theory-main,
+  .content.route-theory .topic-panel,
+  .content.route-theory .apply-panel {
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+
+  .content.route-lesson .lesson-layout {
+    display: grid !important;
+    grid-template-columns: minmax(200px, 0.36fr) minmax(0, 1.64fr) !important;
+    gap: 10px !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-lesson .lesson-steps,
+  .content.route-lesson .lesson-main,
+  .content.route-lesson .lesson-section {
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+
+  .content.route-home .card,
+  .content.route-training .card,
+  .content.route-theory .card,
+  .content.route-lesson .card {
+    padding: 12px !important;
+  }
+
+  .content.route-home .pro-kicker,
+  .content.route-training .training-kicker,
+  .content.route-theory .theory-kicker,
+  .content.route-lesson .lesson-kicker {
+    margin-bottom: 4px !important;
+    font-size: 0.72rem !important;
+  }
 }
 
 /* 中等桌面宽度：避免侧栏挤压后列数过多 */
@@ -631,12 +718,16 @@
 @media (min-width: 901px) and (max-height: 679px),
        (max-width: 1023px) {
   .content.route-home,
-  .content.route-training {
+  .content.route-training,
+  .content.route-theory,
+  .content.route-lesson {
     overflow-y: auto !important;
   }
 
   .content.route-home .music-home,
-  .content.route-training .training-page {
+  .content.route-training .training-page,
+  .content.route-theory .theory-lab,
+  .content.route-lesson .lesson-page {
     height: auto !important;
     max-height: none !important;
     min-height: 100% !important;

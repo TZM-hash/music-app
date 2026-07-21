@@ -1,9 +1,12 @@
 .lesson-page {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 16px;
   max-width: 1240px;
   margin: 0 auto;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 .lesson-hero {
