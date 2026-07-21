@@ -78,3 +78,15 @@ test('focusFromTheoryTopic sets topicId category stage', () => {
     stage: 'junior-advanced',
   })
 })
+
+test('GAME_META covers all training center game routes', () => {
+  const loadTs = createTsLoader()
+  const { GAME_META } = loadTs('src/state/stats.ts')
+  const trainingRoutes = ['game-ear', 'game-read', 'game-sing', 'game-taiko', 'game-echo']
+  for (const route of trainingRoutes) {
+    assert.ok(GAME_META[route], `missing GAME_META for ${route}`)
+    assert.equal(typeof GAME_META[route].name, 'string')
+    assert.equal(typeof GAME_META[route].icon, 'string')
+    assert.equal(typeof GAME_META[route].skill, 'string')
+  }
+})

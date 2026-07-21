@@ -2,10 +2,11 @@
 import { loadRoster, loadSessions, sessionsOf, Session, Student } from './students'
 
 export const GAME_META: Record<string, { name: string; icon: string; skill: string }> = {
-  'game-taiko': { name: '咚咔鼓手', icon: '🥁', skill: '律动' },
-  'game-sing': { name: '唱歌评分', icon: '🎤', skill: '演唱' },
-  'game-ear': { name: '听音辨调', icon: '👂', skill: '音准' },
-  'game-read': { name: '读谱闯关', icon: '🎼', skill: '识谱' },
+  'game-taiko': { name: '节奏反应', icon: '🥁', skill: '律动' },
+  'game-echo': { name: '节奏记忆', icon: '🔁', skill: '节奏记忆' },
+  'game-sing': { name: '跟唱冒险', icon: '🎤', skill: '演唱' },
+  'game-ear': { name: '听感寻宝', icon: '👂', skill: '音准' },
+  'game-read': { name: '谱面寻路', icon: '🎼', skill: '识谱' },
 }
 
 export interface StudentStat {
