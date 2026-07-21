@@ -131,23 +131,22 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <section className="dash-signal-board card">
-        <div className="dash-signal-copy">
-          <span className="dash-kicker">班级能力声谱</span>
-          <h3>{hasData ? `${focusLabel}正在被观察` : '完成练习后生成能力声谱'}</h3>
-          <p>
-            声谱条表示不同练习能力的出现频率，趋势条表示最近练习节奏。
-            颜色越亮，说明这类能力越值得在下一节课中点名讲评。
-          </p>
-        </div>
-        <div className="dash-spectrum">
-          <SpectrumBars values={signalValues} />
-        </div>
-        <div className="dash-trend-mini">
-          <b>练习节奏</b>
-          <SpectrumBars values={trendBars} compact />
-        </div>
-      </section>
+      {!hasData && (
+        <section className="dash-signal-board card">
+          <div className="dash-signal-copy">
+            <span className="dash-kicker">班级能力声谱</span>
+            <h3>完成练习后生成能力声谱</h3>
+            <p>声谱条表示不同练习能力的出现频率。先选学生并完成练习，这里会亮起来。</p>
+          </div>
+          <div className="dash-spectrum">
+            <SpectrumBars values={signalValues} />
+          </div>
+          <div className="dash-trend-mini">
+            <b>练习节奏</b>
+            <SpectrumBars values={trendBars} compact />
+          </div>
+        </section>
+      )}
 
       {!hasData && (
         <div className="dash-empty card">
@@ -189,107 +188,122 @@ export default function Dashboard() {
       {hasData && (
         <>
           <div className="dash-grid">
-            <div className="dash-panel card">
+            <div className="dash-panel card dash-panel-rank">
               <h3>🏆 {focusGame === 'all' ? '班级排行榜（按星星）' : `${GAME_META[focusGame].skill}能力排行`}</h3>
-              <BarChart data={rankingBars} />
+              <BarChart data={rankingBars} height={220} />
             </div>
-            <div className="dash-panel card">
+            <div className="dash-panel card dash-panel-donut">
               <h3>🎲 各游戏练习分布</h3>
               <Donut segments={gameSegments} />
             </div>
-            <div className="dash-panel card">
+            <div className="dash-panel card dash-panel-trend">
               <h3>📈 练习趋势</h3>
-              <LineChart points={overview.trend.map((t) => ({ label: t.label, value: t.count }))} />
+              <LineChart points={overview.trend.map((t) => ({ label: t.label, value: t.count }))} height={180} />
             </div>
-          </div>
-
-          {/* 学生详情 */}
-          <div className="dash-detail card">
-            <div className="detail-head">
-              <h3>👤 学生能力画像</h3>
-              <select value={selected ?? ''} onChange={(e) => setSelected(e.target.value)}>
-                {ranking.map((r) => (
-                  <option key={r.student.id} value={r.student.id}>
-                    {r.student.avatar} {r.student.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            {detail && (
-              <div className="detail-body">
-                <div className="detail-radar">
-                  <Radar axes={radarAxes} />
-                </div>
-                <div className="detail-stats">
-                  <div className="ds-item">
-                    <span>练习次数</span>
-                    <b>{detail.totalSessions}</b>
-                  </div>
-                  <div className="ds-item">
-                    <span>累计星星</span>
-                    <b>{detail.totalStars} ⭐</b>
-                  </div>
-                  <div className="ds-item">
-                    <span>最高分</span>
-                    <b>{detail.bestScore}</b>
-                  </div>
-                  <div className="ds-item">
-                    <span>平均正确率</span>
-                    <b>{Math.round(detail.avgAccuracy * 100)}%</b>
-                  </div>
-                  <div className="ds-skills">
-                    {GAME_IDS.map((g) => (
-                      <div key={g} className="skill-bar">
-                        <span>
-                          {GAME_META[g].icon} {GAME_META[g].skill}
-                        </span>
-                        <div className="skill-track">
-                          <div
-                            className="skill-fill"
-                            style={{
-                              width: filled ? `${Math.round((detail.skillByGame[g] ?? 0) * 100)}%` : '0%',
-                              background: GAME_COLORS[g],
-                            }}
-                          />
-                        </div>
-                        <b>{Math.round((detail.skillByGame[g] ?? 0) * 100)}%</b>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <div className="dash-panel card dash-panel-signal">
+              <div className="dash-signal-copy">
+                <span className="dash-kicker">班级能力声谱</span>
+                <h3>{focusLabel}正在被观察</h3>
               </div>
-            )}
+              <div className="dash-spectrum">
+                <SpectrumBars values={signalValues} />
+              </div>
+              <div className="dash-trend-mini">
+                <b>练习节奏</b>
+                <SpectrumBars values={trendBars} compact />
+              </div>
+            </div>
           </div>
 
-          {/* 完整排行表 */}
-          <div className="dash-table card">
-            <h3>📋 全班明细</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>排名</th>
-                  <th>学生</th>
-                  <th>练习</th>
-                  <th>星星</th>
-                  <th>最高分</th>
-                  <th>正确率</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ranking.map((r, i) => (
-                  <tr key={r.student.id}>
-                    <td>{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td>
-                    <td>
+          <div className="dash-bottom">
+            <div className="dash-detail card">
+              <div className="detail-head">
+                <h3>👤 学生能力画像</h3>
+                <select value={selected ?? ''} onChange={(e) => setSelected(e.target.value)}>
+                  {ranking.map((r) => (
+                    <option key={r.student.id} value={r.student.id}>
                       {r.student.avatar} {r.student.name}
-                    </td>
-                    <td>{r.totalSessions}</td>
-                    <td>{r.totalStars} ⭐</td>
-                    <td>{r.bestScore}</td>
-                    <td>{Math.round(r.avgAccuracy * 100)}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {detail && (
+                <div className="detail-body">
+                  <div className="detail-radar">
+                    <Radar axes={radarAxes} />
+                  </div>
+                  <div className="detail-stats">
+                    <div className="ds-item">
+                      <span>练习次数</span>
+                      <b>{detail.totalSessions}</b>
+                    </div>
+                    <div className="ds-item">
+                      <span>累计星星</span>
+                      <b>{detail.totalStars} ⭐</b>
+                    </div>
+                    <div className="ds-item">
+                      <span>最高分</span>
+                      <b>{detail.bestScore}</b>
+                    </div>
+                    <div className="ds-item">
+                      <span>平均正确率</span>
+                      <b>{Math.round(detail.avgAccuracy * 100)}%</b>
+                    </div>
+                    <div className="ds-skills">
+                      {GAME_IDS.map((g) => (
+                        <div key={g} className="skill-bar">
+                          <span>
+                            {GAME_META[g].icon} {GAME_META[g].skill}
+                          </span>
+                          <div className="skill-track">
+                            <div
+                              className="skill-fill"
+                              style={{
+                                width: filled ? `${Math.round((detail.skillByGame[g] ?? 0) * 100)}%` : '0%',
+                                background: GAME_COLORS[g],
+                              }}
+                            />
+                          </div>
+                          <b>{Math.round((detail.skillByGame[g] ?? 0) * 100)}%</b>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="dash-table card">
+              <h3>📋 全班明细</h3>
+              <div className="dash-table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>排名</th>
+                      <th>学生</th>
+                      <th>练习</th>
+                      <th>星星</th>
+                      <th>最高分</th>
+                      <th>正确率</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ranking.map((r, i) => (
+                      <tr key={r.student.id}>
+                        <td>{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</td>
+                        <td>
+                          {r.student.avatar} {r.student.name}
+                        </td>
+                        <td>{r.totalSessions}</td>
+                        <td>{r.totalStars} ⭐</td>
+                        <td>{r.bestScore}</td>
+                        <td>{Math.round(r.avgAccuracy * 100)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </>
       )}

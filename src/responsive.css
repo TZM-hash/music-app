@@ -796,6 +796,52 @@
   .content.route-training .training-workbench {
     grid-template-columns: minmax(200px, 240px) minmax(0, 1fr) !important;
   }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel-rank {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel-donut {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel-trend {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel-signal {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+  }
+}
+
+/* 桌面满屏：成长观察填满内容区（page CSS 负责结构，这里兜底高度） */
+@media (min-width: 1121px) and (min-height: 680px) {
+  .content.route-dashboard {
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard > * {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
 }
 
 /* 短视口 / 浏览器放大：放弃满屏铺满，改为自然高度 + 页面滚动，避免裁切 */
@@ -845,18 +891,38 @@
 
   .content.route-dashboard .dashboard.has-data,
   .content.route-dashboard .dashboard.no-data {
-    grid-template-rows: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
     height: auto !important;
+    max-height: none !important;
+    grid-template-rows: none !important;
+    grid-template-columns: none !important;
   }
 
+  .content.route-dashboard .dashboard.has-data .dash-lab-head,
+  .content.route-dashboard .dashboard.has-data .kpi-row,
   .content.route-dashboard .dashboard.has-data .dash-grid,
-  .content.route-dashboard .dashboard.has-data .dash-signal-board,
+  .content.route-dashboard .dashboard.has-data .dash-bottom,
+  .content.route-dashboard .dashboard.has-data .dash-panel,
   .content.route-dashboard .dashboard.has-data .dash-detail,
-  .content.route-dashboard .dashboard.has-data .dash-table {
+  .content.route-dashboard .dashboard.has-data .dash-table,
+  .content.route-dashboard .dashboard.has-data .dash-signal-board {
     grid-column: auto !important;
     grid-row: auto !important;
     min-height: auto !important;
+    max-height: none !important;
+    height: auto !important;
     overflow: visible !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-bottom {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
   }
 
   .content.route-home .music-home {
