@@ -99,6 +99,9 @@
   position: relative;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
+  max-width: 100%;
+  overflow: hidden;
   border-radius: 50%;
   background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.92) 0 58%, rgba(255, 255, 255, 0.4) 72%, transparent 73%);
   box-shadow: var(--shadow-soft);
@@ -114,31 +117,40 @@
 }
 .progress-ring-core {
   position: relative;
+  z-index: 1;
   display: grid;
+  max-width: 78%;
   place-items: center;
   text-align: center;
 }
 .progress-ring-core b {
   color: var(--text);
-  font-size: 1.35rem;
+  font-size: clamp(0.9rem, 0.7rem + 1.1vw, 1.35rem);
   line-height: 1;
 }
 .progress-ring-core span {
   margin-top: 4px;
   color: var(--text-soft);
-  font-size: 0.74rem;
+  font-size: clamp(0.62rem, 0.55rem + 0.35vw, 0.74rem);
   font-weight: 900;
+  line-height: 1.15;
 }
 .progress-ring > small {
   position: absolute;
-  right: -8px;
-  bottom: 8px;
-  padding: 4px 7px;
+  right: 4px;
+  bottom: 4px;
+  z-index: 1;
+  max-width: calc(100% - 8px);
+  overflow: hidden;
+  padding: 3px 6px;
   border-radius: 8px;
   background: var(--bg-panel);
   color: var(--text-soft);
-  font-size: 0.68rem;
+  font-size: clamp(0.58rem, 0.5rem + 0.3vw, 0.68rem);
   font-weight: 900;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   box-shadow: var(--shadow-soft);
 }
 

@@ -179,13 +179,70 @@
   }
 }
 
+/* 进度环：固定尺寸组件在缩放/窄格里易溢出；统一可收缩 + 文案夹紧 */
+.progress-ring {
+  flex-shrink: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+.progress-ring-core {
+  max-width: 78%;
+}
+.progress-ring-core b {
+  font-size: clamp(0.88rem, 0.7rem + 1vw, 1.35rem);
+}
+.progress-ring-core span {
+  font-size: clamp(0.6rem, 0.52rem + 0.35vw, 0.74rem);
+}
 /* 进度环右下角徽章：原 right:-8px 明确溢出环外，在 grid 的 auto 列里
    会压住右侧相邻列的文字。改为贴在环内右下角，不再溢出。 */
 .progress-ring > small {
   right: 4px;
   bottom: 4px;
   max-width: calc(100% - 8px);
-  font-size: clamp(0.6rem, 1.6vmin, 0.72rem);
+  overflow: hidden;
+  font-size: clamp(0.58rem, 1.4vmin, 0.7rem);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 图表/声谱在缩放后允许收缩，避免把父卡片顶破或裁切标签 */
+.chart,
+.donut-wrap,
+.spectrum-bars,
+.spectrum-bars.compact {
+  max-width: 100%;
+  min-width: 0;
+}
+.spectrum-bars {
+  min-height: clamp(72px, 12vh, 150px);
+}
+.spectrum-bars.compact {
+  min-height: clamp(56px, 9vh, 96px);
+}
+
+/* 学段节点预览：圆点连线用百分比，避免缩放后与数字错位 */
+.course-node-preview {
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  overflow: visible;
+}
+.course-node-preview::before {
+  top: 19px;
+  left: 10%;
+  right: 10%;
+}
+.course-node-preview b {
+  width: clamp(28px, 3.4vw, 40px);
+  height: clamp(28px, 3.4vw, 40px);
+  font-size: clamp(0.78rem, 1vw, 1rem);
+}
+.course-lab-strip {
+  max-height: none;
+  overflow: visible;
+  align-items: center;
+}
+.course-lab-strip .progress-ring {
+  transform: none !important;
 }
 
 /* 七个头部卡片的右下角装饰条带：原固定 210×62，缩放后按钮放大与之重叠、
@@ -259,21 +316,37 @@
   }
 }
 
-/* 课程节点预览装饰线：原 top:18px 与 38px 圆圈中心(≈19)对齐，
-   但缩放后 span 高度增长、圆圈下移，固定 18px 的装饰线会穿到圆圈下方
-   或文字中间，视觉错位像两条线重叠。改用百分比居中定位。 */
+/* 课程节点预览：对齐圆点中心；窄屏百分比避免错位 */
 .course-node-preview {
-  align-items: center;
+  align-items: start;
+  grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+  overflow: visible;
 }
 .course-node-preview::before {
   top: 19px;
-  left: 12%;
-  right: 12%;
+  left: 10%;
+  right: 10%;
+}
+.course-node-preview b {
+  width: clamp(28px, 3.4vw, 40px);
+  height: clamp(28px, 3.4vw, 40px);
+  font-size: clamp(0.78rem, 1vw, 1rem);
+}
+.course-lab-strip {
+  max-height: none;
+  overflow: visible;
+  align-items: center;
+}
+.course-lab-strip .progress-ring {
+  transform: none !important;
 }
 @media (max-width: 700px) {
   .course-node-preview::before {
     top: 50%;
     transform: translateY(-50%);
+  }
+  .course-lab-strip {
+    grid-template-columns: 1fr !important;
   }
 }
 
@@ -731,17 +804,58 @@
   .content.route-home,
   .content.route-training,
   .content.route-theory,
-  .content.route-lesson {
+  .content.route-lesson,
+  .content.route-course,
+  .content.route-dashboard,
+  .content.route-adventure {
     overflow-y: auto !important;
   }
 
   .content.route-home .music-home,
   .content.route-training .training-page,
   .content.route-theory .theory-lab,
-  .content.route-lesson .lesson-page {
+  .content.route-lesson .lesson-page,
+  .content.route-course .course-page,
+  .content.route-dashboard .dashboard,
+  .content.route-adventure .adventure-page {
     height: auto !important;
     max-height: none !important;
     min-height: 100% !important;
+    overflow: visible !important;
+  }
+
+  .content.route-course .course-lab-strip,
+  .content.route-course .course-node-preview,
+  .content.route-dashboard .dash-grid,
+  .content.route-dashboard .dash-panel,
+  .content.route-dashboard .dash-signal-board {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .content.route-course .course-lab-strip {
+    grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.1fr) !important;
+  }
+
+  .content.route-course .course-lab-strip .progress-ring {
+    width: clamp(68px, 8vw, 92px) !important;
+    height: clamp(68px, 8vw, 92px) !important;
+    transform: none !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data,
+  .content.route-dashboard .dashboard.no-data {
+    grid-template-rows: auto !important;
+    height: auto !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid,
+  .content.route-dashboard .dashboard.has-data .dash-signal-board,
+  .content.route-dashboard .dashboard.has-data .dash-detail,
+  .content.route-dashboard .dashboard.has-data .dash-table {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    min-height: auto !important;
     overflow: visible !important;
   }
 

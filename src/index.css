@@ -4722,23 +4722,26 @@ body {
   }
 
   .content.route-course .course-lab-strip {
-    grid-template-columns: 82px minmax(160px, 0.72fr) minmax(220px, 1fr);
-    gap: 8px;
-    max-height: 96px;
-    padding: 7px 9px;
-    overflow: hidden;
+    grid-template-columns: auto minmax(140px, 0.72fr) minmax(180px, 1fr);
+    gap: 10px;
+    max-height: none;
+    min-height: 0;
+    padding: 10px 12px;
+    overflow: visible;
+    align-items: center;
   }
 
   .content.route-course .course-lab-strip .progress-ring {
-    width: 82px !important;
-    height: 82px !important;
-    transform: scale(0.72);
+    width: clamp(72px, 8vw, 96px) !important;
+    height: clamp(72px, 8vw, 96px) !important;
+    transform: none;
     transform-origin: center;
+    flex-shrink: 0;
   }
 
   .content.route-course .course-lab-strip .progress-ring svg {
-    width: 82px;
-    height: 82px;
+    width: 100%;
+    height: 100%;
   }
 
   .content.route-course .course-spectrum-block > b {
@@ -4750,9 +4753,21 @@ body {
     min-height: 58px;
   }
 
+  .content.route-course .course-node-preview {
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    gap: 6px;
+    overflow: visible;
+  }
+
+  .content.route-course .course-node-preview::before {
+    top: 16px;
+    left: 10%;
+    right: 10%;
+  }
+
   .content.route-course .course-node-preview b {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     font-size: 0.82rem;
   }
 
@@ -6486,33 +6501,39 @@ body {
   }
 
   .content.route-course .course-lab-strip {
-    align-items: stretch;
+    align-items: center;
+    overflow: visible;
+    max-height: none;
   }
 
   .content.route-course .course-lab-strip .progress-ring {
-    width: clamp(116px, 14cqw, 162px) !important;
-    height: clamp(116px, 14cqw, 162px) !important;
+    width: clamp(76px, 8cqw, 104px) !important;
+    height: clamp(76px, 8cqw, 104px) !important;
     align-self: center;
+    transform: none !important;
   }
 
   .content.route-course .course-spectrum-block {
     display: grid;
     grid-template-rows: auto minmax(0, 1fr);
+    min-width: 0;
   }
 
   .content.route-course .course-spectrum-block .spectrum-bars {
-    min-height: clamp(92px, 18cqh, 166px);
+    min-height: clamp(64px, 12cqh, 120px);
   }
 
   .content.route-course .course-node-preview {
     align-self: stretch;
-    align-items: center;
+    align-items: start;
+    grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+    overflow: visible;
   }
 
   .content.route-course .course-node-preview b {
-    width: clamp(38px, 5cqw, 58px);
-    height: clamp(38px, 5cqw, 58px);
-    font-size: clamp(0.95rem, 1.2cqw, 1.35rem);
+    width: clamp(30px, 3.4cqw, 42px);
+    height: clamp(30px, 3.4cqw, 42px);
+    font-size: clamp(0.8rem, 1cqw, 1.05rem);
   }
 
   .content.route-training .training-lab-strip .progress-ring {
@@ -6626,25 +6647,33 @@ body {
   }
 
   .content.route-course .course-lab-strip {
-    overflow: hidden;
+    overflow: visible;
+    max-height: none;
   }
 
   .content.route-course .course-lab-strip .progress-ring {
-    width: clamp(86px, 9cqw, 112px) !important;
-    height: clamp(86px, 9cqw, 112px) !important;
+    width: clamp(72px, 7.5vw, 100px) !important;
+    height: clamp(72px, 7.5vw, 100px) !important;
+    transform: none !important;
   }
 
   .content.route-course .course-spectrum-block .spectrum-bars {
-    min-height: clamp(76px, 13cqh, 108px);
+    min-height: clamp(56px, 10cqh, 96px);
   }
 
   .content.route-course .course-spectrum-block .spectrum-bar {
-    min-height: clamp(24px, 5cqh, 44px);
+    min-height: clamp(18px, 4cqh, 36px);
+  }
+
+  .content.route-course .course-node-preview {
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    overflow: visible;
   }
 
   .content.route-course .course-node-preview b {
-    width: clamp(32px, 3.6cqw, 44px);
-    height: clamp(32px, 3.6cqw, 44px);
+    width: clamp(28px, 3.2cqw, 40px);
+    height: clamp(28px, 3.2cqw, 40px);
+    font-size: clamp(0.78rem, 1cqw, 1rem);
   }
 
   .content.route-course .lesson-flow {

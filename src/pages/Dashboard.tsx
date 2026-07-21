@@ -9,6 +9,7 @@ import './dashboard.css'
 
 const GAME_COLORS: Record<string, string> = {
   'game-taiko': '#f25050',
+  'game-echo': '#845ef7',
   'game-sing': '#f783ac',
   'game-ear': '#2f9e44',
   'game-read': '#f59f00',

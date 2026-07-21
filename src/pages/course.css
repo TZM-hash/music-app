@@ -169,11 +169,13 @@
 
 .course-lab-strip {
   display: grid;
-  grid-template-columns: auto minmax(220px, 0.8fr) minmax(260px, 1fr);
+  grid-template-columns: auto minmax(180px, 0.8fr) minmax(220px, 1fr);
   gap: 16px;
   align-items: center;
   padding: 14px;
   border-radius: 8px;
+  min-height: 0;
+  overflow: visible;
   background:
     linear-gradient(135deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.02)),
     repeating-linear-gradient(90deg, transparent 0 30px, rgba(0, 122, 255, 0.055) 30px 31px);
@@ -181,6 +183,7 @@
 
 .course-spectrum-block {
   min-width: 0;
+  overflow: hidden;
 }
 
 .course-spectrum-block > b {
@@ -193,39 +196,54 @@
 .course-node-preview {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
   gap: 8px;
+  align-items: start;
+  min-width: 0;
+  overflow: visible;
 }
 
 .course-node-preview::before {
   content: '';
   position: absolute;
-  left: 9%;
-  right: 9%;
-  top: 18px;
+  left: 12%;
+  right: 12%;
+  top: 19px;
   height: 3px;
   border-radius: 999px;
   background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple), var(--neon-gold));
   opacity: 0.44;
+  pointer-events: none;
 }
 
 .course-node-preview span {
   position: relative;
+  z-index: 1;
   display: flex;
   min-width: 0;
   flex-direction: column;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   color: var(--text-soft);
-  font-size: 0.78rem;
-  font-weight: 900;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.25;
   text-align: center;
+}
+
+.course-node-preview span > :not(b) {
+  display: -webkit-box;
+  overflow: hidden;
+  max-width: 100%;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .course-node-preview b {
   display: grid;
   width: 38px;
   height: 38px;
+  flex-shrink: 0;
   place-items: center;
   border: 2px solid rgba(0, 122, 255, 0.5);
   border-radius: 50%;
