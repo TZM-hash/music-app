@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState, useRef } from 'react'
-import { buildNotes, whiteNotes, NoteInfo } from '../../music/notes'
+import { buildNotes, whiteNotes, NoteInfo, transposeNote } from '../../music/notes'
 import { ensureAudio, playNote, playChord } from '../../music/audioEngine'
 import { recordResult, loadProgress, BADGE_INFO } from '../../state/progress'
 import { useApp } from '../../state/appState'
@@ -70,15 +70,6 @@ export default function EarGame() {
   // 统一登记定时器，组件卸载时全部清理且回调带卸载保护，避免切页后残留发声/setState
   const { later } = useTimers()
 
-  const chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-  const transpose = (note: string, semis: number): string => {
-    const name = note.slice(0, -1)
-    const oct = parseInt(note.slice(-1), 10)
-    const idx = chromatic.indexOf(name)
-    const total = idx + semis
-    return `${chromatic[((total % 12) + 12) % 12]}${oct + Math.floor(total / 12)}`
-  }
-
   const pickTarget = useCallback(() => {
     if (mode === 'single') {
       const t = keys[Math.floor(Math.random() * keys.length)]
@@ -87,7 +78,7 @@ export default function EarGame() {
     } else if (mode === 'interval') {
       const base = keys[Math.floor(Math.random() * Math.max(1, keys.length - 4))]
       const semis = INTERVAL_STEPS[Math.floor(Math.random() * INTERVAL_STEPS.length)]
-      const second = transpose(base.note, semis)
+      const second = transposeNote(base.note, semis)
       const answer = INTERVALS[semis]
       // 选项：正确答案 + 3 个干扰
       const others = INTERVAL_STEPS.map((s) => INTERVALS[s]).filter((n) => n !== answer)
@@ -281,10 +272,15 @@ export default function EarGame() {
 
           {mode === 'single' && (
             <div className="ear-keys">
-              {keys.map((n) => {
+              {keys.map((n, idx) => {
                 const fb = feedback[n.note]
                 return (
-                  <button key={n.note} className={`ear-key ${fb ?? ''}`} onClick={() => chooseKey(n)}>
+                  <button
+                    key={n.note}
+                    className={`ear-key ${fb ?? ''}`}
+                    aria-label={cfg.showNames ? `琴键 ${n.name}${n.note.slice(-1)}` : `第 ${idx + 1} 个选项`}
+                    onClick={() => chooseKey(n)}
+                  >
                     {cfg.showNames ? (
                       <span>
                         <b>{n.jianpu}</b>

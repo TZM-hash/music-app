@@ -165,6 +165,7 @@ export default function Drums() {
             key={p.kind}
             className={`drum-pad ${p.kind} ${hit === p.kind ? 'hit' : ''}`}
             style={{ '--pad-color': p.color } as React.CSSProperties}
+            aria-label={`鼓面 ${p.label}（按键 ${p.key === ' ' ? '空格' : p.key.toUpperCase()}）`}
             onPointerDown={() => strike(p.kind)}
           >
             <span className="drum-label">{p.label}</span>
@@ -186,6 +187,7 @@ export default function Drums() {
               min={60}
               max={180}
               value={bpm}
+              aria-label="循环速度"
               onChange={(e) => setBpm(Number(e.target.value))}
             />
           </div>
@@ -216,6 +218,8 @@ export default function Drums() {
                       step % 4 === 0 ? 'beat' : ''
                     }`}
                     style={on ? { background: track.color } : undefined}
+                    aria-label={`${track.label} 第 ${step + 1} 步${on ? '（已启用）' : ''}`}
+                    aria-pressed={on}
                     onClick={() => toggleCell(track.kind, step)}
                   />
                 ))}

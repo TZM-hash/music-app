@@ -164,20 +164,3 @@
     opacity: 1;
   }
 }
-
-/* 设置区 */
-.taiko-setup {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-.taiko-setup select {
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(0, 0, 0, 0.05);
-  border: 1px solid var(--line-neon);
-  color: var(--text);
-  font-size: 1rem;
-  font-weight: 700;
-}

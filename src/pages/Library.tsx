@@ -52,6 +52,7 @@ export default function Library() {
     })
   }
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- version 自增作为缓存失效键：曲库变更后重读
   const songs = useMemo(() => allSongs(), [version])
 
   const filtered = useMemo(
@@ -201,6 +202,7 @@ export default function Library() {
               min={1}
               max={5}
               value={maxLevel}
+              aria-label="难度上限"
               onChange={(e) => {
                 setMaxLevel(Number(e.target.value))
                 setSelectedSongId(null)

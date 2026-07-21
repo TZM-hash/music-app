@@ -86,6 +86,7 @@ export default function Xylophone() {
               key={n.note}
               className={`xylo-semi-bar ${active.has(n.note) ? 'active' : ''}`}
               style={{ '--bar-color': n.color } as CSSProperties}
+              aria-label={`半音琴条 ${n.name}（按键 ${n.key.toUpperCase()}）`}
               onPointerDown={() => strike(n)}
             >
               {showNoteNames && <small>{n.name}</small>}
@@ -99,6 +100,7 @@ export default function Xylophone() {
               key={n.note}
               className={`xylo-bar ${active.has(n.note) ? 'active' : ''}`}
               style={{ '--bar-color': n.color } as CSSProperties}
+              aria-label={`琴条 ${n.name}（简谱 ${n.jianpu}，按键 ${n.key.toUpperCase()}）`}
               onPointerDown={() => strike(n)}
             >
               <span className="xylo-bar-label">

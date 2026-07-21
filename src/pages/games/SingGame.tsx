@@ -325,7 +325,7 @@ export default function SingGame() {
           <span className="lg-target">■ 目标音高</span>
           <span className="lg-user">— 你的声音</span>
         </div>
-        <canvas ref={canvasRef} className="sing-canvas" />
+        <canvas ref={canvasRef} className="sing-canvas" aria-label="音高曲线图：目标音高与你的声音对比" />
         <p className="sing-tip">💡 唱不上去的高音会自动帮你折算，放心大声唱！</p>
       </div>
       {result && (

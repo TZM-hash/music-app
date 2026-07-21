@@ -32,6 +32,9 @@ export const PITCH_COLORS: Record<string, string> = {
 }
 
 const NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+
+/** 十二平均律音名表（C 起始）。全项目半音计算的唯一来源，勿在别处再写一份。 */
+export const PITCH_CLASSES: readonly string[] = NAMES
 const SOLFEGE: Record<string, string> = {
   C: 'do',
   'C#': 'di',
@@ -104,6 +107,18 @@ export function transposeNote(note: string, semis: number): string {
   const oct = parseInt(m[2], 10) + Math.floor(total / 12)
   return `${NAMES[((total % 12) + 12) % 12]}${oct}`
 }
+/** 三和弦组成音（大三 maj / 小三 min）。root 形如 C4；解析失败返回空数组。 */
+export function chordNotes(root: string, quality: 'maj' | 'min'): string[] {
+  const m = /^([A-G]#?)(-?\d)$/.exec(root)
+  if (!m) return []
+  const idx = NAMES.indexOf(m[1])
+  if (idx < 0) return []
+  const octave = parseInt(m[2], 10)
+  const at = (semi: number) =>
+    `${NAMES[(idx + semi) % 12]}${octave + Math.floor((idx + semi) / 12)}`
+  return [root, at(quality === 'maj' ? 4 : 3), at(7)]
+}
+
 export const KEYBOARD_MAP: Record<string, string> = {
   a: 'C4',
   w: 'C#4',

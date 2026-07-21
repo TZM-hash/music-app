@@ -62,7 +62,7 @@ export default function TaikoGame() {
     return out
   }, [cfg])
 
-  const finish = () => {
+  const finish = useCallback(() => {
     cancelAnimationFrame(raf.current)
     stopAccompaniment()
     const s = st.current; const total = notes.current.length
@@ -94,7 +94,7 @@ export default function TaikoGame() {
       },
     })
     setPhase('result')
-  }
+  }, [difficulty, song])
 
   const startPlay = useCallback((s: Song) => {
     notes.current = buildChart(s); st.current = { score: 0, combo: 0, maxC: 0, great: 0, good: 0, miss: 0, soul: 0 }
@@ -142,7 +142,7 @@ export default function TaikoGame() {
     }
     raf.current = requestAnimationFrame(loop)
     return () => { cancelAnimationFrame(raf.current); window.removeEventListener('resize', resize) }
-  }, [phase])
+  }, [phase, finish])
 
   const hit = useCallback((type: NType) => {
     if (phase !== 'play') return
@@ -195,10 +195,10 @@ export default function TaikoGame() {
     {phase === 'play' && <div className="taiko-stage">
       {judge && <div className={`taiko-judge ${judge.c}`}>{judge.t}</div>}
       {combo >= 5 && <div className="taiko-combo" style={{ color: combo >= 20 ? getComboColor('rainbow') : combo >= 10 ? getComboColor('gold') : getComboColor('fire'), textShadow: `0 0 20px ${combo >= 20 ? getComboColor('rainbow') : combo >= 10 ? getComboColor('gold') : getComboColor('fire')}` }}>{combo}🔥</div>}
-      <canvas ref={canvasRef} className="taiko-canvas" />
+      <canvas ref={canvasRef} className="taiko-canvas" aria-label="节奏轨道：音符滚向判定圈" />
       <div className="taiko-2keys">
-        <button className="key-don" onPointerDown={() => hit('don')}><span>🥁 咚</span><small>F / 空格</small></button>
-        <button className="key-ka" onPointerDown={() => hit('ka')}><span>🥁 咔</span><small>J / K</small></button>
+        <button className="key-don" aria-label="咚（F 或 空格）" onPointerDown={() => hit('don')}><span>🥁 咚</span><small>F / 空格</small></button>
+        <button className="key-ka" aria-label="咔（J 或 K）" onPointerDown={() => hit('ka')}><span>🥁 咔</span><small>J / K</small></button>
       </div>
     </div>}
     {result && <GameResult gameId={GAME_ID} score={result.score} stars={result.stars} bestScore={best} isNewBest={result.isNewBest} newBadges={result.newBadges} review={result.review} onRetry={() => song && startPlay(song)} onContinue={() => navigate('training')} onHome={() => navigate('home')} />}

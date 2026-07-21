@@ -96,13 +96,10 @@
 
 .training-workbench {
   display: grid;
-  grid-template-columns: 310px minmax(0, 1fr);
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   gap: 14px;
   min-height: 0;
-}
-
-.training-module-list {
-  min-width: 0;
+  align-items: stretch;
 }
 
 .training-card {
@@ -113,6 +110,7 @@
   gap: 9px;
   padding: 14px;
   text-align: left;
+  overflow: hidden;
   transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
 
@@ -180,21 +178,51 @@
   line-height: 1.5;
 }
 
+/* 左侧模块列表：只保留“图标 + 标题 + 学段 + 等级”，
+   避免在等高分栏/缩放时正文、指标、底部信息互相压叠。 */
+.training-module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.training-module-list .training-card {
+  flex: 0 0 auto;
+  gap: 6px;
+  min-height: 0;
+  padding: 10px 12px;
+}
+
+.training-module-list .training-icon {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+}
+
+.training-module-list .training-card h3 {
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.training-module-list .training-card small {
+  display: block;
+  overflow: hidden;
+  font-size: 0.78rem;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .training-module-list .training-card p,
-.training-module-list .training-score-track {
-  display: none;
-}
-
-.training-module-list .metric-row {
-  gap: 5px;
-}
-
-.training-module-list .metric-row span:nth-child(n + 3) {
-  display: none;
-}
-
+.training-module-list .training-reason,
+.training-module-list .metric-row,
+.training-module-list .training-score-track,
 .training-module-list .training-foot {
-  margin-top: 0;
+  display: none;
 }
 
 .training-reason {
@@ -405,7 +433,27 @@
   }
 
   .training-workbench {
-    grid-template-columns: 260px minmax(0, 1fr);
+    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .training-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .training-module-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    max-height: none;
+    overflow: visible;
+  }
+
+  .training-module-list .training-card p,
+  .training-module-list .training-reason {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 }
 
@@ -425,6 +473,10 @@
   .training-stage-head,
   .training-stage-brief,
   .training-stage-visuals {
+    grid-template-columns: 1fr;
+  }
+
+  .training-module-list {
     grid-template-columns: 1fr;
   }
 

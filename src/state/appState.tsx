@@ -1,5 +1,5 @@
 // 全局应用状态：模式（教师/学生）、导航、当前学生、当前曲目
-import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react'
+import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react'
 import { getCurrentStudentId, setCurrentStudentId } from './students'
 import { createTheoryFocus, TheoryFocus } from './theoryFocus'
 import type { TheoryStageId } from '../music/theoryCatalog'
@@ -164,38 +164,60 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (route !== 'lesson' && lessonStage) setLessonStage(null)
   }, [route, lessonStage])
 
-  return (
-    <Ctx.Provider
-      value={{
-        mode,
-        route,
-        returnStack,
-        canGoBack: returnStack.length > 0,
-        backLabel: backButtonLabel(returnStack),
-        navDirection,
-        showNoteNames,
-        currentStudentId,
-        activeSongId,
-        theoryFocus,
-        lessonStage,
-        sidebarOpen,
-        setMode,
-        navigate,
-        openTheory,
-        openLesson,
-        goBack,
-        toggleNoteNames,
-        selectStudent,
-        playSongInGame,
-        toggleSidebar,
-        setSidebarOpen,
-      }}
-    >
-      {children}
-    </Ctx.Provider>
+  // memo 化 context value：否则每次 Provider 重渲染都会生成新对象，
+  // 导致所有 useApp() 消费者（几乎全站）无差别重渲染。
+  const value = useMemo<AppState>(
+    () => ({
+      mode,
+      route,
+      returnStack,
+      canGoBack: returnStack.length > 0,
+      backLabel: backButtonLabel(returnStack),
+      navDirection,
+      showNoteNames,
+      currentStudentId,
+      activeSongId,
+      theoryFocus,
+      lessonStage,
+      sidebarOpen,
+      setMode,
+      navigate,
+      openTheory,
+      openLesson,
+      goBack,
+      toggleNoteNames,
+      selectStudent,
+      playSongInGame,
+      toggleSidebar,
+      setSidebarOpen,
+    }),
+    [
+      mode,
+      route,
+      returnStack,
+      navDirection,
+      showNoteNames,
+      currentStudentId,
+      activeSongId,
+      theoryFocus,
+      lessonStage,
+      sidebarOpen,
+      setMode,
+      navigate,
+      openTheory,
+      openLesson,
+      goBack,
+      toggleNoteNames,
+      selectStudent,
+      playSongInGame,
+      toggleSidebar,
+    ]
   )
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- hook 与 Provider 同文件导出
 export function useApp(): AppState {
   const ctx = useContext(Ctx)
   if (!ctx) throw new Error('useApp must be used within AppProvider')

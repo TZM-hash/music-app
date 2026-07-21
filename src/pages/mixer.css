@@ -40,10 +40,6 @@
 .mix-tempo input {
   width: 160px;
 }
-.mix-transport-actions {
-  display: flex;
-  gap: 8px;
-}
 .mix-btn {
   min-height: 40px;
   padding: 10px 16px;
@@ -56,11 +52,6 @@
 }
 .mix-btn:hover {
   border-color: rgba(0, 122, 255, 0.5);
-}
-.mix-hint {
-  color: var(--text-soft);
-  font-size: 0.85rem;
-  margin-left: auto;
 }
 
 .mix-creative-brief {

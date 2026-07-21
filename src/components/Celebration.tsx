@@ -25,6 +25,7 @@ const GOLD_COLORS = ['#ffd43b', '#ffed4a', '#fff3b0', '#ffb800']
 let spawnFn: ((level: Level, x?: number, y?: number) => void) | null = null
 
 /** 全局庆祝函数，任何组件可通过 import { celebrate } 调用 */
+// eslint-disable-next-line react-refresh/only-export-components -- 与组件同文件导出的命令式 API
 export function celebrate(level: Level, x?: number, y?: number): void {
   spawnFn?.(level, x, y)
 }
@@ -47,6 +48,75 @@ export default function Celebration() {
     window.addEventListener('resize', resize)
     return () => window.removeEventListener('resize', resize)
   }, [resize])
+
+  const tick = useCallback((): void => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+    particles.current = particles.current.filter((p) => p.life < p.maxLife)
+
+    for (const p of particles.current) {
+      p.life++
+      p.x += p.vx
+      p.y += p.vy
+      p.vy += p.gravity
+      p.vx *= p.drag
+      p.vy *= p.drag
+      p.rotation += p.rotSpeed
+
+      const alpha = 1 - p.life / p.maxLife
+      ctx.save()
+      ctx.globalAlpha = alpha
+      ctx.translate(p.x, p.y)
+      ctx.rotate(p.rotation)
+      ctx.fillStyle = p.color
+
+      switch (p.shape) {
+        case 'circle':
+          ctx.beginPath()
+          ctx.arc(0, 0, p.size, 0, Math.PI * 2)
+          ctx.fill()
+          break
+        case 'star': {
+          const s = p.size
+          ctx.beginPath()
+          for (let i = 0; i < 5; i++) {
+            const a = (Math.PI * 2 * i) / 5 - Math.PI / 2
+            const a2 = a + Math.PI / 5
+            ctx.lineTo(Math.cos(a) * s, Math.sin(a) * s)
+            ctx.lineTo(Math.cos(a2) * s * 0.4, Math.sin(a2) * s * 0.4)
+          }
+          ctx.closePath()
+          ctx.fill()
+          break
+        }
+        case 'ribbon':
+          ctx.fillRect(-p.size / 2, -p.size * 2, p.size, p.size * 4)
+          break
+        case 'rect':
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size)
+          break
+      }
+
+      if (p.shape === 'star') {
+        ctx.shadowColor = p.color
+        ctx.shadowBlur = p.size * 3
+        ctx.fill()
+      }
+
+      ctx.restore()
+    }
+
+    if (particles.current.length > 0) {
+      rafId.current = requestAnimationFrame(tick)
+    } else {
+      running.current = false
+    }
+  }, [])
 
   const spawn = useCallback((level: Level, cx?: number, cy?: number) => {
     const W = window.innerWidth
@@ -157,76 +227,7 @@ export default function Celebration() {
       running.current = true
       rafId.current = requestAnimationFrame(tick)
     }
-  }, [])
-
-  const tick = useCallback(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-    particles.current = particles.current.filter((p) => p.life < p.maxLife)
-
-    for (const p of particles.current) {
-      p.life++
-      p.x += p.vx
-      p.y += p.vy
-      p.vy += p.gravity
-      p.vx *= p.drag
-      p.vy *= p.drag
-      p.rotation += p.rotSpeed
-
-      const alpha = 1 - p.life / p.maxLife
-      ctx.save()
-      ctx.globalAlpha = alpha
-      ctx.translate(p.x, p.y)
-      ctx.rotate(p.rotation)
-      ctx.fillStyle = p.color
-
-      switch (p.shape) {
-        case 'circle':
-          ctx.beginPath()
-          ctx.arc(0, 0, p.size, 0, Math.PI * 2)
-          ctx.fill()
-          break
-        case 'star': {
-          const s = p.size
-          ctx.beginPath()
-          for (let i = 0; i < 5; i++) {
-            const a = (Math.PI * 2 * i) / 5 - Math.PI / 2
-            const a2 = a + Math.PI / 5
-            ctx.lineTo(Math.cos(a) * s, Math.sin(a) * s)
-            ctx.lineTo(Math.cos(a2) * s * 0.4, Math.sin(a2) * s * 0.4)
-          }
-          ctx.closePath()
-          ctx.fill()
-          break
-        }
-        case 'ribbon':
-          ctx.fillRect(-p.size / 2, -p.size * 2, p.size, p.size * 4)
-          break
-        case 'rect':
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size)
-          break
-      }
-
-      if (p.shape === 'star') {
-        ctx.shadowColor = p.color
-        ctx.shadowBlur = p.size * 3
-        ctx.fill()
-      }
-
-      ctx.restore()
-    }
-
-    if (particles.current.length > 0) {
-      rafId.current = requestAnimationFrame(tick)
-    } else {
-      running.current = false
-    }
-  }, [])
+  }, [tick])
 
   useEffect(() => {
     spawnFn = spawn

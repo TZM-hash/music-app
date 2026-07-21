@@ -87,6 +87,7 @@ export default function Home() {
   const student = useMemo(() => getCurrentStudent(), []) // 学生切换通过外部导航触发本组件重挂载/重渲染，这里只读一次
   const studentId = student?.id ?? null
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- studentId 作为缓存失效键：学生切换时重读进度
   const progress = useMemo(() => loadProgress(), [studentId])
   const overview = useMemo(() => classOverview(), [])
   const reviewBook = useMemo(

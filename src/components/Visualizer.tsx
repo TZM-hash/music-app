@@ -8,6 +8,7 @@ export interface Burst {
 }
 
 /** 管理音符气泡列表：push(x, color, label) 新增一个气泡，约 1 秒后自动移除 */
+// eslint-disable-next-line react-refresh/only-export-components -- hook 与组件同文件导出
 export function useNoteBursts(lifeMs = 1000) {
   const [bursts, setBursts] = useState<Burst[]>([])
   const nextId = useRef(0)

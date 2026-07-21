@@ -54,8 +54,8 @@ export default function ReadGame() {
   const pick = useCallback(() => {
     const t = pool[Math.floor(Math.random() * pool.length)]
     setTarget(t)
-    ensureAudio().then(() => {
-      if (!mounted.current) return
+    ensureAudio().then((ok) => {
+      if (!ok || !mounted.current) return
       later(() => playNote(t, '4n'), 150)
     })
   }, [pool, later, mounted])

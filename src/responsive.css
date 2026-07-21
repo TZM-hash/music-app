@@ -1,0 +1,712 @@
+/* ============================================================
+   全站多分辨率适配补丁（700px 窄屏 → 2560px 超宽屏）
+   集中管理各页面的响应式兜底规则，避免散落在各文件难以维护。
+   注意：本文件在 main.tsx 中最后导入，同级选择器可覆盖页面样式。
+   ============================================================ */
+
+/* ---------- 内容区：超宽屏限宽居中，避免无限拉伸 ---------- */
+.content-instrument .instrument-wrap,
+.content-game .game-wrap,
+.roster,
+.battle-wrap,
+.training-page,
+.dashboard,
+.course-page,
+.theory-layout {
+  width: 100%;
+  max-width: 1560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---------- 素材库：详情面板内部限宽（左右对半分后右侧很宽） ---------- */
+.library-detail > * {
+  max-width: 860px;
+}
+
+/* ---------- 混音器：窄屏轨道区横向滚动，不再挤压变形 ---------- */
+.mix-ruler,
+.mix-track {
+  min-width: 640px;
+}
+.mix-tracks {
+  overflow-x: auto;
+}
+
+/* ---------- 混音器：中窄屏（<700px）轨道头进一步收窄 ---------- */
+@media (max-width: 700px) {
+  .mix-track-head,
+  .mix-track-head-spacer {
+    width: 160px;
+  }
+  .mix-ruler,
+  .mix-track {
+    min-width: 560px;
+  }
+}
+
+/* ---------- 游戏：开始面板在低矮视口可滚动，不顶出屏幕 ---------- */
+.start-hint {
+  overflow-y: auto;
+}
+
+/* ---------- 游戏：结算弹窗在极窄视口不强制最小宽度 ---------- */
+@media (max-width: 400px) {
+  .result-card {
+    min-width: 0;
+  }
+  .result-card.wide {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+/* ---------- 听音辨键：琴键行在窄屏允许换行 ---------- */
+@media (max-width: 700px) {
+  .ear-keys {
+    flex-wrap: wrap;
+    height: auto;
+  }
+}
+
+/* ---------- 乐理：1180px 断点与侧栏收起(900px)之间的空档，用 240px 窄导航 ---------- */
+@media (max-width: 1180px) and (min-width: 901px) {
+  .theory-layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+}
+
+/* ---------- 竖屏 / 极窄视口：顶栏工具区换行不溢出 ---------- */
+@media (max-width: 560px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .topbar .seg {
+    order: 5;
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ============================================================
+   Ctrl + 滚轮缩放（页面缩放）兼容
+   浏览器缩放等价于"视口变小"：150% 缩放时布局视口只剩约 2/3 宽、
+   可用高度也按比例减少。所有"固定填满高度 + overflow: hidden"的
+   容器会在某个缩放档位被压塌，导致卡片互相重叠或内容被裁掉。
+   统一策略：改为"最小高度保底 + 内容超出时滚动"，任何缩放下可达。
+   ============================================================ */
+
+/* 顶栏工具多时允许换行（基础规则未开放 flex-wrap） */
+.topbar {
+  flex-wrap: wrap;
+}
+
+/* 各页头部横排：缩放后空间不足时换行，而不是互相挤压重叠 */
+.course-head,
+.lesson-hero,
+.training-head {
+  flex-wrap: wrap;
+}
+
+/* ---- 乐器页：取消"撑满视口高度"，工具栏自然换行，整页可滚动 ---- */
+.content-instrument .instrument-wrap {
+  height: auto;
+  min-height: 100%;
+}
+.piano-stage {
+  min-height: 300px;
+}
+
+/* 琴键标签：缩放到琴键很窄时，标签收在键内，不溢出到相邻键上 */
+.key-label {
+  max-width: 100%;
+  overflow: hidden;
+}
+.key-label b,
+.key-label small {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---- 游戏页：外壳与舞台不再钉死视口高度，保留最小可用高度 ---- */
+.game-wrap {
+  height: auto;
+  min-height: 100%;
+}
+.taiko-stage,
+.sing-stage,
+.echo-stage {
+  flex: none;
+}
+.taiko-canvas,
+.sing-canvas {
+  min-height: 300px;
+}
+
+/* ---- 混音器：轨道区保底高度，纵向可滚动 ---- */
+.mixer {
+  height: auto;
+  min-height: 100%;
+}
+.mix-tracks {
+  min-height: 200px;
+}
+
+/* ---- 团队对战：同样解除钉死高度 ---- */
+.battle-wrap {
+  height: auto;
+  min-height: 100%;
+}
+
+/* ============================================================
+   绝对定位元素的缩放兼容（跨断点通用，写在响应式兜底里覆盖页面样式）
+   ============================================================ */
+
+/* 太鼓判定文字：原固定 left:140px + 2.4rem，桌面端命中圈就在画布 left:140px
+   处（HIT_X=140），所以桌面保持 140px 对齐命中圈；但字号用 clamp 随视口缩放，
+   避免放大后文字溢出舞台压住下方鼓面。窄屏（<700px，含重度缩放）改居中，
+   不再飘出 canvas。 */
+.taiko-judge {
+  top: 18%;
+  left: 50%;
+  font-size: clamp(1.6rem, 5vmin, 2.4rem);
+}
+@media (min-width: 700px) {
+  .taiko-judge {
+    left: 140px;
+  }
+}
+
+/* 进度环右下角徽章：原 right:-8px 明确溢出环外，在 grid 的 auto 列里
+   会压住右侧相邻列的文字。改为贴在环内右下角，不再溢出。 */
+.progress-ring > small {
+  right: 4px;
+  bottom: 4px;
+  max-width: calc(100% - 8px);
+  font-size: clamp(0.6rem, 1.6vmin, 0.72rem);
+}
+
+/* 七个头部卡片的右下角装饰条带：原固定 210×62，缩放后按钮放大与之重叠、
+   遮挡文字。改为按容器宽高比例收缩，且压到更靠右下的角落避开主操作区。 */
+.lesson-hero::after,
+.course-head::after,
+.training-head::after,
+.theory-lab-head::after,
+.lib-header::after,
+.song-picker::after,
+.start-hint::after {
+  width: min(210px, 38%);
+  height: min(62px, 32%);
+  opacity: 0.18;
+}
+
+/* 首页英雄区控制台标题右侧 b 文字：原 flex-shrink:0 + nowrap 在窄空间
+   溢出盖到波形/状态格。允许收缩并省略号截断。 */
+.content.route-home .hero-console-head b {
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 首页波形条：原 .hero-wave 无 overflow:hidden，子条 scaleY(1.08) 后顶部
+   突出容器压到上方标题。给容器加裁切并去掉超出缩放。 */
+.hero-wave {
+  overflow: hidden;
+}
+@keyframes waveLift {
+  0%, 100% { transform: scaleY(0.82); opacity: 0.72; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* 钢琴键面涟漪：原 64px 固定 + scale(2.6) 在窄键里连成一片像"键面合并"。
+   改为按键面百分比，扩散封顶 scale(1.5)。 */
+.white-key::after,
+.black-key::after {
+  width: 100%;
+  height: 100%;
+}
+@keyframes strikeRipple {
+  0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0.55; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+
+/* 钢琴键盘容器：补 overflow:hidden，防止黑键负 margin(-31%) 在缩放后
+   溢出键盘右边缘压到相邻元素。 */
+.piano {
+  overflow: hidden;
+}
+
+/* 钢琴音符气泡：原固定 48px 在窄键上横跨 2 个白键像"飘到隔壁键"。
+   用 clamp 随视口缩放。 */
+.viz-bubble {
+  width: clamp(28px, 4vmin, 48px);
+  height: clamp(28px, 4vmin, 48px);
+  font-size: clamp(0.6rem, 1.4vmin, 0.85rem);
+}
+
+/* 学段总览发现岛卡片浮动动画：缩放后卡片间距变小，translateY(-6px)
+   浮动会让相邻卡片边缘闪烁重叠。窄屏关掉浮动。 */
+@media (max-width: 1180px) {
+  .station {
+    animation: none;
+  }
+  .station.active {
+    animation: none;
+  }
+}
+
+/* 课程节点预览装饰线：原 top:18px 与 38px 圆圈中心(≈19)对齐，
+   但缩放后 span 高度增长、圆圈下移，固定 18px 的装饰线会穿到圆圈下方
+   或文字中间，视觉错位像两条线重叠。改用百分比居中定位。 */
+.course-node-preview {
+  align-items: center;
+}
+.course-node-preview::before {
+  top: 19px;
+  left: 12%;
+  right: 12%;
+}
+@media (max-width: 700px) {
+  .course-node-preview::before {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+/* ============================================================
+   桌面满屏适配：铺满视口，但不溢出
+   目标：
+   1. 首页 3 行网格铺满内容区，内部卡片用 minmax(0, fr) 吸收高度，
+      文本/图表用 clamp 与 overflow 控制，不再把页面顶出滚动。
+   2. 挑战中心 head/lab 固定摘要高度，workbench 吃掉剩余高度铺满。
+   3. 列表卡片只显示摘要；今日挑战卡片自适应窄栏。
+   ============================================================ */
+@media (min-width: 1024px) and (min-height: 680px) {
+  /* 内容区成为高度容器 */
+  .content.route-home,
+  .content.route-training {
+    overflow: hidden !important;
+  }
+
+  .content.route-home > *,
+  .content.route-training > * {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* ---------- 首页：三行铺满 ---------- */
+  .content.route-home .music-home {
+    display: grid !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    grid-template-columns: repeat(16, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 0.72fr) !important;
+    gap: 10px !important;
+    align-content: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .music-home > * {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .music-hero {
+    grid-column: 1 / 9 !important;
+    grid-row: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .pro-recommend {
+    grid-column: 9 / 14 !important;
+    grid-row: 1 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .pro-status {
+    grid-column: 14 / 17 !important;
+    grid-row: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .home-lab-grid {
+    display: contents !important;
+  }
+
+  .content.route-home .spectrum-panel {
+    grid-column: 1 / 5 !important;
+    grid-row: 2 !important;
+  }
+
+  .content.route-home .command-panel {
+    grid-column: 5 / 9 !important;
+    grid-row: 2 !important;
+  }
+
+  .content.route-home .growth-panel {
+    grid-column: 9 / 13 !important;
+    grid-row: 2 !important;
+  }
+
+  .content.route-home .review-home {
+    grid-column: 13 / 17 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.9fr) !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    align-content: stretch !important;
+  }
+
+  .content.route-home .review-block {
+    min-height: 0 !important;
+    overflow: hidden !important;
+    gap: 6px !important;
+    padding: 8px 10px !important;
+  }
+
+  .content.route-home .review-block h3 {
+    overflow: hidden !important;
+    font-size: 0.84rem !important;
+    line-height: 1.2 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .content.route-home .daily-cards {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+    min-height: 0 !important;
+  }
+
+  .content.route-home .daily-card {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 1.35 / 1 !important;
+    max-height: 78px !important;
+  }
+
+  .content.route-home .daily-card-icon {
+    font-size: 1.25rem !important;
+  }
+
+  .content.route-home .daily-card-label,
+  .content.route-home .daily-card-front b {
+    font-size: 0.7rem !important;
+  }
+
+  .content.route-home .review-list,
+  .content.route-home .weak-chip-row {
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+
+  .content.route-home .review-list button {
+    min-height: 36px !important;
+    padding: 6px 8px !important;
+  }
+
+  .content.route-home .portfolio-panel {
+    grid-column: 1 / 7 !important;
+    grid-row: 3 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .home-entry-panel {
+    grid-column: 7 / 17 !important;
+    grid-row: 3 !important;
+    display: grid !important;
+    grid-template-columns: minmax(150px, 0.38fr) minmax(0, 1.62fr) !important;
+    gap: 10px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .home-entry-group {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+  }
+
+  .content.route-home .home-entry-group button {
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 8px !important;
+  }
+
+  .content.route-home .home-entry-group button small {
+    -webkit-line-clamp: 1 !important;
+  }
+
+  .content.route-home .home-lab-panel,
+  .content.route-home .pro-kpi,
+  .content.route-home .hero-stage,
+  .content.route-home .hero-console {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-home .music-hero h1 {
+    font-size: clamp(1.35rem, 1.5vw, 1.9rem) !important;
+    line-height: 1.12 !important;
+  }
+
+  .content.route-home .music-hero p,
+  .content.route-home .pro-recommend p,
+  .content.route-home .home-lab-panel p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .content.route-home .hero-wave {
+    height: clamp(40px, 7vh, 64px) !important;
+  }
+
+  .content.route-home .lesson-flow-mini button,
+  .content.route-home .growth-node {
+    min-height: 0 !important;
+  }
+
+  .content.route-home .spectrum-bars,
+  .content.route-home .spectrum-bars.compact {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  /* ---------- 挑战中心：head/lab 摘要，workbench 铺满剩余 ---------- */
+  .content.route-training .training-page {
+    display: grid !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto minmax(0, 1fr) !important;
+    gap: 10px !important;
+    align-content: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-training .training-head,
+  .content.route-training .training-lab-strip {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-training .training-head {
+    padding: 12px 14px !important;
+  }
+
+  .content.route-training .training-head h2 {
+    margin-bottom: 4px !important;
+    font-size: clamp(1.2rem, 1.4vw, 1.45rem) !important;
+  }
+
+  .content.route-training .training-head p,
+  .content.route-training .training-lab-strip p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    font-size: 0.84rem !important;
+  }
+
+  .content.route-training .training-lab-strip {
+    grid-template-columns: minmax(0, 1fr) minmax(86px, 0.18fr) minmax(0, 0.78fr) !important;
+    gap: 10px !important;
+    padding: 10px 12px !important;
+  }
+
+  .content.route-training .training-lab-strip .progress-ring {
+    width: clamp(72px, 6vw, 92px) !important;
+    height: clamp(72px, 6vw, 92px) !important;
+  }
+
+  .content.route-training .training-lab-strip .spectrum-bars {
+    min-height: 64px !important;
+    height: 72px !important;
+  }
+
+  .content.route-training .training-workbench {
+    display: grid !important;
+    grid-template-columns: minmax(220px, 280px) minmax(0, 1fr) !important;
+    gap: 10px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    align-items: stretch !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-training .training-module-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .content.route-training .training-module-list .training-card {
+    flex: 0 0 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    gap: 6px !important;
+    padding: 10px 12px !important;
+  }
+
+  .content.route-training .training-module-list .training-icon {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 1.25rem !important;
+  }
+
+  .content.route-training .training-module-list .training-card p,
+  .content.route-training .training-module-list .training-reason,
+  .content.route-training .training-module-list .metric-row,
+  .content.route-training .training-module-list .training-score-track,
+  .content.route-training .training-module-list .training-foot {
+    display: none !important;
+  }
+
+  .content.route-training .training-module-stage {
+    display: grid !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    grid-template-rows: auto auto minmax(0, 1fr) auto auto !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+    align-content: stretch !important;
+  }
+
+  .content.route-training .training-stage-visuals {
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-training .training-stage-spectrum {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  .content.route-training .training-stage-spectrum .spectrum-bars {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  .content.route-training .training-stage-head p,
+  .content.route-training .training-stage-brief p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .content.route-training .training-stage-footer {
+    min-height: 0 !important;
+  }
+}
+
+/* 中等桌面宽度：避免侧栏挤压后列数过多 */
+@media (min-width: 1024px) and (max-width: 1280px) and (min-height: 680px) {
+  .content.route-home .pro-status {
+    grid-template-columns: 1fr !important;
+  }
+
+  .content.route-home .home-entry-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .content.route-training .training-workbench {
+    grid-template-columns: minmax(200px, 240px) minmax(0, 1fr) !important;
+  }
+}
+
+/* 短视口 / 浏览器放大：放弃满屏铺满，改为自然高度 + 页面滚动，避免裁切 */
+@media (min-width: 901px) and (max-height: 679px),
+       (max-width: 1023px) {
+  .content.route-home,
+  .content.route-training {
+    overflow-y: auto !important;
+  }
+
+  .content.route-home .music-home,
+  .content.route-training .training-page {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+  }
+
+  .content.route-home .music-home {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
+  .content.route-home .music-home > *,
+  .content.route-home .home-lab-panel,
+  .content.route-home .review-home,
+  .content.route-home .portfolio-panel,
+  .content.route-home .home-entry-panel {
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .content.route-home .home-lab-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+  }
+
+  .content.route-home .review-home {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  }
+
+  .content.route-training .training-page {
+    display: grid !important;
+    grid-template-rows: auto auto auto !important;
+  }
+
+  .content.route-training .training-workbench {
+    height: auto !important;
+    min-height: 420px !important;
+    overflow: visible !important;
+    align-items: start !important;
+  }
+
+  .content.route-training .training-module-list,
+  .content.route-training .training-module-stage {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}

@@ -422,15 +422,15 @@ export default function Mixer() {
         </button>
         <div className="mix-tempo">
           <span>速度 {bpm}</span>
-          <input type="range" min={60} max={180} value={bpm} onChange={(e) => setBpm(Number(e.target.value))} />
+          <input type="range" min={60} max={180} value={bpm} aria-label="速度" onChange={(e) => setBpm(Number(e.target.value))} />
         </div>
         <div className="mix-tempo">
           <span>摇摆 {Math.round(swing * 100)}%</span>
-          <input type="range" min={0} max={0.5} step={0.05} value={swing} onChange={(e) => setSwing(Number(e.target.value))} />
+          <input type="range" min={0} max={0.5} step={0.05} value={swing} aria-label="摇摆" onChange={(e) => setSwing(Number(e.target.value))} />
         </div>
         <div className="mix-tempo">
           <span>🔊 主音量</span>
-          <input type="range" min={-30} max={0} value={master} onChange={(e) => setMaster(Number(e.target.value))} />
+          <input type="range" min={-30} max={0} value={master} aria-label="主音量" onChange={(e) => setMaster(Number(e.target.value))} />
         </div>
       </div>
 
@@ -552,7 +552,7 @@ export default function Mixer() {
                 <div className="track-mini-actions">
                   <button className={`mini-toggle ${t.mute ? 'on-mute' : ''}`} onClick={() => updateTrack(t.id, { mute: !t.mute })} title="静音">M</button>
                   <button className={`mini-toggle ${t.solo ? 'on-solo' : ''}`} onClick={() => updateTrack(t.id, { solo: !t.solo })} title="独奏">S</button>
-                  <input className="track-vol" type="range" min={-24} max={0} value={t.volume} onChange={(e) => updateTrack(t.id, { volume: Number(e.target.value) })} title="音量" />
+                  <input className="track-vol" type="range" min={-24} max={0} value={t.volume} onChange={(e) => updateTrack(t.id, { volume: Number(e.target.value) })} title="音量" aria-label={`${VOICE_INFO[t.voice].name} 音量`} />
                   <button className="mini-toggle" onClick={() => clearTrack(t.id)} title="清空该轨">⌫</button>
                   <button className="mini-toggle del" onClick={() => removeTrack(t.id)} title="删除该轨">✕</button>
                 </div>

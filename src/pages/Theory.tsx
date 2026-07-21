@@ -760,7 +760,7 @@ async function playDemo(kind: DemoKind, control: DemoControl) {
 
   if (kind === 'dynamics') {
     if (control.value === 'crescendo') {
-      ;[0.3, 0.55, 0.9].forEach((volume, i) => later(i * 360, () => playNote('C4', '8n', volume)))
+      [0.3, 0.55, 0.9].forEach((volume, i) => later(i * 360, () => playNote('C4', '8n', volume)))
     } else {
       playNote('C4', '4n', control.value === 'soft' ? 0.3 : control.value === 'strong' ? 0.95 : 0.62)
     }

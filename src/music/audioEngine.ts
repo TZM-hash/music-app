@@ -1,5 +1,6 @@
 // 音频引擎 2.0：音色切换 · 和弦 · 太鼓音效 · 节拍器
 // 按需导入 Tone.js，避免把整个库打进单文件包
+import { PITCH_CLASSES, chordNotes as buildTriad } from './notes'
 import {
   start as toneStart,
   now as toneNow,
@@ -18,10 +19,19 @@ import {
 
 let started = false
 
-export async function ensureAudio(): Promise<void> {
-  if (started) return
-  await toneStart()
-  started = true
+/**
+ * 确保 AudioContext 已启动。内部吞掉所有错误（浏览器拒绝自动播放策略等），
+ * 返回是否成功——调用方据此决定是否继续发声，不会产生 unhandled rejection。
+ */
+export async function ensureAudio(): Promise<boolean> {
+  if (started) return true
+  try {
+    await toneStart()
+    started = true
+    return true
+  } catch {
+    return false
+  }
 }
 
 // —— 音色系统 ——
@@ -253,18 +263,8 @@ export function releaseNote(note: string, patch?: TonePatch): void {
 
 /** 播放一个三和弦 */
 export function playChord(root: string, quality: 'maj' | 'min', duration = '2n'): void {
-  const chromatic = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
-  const octave = parseInt(root.slice(-1), 10)
-  const name = root.slice(0, -1)
-  const idx = chromatic.indexOf(name)
-  if (idx < 0) return
-  const third = quality === 'maj' ? 4 : 3
-  const fifth = 7
-  const notes = [
-    root,
-    `${chromatic[(idx + third) % 12]}${octave + Math.floor((idx + third) / 12)}`,
-    `${chromatic[(idx + fifth) % 12]}${octave + Math.floor((idx + fifth) / 12)}`,
-  ]
+  const notes = buildTriad(root, quality)
+  if (notes.length === 0) return
   if (currentPatch === 'piano') {
     getPianoVoice().triggerAttackRelease(notes, duration)
   } else {
@@ -576,17 +576,9 @@ let stopAccomp: (() => void) | null = null
 let padSynth: PolySynth | null = null
 let bassSynth: Synth | null = null
 
-const chromaticScale = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
 function chordNotes(root: string, quality: 'maj' | 'min'): string[] {
-  const octave = parseInt(root.slice(-1), 10)
-  const idx = chromaticScale.indexOf(root.slice(0, -1))
-  if (idx < 0) return [root]
-  const third = quality === 'maj' ? 4 : 3
-  return [
-    root,
-    `${chromaticScale[(idx + third) % 12]}${octave + Math.floor((idx + third) / 12)}`,
-    `${chromaticScale[(idx + 7) % 12]}${octave + Math.floor((idx + 7) / 12)}`,
-  ]
+  const notes = buildTriad(root, quality)
+  return notes.length > 0 ? notes : [root]
 }
 // 和弦根音降两个八度作为贝斯
 function bassOf(root: string): string {
@@ -634,7 +626,7 @@ export function inferChords(
     if (n.note !== 'rest') {
       const m = /^([A-G]#?)(-?\d)$/.exec(n.note)
       if (m) {
-        const pc = chromaticScale.indexOf(m[1])
+        const pc = PITCH_CLASSES.indexOf(m[1])
         barWeights[pc] = (barWeights[pc] ?? 0) + n.beats
       }
     }

@@ -268,10 +268,10 @@ export default function EchoGame() {
           <div className="echo-play">
             <p>👆 跟着敲出来！</p>
             <div className="taiko-2keys">
-              <button className="key-don" onPointerDown={() => hit('don')}>
+              <button className="key-don" aria-label="咚（F 或 空格）" onPointerDown={() => hit('don')}>
                 <span>🥁 咚</span><small>F / 空格</small>
               </button>
-              <button className="key-ka" onPointerDown={() => hit('ka')}>
+              <button className="key-ka" aria-label="咔（J 或 K）" onPointerDown={() => hit('ka')}>
                 <span>🥁 咔</span><small>J / K</small>
               </button>
             </div>

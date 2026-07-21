@@ -1,4 +1,5 @@
 // 麦克风音高检测：Web Audio + 自相关基频检测（纯前端，离线可用）
+import { PITCH_CLASSES } from './notes'
 
 export interface PitchReading {
   /** 基频 Hz，未检测到为 -1 */
@@ -11,7 +12,7 @@ export interface PitchReading {
   clarity: number
 }
 
-const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+const NOTE_NAMES = PITCH_CLASSES
 
 /** 频率 → 音名（含八度）+ 音分偏差 */
 export function freqToNote(freq: number): { note: string; cents: number; midi: number } {

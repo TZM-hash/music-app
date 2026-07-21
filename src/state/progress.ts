@@ -18,8 +18,6 @@ export interface GameProgress {
 
 export type ProgressStore = Record<string, GameProgress>
 
-const empty: GameProgress = { stars: {}, bestScores: {}, playCount: 0, badges: [] }
-
 function blankProgress(): GameProgress {
   return { stars: {}, bestScores: {}, playCount: 0, badges: [] }
 }
@@ -35,12 +33,11 @@ function normalizeProgress(value: Partial<GameProgress> | null | undefined): Gam
   }
 }
 
-function readJson<T>(key: string, fallback: T): T {
+function readRaw(key: string): string | null {
   try {
-    const raw = localStorage.getItem(key)
-    return raw ? (JSON.parse(raw) as T) : fallback
+    return localStorage.getItem(key)
   } catch {
-    return fallback
+    return null
   }
 }
 
@@ -57,25 +54,57 @@ function currentScope(studentId = getCurrentStudentId()): string {
   return studentId || ANONYMOUS_SCOPE
 }
 
+// —— 内存缓存 ——
+// 进度 store 随学生数增长，每次 recordResult/loadProgress 都全量 JSON.parse 浪费明显。
+// 缓存「原始字符串 + 解析结果」：localStorage 里的字符串没变就直接复用解析结果；
+// 备份导入等外部写入会改变字符串，比较时自动失效，无需手动清缓存。
+let cachedRaw: string | null | undefined = undefined // undefined = 尚未加载
+let cachedStore: ProgressStore | null = null
+
 export function loadProgressStore(): ProgressStore {
-  const scoped = readJson<Record<string, Partial<GameProgress>> | null>(STORE_KEY, null)
-  if (scoped && typeof scoped === 'object') {
-    const store: ProgressStore = {}
-    for (const [studentId, progress] of Object.entries(scoped)) {
-      store[studentId] = normalizeProgress(progress)
+  const raw = readRaw(STORE_KEY)
+  if (cachedStore && raw === cachedRaw) return cachedStore
+
+  if (raw) {
+    let scoped: Record<string, Partial<GameProgress>> | null = null
+    try {
+      scoped = JSON.parse(raw) as Record<string, Partial<GameProgress>> | null
+    } catch {
+      scoped = null
     }
-    // 新 store 已存在：把历史遗留的 legacy 数据清掉，防止"清空后复活"
-    removeLegacyKey()
-    return store
+    if (scoped && typeof scoped === 'object') {
+      const store: ProgressStore = {}
+      for (const [studentId, progress] of Object.entries(scoped)) {
+        store[studentId] = normalizeProgress(progress)
+      }
+      // 新 store 已存在：把历史遗留的 legacy 数据清掉，防止"清空后复活"
+      removeLegacyKey()
+      cachedRaw = raw
+      cachedStore = store
+      return store
+    }
   }
 
-  const legacy = readJson<Partial<GameProgress> | null>(LEGACY_KEY, null)
-  if (!legacy) return {}
+  // 无新 store：尝试从 legacy 迁移
+  let legacy: Partial<GameProgress> | null = null
+  try {
+    const legacyRaw = localStorage.getItem(LEGACY_KEY)
+    legacy = legacyRaw ? (JSON.parse(legacyRaw) as Partial<GameProgress>) : null
+  } catch {
+    legacy = null
+  }
+  if (!legacy) {
+    cachedRaw = raw
+    cachedStore = {}
+    return cachedStore
+  }
 
   const migrated = { [ANONYMOUS_SCOPE]: normalizeProgress(legacy) }
   writeJson(STORE_KEY, migrated)
   // 迁移完成后删除 legacy key，避免下次又从旧数据复活
   removeLegacyKey()
+  cachedRaw = readRaw(STORE_KEY)
+  cachedStore = migrated
   return migrated
 }
 
@@ -88,24 +117,31 @@ function removeLegacyKey(): void {
 }
 
 export function saveProgressStore(store: ProgressStore): boolean {
-  return writeJson(STORE_KEY, store)
+  const ok = writeJson(STORE_KEY, store)
+  if (ok) {
+    cachedStore = store
+    cachedRaw = readRaw(STORE_KEY)
+  }
+  return ok
 }
 
 export function loadProgress(studentId?: string | null): GameProgress {
   const store = loadProgressStore()
-  return normalizeProgress(store[currentScope(studentId)] ?? empty)
+  const scope = currentScope(studentId)
+  // 无记录时返回全新对象，避免调用方修改到共享的 empty 常量
+  return store[scope] ? normalizeProgress(store[scope]) : blankProgress()
 }
 
 export function saveProgress(p: GameProgress, studentId?: string | null): void {
   const store = loadProgressStore()
   store[currentScope(studentId)] = normalizeProgress(p)
-  writeJson(STORE_KEY, store)
+  saveProgressStore(store)
 }
 
 export function removeStudentProgress(studentId: string): void {
   const store = loadProgressStore()
   delete store[studentId]
-  writeJson(STORE_KEY, store)
+  saveProgressStore(store)
 }
 
 /** 记录一次游戏结果，返回更新后的进度以及是否刷新纪录 */

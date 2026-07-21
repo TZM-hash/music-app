@@ -1,8 +1,9 @@
 // 纯 SVG 五线谱 / 简谱渲染（高音谱号，支持时值/升号/附加线/小节线）
 import { MelodyNote } from '../music/songs'
+import { PITCH_CLASSES } from '../music/notes'
 import './staff.css'
 
-const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+const NOTE_NAMES = PITCH_CLASSES
 const JIANPU: Record<string, string> = {
   C: '1', D: '2', E: '3', F: '4', G: '5', A: '6', B: '7',
 }

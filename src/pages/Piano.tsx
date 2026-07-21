@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { buildNotes, whiteNotes, KEYBOARD_MAP, SCALES, NoteInfo, transposeNote } from '../music/notes'
 import {
   ensureAudio,
@@ -71,14 +71,26 @@ export default function Piano() {
   const [sustainSecs, setSustainSecs] = useState(initialPrefs.sustainSecs)
   const [loadState, setLoadState] = useState<PianoLoadState>('idle')
 
-  const ALL = buildNotes(octave, octaveSpan)
-  const WHITES = whiteNotes(ALL)
+  const ALL = useMemo(() => buildNotes(octave, octaveSpan), [octave, octaveSpan])
+  const WHITES = useMemo(() => whiteNotes(ALL), [ALL])
+  // 每个白键右侧的黑键（预计算，避免渲染时 O(n²) 的 ALL.find）
+  const blackAfterWhite = useMemo(() => {
+    const blackByLeft = new Map<string, NoteInfo>()
+    for (const n of ALL) {
+      if (n.isBlack) blackByLeft.set(`${n.name[0]}${n.note.slice(-1)}`, n)
+    }
+    return WHITES.map((w) =>
+      w.name === 'E' || w.name === 'B' ? null : blackByLeft.get(`${w.name}${w.note.slice(-1)}`) ?? null
+    )
+  }, [ALL, WHITES])
 
   const [active, setActive] = useState<Set<string>>(new Set())
   const activeRef = useRef<Set<string>>(new Set())
   const { bursts, push: pushBurst } = useNoteBursts()
   const recording = useRef<{ note: string; t: number; v: number }[]>([])
   const [isRecording, setIsRecording] = useState(false)
+  // 录音状态用 ref 镜像，让 press/release 回调引用稳定（键盘监听 effect 不必反复重注册）
+  const isRecordingRef = useRef(false)
   const [hasRecording, setHasRecording] = useState(false)
   const startTime = useRef(0)
   const mounted = useMounted()
@@ -86,8 +98,8 @@ export default function Piano() {
 
   // 进入钢琴页即预加载采样，并订阅加载状态（带卸载保护）
   useEffect(() => {
-    ensureAudio().then(() => {
-      if (mounted.current) preloadPiano()
+    ensureAudio().then((ok) => {
+      if (ok && mounted.current) preloadPiano()
     })
     return onPianoLoad(setLoadState)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -135,29 +147,29 @@ export default function Piano() {
       const rect = btnEl.getBoundingClientRect()
       const relY = clientY - rect.top
       const vel = Math.min(0.95, Math.max(0.45, relY / rect.height))
-      ensureAudio().then(() => attackNote(note.note, vel))
+      ensureAudio().then((ok) => ok && attackNote(note.note, vel))
       activeRef.current.add(note.note)
       setActive((s) => new Set(s).add(note.note))
       pushBurst(noteX(note), note.color, showNoteNames ? note.jianpu : '')
-      if (isRecording) {
+      if (isRecordingRef.current) {
         recording.current.push({ note: note.note, t: performance.now() - startTime.current, v: vel })
       }
     },
-    [noteX, showNoteNames, isRecording, pushBurst]
+    [noteX, showNoteNames, pushBurst]
   )
 
   // 键盘/回放用的固定力度触发
   const press = useCallback(
     (note: NoteInfo, vel = 0.8) => {
-      ensureAudio().then(() => attackNote(note.note, vel))
+      ensureAudio().then((ok) => ok && attackNote(note.note, vel))
       activeRef.current.add(note.note)
       setActive((s) => new Set(s).add(note.note))
       pushBurst(noteX(note), note.color, showNoteNames ? note.jianpu : '')
-      if (isRecording) {
+      if (isRecordingRef.current) {
         recording.current.push({ note: note.note, t: performance.now() - startTime.current, v: vel })
       }
     },
-    [noteX, showNoteNames, isRecording, pushBurst]
+    [noteX, showNoteNames, pushBurst]
   )
 
   const release = useCallback((note: NoteInfo) => {
@@ -199,7 +211,7 @@ export default function Piano() {
   // 节拍器
   useEffect(() => {
     if (metroOn) {
-      ensureAudio().then(() => startMetronome(bpm, (b) => setBeatFlash(b)))
+      ensureAudio().then((ok) => ok && startMetronome(bpm, (b) => setBeatFlash(b)))
     } else {
       stopMetronome()
       setBeatFlash(-1)
@@ -216,24 +228,26 @@ export default function Piano() {
     setVol(v)
   }
   const strumChord = async (root: string, quality: 'maj' | 'min') => {
-    await ensureAudio()
+    if (!(await ensureAudio())) return
     playChord(root, quality, '2n')
   }
 
   const toggleRecord = () => {
     if (isRecording) {
+      isRecordingRef.current = false
       setIsRecording(false)
       setHasRecording(recording.current.length > 0)
     } else {
       recording.current = []
       startTime.current = performance.now()
+      isRecordingRef.current = true
       setIsRecording(true)
       setHasRecording(false)
     }
   }
 
   const playback = async () => {
-    await ensureAudio()
+    if (!(await ensureAudio())) return
     if (!mounted.current) return
     recording.current.forEach((ev) => {
       later(() => {
@@ -332,6 +346,7 @@ export default function Piano() {
             min={40}
             max={200}
             value={bpm}
+            aria-label="节拍器速度"
             onChange={(e) => setBpm(Number(e.target.value))}
           />
           <span className="ctrl-val">{bpm}</span>
@@ -362,6 +377,7 @@ export default function Piano() {
             min={-30}
             max={0}
             value={volume}
+            aria-label="音量"
             onChange={(e) => changeVolume(Number(e.target.value))}
           />
         </div>
@@ -396,6 +412,7 @@ export default function Piano() {
                 max={6}
                 step={0.5}
                 value={sustainSecs}
+                aria-label="延音余音时长"
                 onChange={(e) => changeSustainTime(Number(e.target.value))}
               />
             </>
@@ -415,13 +432,14 @@ export default function Piano() {
         <Visualizer bursts={bursts} />
         <div className="piano" style={{ '--white-count': WHITES.length } as React.CSSProperties}>
           {/* 白键：grid 列布局，每个白键占一列 */}
-          {WHITES.map((n) => (
+          {WHITES.map((n, i) => (
             <button
               key={n.note}
               className={`white-key ${active.has(n.note) ? 'active' : ''} ${
                 inScale(n) ? '' : 'dim-key'
               } ${scaleNotes.length > 0 && inScale(n) ? 'scale-key' : ''}`}
-              style={{ gridColumn: WHITES.indexOf(n) + 1 }}
+              style={{ gridColumn: i + 1 }}
+              aria-label={`琴键 ${n.name}${n.note.slice(-1)}（简谱 ${n.jianpu}）`}
               onPointerDown={(e) => pressWithVel(n, e.clientY, e.currentTarget)}
               onPointerUp={() => release(n)}
               onPointerLeave={() => active.has(n.note) && release(n)}
@@ -436,11 +454,8 @@ export default function Piano() {
           ))}
 
           {/* 黑键：放在对应白键列的右边缘，跨列显示 */}
-          {WHITES.map((w, i) => {
-            const blackAfter = ALL.find(
-              (n) => n.isBlack && n.note[0] === w.name && n.note.slice(-1) === w.note.slice(-1)
-            )
-            if (!blackAfter || w.name === 'E' || w.name === 'B' || i >= WHITES.length - 1) return null
+          {blackAfterWhite.map((blackAfter, i) => {
+            if (!blackAfter || i >= WHITES.length - 1) return null
             return (
               <button
                 key={blackAfter.note}
@@ -448,6 +463,7 @@ export default function Piano() {
                   inScale(blackAfter) ? '' : 'dim-key'
                 }`}
                 style={{ gridColumn: i + 1 }}
+                aria-label={`琴键 ${blackAfter.name}${blackAfter.note.slice(-1)}`}
                 onPointerDown={(e) => pressWithVel(blackAfter, e.clientY, e.currentTarget)}
                 onPointerUp={() => release(blackAfter)}
                 onPointerLeave={() => active.has(blackAfter.note) && release(blackAfter)}
