@@ -1001,7 +1001,16 @@ button:focus-visible {
   line-height: 1;
 }
 
-.daily-rail,
+.daily-rail {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  min-height: 0;
+  align-content: start;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
 .review-rail-list,
 .review-rail-chips {
   display: flex;
@@ -1027,6 +1036,10 @@ button:focus-visible {
   background: var(--bg-panel);
   color: var(--text);
   text-align: left;
+}
+
+.daily-rail-empty {
+  grid-column: 1 / -1;
 }
 
 .daily-rail-empty,
