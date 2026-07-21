@@ -17,6 +17,10 @@ import {
   loadReviewBook,
   type ReviewQuestion,
 } from '../state/theoryReview'
+import {
+  focusFromReviewItem,
+  focusFromWeakCategory,
+} from '../state/reviewDeepLink'
 
 interface EntryItem {
   route: Route
@@ -79,7 +83,7 @@ function theoryToReviewQuestions(): ReviewQuestion[] {
 }
 
 export default function Home() {
-  const { navigate, mode } = useApp()
+  const { navigate, mode, openTheory } = useApp()
   const isLectureMode = mode === 'lecture'
 
   // 学生维度 + 投屏模式决定全部派生数据，按它们缓存，避免每次 render 都全量读 localStorage / 重算
@@ -311,7 +315,7 @@ export default function Home() {
                       key={item.id ?? `${item.itemTitle}-${index}`}
                       type="button"
                       className="daily-rail-item"
-                      onClick={() => navigate('training')}
+                      onClick={() => openTheory(focusFromReviewItem(item))}
                     >
                       <span className="daily-rail-index" aria-hidden="true">
                         {index + 1}
@@ -333,13 +337,13 @@ export default function Home() {
               </div>
               <div className="review-rail-list">
                 {wrongAnswers.length === 0 ? (
-                  <button type="button" onClick={() => navigate('theory')}>
+                  <button type="button" onClick={() => openTheory()}>
                     <strong>暂无需要回放</strong>
                     <small>完成挑战后会显示值得再听的地方</small>
                   </button>
                 ) : (
                   wrongAnswers.map((item) => (
-                    <button key={item.id} type="button" onClick={() => navigate('training')}>
+                    <button key={item.id} type="button" onClick={() => openTheory(focusFromReviewItem(item))}>
                       <strong>{item.itemTitle}</strong>
                       <small>
                         {item.options[item.lastSelectedAnswer ?? -1] ?? '未选择'} →{' '}
@@ -363,7 +367,11 @@ export default function Home() {
                   </button>
                 ) : (
                   weakCategories.map((item) => (
-                    <button key={item.category} type="button" onClick={() => navigate('theory')}>
+                    <button
+                      key={item.category}
+                      type="button"
+                      onClick={() => openTheory(focusFromWeakCategory(item.category))}
+                    >
                       {item.category}
                       <em>{Math.round(item.accuracy * 100)}%</em>
                     </button>
