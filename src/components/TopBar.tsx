@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useApp, Route } from '../state/appState'
 import { ROUTE_LABELS } from '../state/navigationHistory'
 import { setUISoundEnabled, isUISoundEnabled } from '../music/uiSounds'
@@ -24,14 +24,36 @@ export default function TopBar() {
     toggleSidebar,
     goBack,
   } = useApp()
-  const isInstrument = route === 'piano' || route === 'drums'
+  const isInstrument =
+    route === 'piano' ||
+    route === 'drums' ||
+    route === 'xylophone' ||
+    route === 'recorder'
   const [uiSoundOn, setUiSoundOn] = useState(isUISoundEnabled)
+  const [isFullscreen, setIsFullscreen] = useState(
+    () => typeof document !== 'undefined' && !!document.fullscreenElement
+  )
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener('fullscreenchange', onChange)
+    return () => document.removeEventListener('fullscreenchange', onChange)
+  }, [])
+
   const toggleUiSound = () => {
     setUiSoundOn((v) => {
       const next = !v
       setUISoundEnabled(next)
       return next
     })
+  }
+
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) {
+      void document.exitFullscreen?.()
+    } else {
+      void document.documentElement.requestFullscreen?.()
+    }
   }
 
   return (
@@ -96,11 +118,11 @@ export default function TopBar() {
       </div>
 
       <button
-        className="toolbtn"
-        onClick={() => document.documentElement.requestFullscreen?.()}
-        title="投屏全屏"
+        className={`toolbtn ${isFullscreen ? 'active' : ''}`}
+        onClick={toggleFullscreen}
+        title={isFullscreen ? '退出全屏' : '投屏全屏'}
       >
-        全屏
+        {isFullscreen ? '退出全屏' : '全屏'}
       </button>
     </header>
   )
