@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useMemo } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -17,7 +17,6 @@ import {
   loadReviewBook,
   type ReviewQuestion,
 } from '../state/theoryReview'
-import { useTimers } from '../hooks/useTimers'
 
 interface EntryItem {
   route: Route
@@ -283,50 +282,95 @@ export default function Home() {
       </section>
 
       {!isLectureMode && (
-        <section className="review-home card">
-          <div className="review-block daily">
-            <span className="pro-kicker">今日挑战</span>
-            <h3>{dailyChallenge.length} 个混合小挑战</h3>
-            <DailyCards items={dailyChallenge} onGo={() => navigate('training')} />
-          </div>
-          <div className="review-block">
-            <span className="pro-kicker">回放点</span>
-            <h3>{wrongAnswers.length > 0 ? `${wrongAnswers.length} 个可以再试` : '暂无需要回放'}</h3>
-            <div className="review-list">
-              {wrongAnswers.length === 0 ? (
-                <button onClick={() => navigate('theory')}>
-                  <b>完成一次挑战</b>
-                  <small>挑战后这里会显示值得再听再玩的地方</small>
-                </button>
-              ) : (
-                wrongAnswers.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => navigate('training')}
-                  >
-                    <b>{item.itemTitle}</b>
-                    <small>
-                      {item.options[item.lastSelectedAnswer ?? -1] ?? '未选择'} → {item.options[item.correctAnswer]}
-                    </small>
-                  </button>
-                ))
-              )}
+        <section className="review-rail card" aria-label="今日挑战与回放">
+          <header className="review-rail-head">
+            <div>
+              <span className="pro-kicker">今日练习</span>
+              <h3>挑战 · 回放 · 再探索</h3>
             </div>
-          </div>
-          <div className="review-block weak">
-            <span className="pro-kicker">再探索方向</span>
-            <h3>{weakCategories.length > 0 ? '优先回到这些声音方向' : '完成挑战后生成'}</h3>
-            <div className="weak-chip-row">
-              {weakCategories.length === 0 ? (
-                <button onClick={() => navigate('training')}>进入挑战中心</button>
-              ) : (
-                weakCategories.map((item) => (
-                  <button key={item.category} onClick={() => navigate('theory')}>
-                    {item.category} <b>{Math.round(item.accuracy * 100)}%</b>
+            <button type="button" className="review-rail-link" onClick={() => navigate('training')}>
+              进入挑战中心
+            </button>
+          </header>
+
+          <div className="review-rail-body">
+            <section className="review-rail-block">
+              <div className="review-rail-title">
+                <span>今日挑战</span>
+                <b>{dailyChallenge.length}</b>
+              </div>
+              <div className="daily-rail">
+                {dailyChallenge.length === 0 ? (
+                  <button type="button" className="daily-rail-empty" onClick={() => navigate('training')}>
+                    <strong>暂无今日挑战</strong>
+                    <small>进入挑战中心开始练习</small>
                   </button>
-                ))
-              )}
-            </div>
+                ) : (
+                  dailyChallenge.map((item, index) => (
+                    <button
+                      key={item.id ?? `${item.itemTitle}-${index}`}
+                      type="button"
+                      className="daily-rail-item"
+                      onClick={() => navigate('training')}
+                    >
+                      <span className="daily-rail-index" aria-hidden="true">
+                        {index + 1}
+                      </span>
+                      <span className="daily-rail-copy">
+                        <strong>{item.itemTitle}</strong>
+                        <small>{item.category}</small>
+                      </span>
+                    </button>
+                  ))
+                )}
+              </div>
+            </section>
+
+            <section className="review-rail-block">
+              <div className="review-rail-title">
+                <span>回放点</span>
+                <b>{wrongAnswers.length}</b>
+              </div>
+              <div className="review-rail-list">
+                {wrongAnswers.length === 0 ? (
+                  <button type="button" onClick={() => navigate('theory')}>
+                    <strong>暂无需要回放</strong>
+                    <small>完成挑战后会显示值得再听的地方</small>
+                  </button>
+                ) : (
+                  wrongAnswers.map((item) => (
+                    <button key={item.id} type="button" onClick={() => navigate('training')}>
+                      <strong>{item.itemTitle}</strong>
+                      <small>
+                        {item.options[item.lastSelectedAnswer ?? -1] ?? '未选择'} →{' '}
+                        {item.options[item.correctAnswer]}
+                      </small>
+                    </button>
+                  ))
+                )}
+              </div>
+            </section>
+
+            <section className="review-rail-block">
+              <div className="review-rail-title">
+                <span>再探索方向</span>
+                <b>{weakCategories.length}</b>
+              </div>
+              <div className="review-rail-chips">
+                {weakCategories.length === 0 ? (
+                  <button type="button" onClick={() => navigate('training')}>
+                    完成挑战后生成
+                  </button>
+                ) : (
+                  weakCategories.map((item) => (
+                    <button key={item.category} type="button" onClick={() => navigate('theory')}>
+                      {item.category}
+                      <em>{Math.round(item.accuracy * 100)}%</em>
+                    </button>
+                  ))
+                )}
+              </div>
+            </section>
           </div>
         </section>
       )}
@@ -441,44 +485,6 @@ export default function Home() {
           ))}
         </section>
       )}
-    </div>
-  )
-}
-
-function DailyCards({ items, onGo }: { items: { id?: string; itemTitle: string; category: string; question: string }[]; onGo: () => void }) {
-  const [flipped, setFlipped] = useState<Set<number>>(new Set())
-  const { later } = useTimers()
-
-  const toggle = (i: number) => {
-    setFlipped((prev) => {
-      const next = new Set(prev)
-      if (next.has(i)) next.delete(i)
-      else next.add(i)
-      return next
-    })
-  }
-
-  return (
-    <div className="daily-cards">
-      {items.map((item, i) => (
-        <button
-          key={item.id}
-          className={`daily-card ${flipped.has(i) ? 'flipped' : ''}`}
-          onClick={() => { toggle(i); if (!flipped.has(i)) later(onGo, 600) }}
-        >
-          {!flipped.has(i) ? (
-            <div className="daily-card-back">
-              <span className="daily-card-icon">🎵</span>
-              <span className="daily-card-label">挑战 {i + 1}</span>
-            </div>
-          ) : (
-            <div className="daily-card-front">
-              <b>{item.itemTitle}</b>
-              <small>{item.category}</small>
-            </div>
-          )}
-        </button>
-      ))}
     </div>
   )
 }

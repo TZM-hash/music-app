@@ -164,43 +164,36 @@ export default function TrainingCenter() {
       </section>
 
       <div className="training-workbench">
-        <div className="training-grid training-module-list" aria-label="挑战模块列表">
-        {MODULES.map((m) => {
-          const best = progress.bestScores[m.route] ?? 0
-          const isRecommended = m.id === recommended.id
-          return (
-            <button
-              key={m.id}
-              className={`training-card card ${m.id === active.id ? 'on' : ''} ${isRecommended ? 'recommended' : ''}`}
-              onClick={() => setActiveId(m.id)}
-              type="button"
-            >
-              <div className="training-card-top">
-                <span className="training-icon" style={{ background: m.color }}>
+        <nav className="training-module-nav" aria-label="挑战模块列表">
+          {MODULES.map((m) => {
+            const best = progress.bestScores[m.route] ?? 0
+            const isActive = m.id === active.id
+            const isRecommended = m.id === recommended.id
+            return (
+              <button
+                key={m.id}
+                type="button"
+                className={`training-nav-item ${isActive ? 'on' : ''} ${isRecommended ? 'recommended' : ''}`}
+                onClick={() => setActiveId(m.id)}
+                aria-current={isActive ? 'true' : undefined}
+              >
+                <span className="training-nav-icon" style={{ background: m.color }} aria-hidden="true">
                   {m.icon}
                 </span>
-                <span className="training-level">{isRecommended ? '推荐' : m.level}</span>
-              </div>
-              <h3>{m.title}</h3>
-              <small>{m.ability} · {m.stage}</small>
-              <p>{m.goal}</p>
-              <div className="training-reason">{best > 0 ? `历史最高 ${best}，可继续巩固。` : m.reason}</div>
-              <div className="metric-row">
-                {m.metrics.map((metric) => (
-                  <span key={metric}>{metric}</span>
-                ))}
-              </div>
-              <div className="training-score-track" aria-label={`${m.title}最高分 ${best}`}>
-                <span style={{ width: filled ? `${Math.min(100, best)}%` : '0%', background: m.color }} />
-              </div>
-              <div className="training-foot">
-                <b>{best > 0 ? `最高分 ${best}` : '尚未挑战'}</b>
-                <span>{m.id === active.id ? '正在查看' : '查看挑战'}</span>
-              </div>
-            </button>
-          )
-        })}
-        </div>
+                <span className="training-nav-copy">
+                  <strong>{m.title}</strong>
+                  <small>
+                    {m.ability} · {m.stage}
+                  </small>
+                </span>
+                <span className="training-nav-meta">
+                  <em>{isRecommended ? '推荐' : m.level}</em>
+                  <b>{best > 0 ? best : '新'}</b>
+                </span>
+              </button>
+            )
+          })}
+        </nav>
 
         <section className="training-module-stage card" style={{ borderColor: active.color }}>
           <div className="training-stage-head">
@@ -208,7 +201,9 @@ export default function TrainingCenter() {
               {active.icon}
             </span>
             <div>
-              <span className="training-kicker">{active.ability} / {active.stage} / {active.level}</span>
+              <span className="training-kicker">
+                {active.ability} / {active.stage} / {active.level}
+              </span>
               <h2>{active.title}</h2>
               <p>{active.goal}</p>
             </div>
@@ -218,7 +213,11 @@ export default function TrainingCenter() {
             <div>
               <span>为什么推荐</span>
               <b>{active.id === recommended.id ? '当前优先练这一项' : '可作为补充练习'}</b>
-              <p>{activeBest > 0 ? `已有最高分 ${activeBest}，下一步可以追求更稳定的表现。` : active.reason}</p>
+              <p>
+                {activeBest > 0
+                  ? `已有最高分 ${activeBest}，下一步可以追求更稳定的表现。`
+                  : active.reason}
+              </p>
             </div>
             <div>
               <span>玩法提示</span>
@@ -251,6 +250,14 @@ export default function TrainingCenter() {
             <div>
               <b>{activeBest > 0 ? `历史最高 ${activeBest}` : '还没有挑战记录'}</b>
               <small>进入后会记录本机最高分，并同步到能力声谱和首页状态。</small>
+              <div className="training-score-track" aria-label={`${active.title}最高分 ${activeBest}`}>
+                <span
+                  style={{
+                    width: filled ? `${Math.min(100, activeBest)}%` : '0%',
+                    background: active.color,
+                  }}
+                />
+              </div>
             </div>
             <button className="big-start training-start" onClick={() => navigate(active.route)}>
               进入{active.former}

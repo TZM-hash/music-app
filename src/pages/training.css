@@ -86,14 +86,6 @@
   min-width: 0;
 }
 
-.training-grid {
-  display: flex;
-  min-height: 0;
-  flex-direction: column;
-  gap: 10px;
-  overflow: auto;
-}
-
 .training-workbench {
   display: grid;
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
@@ -102,40 +94,115 @@
   align-items: stretch;
 }
 
-.training-card {
+/* 左侧导航：专用紧凑列表项，不再复用完整卡片结构 */
+.training-module-nav {
   display: flex;
-  min-height: 0;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 9px;
-  padding: 14px;
+  gap: 8px;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-right: 2px;
+}
+
+.training-nav-item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.78);
+  color: var(--text);
   text-align: left;
-  overflow: hidden;
-  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
-.training-card:hover {
-  transform: translateX(3px);
-  border-color: var(--neon-cyan);
+.training-nav-item:hover {
+  transform: translateX(2px);
+  border-color: rgba(0, 122, 255, 0.35);
 }
 
-.training-card.on {
+.training-nav-item.on {
   border-color: rgba(0, 122, 255, 0.48);
   background:
-    linear-gradient(135deg, rgba(0, 122, 255, 0.1), rgba(175, 82, 222, 0.08)),
-    rgba(0, 0, 0, 0.05);
-  box-shadow: 0 18px 34px rgba(0, 122, 255, 0.13);
+    linear-gradient(135deg, rgba(0, 122, 255, 0.12), rgba(175, 82, 222, 0.08)),
+    rgba(255, 255, 255, 0.92);
+  box-shadow: 0 14px 28px rgba(0, 122, 255, 0.12);
 }
 
-.training-card.recommended:not(.on) {
-  border-color: rgba(52, 199, 89, 0.38);
+.training-nav-item.recommended:not(.on) {
+  border-color: rgba(52, 199, 89, 0.34);
 }
 
-.training-card-top {
-  display: flex;
+.training-nav-icon {
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  width: 100%;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.training-nav-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.training-nav-copy strong {
+  overflow: hidden;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.training-nav-copy small {
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.training-nav-meta {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  flex-shrink: 0;
+}
+
+.training-nav-meta em {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.04);
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.training-nav-item.recommended .training-nav-meta em {
+  background: rgba(52, 199, 89, 0.12);
+  color: #1f9d55;
+}
+
+.training-nav-meta b {
+  color: var(--neon-cyan);
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1;
 }
 
 .training-icon {
@@ -154,86 +221,6 @@
   height: 68px;
   font-size: 2rem;
   box-shadow: 0 18px 34px rgba(15, 23, 42, 0.14);
-}
-
-.training-level {
-  padding: 5px 9px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.04);
-  color: var(--text-soft);
-  font-size: 0.76rem;
-  font-weight: 800;
-}
-
-.training-card h3 {
-  font-size: 1.15rem;
-}
-
-.training-card small,
-.training-card p {
-  color: var(--text-soft);
-}
-
-.training-card p {
-  line-height: 1.5;
-}
-
-/* 左侧模块列表：只保留“图标 + 标题 + 学段 + 等级”，
-   避免在等高分栏/缩放时正文、指标、底部信息互相压叠。 */
-.training-module-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-  min-height: 0;
-  overflow: auto;
-  overscroll-behavior: contain;
-}
-
-.training-module-list .training-card {
-  flex: 0 0 auto;
-  gap: 6px;
-  min-height: 0;
-  padding: 10px 12px;
-}
-
-.training-module-list .training-icon {
-  width: 40px;
-  height: 40px;
-  font-size: 1.25rem;
-}
-
-.training-module-list .training-card h3 {
-  font-size: 1rem;
-  line-height: 1.2;
-}
-
-.training-module-list .training-card small {
-  display: block;
-  overflow: hidden;
-  font-size: 0.78rem;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.training-module-list .training-card p,
-.training-module-list .training-reason,
-.training-module-list .metric-row,
-.training-module-list .training-score-track,
-.training-module-list .training-foot {
-  display: none;
-}
-
-.training-reason {
-  display: -webkit-box;
-  overflow: hidden;
-  color: var(--text-soft);
-  font-size: 0.8rem;
-  font-weight: 750;
-  line-height: 1.4;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
 }
 
 .training-module-stage {
@@ -370,23 +357,13 @@
   font-weight: 700;
 }
 
+.training-stage-footer .training-score-track {
+  margin-top: 10px;
+  max-width: 280px;
+}
+
 .training-start {
   flex-shrink: 0;
-}
-
-.metric-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.metric-row span {
-  padding: 5px 8px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.04);
-  color: var(--text);
-  font-size: 0.78rem;
-  font-weight: 700;
 }
 
 .training-score-track {
@@ -407,26 +384,6 @@
   transition: width 0.45s ease;
 }
 
-.training-foot {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  width: 100%;
-  margin-top: auto;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-}
-
-.training-foot b {
-  color: var(--neon-cyan);
-}
-
-.training-foot span {
-  color: var(--neon-cyan);
-  font-weight: 800;
-}
-
 @media (max-width: 1180px) {
   .training-lab-strip {
     grid-template-columns: minmax(240px, 1fr) auto minmax(220px, 0.9fr);
@@ -442,18 +399,11 @@
     grid-template-columns: 1fr;
   }
 
-  .training-module-list {
+  .training-module-nav {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     max-height: none;
     overflow: visible;
-  }
-
-  .training-module-list .training-card p,
-  .training-module-list .training-reason {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
   }
 }
 
@@ -476,7 +426,7 @@
     grid-template-columns: 1fr;
   }
 
-  .training-module-list {
+  .training-module-nav {
     grid-template-columns: 1fr;
   }
 

@@ -922,75 +922,193 @@ button:focus-visible {
   border-color: var(--primary);
   color: #fff;
 }
-.review-home {
+
+/* 首页右侧练习轨道：紧凑列表，不再用 3D 翻牌卡 */
+.review-rail {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 0.9fr;
-  gap: 12px;
-  padding: 14px;
-}
-.review-block {
-  display: flex;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
   min-width: 0;
-  flex-direction: column;
-  gap: 7px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  background: var(--bg-soft);
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+  border-left: 4px solid var(--accent);
 }
-.review-block h3 {
-  font-size: 0.98rem;
+
+.review-rail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.review-rail-head h3 {
+  margin: 2px 0 0;
+  color: var(--text);
+  font-size: 1rem;
   line-height: 1.2;
 }
-.review-list {
+
+.review-rail-link {
+  flex-shrink: 0;
+  min-height: 32px;
+  padding: 6px 10px;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  background: rgba(0, 122, 255, 0.08);
+  color: var(--primary);
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.review-rail-body {
+  display: grid;
+  grid-template-rows: minmax(0, 1.2fr) minmax(0, 0.95fr) minmax(0, 0.85fr);
+  gap: 8px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.review-rail-block {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 6px;
+  min-height: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+
+.review-rail-title {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.review-rail-title span {
+  color: var(--text-soft);
+  font-size: 0.74rem;
+  font-weight: 850;
+}
+
+.review-rail-title b {
+  color: var(--primary);
+  font-size: 0.86rem;
+  line-height: 1;
+}
+
+.daily-rail,
+.review-rail-list,
+.review-rail-chips {
+  display: flex;
+  min-height: 0;
   flex-direction: column;
   gap: 6px;
-}
-.review-list.compact {
-  max-height: 100px;
   overflow: auto;
+  overscroll-behavior: contain;
 }
-.review-list button {
-  display: flex;
-  min-height: 44px;
-  flex-direction: column;
-  gap: 2px;
-  padding: 7px 10px;
+
+.daily-rail-item,
+.daily-rail-empty,
+.review-rail-list button {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 9px;
+  border: 1px solid transparent;
   border-radius: 8px;
   background: var(--bg-panel);
   color: var(--text);
   text-align: left;
 }
-.review-list b {
-  font-size: 0.9rem;
-  line-height: 1.2;
+
+.daily-rail-empty,
+.review-rail-list button {
+  grid-template-columns: minmax(0, 1fr);
 }
-.review-list small {
-  display: -webkit-box;
+
+.daily-rail-item:hover,
+.daily-rail-empty:hover,
+.review-rail-list button:hover,
+.review-rail-chips button:hover {
+  border-color: rgba(0, 122, 255, 0.28);
+}
+
+.daily-rail-index {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--primary);
+  font-size: 0.74rem;
+  font-weight: 900;
+}
+
+.daily-rail-copy,
+.review-rail-list button {
+  min-width: 0;
+}
+
+.daily-rail-copy strong,
+.review-rail-list strong,
+.daily-rail-empty strong {
+  display: block;
   overflow: hidden;
+  font-size: 0.84rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.daily-rail-copy small,
+.review-rail-list small,
+.daily-rail-empty small {
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
   color: var(--text-soft);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  line-height: 1.3;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.weak-chip-row {
-  display: flex;
+
+.review-rail-chips {
+  flex-direction: row;
   flex-wrap: wrap;
-  gap: 6px;
+  align-content: flex-start;
 }
-.weak-chip-row button {
-  padding: 6px 9px;
-  border-radius: 8px;
+
+.review-rail-chips button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid transparent;
+  border-radius: 999px;
   background: var(--bg-panel);
   color: var(--text);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 800;
 }
-.weak-chip-row b {
+
+.review-rail-chips em {
   color: var(--primary);
+  font-style: normal;
+  font-weight: 900;
 }
+
 .home-entry-panel {
   display: grid;
   grid-template-columns: minmax(180px, 0.46fr) minmax(0, 1.54fr);
@@ -3036,31 +3154,17 @@ body {
     font-size: 1rem;
   }
 
-  .content.route-home .review-home {
+  .content.route-home .review-rail {
     grid-column: 4;
     grid-row: 2;
-    grid-template-columns: 1fr;
-    gap: 8px;
+    min-height: 0;
     padding: 10px;
-    overflow: auto;
-    overscroll-behavior: contain;
+    overflow: hidden;
   }
 
-  .content.route-home .review-block {
+  .content.route-home .review-rail-block {
     gap: 5px;
     padding: 8px 10px;
-  }
-
-  .content.route-home .daily-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .content.route-home .daily-card {
-    height: 70px;
-  }
-
-  .content.route-home .review-list.compact {
-    max-height: 64px;
   }
 
   .content.route-home .pro-status {
@@ -3419,7 +3523,7 @@ body {
     font-size: 0.82rem;
   }
 
-  .content.route-training .training-grid {
+  .content.route-training .training-module-nav {
     min-height: 0;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
@@ -4119,54 +4223,34 @@ body {
     font-size: 1rem;
   }
 
-  .content.route-home .review-home {
+  .content.route-home .review-rail {
     grid-column: 10 / 13;
     grid-row: 2;
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 7px;
-    align-content: start;
-    overflow: auto;
-    overscroll-behavior: contain;
-  }
-
-  .content.route-home .review-block {
-    min-height: 0;
-    gap: 3px;
-    padding: 9px 10px;
-  }
-
-  .content.route-home .review-block h3 {
+    align-content: stretch;
     overflow: hidden;
-    color: var(--text);
-    font-size: 0.84rem;
-    line-height: 1.28;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .content.route-home .daily-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+  .content.route-home .review-rail-block {
+    min-height: 0;
+    gap: 4px;
+    padding: 8px 9px;
   }
 
-  .content.route-home .daily-card {
-    height: 68px;
+  .content.route-home .review-rail-title span {
+    font-size: 0.72rem;
   }
 
-  .content.route-home .daily-card-icon {
-    font-size: 1.3rem;
+  .content.route-home .daily-rail-item,
+  .content.route-home .daily-rail-empty,
+  .content.route-home .review-rail-list button {
+    min-height: 34px;
+    padding: 6px 8px;
   }
 
-  .content.route-home .review-list,
-  .content.route-home .review-list.compact {
-    display: flex;
-    flex-direction: column;
-    max-height: 72px;
-    overflow: auto;
-  }
-
-  .content.route-home .weak-chip-row {
+  .content.route-home .review-rail-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
@@ -4475,7 +4559,7 @@ body {
     min-height: 70px;
   }
 
-  .content.route-training .training-grid {
+  .content.route-training .training-module-nav {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 10px;
@@ -5022,7 +5106,7 @@ body {
     min-height: 0;
   }
 
-  .content.route-home .review-home {
+  .content.route-home .review-rail {
     grid-column: 10 / 13;
     grid-row: 2;
     min-height: 0;
@@ -5057,7 +5141,7 @@ body {
   }
 
   .content.route-home .home-lab-panel,
-  .content.route-home .review-block,
+  .content.route-home .review-rail-block,
   .content.route-home .work-card,
   .content.route-home .quick-tools {
     overflow: hidden;
@@ -5212,38 +5296,32 @@ body {
     overflow: hidden;
   }
 
-  .content.route-training .training-grid {
+  .content.route-training .training-module-nav {
     display: flex;
     flex-direction: column;
-    grid-template-columns: none;
     gap: 8px;
     min-height: 0;
     overflow: auto;
     overscroll-behavior: contain;
   }
 
-  .content.route-training .training-card {
+  .content.route-training .training-nav-item {
     flex: 0 0 auto;
     min-height: 0;
-    gap: 6px;
+    gap: 8px;
     padding: 10px;
   }
 
-  .content.route-training .training-card:hover {
-    transform: translateX(3px);
+  .content.route-training .training-nav-item:hover {
+    transform: translateX(2px);
   }
 
-  .content.route-training .training-card p {
-    -webkit-line-clamp: 2;
-    font-size: 0.74rem;
+  .content.route-training .training-nav-copy strong {
+    font-size: 0.94rem;
   }
 
-  .content.route-training .training-module-list .training-card p,
-  .content.route-training .training-module-list .training-reason,
-  .content.route-training .training-module-list .metric-row,
-  .content.route-training .training-module-list .training-score-track,
-  .content.route-training .training-module-list .training-foot {
-    display: none;
+  .content.route-training .training-nav-copy small {
+    font-size: 0.72rem;
   }
 
   .content.route-training .training-module-stage {
@@ -5445,7 +5523,7 @@ body {
     min-height: 0;
   }
 
-  .content.route-home .review-home {
+  .content.route-home .review-rail {
     grid-column: 9 / 13;
     grid-row: 2;
     display: grid;
@@ -5486,7 +5564,7 @@ body {
   .content.route-home .hero-stage,
   .content.route-home .hero-console,
   .content.route-home .home-lab-panel,
-  .content.route-home .review-block,
+  .content.route-home .review-rail-block,
   .content.route-home .work-card,
   .content.route-home .quick-tools > div {
     min-height: 0;
@@ -5503,7 +5581,7 @@ body {
   .content.route-home .home-lab-panel p,
   .content.route-home .quick-tools p,
   .content.route-home .work-card p,
-  .content.route-home .review-list small {
+  .content.route-home .review-rail-list small {
     display: -webkit-box;
     overflow: hidden;
     -webkit-box-orient: vertical;
@@ -5520,7 +5598,7 @@ body {
   }
 
   .content.route-home .work-card p,
-  .content.route-home .review-list small {
+  .content.route-home .review-rail-list small {
     -webkit-line-clamp: 1;
   }
 
@@ -5917,33 +5995,24 @@ body {
     overflow: hidden;
   }
 
-  .content.route-training .training-grid {
+  .content.route-training .training-module-nav {
     display: flex;
     flex-direction: column;
-    grid-auto-rows: auto;
     gap: 8px;
     min-height: 0;
     overflow: auto;
     overscroll-behavior: contain;
   }
 
-  .content.route-training .training-card {
+  .content.route-training .training-nav-item {
     flex: 0 0 auto;
-    gap: 6px;
+    gap: 8px;
     min-height: 0;
     padding: var(--compact-pad);
   }
 
-  .content.route-training .training-module-list .training-card p,
-  .content.route-training .training-module-list .training-reason,
-  .content.route-training .training-module-list .metric-row,
-  .content.route-training .training-module-list .training-score-track,
-  .content.route-training .training-module-list .training-foot {
-    display: none;
-  }
-
-  .content.route-training .training-card h3 {
-    font-size: clamp(0.94rem, 0.82rem + 0.28vw, 1.16rem);
+  .content.route-training .training-nav-copy strong {
+    font-size: clamp(0.9rem, 0.8rem + 0.24vw, 1.05rem);
   }
 
   .content.route-training .training-module-stage {
@@ -7145,7 +7214,7 @@ body {
   }
 
   .content.route-home .work-card p,
-  .content.route-home .review-list small {
+  .content.route-home .review-rail-list small {
     -webkit-line-clamp: 1;
   }
 
@@ -7451,82 +7520,70 @@ body {
     display: contents;
   }
 
-  .content.route-home .review-home {
+  .content.route-home .review-rail {
     grid-column: 13 / 17;
     grid-row: 2;
     display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.9fr);
+    grid-template-rows: auto minmax(0, 1fr);
     gap: 8px;
     min-height: 0;
     overflow: hidden;
-    align-content: stretch;
+    padding: 10px;
   }
 
-  .content.route-home .review-block {
-    min-height: 0;
-    gap: 6px;
-    padding: 8px 10px;
-    overflow: hidden;
+  .content.route-home .review-rail-head h3 {
+    font-size: 0.92rem;
   }
 
-  .content.route-home .review-block h3 {
-    overflow: hidden;
-    font-size: 0.86rem;
-    line-height: 1.25;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .content.route-home .daily-cards {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
-  }
-
-  .content.route-home .daily-card {
-    height: auto;
-    max-height: 78px;
-    aspect-ratio: 1.35 / 1;
-  }
-
-  .content.route-home .daily-card-icon {
-    font-size: 1.35rem;
-  }
-
-  .content.route-home .daily-card-label,
-  .content.route-home .daily-card-front b {
+  .content.route-home .review-rail-link {
+    min-height: 28px;
+    padding: 5px 8px;
     font-size: 0.72rem;
   }
 
-  .content.route-home .review-list,
-  .content.route-home .weak-chip-row {
-    display: flex;
+  .content.route-home .review-rail-body {
+    grid-template-rows: minmax(0, 1.15fr) minmax(0, 0.95fr) minmax(0, 0.85fr);
+    gap: 7px;
     min-height: 0;
+    overflow: hidden;
   }
 
-  .content.route-home .review-list {
-    flex-direction: column;
-    gap: 6px;
-    overflow: auto;
+  .content.route-home .review-rail-block {
+    min-height: 0;
+    gap: 5px;
+    padding: 7px 8px;
+    overflow: hidden;
   }
 
-  .content.route-home .review-list button {
-    min-height: 40px;
+  .content.route-home .daily-rail-item,
+  .content.route-home .daily-rail-empty,
+  .content.route-home .review-rail-list button {
+    min-height: 36px;
     padding: 6px 8px;
   }
 
-  .content.route-home .review-list small {
-    -webkit-line-clamp: 1;
+  .content.route-home .daily-rail-index {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
   }
 
-  .content.route-home .weak-chip-row {
-    flex-wrap: wrap;
-    gap: 6px;
+  .content.route-home .daily-rail-copy strong,
+  .content.route-home .review-rail-list strong,
+  .content.route-home .daily-rail-empty strong {
+    font-size: 0.78rem;
   }
 
-  .content.route-home .weak-chip-row button {
-    padding: 5px 8px;
-    font-size: 0.74rem;
+  .content.route-home .daily-rail-copy small,
+  .content.route-home .review-rail-list small,
+  .content.route-home .daily-rail-empty small {
+    font-size: 0.68rem;
+  }
+
+  .content.route-home .review-rail-chips button {
+    min-height: 28px;
+    padding: 4px 8px;
+    font-size: 0.72rem;
   }
 
   .content.route-home .portfolio-panel,
@@ -7589,7 +7646,7 @@ body {
   .content.route-home .pro-recommend,
   .content.route-home .pro-status,
   .content.route-home .home-lab-panel,
-  .content.route-home .review-home,
+  .content.route-home .review-rail,
   .content.route-home .portfolio-panel,
   .content.route-home .home-entry-panel {
     min-height: 0;
@@ -8408,7 +8465,7 @@ body {
     grid-row: auto;
   }
 
-  .content.route-home .review-home {
+  .content.route-home .review-rail {
     grid-column: 1 / 9;
     grid-row: 4;
   }
