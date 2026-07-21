@@ -188,30 +188,20 @@ export default function Dashboard() {
       {hasData && (
         <>
           <div className="dash-grid">
-            <div className="dash-panel card dash-panel-rank">
+            <div className="dash-panel card">
               <h3>🏆 {focusGame === 'all' ? '班级排行榜（按星星）' : `${GAME_META[focusGame].skill}能力排行`}</h3>
-              <BarChart data={rankingBars} height={220} />
+              <BarChart data={rankingBars} height={200} />
             </div>
-            <div className="dash-panel card dash-panel-donut">
+            <div className="dash-panel card">
               <h3>🎲 各游戏练习分布</h3>
               <Donut segments={gameSegments} />
             </div>
-            <div className="dash-panel card dash-panel-trend">
+            <div className="dash-panel card">
               <h3>📈 练习趋势</h3>
-              <LineChart points={overview.trend.map((t) => ({ label: t.label, value: t.count }))} height={180} />
-            </div>
-            <div className="dash-panel card dash-panel-signal">
-              <div className="dash-signal-copy">
-                <span className="dash-kicker">班级能力声谱</span>
-                <h3>{focusLabel}正在被观察</h3>
-              </div>
-              <div className="dash-spectrum">
-                <SpectrumBars values={signalValues} />
-              </div>
-              <div className="dash-trend-mini">
-                <b>练习节奏</b>
-                <SpectrumBars values={trendBars} compact />
-              </div>
+              <LineChart
+                points={overview.trend.map((t) => ({ label: t.label, value: t.count }))}
+                height={180}
+              />
             </div>
           </div>
 

@@ -844,6 +844,156 @@
   }
 }
 
+/* ============================================================
+   成长观察页：覆盖 index.css 历史 layout pass 的绝对网格定位
+   改回稳定的「上 KPI / 中三图 / 下画像+明细」流式布局，避免控件错位。
+   ============================================================ */
+@media (min-width: 1121px) {
+  .content.route-dashboard {
+    overflow: auto !important;
+  }
+
+  .content.route-dashboard > * {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .content.route-dashboard .dashboard,
+  .content.route-dashboard .dashboard.has-data,
+  .content.route-dashboard .dashboard.no-data {
+    display: grid !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    align-content: start !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px) !important;
+    grid-template-rows: auto auto auto !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data > * {
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-lab-head {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(240px, 360px) !important;
+    gap: 16px !important;
+    padding: 18px 20px !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .kpi-row {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid {
+    grid-column: 1 / 3 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: none !important;
+    gap: 12px !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-panel {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    display: block !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-bottom {
+    grid-column: 1 / 3 !important;
+    grid-row: 3 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.9fr) !important;
+    gap: 12px !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-detail,
+  .content.route-dashboard .dashboard.has-data .dash-table {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    min-height: 0 !important;
+    overflow: auto !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-signal-board {
+    display: none !important;
+  }
+
+  .content.route-dashboard .dash-lab-copy h2 {
+    font-size: clamp(1.3rem, 1.1rem + 0.7vw, 1.8rem) !important;
+  }
+
+  .content.route-dashboard .dash-lab-copy p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .content.route-dashboard .dash-command .progress-ring {
+    width: clamp(88px, 8vw, 118px) !important;
+    height: clamp(88px, 8vw, 118px) !important;
+    transform: none !important;
+  }
+
+  .content.route-dashboard .kpi {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 1120px) {
+  .content.route-dashboard .dashboard,
+  .content.route-dashboard .dashboard.has-data,
+  .content.route-dashboard .dashboard.no-data {
+    display: flex !important;
+    flex-direction: column !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-lab-head,
+  .content.route-dashboard .dashboard.has-data .kpi-row,
+  .content.route-dashboard .dashboard.has-data .dash-grid,
+  .content.route-dashboard .dashboard.has-data .dash-bottom,
+  .content.route-dashboard .dashboard.has-data .dash-panel,
+  .content.route-dashboard .dashboard.has-data .dash-detail,
+  .content.route-dashboard .dashboard.has-data .dash-table {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .content.route-dashboard .dashboard.has-data .dash-bottom {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* 短视口 / 浏览器放大：放弃满屏铺满，改为自然高度 + 页面滚动，避免裁切 */
 @media (min-width: 901px) and (max-height: 679px),
        (max-width: 1023px) {
