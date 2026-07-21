@@ -54,7 +54,6 @@ export default function Dashboard() {
     GAME_IDS
       .map((g) => ({ id: g, count: overview.sessionsByGame[g] ?? 0 }))
       .sort((a, b) => b.count - a.count)[0]?.id ?? GAME_IDS[0]
-  const focusLabel = focusGame === 'all' ? '全班综合' : GAME_META[focusGame].skill
   const signalValues = GAME_IDS.map((g) => ({
     label: GAME_META[g].skill,
     value: overview.sessionsByGame[g] ?? 0,
