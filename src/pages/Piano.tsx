@@ -185,26 +185,36 @@ export default function Piano() {
   // 电脑键盘弹奏（映射固定为 C4 区，随 octave 半音移调，跨八度正确）
   useEffect(() => {
     const shift = (octave - 4) * 12
+    // 记录每个物理键按下时实际触发的音符：即便按住期间切换了八度，
+    // keyup 也能释放当初按下的那个音，避免残留卡音。
+    const pressedByKey = new Map<string, NoteInfo>()
     const down = (e: KeyboardEvent) => {
       if (e.repeat) return
-      const base = KEYBOARD_MAP[e.key.toLowerCase()]
+      const key = e.key.toLowerCase()
+      const base = KEYBOARD_MAP[key]
       if (!base) return
+      if (pressedByKey.has(key)) return
       const target = transposeNote(base, shift)
       const info = ALL.find((n) => n.note === target)
-      if (info) press(info)
+      if (info) {
+        pressedByKey.set(key, info)
+        press(info)
+      }
     }
     const up = (e: KeyboardEvent) => {
-      const base = KEYBOARD_MAP[e.key.toLowerCase()]
-      if (!base) return
-      const target = transposeNote(base, shift)
-      const info = ALL.find((n) => n.note === target)
-      if (info) release(info)
+      const key = e.key.toLowerCase()
+      const info = pressedByKey.get(key)
+      if (!info) return
+      pressedByKey.delete(key)
+      release(info)
     }
     window.addEventListener('keydown', down)
     window.addEventListener('keyup', up)
     return () => {
       window.removeEventListener('keydown', down)
       window.removeEventListener('keyup', up)
+      // effect 重建（如切换八度）时，释放此前按住的所有音，避免遗留发声
+      pressedByKey.forEach((info) => release(info))
     }
   }, [press, release, octave, ALL])
 

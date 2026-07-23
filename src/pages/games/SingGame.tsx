@@ -98,9 +98,10 @@ export default function SingGame() {
     setError(null)
     setPhase('perm')
     playUI('countdown')
+    let det: PitchDetector | null = null
     try {
       await ensureAudio()
-      const det = new PitchDetector()
+      det = new PitchDetector()
       await det.start()
       // 权限/音频启动期间用户可能已切页：立刻停掉麦克风并放弃后续 setState
       if (!mounted.current) {
@@ -110,6 +111,9 @@ export default function SingGame() {
       detector.current = det
       beginPlay(s)
     } catch (err) {
+      // 任何异常路径都要停掉可能已启动的麦克风流/AudioContext，避免泄漏（指示灯常亮）
+      det?.stop()
+      if (detector.current === det) detector.current = null
       if (!mounted.current) return
       setError('无法访问麦克风。请在浏览器允许麦克风权限后重试（也可能是设备没有麦克风）。')
     }

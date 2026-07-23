@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 
 export interface Burst {
   id: number
@@ -12,13 +12,26 @@ export interface Burst {
 export function useNoteBursts(lifeMs = 1000) {
   const [bursts, setBursts] = useState<Burst[]>([])
   const nextId = useRef(0)
+  // 登记所有未触发的移除定时器，组件卸载时统一清除，避免卸载后 setState
+  const timers = useRef<Set<number>>(new Set())
   const push = useCallback(
     (x: number, color: string, label: string) => {
       const id = nextId.current++
       setBursts((list) => [...list, { id, x, color, label }])
-      window.setTimeout(() => setBursts((list) => list.filter((item) => item.id !== id)), lifeMs)
+      const timer = window.setTimeout(() => {
+        timers.current.delete(timer)
+        setBursts((list) => list.filter((item) => item.id !== id))
+      }, lifeMs)
+      timers.current.add(timer)
     },
     [lifeMs]
+  )
+  useEffect(
+    () => () => {
+      timers.current.forEach((timer) => window.clearTimeout(timer))
+      timers.current.clear()
+    },
+    []
   )
   return { bursts, push }
 }

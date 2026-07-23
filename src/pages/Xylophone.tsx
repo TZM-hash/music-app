@@ -71,6 +71,14 @@ export default function Xylophone() {
     return () => window.removeEventListener('keydown', down)
   }, [strike])
 
+  // 卸载时清除所有未触发的高亮复位定时器，避免切页后 setActive 报错
+  useEffect(() => {
+    const timersMap = timers.current
+    return () => {
+      Object.values(timersMap).forEach((timer) => window.clearTimeout(timer))
+    }
+  }, [])
+
   return (
     <div className="instrument-wrap">
       <div className="instrument-toolbar">

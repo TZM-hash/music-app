@@ -140,6 +140,14 @@ export default function Drums() {
     []
   )
 
+  // 卸载时清除鼓面高亮复位定时器，避免切页后 setHit 报错
+  useEffect(() => {
+    const timersMap = timers.current
+    return () => {
+      Object.values(timersMap).forEach((timer) => window.clearTimeout(timer))
+    }
+  }, [])
+
   const hasAnyStep = () => Object.values(gridRef.current).some((steps) => steps.some(Boolean))
   const applyPreset = (i: number) => {
     const preset = PRESETS[i]
