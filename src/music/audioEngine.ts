@@ -88,14 +88,20 @@ function buildPianoFallback(): PolySynth {
  */
 export function preloadPiano(): void {
   if (pianoLoadState !== 'idle') return
-  setPianoState('loading')
-
   // 混响让钢琴更有空间感
   if (!pianoReverb) pianoReverb = new Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
   if (!pianoFallback) {
     pianoFallback = buildPianoFallback().connect(pianoReverb)
     pianoFallback.volume.value = currentVolume
   }
+
+  // 离线 / file:// 双击打开时不请求 CDN：立刻使用内置合成音色，避免 8 秒空等
+  if (!canLoadRemotePianoSamples()) {
+    setPianoState('fallback')
+    return
+  }
+
+  setPianoState('loading')
 
   // Salamander Grand Piano 采样（Tone.js 官方 CDN 示例音源）
   try {
@@ -126,6 +132,16 @@ export function preloadPiano(): void {
   window.setTimeout(() => {
     if (pianoLoadState === 'loading') setPianoState('fallback')
   }, 8000)
+}
+
+/** 是否具备加载远程钢琴采样的条件：在线且非 file:// 协议（双击打开的离线单文件） */
+function canLoadRemotePianoSamples(): boolean {
+  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
+  // file:// 打开的单文件 HTML 在部分浏览器即使“在线”也拦跨域采样请求，直接走降级
+  if (window.location.protocol === 'file:') return false
+  // 浏览器明确报告离线时跳过 CDN，避免 8 秒 loading 空等
+  if (navigator.onLine === false) return false
+  return true
 }
 
 /** 返回当前可用的钢琴发声对象 */
