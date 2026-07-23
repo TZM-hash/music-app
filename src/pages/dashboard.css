@@ -247,10 +247,17 @@
   min-height: 180px;
 }
 
+.dash-panel .chart {
+  height: 200px;
+  min-height: 180px;
+  overflow: visible;
+}
+
 .dash-panel .donut-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-height: 180px;
 }
 
 /* Bottom: detail + table — equal height, shared edges */
