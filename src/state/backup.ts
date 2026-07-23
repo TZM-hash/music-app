@@ -3,6 +3,8 @@ const BACKUP_VERSION = 1
 
 const BACKUP_KEYS = [
   'music-edu-roster-v1',
+  'music-edu-roster-initialized-v1',
+  'music-edu-current-student-v1',
   'music-edu-sessions-v1',
   'music-edu-progress-v1',
   'music-edu-progress-by-student-v1',
@@ -52,6 +54,9 @@ export function exportClassroomBackup(): string {
 // 每个备份 key 期望的数据形状：'array' | 'object' | 'any'（any 仅做 JSON 语法校验）
 const KEY_SHAPES: Record<string, 'array' | 'object' | 'any'> = {
   'music-edu-roster-v1': 'array',
+  // 「名册已初始化」标志与「当前学生」都是原始 JSON 值（布尔 / 字符串或 null），只做语法校验
+  'music-edu-roster-initialized-v1': 'any',
+  'music-edu-current-student-v1': 'any',
   'music-edu-sessions-v1': 'array',
   'music-edu-progress-v1': 'object',
   'music-edu-progress-by-student-v1': 'object',

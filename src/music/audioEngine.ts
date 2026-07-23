@@ -18,6 +18,8 @@ import {
 } from 'tone'
 
 let started = false
+// 记录正在进行中的启动 Promise：并发调用复用同一次 toneStart，避免重复启动 AudioContext
+let startingPromise: Promise<boolean> | null = null
 
 /**
  * 确保 AudioContext 已启动。内部吞掉所有错误（浏览器拒绝自动播放策略等），
@@ -25,13 +27,20 @@ let started = false
  */
 export async function ensureAudio(): Promise<boolean> {
   if (started) return true
-  try {
-    await toneStart()
-    started = true
-    return true
-  } catch {
-    return false
-  }
+  // 已有启动在途时直接复用，防止并发调用各自 toneStart 造成竞态
+  if (startingPromise) return startingPromise
+  startingPromise = (async () => {
+    try {
+      await toneStart()
+      started = true
+      return true
+    } catch {
+      return false
+    } finally {
+      startingPromise = null
+    }
+  })()
+  return startingPromise
 }
 
 // —— 音色系统 ——

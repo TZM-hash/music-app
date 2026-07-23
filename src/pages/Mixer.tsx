@@ -172,6 +172,13 @@ function isSavedProject(value: unknown): value is SavedProject {
   return !!project && typeof project === 'object' && Array.isArray(project.tracks) && typeof project.bpm === 'number'
 }
 
+// 已保存作品没有持久 id，用「内容特征 + 索引」派生稳定的 React key：
+// 名称相同的作品也能区分，删除中间项时不会因纯索引 key 造成 DOM 错位。
+function projectKey(project: SavedProject, index: number): string {
+  const hits = project.tracks.reduce((sum, track) => sum + track.steps.filter(Boolean).length, 0)
+  return `${index}-${project.name}-${project.bpm}-${project.tracks.length}-${hits}`
+}
+
 export default function Mixer() {
   const { currentStudentId } = useApp()
   const [tracks, setTracks] = useState<Track[]>(() => presetToTracks(PRESETS[0]))
@@ -404,7 +411,12 @@ export default function Mixer() {
     reader.onload = () => {
       try {
         const c = JSON.parse(String(reader.result))
-        loadProject(c as SavedProject)
+        // 校验结构后再加载，避免格式对但字段缺失的 JSON 触发 loadProject 内部崩溃
+        if (!isSavedProject(c)) {
+          alert('文件不是有效的混音作品。')
+          return
+        }
+        loadProject(c)
         setImportOpen(false)
       } catch {
         alert('文件格式不正确。')
@@ -479,9 +491,9 @@ export default function Mixer() {
         <div className="mix-projects card">
           <span className="mix-toolbar-label">📁 我的作品：</span>
           {projects.map((p, i) => (
-            <span key={i} className="proj-chip">
+            <span key={projectKey(p, i)} className="proj-chip">
               <button className="proj-load" onClick={() => loadProject(p)}>{p.name}</button>
-              <button className="proj-del" onClick={() => deleteProject(i)}>✕</button>
+              <button className="proj-del" aria-label={`删除作品 ${p.name}`} onClick={() => deleteProject(i)}>✕</button>
             </span>
           ))}
         </div>

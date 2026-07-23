@@ -65,6 +65,8 @@ export default function EchoGame() {
   // 累计每轮正确率，结算时用整局平均评星，而非只看最后一轮
   const accSum = useRef(0)
   const accCount = useRef(0)
+  // 本轮是否已判定：防止「敲够」与「超时」两条路径重复判定
+  const roundJudged = useRef(false)
   const totalRounds = 5
 
   // 统一登记定时器，组件卸载时全部清理（回调内带卸载保护），避免切页后残留
@@ -96,6 +98,7 @@ export default function EchoGame() {
   const startRound = useCallback((p: EchoPattern) => {
     setPattern(p)
     echoHits.current = []
+    roundJudged.current = false
     setPhase('listen')
     playPattern(p)
     const beatMs = (60 / p.bpm) * 1000
@@ -127,17 +130,12 @@ export default function EchoGame() {
     }, 1200)
   }, [pickPattern, startRound, later])
 
-  const hit = useCallback((type: NType) => {
-    if (phase !== 'echo' || !pattern) return
-    const now = performance.now() - startAt.current
+  // 判定本轮：敲够音数或超时后调用；用 roundJudged 守卫避免两条路径重复判定。
+  const judgeRound = useCallback(() => {
+    if (roundJudged.current || !pattern) return
+    roundJudged.current = true
     const beatMs = (60 / pattern.bpm) * 1000
-
-    if (type === 'don') taikoDON()
-    else taikoKA()
-
-    echoHits.current.push({ note: type, time: now })
-
-    if (echoHits.current.length >= pattern.notes.length) {
+    {
       setPhase('judge')
       let correct = 0
       const rows: { label: string; got: string; want?: string; ok: boolean }[] = []
@@ -220,7 +218,33 @@ export default function EchoGame() {
         }
       }, 1500)
     }
-  }, [phase, pattern, round, level, pickPattern, startRound, later])
+  }, [pattern, round, level, pickPattern, startRound, later])
+
+  const hit = useCallback((type: NType) => {
+    if (phase !== 'echo' || !pattern || roundJudged.current) return
+    const now = performance.now() - startAt.current
+
+    if (type === 'don') taikoDON()
+    else taikoKA()
+
+    echoHits.current.push({ note: type, time: now })
+
+    if (echoHits.current.length >= pattern.notes.length) {
+      judgeRound()
+    }
+  }, [phase, pattern, judgeRound])
+
+  // 进入 echo 阶段后设一个兜底超时：即便学生敲的音数不够，也会在合理时限后强制判定，
+  // 避免因少敲而永远停在 echo 阶段（软锁）。
+  useEffect(() => {
+    if (phase !== 'echo' || !pattern) return
+    const beatMs = (60 / pattern.bpm) * 1000
+    const lastBeat = pattern.notes.length > 0 ? Math.max(...pattern.notes.map((n) => n.beat)) : 0
+    // 给足跟敲时间：整段时长 + 3 拍缓冲
+    const timeoutMs = (lastBeat + 3) * beatMs + 1500
+    const timer = later(() => judgeRound(), timeoutMs)
+    return () => window.clearTimeout(timer)
+  }, [phase, pattern, judgeRound, later])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {

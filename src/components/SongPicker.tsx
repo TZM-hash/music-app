@@ -103,10 +103,19 @@ export default function SongPicker({
 
           <div className="picker-list">
             {filtered.map((s) => (
-              <button
+              <div
                 key={s.id}
+                role="button"
+                tabIndex={0}
+                aria-pressed={selectedId === s.id}
                 className={`picker-song ${selectedId === s.id ? 'on' : ''}`}
                 onClick={() => setSelectedId(s.id)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    setSelectedId(s.id)
+                  }
+                }}
               >
                 <span className="ps-icon" style={{ background: CATEGORY_INFO[s.category].color }}>
                   {CATEGORY_INFO[s.category].icon}
@@ -120,13 +129,15 @@ export default function SongPicker({
                     {'★'.repeat(s.level)} · {s.bpm} BPM
                   </small>
                 </span>
-                <span
+                <button
+                  type="button"
                   className={`ps-preview ${previewing === s.id ? 'playing' : ''}`}
+                  aria-label={previewing === s.id ? `停止试听 ${s.title}` : `试听 ${s.title}`}
                   onClick={(e) => preview(s, e)}
                 >
                   {previewing === s.id ? '🎵' : '▶'}
-                </span>
-              </button>
+                </button>
+              </div>
             ))}
           </div>
         </div>
