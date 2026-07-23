@@ -185,6 +185,7 @@ export default function Library() {
         <div className="lib-search">
           <input
             placeholder={view === 'songs' ? '🔍 搜索曲目名称…' : '🔍 搜索音乐故事或关键词…'}
+            aria-label={view === 'songs' ? '搜索曲目名称' : '搜索音乐故事或关键词'}
             value={search}
             onChange={(e) => {
               setSearch(e.target.value)

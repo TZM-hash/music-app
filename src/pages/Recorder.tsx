@@ -86,6 +86,7 @@ export default function Recorder() {
             <button
               key={f.note}
               className={`recorder-key ${current?.note === f.note ? 'on' : ''}`}
+              aria-label={`竖笛音符 ${f.name}（简谱 ${f.jianpu}，按键 ${f.key.toUpperCase()}）`}
               onPointerDown={() => play(f)}
               onPointerUp={() => stop(f)}
               onPointerLeave={() => current?.note === f.note && stop(f)}

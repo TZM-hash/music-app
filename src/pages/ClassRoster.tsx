@@ -81,6 +81,7 @@ export default function ClassRoster() {
           </div>
           <input
             placeholder="学生姓名"
+            aria-label="学生姓名"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && add()}
