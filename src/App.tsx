@@ -73,7 +73,7 @@ function Shell() {
         <div
           className={`content route-${displayedRoute} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''} ${leaving ? 'leaving' : ''} ${navDirection === 'back' ? 'nav-back' : 'nav-forward'}`}
         >
-          <ErrorBoundary onReset={() => navigate('home', { history: 'reset' })}>
+          <ErrorBoundary key={displayedRoute} onReset={() => navigate('home', { history: 'reset' })}>
             {displayedRoute === 'home' && <Home />}
             {displayedRoute === 'lesson' && <LessonMode />}
             {displayedRoute === 'piano' && <Piano />}

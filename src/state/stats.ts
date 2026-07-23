@@ -80,9 +80,12 @@ export function classOverview(): ClassOverview {
   const trend: { label: string; count: number }[] = []
   if (sessions.length > 0) {
     const per = Math.max(1, Math.ceil(sessions.length / buckets))
+    let cumulative = 0
     for (let i = 0; i < sessions.length; i += per) {
       const slice = sessions.slice(i, i + per)
-      trend.push({ label: `#${i + 1}`, count: slice.length })
+      // 累计次数：每段末尾的练习总数，趋势图呈现随时间增长的曲线
+      cumulative += slice.length
+      trend.push({ label: `#${i + 1}`, count: cumulative })
     }
   }
 

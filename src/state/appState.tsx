@@ -77,7 +77,10 @@ function loadPrefs(): Prefs {
     const raw = localStorage.getItem(PREF_KEY)
     if (raw) {
       const parsed = { mode: 'teacher', showNoteNames: true, ...JSON.parse(raw) } as Prefs
-      if (!['teacher', 'lecture', 'student'].includes(parsed.mode)) return { mode: 'teacher', showNoteNames: true }
+      // mode 非法时只纠正 mode，保留用户其它有效偏好（如 showNoteNames）
+      if (!['teacher', 'lecture', 'student'].includes(parsed.mode)) {
+        return { ...parsed, mode: 'teacher' }
+      }
       return parsed
     }
   } catch {

@@ -69,7 +69,7 @@ export default function TeamBattle() {
         <div className="battle-start">
           <h2>⚔️ 班级对战</h2>
           <p>把全班分成两组，轮流答题/演奏，大屏实时显示比分。适合课堂互动！</p>
-          <button className="big-start" onClick={start}>开始对战国</button>
+          <button className="big-start" onClick={start}>开始对战</button>
         </div>
       </div>
     )
