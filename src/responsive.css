@@ -50,6 +50,15 @@
   overflow-y: auto;
 }
 
+/* ---------- 音乐探索馆：矮视口/缩放时不硬裁切内容，改为整体可滚动 ---------- */
+@media (max-height: 640px) {
+  .theory-lab {
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
+  }
+}
+
 /* ---------- 游戏：结算弹窗在极窄视口不强制最小宽度 ---------- */
 @media (max-width: 400px) {
   .result-card {

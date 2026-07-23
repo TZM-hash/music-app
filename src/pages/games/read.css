@@ -8,7 +8,7 @@
   gap: 32px;
 }
 .single-staff {
-  width: 300px;
+  width: min(300px, 100%);
   height: auto;
   background: var(--bg-panel);
   border: 1px solid var(--line-neon);
