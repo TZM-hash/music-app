@@ -66,6 +66,10 @@ function createTsLoader() {
     cache.set(resolved, module)
     const localRequire = (specifier) => {
       if (specifier === 'tone') return toneStub
+      // 本地钢琴采样在 Node 测试中无需真实音频，统一返回假 URL
+      if (typeof specifier === 'string' && /\.mp3(\?.*)?$/i.test(specifier)) {
+        return 'data:audio/mpeg;base64,AAA='
+      }
       if (specifier.startsWith('.')) return load(path.resolve(path.dirname(resolved), specifier))
       return require(specifier)
     }

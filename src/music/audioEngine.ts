@@ -1,6 +1,7 @@
 // 音频引擎 2.0：音色切换 · 和弦 · 太鼓音效 · 节拍器
 // 按需导入 Tone.js，避免把整个库打进单文件包
 import { PITCH_CLASSES, chordNotes as buildTriad } from './notes'
+import { EMBEDDED_PIANO_SAMPLES } from './pianoSamples'
 import {
   start as toneStart,
   now as toneNow,
@@ -83,40 +84,24 @@ function buildPianoFallback(): PolySynth {
 
 /**
  * 预加载钢琴采样（在用户首次进入钢琴页时调用）。
- * 采样来自 tonejs.github.io CDN —— 需要联网；离线或加载失败（8 秒超时）
- * 会自动降级为内置 FM 合成音色，功能不受影响，只是音色不同。
+ * 优先使用打包进应用的真实钢琴采样（离线/单文件可用）；
+ * 仅当本地采样解码失败时，才降级为内置 FM 合成音色。
  */
 export function preloadPiano(): void {
   if (pianoLoadState !== 'idle') return
-  // 混响让钢琴更有空间感
   if (!pianoReverb) pianoReverb = new Reverb({ decay: 1.6, wet: 0.18 }).toDestination()
   if (!pianoFallback) {
     pianoFallback = buildPianoFallback().connect(pianoReverb)
     pianoFallback.volume.value = currentVolume
   }
 
-  // 离线 / file:// 双击打开时不请求 CDN：立刻使用内置合成音色，避免 8 秒空等
-  if (!canLoadRemotePianoSamples()) {
-    setPianoState('fallback')
-    return
-  }
-
   setPianoState('loading')
 
-  // Salamander Grand Piano 采样（Tone.js 官方 CDN 示例音源）
+  // 本地打包采样：Vite 构建后为 data URL，file:// 双击打开也能加载，无需联网
   try {
     pianoSampler = new Sampler({
-      urls: {
-        A0: 'A0.mp3', C1: 'C1.mp3', 'D#1': 'Ds1.mp3', 'F#1': 'Fs1.mp3',
-        A1: 'A1.mp3', C2: 'C2.mp3', 'D#2': 'Ds2.mp3', 'F#2': 'Fs2.mp3',
-        A2: 'A2.mp3', C3: 'C3.mp3', 'D#3': 'Ds3.mp3', 'F#3': 'Fs3.mp3',
-        A3: 'A3.mp3', C4: 'C4.mp3', 'D#4': 'Ds4.mp3', 'F#4': 'Fs4.mp3',
-        A4: 'A4.mp3', C5: 'C5.mp3', 'D#5': 'Ds5.mp3', 'F#5': 'Fs5.mp3',
-        A5: 'A5.mp3', C6: 'C6.mp3', 'D#6': 'Ds6.mp3', 'F#6': 'Fs6.mp3',
-        A6: 'A6.mp3', C7: 'C7.mp3',
-      },
+      urls: EMBEDDED_PIANO_SAMPLES,
       release: 1.4,
-      baseUrl: 'https://tonejs.github.io/audio/salamander/',
       onload: () => {
         setPianoState('sampled')
       },
@@ -124,24 +109,15 @@ export function preloadPiano(): void {
         setPianoState('fallback')
       },
     }).connect(pianoReverb)
+    pianoSampler.volume.value = currentVolume
   } catch {
     setPianoState('fallback')
   }
 
-  // 超时保护：8 秒还没加载好就用降级音源
+  // 超时保护：解码异常时 8 秒后降级，避免界面一直停在 loading
   window.setTimeout(() => {
     if (pianoLoadState === 'loading') setPianoState('fallback')
   }, 8000)
-}
-
-/** 是否具备加载远程钢琴采样的条件：在线且非 file:// 协议（双击打开的离线单文件） */
-function canLoadRemotePianoSamples(): boolean {
-  if (typeof window === 'undefined' || typeof navigator === 'undefined') return false
-  // file:// 打开的单文件 HTML 在部分浏览器即使“在线”也拦跨域采样请求，直接走降级
-  if (window.location.protocol === 'file:') return false
-  // 浏览器明确报告离线时跳过 CDN，避免 8 秒 loading 空等
-  if (navigator.onLine === false) return false
-  return true
 }
 
 /** 返回当前可用的钢琴发声对象 */

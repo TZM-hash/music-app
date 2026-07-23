@@ -434,7 +434,7 @@ export default function Piano() {
         <span className={`piano-load ${loadState}`}>
           {loadState === 'loading' && '⏳ 正在加载真实钢琴音色…'}
           {loadState === 'sampled' && '🎹 真实钢琴音色'}
-          {loadState === 'fallback' && '🎹 增强合成音色（离线）'}
+          {loadState === 'fallback' && '🎹 合成音色（采样未就绪）'}
         </span>
       </div>
 
