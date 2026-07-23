@@ -133,6 +133,12 @@ export function getCurrentStudent(): Student | null {
   return loadRoster().find((s) => s.id === id) ?? null
 }
 
+/** 在给定名册中按 id 查找学生；id 为空或未命中时返回 null（纯函数，便于测试与复用） */
+export function findStudentById(roster: Student[], id: string | null): Student | null {
+  if (!id) return null
+  return roster.find((s) => s.id === id) ?? null
+}
+
 // —— 会话记录 ——
 export function loadSessions(): Session[] {
   return read<Session[]>(SESSIONS_KEY, [])

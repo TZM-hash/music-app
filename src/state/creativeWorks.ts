@@ -82,6 +82,17 @@ function writeAll(list: CreativeWork[]): void {
   }
 }
 
+// 从现有作品 id（形如 work-<createdAt>-<seq>）中扫描最大序号，
+// 新增时用「最大序号 + 1」，避免因列表被 MAX_WORKS 截断而让序号卡死撞号丢数据。
+function nextSequence(list: CreativeWork[]): number {
+  let max = 0
+  for (const work of list) {
+    const match = /^work-\d+-(\d+)$/.exec(work.id)
+    if (match) max = Math.max(max, parseInt(match[1], 10))
+  }
+  return max + 1
+}
+
 export function createCreativeWork(
   draft: CreativeWorkDraft,
   createdAt = Date.now(),
@@ -168,7 +179,7 @@ export function loadCreativeWorks(studentId?: string | null): CreativeWork[] {
 
 export function saveCreativeWork(draft: CreativeWorkDraft): CreativeWork {
   const all = readAll()
-  const work = createCreativeWork(draft, Date.now(), all.length + 1)
+  const work = createCreativeWork(draft, Date.now(), nextSequence(all))
   const next = addCreativeWorkToList(all, work)
   writeAll(next)
   return work

@@ -62,6 +62,9 @@ export default function EchoGame() {
   // 用 ref 跟踪最新分数/最大连击，避免结算定时器闭包读到旧值
   const scoreRef = useRef(0)
   const maxCombo = useRef(0)
+  // 累计每轮正确率，结算时用整局平均评星，而非只看最后一轮
+  const accSum = useRef(0)
+  const accCount = useRef(0)
   const totalRounds = 5
 
   // 统一登记定时器，组件卸载时全部清理（回调内带卸载保护），避免切页后残留
@@ -111,6 +114,8 @@ export default function EchoGame() {
     setScore(0)
     scoreRef.current = 0
     maxCombo.current = 0
+    accSum.current = 0
+    accCount.current = 0
     setCombo(0)
     setRound(0)
     setResult(null)
@@ -163,6 +168,9 @@ export default function EchoGame() {
 
       const acc = correct / pattern.notes.length
       const isGood = acc >= 0.7
+      // 记录本轮正确率，供整局平均评星使用
+      accSum.current += acc
+      accCount.current += 1
 
       if (isGood) {
         const c = hitCombo()
@@ -184,8 +192,10 @@ export default function EchoGame() {
         if (nextRound >= totalRounds) {
           // 用 ref 中的最新分数结算，与 HUD 显示完全一致
           const finalScore = scoreRef.current
-          const stars = acc >= 0.9 ? 3 : acc >= 0.7 ? 2 : acc >= 0.5 ? 1 : 0
-          const r = recordResult(GAME_ID, level, stars, finalScore, { accuracy: acc })
+          // 整局平均正确率：避免最后一轮失手就把之前的好成绩清零
+          const avgAcc = accCount.current > 0 ? accSum.current / accCount.current : 0
+          const stars = avgAcc >= 0.9 ? 3 : avgAcc >= 0.7 ? 2 : avgAcc >= 0.5 ? 1 : 0
+          const r = recordResult(GAME_ID, level, stars, finalScore, { accuracy: avgAcc })
           if (stars >= 2) {
             celebrate('large')
             playUI('fanfare')
@@ -195,11 +205,11 @@ export default function EchoGame() {
             newBadges: r.newBadges.map((b) => BADGE_INFO[b]).filter(Boolean),
             review: {
               stats: [
-                { label: '本轮正确率', value: `${Math.round(acc * 100)}%` },
+                { label: '平均正确率', value: `${Math.round(avgAcc * 100)}%` },
                 { label: '最大连击', value: `${maxCombo.current}` },
               ],
               rows,
-              advice: acc >= 0.9 ? '节奏感很棒！可以挑战更高难度了。' : acc >= 0.7 ? '不错，注意听准每个音符的间隔。' : '先慢速听几遍，跟着拍子轻轻点。',
+              advice: avgAcc >= 0.9 ? '节奏感很棒！可以挑战更高难度了。' : avgAcc >= 0.7 ? '不错，注意听准每个音符的间隔。' : '先慢速听几遍，跟着拍子轻轻点。',
             },
           })
           setPhase('result')

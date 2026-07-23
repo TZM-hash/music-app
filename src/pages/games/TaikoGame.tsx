@@ -129,7 +129,7 @@ export default function TaikoGame() {
       if (hitFlash.current > 0) { ctx.beginPath(); ctx.arc(HIT_X, laneY, ringR + hitFlash.current * 20, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,220,100,${hitFlash.current * 0.4})`; ctx.fill(); hitFlash.current -= 0.06 }
       for (const n of notes.current) {
         if (n.hit) continue; const x = HIT_X + (n.time - now) * SPEED
-        if (x < -40 || x > W + 40) { if (!n.judged && n.time - now < -W_MS) { n.judged = true; st.current.combo = 0; st.current.soul = Math.max(0, st.current.soul - 3); setCombo(0); resetCombo() } continue }
+        if (x < -40 || x > W + 40) { if (!n.judged && n.time - now < -W_MS) { n.judged = true; st.current.miss++; st.current.combo = 0; st.current.soul = Math.max(0, st.current.soul - 3); setCombo(0); resetCombo() } continue }
         const r = n.big ? 30 : 22
         ctx.beginPath(); ctx.arc(x, laneY, r, 0, Math.PI * 2)
         ctx.fillStyle = n.type === 'don' ? '#f25050' : '#5aa0f0'; ctx.fill()
