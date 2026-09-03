@@ -1844,4 +1844,22 @@
   .content.route-class .roster-pager {
     min-height: 42px !important;
   }
+
+  .content.route-mixer .mix-track-stage {
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) auto !important;
+    gap: 8px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-mixer .mix-tracks {
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding-right: 0 !important;
+  }
+
+  .content.route-mixer .mix-track-pager {
+    min-height: 42px !important;
+  }
 }

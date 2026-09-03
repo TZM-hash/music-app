@@ -158,6 +158,11 @@
 }
 
 /* 音轨列表 */
+.mix-track-stage {
+  display: contents;
+  min-height: 0;
+}
+
 .mix-tracks {
   flex: 1;
   overflow-y: auto;
