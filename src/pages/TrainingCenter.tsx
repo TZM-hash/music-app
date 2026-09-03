@@ -1,8 +1,11 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Route, useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
+import { getCurrentStudent } from '../state/students'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
 import { useFillOnMount } from '../components/useFillOnMount'
+import MusicExperienceStage from '../components/MusicExperienceStage'
+import { buildExperienceJourney, getRecommendedActivities } from '../music/experienceActivities'
 import '../components/charts.css'
 import './training.css'
 
@@ -101,10 +104,18 @@ const MODULES: TrainingModule[] = [
 ]
 
 export default function TrainingCenter() {
-  const { navigate } = useApp()
+  const { navigate, currentStudentId } = useApp()
   const progress = loadProgress()
   const [activeId, setActiveId] = useState(MODULES[0].id)
+  const [activeExperienceId, setActiveExperienceId] = useState('sound-detective')
   const filled = useFillOnMount()
+  const currentStudent = getCurrentStudent()
+  const experienceActivities = getRecommendedActivities(currentStudent?.grade)
+  const activeExperience =
+    experienceActivities.find((activity) => activity.id === activeExperienceId) ?? experienceActivities[0]
+  const experienceJourney = activeExperience
+    ? buildExperienceJourney(activeExperience, currentStudent?.grade)
+    : null
   const moduleSignals = MODULES.map((m) => ({
     label: m.former.slice(0, 2),
     value: progress.bestScores[m.route] ?? 0,
@@ -121,9 +132,54 @@ export default function TrainingCenter() {
 
   return (
     <div className="training-page">
+      <section className="training-experience-shell" aria-labelledby="training-experience-title">
+        <div className="training-experience-intro">
+          <div>
+            <span className="training-kicker">今日玩乐</span>
+            <h2 id="training-experience-title">音乐探险游乐场</h2>
+            <p>
+              {currentStudent?.name
+                ? `${currentStudent.name}，挑一个声音游戏，先听见，再动手玩。`
+                : '挑一个声音游戏，先听见，再动手玩。'}
+            </p>
+          </div>
+          <span className="training-grade-note">
+            {currentStudent?.grade ? `按${currentStudent.grade}年级调整` : '小学通用玩法'}
+          </span>
+        </div>
+
+        <div className="training-experience-doors" role="tablist" aria-label="音乐探险类型">
+          {experienceActivities.map((activity) => (
+            <button
+              key={activity.id}
+              type="button"
+              role="tab"
+              aria-selected={activity.id === activeExperience?.id}
+              className={`training-experience-door ${activity.id === activeExperience?.id ? 'active' : ''}`}
+              style={{ '--door-color': activity.color } as CSSProperties}
+              onClick={() => setActiveExperienceId(activity.id)}
+            >
+              <span aria-hidden="true">{activity.icon}</span>
+              <strong>{activity.title}</strong>
+              <small>{activity.subtitle}</small>
+            </button>
+          ))}
+        </div>
+
+        {experienceJourney && (
+          <MusicExperienceStage
+            journey={experienceJourney}
+            studentId={currentStudentId}
+            grade={currentStudent?.grade}
+            onNavigate={navigate}
+            compact
+          />
+        )}
+      </section>
+
       <section className="training-head card">
         <div>
-          <span className="training-kicker">统一挑战入口</span>
+          <span className="training-kicker">更多练习</span>
           <h2>挑战中心</h2>
           <p>
             这里统一管理听感、读谱、跟唱、节奏反应和节奏记忆五类小游戏。

@@ -156,7 +156,7 @@ export default function MusicExperienceStage({
       topicId: journey.activity.curriculumTopicIds[0] ?? `experience:${journey.activity.id}`,
       title: `${journey.activity.title} · ${journey.activity.zhejiangTag}`,
       statement: `我发现：${journey.activity.subtitle}，${feeling}。`,
-      source: 'extension',
+      source: journey.activity.source,
       grade: grade ?? undefined,
       tags: [journey.activity.title, journey.activity.zhejiangTag, journey.ageBand],
     })

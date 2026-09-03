@@ -449,3 +449,105 @@
     flex-direction: column;
   }
 }
+
+/* 音乐探险游乐场：与旧挑战模块并列，旧模块继续作为更多练习保留 */
+.training-experience-shell {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.training-experience-intro {
+  align-items: end;
+  display: flex;
+  gap: 14px;
+  justify-content: space-between;
+  padding: 4px 2px 0;
+}
+
+.training-experience-intro h2 {
+  color: var(--text);
+  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  margin-bottom: 4px;
+}
+
+.training-experience-intro p {
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.training-grade-note {
+  background: rgba(47, 128, 237, 0.1);
+  border-radius: 999px;
+  color: #2f80ed;
+  flex: 0 0 auto;
+  font-size: 0.78rem;
+  font-weight: 850;
+  padding: 8px 12px;
+}
+
+.training-experience-doors {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.training-experience-door {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.82);
+  border: 2px solid rgba(37, 50, 74, 0.08);
+  border-radius: 17px;
+  display: grid;
+  gap: 3px 9px;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-height: 70px;
+  padding: 10px 13px;
+  text-align: left;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.training-experience-door > span {
+  align-items: center;
+  background: color-mix(in srgb, var(--door-color) 16%, white);
+  border-radius: 12px;
+  display: inline-flex;
+  font-size: 1.55rem;
+  grid-row: span 2;
+  height: 43px;
+  justify-content: center;
+  width: 43px;
+}
+
+.training-experience-door strong {
+  color: var(--text);
+  font-size: 0.94rem;
+}
+
+.training-experience-door small {
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.training-experience-door:hover,
+.training-experience-door:focus-visible,
+.training-experience-door.active {
+  border-color: var(--door-color);
+  box-shadow: 0 10px 20px color-mix(in srgb, var(--door-color) 16%, transparent);
+  transform: translateY(-2px);
+}
+
+.training-experience-door.active {
+  background: color-mix(in srgb, var(--door-color) 7%, white);
+}
+
+@media (max-width: 640px) {
+  .training-experience-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .training-experience-doors {
+    grid-template-columns: 1fr;
+  }
+}

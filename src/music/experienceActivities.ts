@@ -22,6 +22,7 @@ export interface ExperienceActivity {
   prompts: ExperiencePrompts
   curriculumTopicIds: string[]
   zhejiangTag: string
+  source: 'textbook' | 'extension'
 }
 
 export interface ExperienceStep {
@@ -56,6 +57,7 @@ export const EXPERIENCE_ACTIVITIES: ExperienceActivity[] = [
     },
     curriculumTopicIds: ['sound-four-properties', 'pitch-up-down', 'chinese-instruments'],
     zhejiangTag: '越剧声腔',
+    source: 'extension',
   },
   {
     id: 'rhythm-sprite',
@@ -73,6 +75,7 @@ export const EXPERIENCE_ACTIVITIES: ExperienceActivity[] = [
     },
     curriculumTopicIds: ['steady-beat', 'quarter-eighth-notes', 'meter-basic', 'syncopation'],
     zhejiangTag: '龙舟鼓点',
+    source: 'extension',
   },
   {
     id: 'music-canvas',
@@ -90,6 +93,7 @@ export const EXPERIENCE_ACTIVITIES: ExperienceActivity[] = [
     },
     curriculumTopicIds: ['motif', 'pentatonic-scale', 'four-bar-phrase-writing', 'folk-song-region'],
     zhejiangTag: '西湖水乡',
+    source: 'extension',
   },
 ]
 
@@ -165,4 +169,3 @@ export function buildExperienceJourney(
 
   return { activity, ageBand, steps }
 }
-
