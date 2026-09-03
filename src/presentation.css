@@ -1810,3 +1810,38 @@
     display: none !important;
   }
 }
+
+/* ---------- 班级名册：桌面投屏分页 ---------- */
+@media (min-width: 901px) {
+  .content.route-class .roster {
+    grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+    align-content: stretch !important;
+    gap: 8px !important;
+  }
+
+  .content.route-class .roster-grid {
+    align-content: stretch !important;
+    align-items: stretch !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(0, 1fr) !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    gap: 10px !important;
+    overflow: hidden !important;
+    padding-right: 0 !important;
+  }
+
+  .content.route-class .roster-grid > .reveal-item {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-class .roster-grid .stu-card {
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-class .roster-pager {
+    min-height: 42px !important;
+  }
+}
