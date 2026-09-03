@@ -1,6 +1,7 @@
 import type { DemoKind, TheoryTopic } from './theoryCatalog'
+import { alignTheoryTopic } from './zhejiangCurriculum'
 
-type TopicDraft = Omit<TheoryTopic, 'actions' | 'demo'> & {
+type TopicDraft = Omit<TheoryTopic, 'actions' | 'demo' | 'curriculum'> & {
   demo: DemoKind
 }
 
@@ -52,6 +53,7 @@ function makeTopic(draft: TopicDraft): TheoryTopic {
       title: `${draft.title}互动实验`,
       caption: `通过听、看、点选来理解“${draft.subtitle}”。`,
     },
+    curriculum: alignTheoryTopic({ id: draft.id, category: draft.category, stage: draft.stage }),
   }
 }
 

@@ -14,6 +14,7 @@ const BACKUP_KEYS = [
   'music-edu-piano-prefs-v1',
   'music-edu-theory-review-v1',
   'music-edu-creative-works-v1',
+  'music-edu-discoveries-v1',
   'music-edu-ui-sound-v1',
 ]
 
@@ -66,6 +67,7 @@ const KEY_SHAPES: Record<string, 'array' | 'object' | 'any'> = {
   'music-edu-piano-prefs-v1': 'object',
   'music-edu-theory-review-v1': 'object',
   'music-edu-creative-works-v1': 'array',
+  'music-edu-discoveries-v1': 'array',
   'music-edu-ui-sound-v1': 'any',
 }
 

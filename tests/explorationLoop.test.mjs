@@ -67,6 +67,9 @@ test('task card packages a topic into listen, guess, play, create, speak mission
   assert.ok(card.mission.includes('创'))
   assert.ok(card.checkpoints.length >= 3)
   assert.ok(card.steps.every((step) => step.badge.length >= 2))
+  assert.equal(card.sourceLabel, '教材同步')
+  assert.ok(card.curriculum.grades.includes(1))
+  assert.ok(card.curriculum.unitTitle.length >= 2)
 })
 
 test('create step suggests a creative action when topic actions do not include one', () => {

@@ -1,6 +1,7 @@
 import type { Route } from '../state/appState'
 import type { DemoScene } from './theoryDemos'
 import type { TheoryTopic } from './theoryCatalog'
+import { getCurriculumSourceLabel, TopicCurriculum } from './zhejiangCurriculum'
 
 export type ExplorationStepId = 'listen' | 'guess' | 'play' | 'speak' | 'create'
 
@@ -20,6 +21,8 @@ export interface ExplorationTaskCard {
   mission: string
   checkpoints: string[]
   steps: ExplorationStep[]
+  curriculum: TopicCurriculum
+  sourceLabel: string
 }
 
 function pickPlayAction(topic: TheoryTopic): TheoryTopic['actions'][number] | undefined {
@@ -97,5 +100,7 @@ export function buildExplorationTaskCard(topic: TheoryTopic, scene: DemoScene): 
     mission: `听见“${topic.subtitle}”，试玩一个变化，再创作一段四拍小声音。`,
     checkpoints,
     steps: buildExplorationLoop(topic, scene),
+    curriculum: topic.curriculum,
+    sourceLabel: getCurriculumSourceLabel(topic.curriculum.source),
   }
 }

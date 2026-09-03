@@ -1,6 +1,12 @@
 import { Route } from '../state/appState'
 import { EXPANDED_THEORY_TOPICS, enrichTheoryTopicQuiz } from './theoryExpansion'
 import { THEORY_CONTENT } from './theoryContent'
+import {
+  alignTheoryTopic,
+  CurriculumSource,
+  PrimaryGrade,
+  TopicCurriculum,
+} from './zhejiangCurriculum'
 
 export type TheoryStageId =
   | 'primary-lower'
@@ -57,11 +63,14 @@ export interface TheoryTopic {
   }
   actions: { label: string; route: Route }[]
   quiz: MiniQuestion[]
+  curriculum: TopicCurriculum
 }
 
 export interface TheoryTopicFilter {
   category?: string
   stage?: TheoryStageId
+  grade?: PrimaryGrade
+  source?: CurriculumSource
 }
 
 export const THEORY_STAGES: TheoryStage[] = [
@@ -106,7 +115,20 @@ function topic(
   actions: TheoryTopic['actions'],
   quiz: MiniQuestion[]
 ): TheoryTopic {
-  return { id, category, stage, level, title, subtitle, concept, keyPoints, demo, actions, quiz }
+  return {
+    id,
+    category,
+    stage,
+    level,
+    title,
+    subtitle,
+    concept,
+    keyPoints,
+    demo,
+    actions,
+    quiz,
+    curriculum: alignTheoryTopic({ id, category, stage }),
+  }
 }
 
 const BASE_THEORY_TOPICS: TheoryTopic[] = [
@@ -1055,7 +1077,9 @@ export function filterTheoryTopics(filter: TheoryTopicFilter = {}): TheoryTopic[
   return THEORY_TOPICS.filter((topic) => {
     const categoryMatch = !filter.category || topic.category === filter.category
     const stageMatch = !filter.stage || topic.stage === filter.stage
-    return categoryMatch && stageMatch
+    const gradeMatch = !filter.grade || topic.curriculum.grades.includes(filter.grade)
+    const sourceMatch = !filter.source || topic.curriculum.source === filter.source
+    return categoryMatch && stageMatch && gradeMatch && sourceMatch
   })
 }
 

@@ -21,6 +21,7 @@ function loadStudents() {
     if (specifier === './progress') return { removeStudentProgress() {} }
     if (specifier === './theoryReview') return { removeStudentReviewBook() {} }
     if (specifier === './creativeWorks') return { removeStudentCreativeWorks() {} }
+    if (specifier === './discoveries') return { removeStudentDiscoveries() {} }
     return require(specifier)
   }
   new Function('module', 'exports', 'require', transpiled)(module, module.exports, localRequire)

@@ -2,6 +2,8 @@
 import { removeStudentProgress } from './progress'
 import { removeStudentReviewBook } from './theoryReview'
 import { removeStudentCreativeWorks } from './creativeWorks'
+import { removeStudentDiscoveries } from './discoveries'
+import type { PrimaryGrade, Semester } from '../music/zhejiangCurriculum'
 
 const ROSTER_KEY = 'music-edu-roster-v1'
 const SESSIONS_KEY = 'music-edu-sessions-v1'
@@ -12,6 +14,14 @@ export interface Student {
   name: string
   avatar: string // emoji
   createdAt: number
+  /** 浙江人音版小学教材定位；旧名册可能没有这两个字段 */
+  grade?: PrimaryGrade
+  semester?: Semester
+}
+
+export interface StudentCurriculumProfile {
+  grade?: PrimaryGrade
+  semester?: Semester
 }
 
 // 一次游戏练习会话
@@ -89,20 +99,47 @@ function seedStudents(): Student[] {
     name,
     avatar: AVATARS[i % AVATARS.length],
     createdAt: i,
+    grade: (i % 6) + 1 as PrimaryGrade,
+    semester: 1 as Semester,
   }))
 }
 
-export function addStudent(name: string, avatar?: string): Student {
+export function addStudent(name: string, avatar?: string, profile?: StudentCurriculumProfile): Student {
   const list = loadRoster()
   const student: Student = {
     id: nextId('stu'),
     name: name.trim() || '新同学',
     avatar: avatar || AVATARS[list.length % AVATARS.length],
     createdAt: list.length,
+    // 新同学先落在小学中段，老师可在名册中调整到实际册次。
+    grade: profile?.grade ?? 3,
+    semester: profile?.semester ?? 1,
   }
   list.push(student)
   write(ROSTER_KEY, list)
   return student
+}
+
+function isPrimaryGrade(value: unknown): value is PrimaryGrade {
+  return value === 1 || value === 2 || value === 3 || value === 4 || value === 5 || value === 6
+}
+
+function isSemester(value: unknown): value is Semester {
+  return value === 1 || value === 2
+}
+
+export function updateStudentProfile(id: string, profile: StudentCurriculumProfile): Student | null {
+  const list = loadRoster()
+  const index = list.findIndex((student) => student.id === id)
+  if (index < 0) return null
+
+  const current = list[index]
+  const next: Student = { ...current }
+  if (profile.grade !== undefined && isPrimaryGrade(profile.grade)) next.grade = profile.grade
+  if (profile.semester !== undefined && isSemester(profile.semester)) next.semester = profile.semester
+  list[index] = next
+  write(ROSTER_KEY, list)
+  return next
 }
 
 export function removeStudent(id: string): void {
@@ -113,6 +150,7 @@ export function removeStudent(id: string): void {
   removeStudentProgress(id)
   removeStudentReviewBook(id)
   removeStudentCreativeWorks(id)
+  removeStudentDiscoveries(id)
 }
 
 export function randomAvatar(index: number): string {
