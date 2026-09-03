@@ -2274,3 +2274,194 @@
     overflow: hidden !important;
   }
 }
+
+/* ---------- 桌面裁切修复：学段总览与互动课堂 ---------- */
+/* 只覆盖 901px 以上视口；移动端继续使用原有连续布局。 */
+@media (min-width: 901px) {
+  .content.route-course .course-page {
+    grid-template-rows: auto minmax(0, 1fr) !important;
+  }
+
+  .content.route-course .course-head {
+    align-items: center !important;
+    box-sizing: border-box !important;
+    flex-wrap: nowrap !important;
+    gap: clamp(12px, 1.3vw, 18px) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-course .course-head > :first-child {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .content.route-course .course-head > .course-current {
+    flex: 0 0 clamp(148px, 15vw, 174px) !important;
+    min-width: 0 !important;
+    padding: 10px !important;
+  }
+
+  .content.route-course .course-head h2 {
+    margin-bottom: 4px !important;
+  }
+
+  .content.route-course .course-head p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    line-height: 1.38 !important;
+  }
+
+  .content.route-course .course-grade-picker {
+    gap: 5px !important;
+    margin-top: 8px !important;
+  }
+
+  .content.route-course .course-grade-picker button {
+    min-height: 30px !important;
+    padding: 4px 8px !important;
+  }
+
+  .content.route-course .course-current small {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .content.route-course .course-layout {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-course .lesson-board {
+    display: grid !important;
+    grid-template-rows: auto auto auto minmax(82px, auto) auto auto !important;
+    gap: 6px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-course .lesson-title {
+    gap: 8px !important;
+    min-height: 44px !important;
+  }
+
+  .content.route-course .lesson-title .course-icon.big {
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 1.45rem !important;
+  }
+
+  .content.route-course .lesson-title p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 1 !important;
+    line-height: 1.3 !important;
+  }
+
+  .content.route-course .outcome-row {
+    max-height: 26px !important;
+    overflow: hidden !important;
+    gap: 4px !important;
+  }
+
+  .content.route-course .outcome-row span {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    padding: 4px 6px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 0.68rem !important;
+  }
+
+  .content.route-course .course-focus {
+    display: grid !important;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 4px !important;
+    max-height: 48px !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-course .course-focus span {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    padding: 4px 5px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 0.68rem !important;
+  }
+
+  .content.route-course .course-lab-strip {
+    min-height: 82px !important;
+    padding: 6px !important;
+  }
+
+  .content.route-course .course-lab-strip .progress-ring {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .content.route-course .course-goal-block {
+    max-height: 68px !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 8px 10px !important;
+  }
+
+  .content.route-course .course-goal-block p {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 1 !important;
+    line-height: 1.35 !important;
+  }
+
+  .content.route-course .course-duration {
+    font-size: 0.68rem !important;
+  }
+
+  .content.route-lesson .lesson-layout {
+    grid-template-columns: clamp(210px, 18vw, 240px) minmax(0, 1fr) !important;
+  }
+
+  .content.route-lesson .lesson-steps {
+    align-content: stretch !important;
+    display: grid !important;
+    grid-auto-rows: minmax(0, 1fr) !important;
+    gap: 8px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-lesson .lesson-steps button {
+    align-content: center !important;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) !important;
+    min-height: 0 !important;
+    padding: 4px 8px !important;
+  }
+
+  .content.route-lesson .lesson-steps b {
+    min-height: 0 !important;
+    overflow: hidden !important;
+    line-height: 1.15 !important;
+    font-size: 0.82rem !important;
+  }
+
+  .content.route-lesson .lesson-steps small {
+    display: block !important;
+    max-height: 1.2em !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    line-height: 1.2 !important;
+    font-size: clamp(0.66rem, 0.6rem + 0.1vw, 0.74rem) !important;
+  }
+}
