@@ -71,6 +71,6 @@
 **Files:** `README.md`, `dist/index.html`, `乐动课堂.html`
 
 - [ ] 更新 README。
-- [ ] 跑 `npm test`、`npm run lint`、`npm run build`。
-- [ ] 复制构建结果覆盖单文件并核对 SHA256。
-- [ ] 跑 `git diff --check`，按阶段保存本地 Git 提交，不推送远程。
+- [x] 跑 `npm test`、`npm run lint`、`npm run build`。
+- [x] 复制构建结果覆盖单文件并核对 SHA256。
+- [x] 跑 `git diff --check`，按阶段保存本地 Git 提交，不推送远程。

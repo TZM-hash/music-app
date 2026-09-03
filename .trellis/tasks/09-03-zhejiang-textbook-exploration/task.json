@@ -15,12 +15,12 @@
   "branch": null,
   "base_branch": "codex/v0.9a-smart-review-encyclopedia",
   "worktree_path": null,
-  "commit": null,
+  "commit": "f5b909e",
   "pr_url": null,
   "subtasks": [],
   "children": [],
   "parent": null,
   "relatedFiles": [],
-  "notes": "",
+  "notes": "已完成 e841227（教材数据链路）与 f5b909e（页面接入与精简）阶段提交；单文件乐动课堂.html 已由 dist/index.html 同步，按仓库约定保持忽略不提交。",
   "meta": {}
 }

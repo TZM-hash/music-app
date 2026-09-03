@@ -118,5 +118,5 @@
 - [x] 更新 README 功能说明、教材对照和备份说明。
 - [x] 运行 `npm test`，确认全量测试通过。
 - [x] 运行 `npm run lint` 和 `npm run build`。
-- [ ] 用 `Copy-Item -Force -LiteralPath 'dist\\index.html' -Destination '乐动课堂.html'` 更新单文件。
-- [ ] 用 SHA256 核对两个 HTML 完全一致，运行 `git diff --check`，并记录阶段提交与未跟踪发布文件。
+- [x] 用 `Copy-Item -Force -LiteralPath 'dist\\index.html' -Destination '乐动课堂.html'` 更新单文件。
+- [x] 用 SHA256 核对两个 HTML 完全一致，运行 `git diff --check`，并记录阶段提交与忽略的发布文件。
