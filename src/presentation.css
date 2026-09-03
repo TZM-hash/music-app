@@ -1543,6 +1543,57 @@
   .content.route-library .library-songs .detail-score-preview {
     padding: 6px !important;
   }
+
+  /* 竖笛指法图：投屏高度有限时保持整张图例可见。 */
+  .content.route-recorder .recorder-stage {
+    gap: 16px !important;
+    padding: 8px 14px 6px !important;
+  }
+
+  .content.route-recorder .fingering {
+    min-width: 204px !important;
+    padding: 8px !important;
+  }
+
+  .content.route-recorder .fingering-title {
+    font-size: 1rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .content.route-recorder .recorder-body {
+    gap: 4px !important;
+    padding: 10px !important;
+  }
+
+  .content.route-recorder .recorder-mouth {
+    width: 34px !important;
+    height: 20px !important;
+  }
+
+  .content.route-recorder .hole {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 0.62rem !important;
+  }
+
+  .content.route-recorder .recorder-foot {
+    width: 24px !important;
+    height: 14px !important;
+    margin-top: 2px !important;
+  }
+
+  .content.route-recorder .fingering-legend {
+    gap: 12px !important;
+    margin-top: 8px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .content.route-recorder .legend-dot {
+    width: 12px !important;
+    height: 12px !important;
+    border-width: 1px !important;
+  }
 }
 
 @media (max-width: 900px) {
