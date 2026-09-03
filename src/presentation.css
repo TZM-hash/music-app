@@ -2031,3 +2031,246 @@
     margin-top: 0 !important;
   }
 }
+
+/* ---------- 成长观察：桌面分页展示，手机端保持原连续布局 ---------- */
+@media (min-width: 901px) {
+  .content.route-dashboard {
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard > * {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  .content.route-dashboard .dashboard-pager {
+    flex: 0 0 auto !important;
+  }
+
+  .content.route-dashboard .dashboard-presentation-page {
+    display: none !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  .content.route-dashboard .dashboard[data-dashboard-page='0'] > .dashboard-page-overview,
+  .content.route-dashboard .dashboard[data-dashboard-page='1'] > .dashboard-page-student,
+  .content.route-dashboard .dashboard[data-dashboard-page='2'] > .dashboard-page-roster {
+    display: flex !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-lab-head {
+    flex: 0 0 auto !important;
+    min-height: 112px !important;
+    max-height: 164px !important;
+    padding: 14px 18px !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-lab-head .dash-lab-copy p {
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .kpi-row {
+    flex: 0 0 auto !important;
+    min-height: 72px !important;
+    max-height: 98px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid {
+    display: grid !important;
+    flex: 1 1 auto !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid > .dash-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 12px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid .dash-panel h3 {
+    flex: 0 0 auto !important;
+    font-size: 0.92rem !important;
+    line-height: 1.2 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid .chart-shell,
+  .content.route-dashboard .dashboard-page-overview > .dash-grid .chart,
+  .content.route-dashboard .dashboard-page-overview > .dash-grid .donut-wrap {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid .chart {
+    min-height: 0 !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-signal-board {
+    display: grid !important;
+    flex: 1 1 auto !important;
+    grid-template-columns: minmax(180px, 0.9fr) minmax(0, 1.2fr) minmax(150px, 0.75fr) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    padding: 14px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-signal-board .dash-spectrum,
+  .content.route-dashboard .dashboard-page-overview > .dash-signal-board .dash-trend-mini {
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell,
+  .content.route-dashboard .dashboard-page-roster > .dashboard-roster-shell {
+    align-self: stretch !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail,
+  .content.route-dashboard .dashboard-page-student > .dash-empty,
+  .content.route-dashboard .dashboard-page-roster > .dashboard-roster-shell > .dash-table {
+    align-self: stretch !important;
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    width: 100% !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail {
+    padding: 16px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail .detail-body {
+    align-items: center !important;
+    display: grid !important;
+    flex: 1 1 auto !important;
+    grid-template-columns: minmax(160px, 220px) minmax(0, 1fr) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail .detail-radar,
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail .detail-stats {
+    min-height: 0 !important;
+    min-width: 0 !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail .detail-radar svg {
+    height: clamp(150px, 24vh, 220px) !important;
+    width: clamp(150px, 24vh, 220px) !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dash-empty {
+    align-content: center !important;
+    display: grid !important;
+    gap: 14px !important;
+    padding: 24px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-roster > .dashboard-roster-shell > .dash-table {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 14px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-roster > .dashboard-roster-shell > .dash-table .dash-table-scroll {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .content.route-dashboard .dashboard-page-roster > .dashboard-roster-shell > .dash-table table {
+    margin-top: 8px !important;
+  }
+
+  .content.route-dashboard .dashboard-table-pager {
+    flex: 0 0 auto !important;
+    margin-top: 8px !important;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1120px) {
+  .content.route-dashboard .dashboard-page-overview > .dash-lab-head {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.72fr) !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid {
+    gap: 8px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid > .dash-panel {
+    padding: 9px !important;
+  }
+
+  .content.route-dashboard .dashboard-page-overview > .dash-grid .dash-panel h3 {
+    font-size: 0.82rem !important;
+  }
+
+  .content.route-dashboard .dashboard-page-student > .dashboard-detail-shell > .dash-detail .detail-body {
+    grid-template-columns: minmax(132px, 176px) minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .content.route-dashboard .dashboard-presentation-page {
+    display: contents !important;
+  }
+}
+
+/* 历史 dashboard 网格规则带有更高特异性；这里明确清空桌面展示层的旧网格轨道。 */
+@media (min-width: 901px) {
+  .content.route-dashboard .dashboard.has-data,
+  .content.route-dashboard .dashboard.no-data {
+    align-content: stretch !important;
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+}
