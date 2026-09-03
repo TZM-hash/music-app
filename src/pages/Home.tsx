@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, type CSSProperties } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -23,6 +23,7 @@ import {
   focusFromReviewItem,
   focusFromWeakCategory,
 } from '../state/reviewDeepLink'
+import { EXPERIENCE_ACTIVITIES } from '../music/experienceActivities'
 
 function formatWorkDate(work: CreativeWork): string {
   const date = new Date(work.createdAt)
@@ -149,7 +150,7 @@ export default function Home() {
       : '先选择一位学生，系统会按年级推荐对应的人音版探索卡。'
 
   const continueRoute: Route = !isLectureMode && theoryPracticeCount > 0 ? 'training' : 'lesson'
-  const continueLabel = continueRoute === 'training' ? '继续挑战' : '开始互动课'
+  const continueLabel = continueRoute === 'training' ? '继续今日探险' : '开始今日探险'
   const recommendationTopic = explorationRecommendation?.topic
   const recommendationCurriculum = recommendationTopic?.curriculum
 
@@ -191,6 +192,29 @@ export default function Home() {
               <b>{continueLabel}</b>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="home-playground card" aria-labelledby="home-playground-title">
+        <div className="home-playground-copy">
+          <span className="pro-kicker">听见 · 动起来 · 留下作品</span>
+          <h2 id="home-playground-title">今日音乐探险</h2>
+          <p>不用先读完说明，选一个入口，马上让耳朵和身体参与进来。</p>
+        </div>
+        <div className="home-playground-grid">
+          {EXPERIENCE_ACTIVITIES.map((activity) => (
+            <button
+              key={activity.id}
+              type="button"
+              className="home-playground-door"
+              style={{ '--door-color': activity.color } as CSSProperties}
+              onClick={() => navigate('training')}
+            >
+              <span aria-hidden="true">{activity.icon}</span>
+              <strong>{activity.title}</strong>
+              <small>{activity.subtitle}</small>
+            </button>
+          ))}
         </div>
       </section>
 

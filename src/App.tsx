@@ -4,6 +4,7 @@ import { stopAllAudio } from './music/audioEngine'
 import { stopUISounds } from './music/uiSounds'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
+import MobileNav from './components/MobileNav'
 import Celebration from './components/Celebration'
 import ErrorBoundary from './components/ErrorBoundary'
 import Home from './pages/Home'
@@ -95,6 +96,7 @@ function Shell() {
           </ErrorBoundary>
         </div>
       </div>
+      <MobileNav />
       <Celebration />
     </div>
   )

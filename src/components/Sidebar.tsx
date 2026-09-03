@@ -1,53 +1,9 @@
-import { useApp, Route } from '../state/appState'
+import { useApp, type Route } from '../state/appState'
+import { STUDENT_PRIMARY_NAV, STUDENT_SECONDARY_NAV } from './studentNavigation'
 
-interface NavItem {
-  route: Route
-  icon: string
-  label: string
-  hint?: string
-}
-
-interface NavGroup {
-  title: string
-  items: NavItem[]
-  teacherOnly?: boolean
-}
-
-const GROUPS: NavGroup[] = [
-  {
-    title: '学习主轴',
-    items: [
-      { route: 'lesson', icon: '📖', label: '互动课堂', hint: '听玩创一节课' },
-    ],
-  },
-  {
-    title: '工具与乐器',
-    items: [
-      { route: 'theory', icon: '🎵', label: '音乐探索馆', hint: '分级发现与挑战' },
-      { route: 'training', icon: '🎯', label: '挑战中心', hint: '听辨、读谱、跟唱、节奏' },
-      { route: 'piano', icon: '🎹', label: '钢琴', hint: '音高、音阶与和弦' },
-      { route: 'drums', icon: '🥁', label: '架子鼓', hint: '节拍互动' },
-      { route: 'mixer', icon: '🎛️', label: '混音创作', hint: '编曲节奏格' },
-      { route: 'recorder', icon: '🪈', label: '竖笛', hint: '指法与旋律' },
-      { route: 'xylophone', icon: '🎶', label: '木琴', hint: '清脆打击旋律' },
-    ],
-  },
-  {
-    title: '素材与记录',
-    items: [
-      { route: 'library', icon: '📚', label: '素材库', hint: '歌曲与故事素材' },
-      { route: 'course', icon: '🗺️', label: '学段总览', hint: '各学段目标与进度' },
-      { route: 'adventure', icon: '🏝️', label: '闯关地图', hint: '音乐岛成长路线' },
-    ],
-  },
-  {
-    title: '班级陪伴',
-    teacherOnly: true,
-    items: [
-      { route: 'class', icon: '👥', label: '学生档案', hint: '名单与个人记录' },
-      { route: 'dashboard', icon: '📊', label: '成长观察', hint: '班级表现看板' },
-    ],
-  },
+const TEACHER_ITEMS: Array<{ route: Route; icon: string; label: string; hint: string }> = [
+  { route: 'class', icon: '👥', label: '学生档案', hint: '名单与个人记录' },
+  { route: 'dashboard', icon: '📊', label: '成长观察', hint: '班级表现看板' },
 ]
 
 export default function Sidebar() {
@@ -67,38 +23,60 @@ export default function Sidebar() {
       </button>
 
       <nav className="side-nav" aria-label="主导航">
-        <button
-          className={`side-item ${route === 'home' ? 'active' : ''}`}
-          onClick={() => openMainRoute('home')}
-        >
-          <span className="side-icon">🏠</span>
-          <span className="side-label">
-            <b>今日探索</b>
-            <small>推荐路线与最近记录</small>
-          </span>
-        </button>
+        <div className="side-group side-primary-group">
+          <div className="side-group-title">音乐空间</div>
+          {STUDENT_PRIMARY_NAV.map((item) => (
+            <button
+              key={item.route}
+              className={`side-item ${route === item.route ? 'active' : ''}`}
+              onClick={() => openMainRoute(item.route)}
+            >
+              <span className="side-icon">{item.icon}</span>
+              <span className="side-label">
+                <b>{item.label}</b>
+                <small>{item.hint}</small>
+              </span>
+            </button>
+          ))}
+        </div>
 
-        {GROUPS.map((group) => {
-          if (group.teacherOnly && mode !== 'teacher') return null
-          return (
-            <div key={group.title} className="side-group">
-              <div className="side-group-title">{group.title}</div>
-              {group.items.map((item) => (
-                <button
-                  key={item.route}
-                  className={`side-item ${route === item.route ? 'active' : ''}`}
-                  onClick={() => openMainRoute(item.route)}
-                >
-                  <span className="side-icon">{item.icon}</span>
-                  <span className="side-label">
-                    <b>{item.label}</b>
-                    {item.hint && <small>{item.hint}</small>}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )
-        })}
+        <details className="side-more-group">
+          <summary>更多入口</summary>
+          <div className="side-more-list">
+            {STUDENT_SECONDARY_NAV.map((item) => (
+              <button
+                key={item.route}
+                className={`side-item ${route === item.route ? 'active' : ''}`}
+                onClick={() => openMainRoute(item.route)}
+              >
+                <span className="side-icon">{item.icon}</span>
+                <span className="side-label">
+                  <b>{item.label}</b>
+                  <small>{item.hint}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        </details>
+
+        {mode === 'teacher' && (
+          <div className="side-group side-teacher-group">
+            <div className="side-group-title">教师空间</div>
+            {TEACHER_ITEMS.map((item) => (
+              <button
+                key={item.route}
+                className={`side-item ${route === item.route ? 'active' : ''}`}
+                onClick={() => openMainRoute(item.route)}
+              >
+                <span className="side-icon">{item.icon}</span>
+                <span className="side-label">
+                  <b>{item.label}</b>
+                  <small>{item.hint}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       <div className="side-foot">
