@@ -1,0 +1,165 @@
+/* 教学展示视口：所有主要内容在当前视口内完成，长内容使用明确分页。 */
+
+.presentation-viewport {
+  min-height: 0;
+  position: relative;
+}
+
+.page-pager {
+  align-items: center;
+  background: rgba(255, 254, 251, 0.92);
+  border: 1px solid var(--playful-line);
+  border-radius: 18px;
+  box-shadow: 0 5px 14px rgba(63, 77, 108, 0.08);
+  display: flex;
+  gap: 8px;
+  min-height: 50px;
+  padding: 5px 7px;
+  width: 100%;
+}
+
+.page-pager-tabs {
+  align-items: stretch;
+  display: flex;
+  flex: 1 1 auto;
+  gap: 5px;
+  justify-content: center;
+  min-width: 0;
+}
+
+.page-pager-tab,
+.page-pager-arrow {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 13px;
+  color: var(--playful-muted);
+  display: inline-flex;
+  font-size: 0.78rem;
+  font-weight: 800;
+  justify-content: center;
+  line-height: 1.15;
+  min-height: 40px;
+  min-width: 44px;
+  padding: 6px 10px;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms var(--ease-spring);
+}
+
+.page-pager-tab {
+  gap: 6px;
+  min-width: 0;
+}
+
+.page-pager-tab span {
+  align-items: center;
+  background: rgba(75, 134, 247, 0.1);
+  border-radius: 999px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+}
+
+.page-pager-tab b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-pager-tab:hover:not(.active),
+.page-pager-arrow:hover:not(:disabled) {
+  background: rgba(75, 134, 247, 0.08);
+  border-color: rgba(75, 134, 247, 0.16);
+  color: var(--playful-blue-deep);
+  transform: translateY(-1px);
+}
+
+.page-pager-tab.active {
+  background: linear-gradient(135deg, rgba(75, 134, 247, 0.16), rgba(133, 115, 232, 0.12));
+  border-color: rgba(75, 134, 247, 0.26);
+  color: var(--playful-blue-deep);
+  box-shadow: 0 3px 8px rgba(75, 134, 247, 0.1);
+}
+
+.page-pager-tab.active span {
+  background: var(--playful-blue);
+  color: #fff;
+}
+
+.page-pager-arrow {
+  background: rgba(71, 84, 112, 0.05);
+  flex: 0 0 auto;
+}
+
+.page-pager-arrow svg {
+  fill: none;
+  height: 18px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+  width: 18px;
+}
+
+.page-pager-arrow:disabled {
+  cursor: not-allowed;
+  opacity: 0.38;
+}
+
+.page-pager-status {
+  color: var(--playful-muted);
+  flex: 0 0 auto;
+  font-size: 0.74rem;
+  font-weight: 800;
+  min-width: 72px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.page-pager-compact {
+  background: rgba(255, 254, 251, 0.72);
+  box-shadow: none;
+  min-height: 44px;
+}
+
+.page-pager-compact .page-pager-tab {
+  min-height: 34px;
+}
+
+@media (max-width: 720px) {
+  .page-pager {
+    gap: 5px;
+    min-height: 48px;
+    padding: 4px;
+  }
+
+  .page-pager-tabs {
+    gap: 3px;
+  }
+
+  .page-pager-tab {
+    flex: 1 1 0;
+    padding: 5px 6px;
+  }
+
+  .page-pager-tab b {
+    font-size: 0.7rem;
+  }
+
+  .page-pager-tab span {
+    height: 22px;
+    width: 22px;
+  }
+
+  .page-pager-status {
+    min-width: 58px;
+    font-size: 0.68rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-pager-tab,
+  .page-pager-arrow {
+    transition: none;
+  }
+}
