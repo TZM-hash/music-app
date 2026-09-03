@@ -24,7 +24,6 @@ export const ROUTE_LABELS: Record<Route, string> = {
   xylophone: '木琴',
   'game-ear': '听感挑战',
   'game-echo': '节奏复制',
-  battle: '班级对战',
   'game-taiko': '节奏反应',
   'game-sing': '跟唱挑战',
   'game-read': '读谱闯关',

@@ -3,6 +3,7 @@ import { useApp } from '../state/appState'
 import { ensureAudio, playNote } from '../music/audioEngine'
 import { stopUISounds, uiLater } from '../music/uiSounds'
 import { useMounted } from '../hooks/useTimers'
+import { getCurrentStudent } from '../state/students'
 import { recordResult } from '../state/progress'
 import {
   DemoKind,
@@ -14,28 +15,59 @@ import {
   filterTheoryTopics,
   getStageLabel,
 } from '../music/theoryCatalog'
+import {
+  CurriculumSource,
+  getCurriculumSourceLabel,
+  getGradeLabel,
+  getSemesterLabel,
+  PRIMARY_GRADES,
+  PrimaryGrade,
+} from '../music/zhejiangCurriculum'
 import { DemoControl, getDemoScene } from '../music/theoryDemos'
 import { buildExplorationTaskCard } from '../music/explorationLoop'
+import { getZhejiangExtension } from '../music/zhejiangExtensions'
+import { saveMusicDiscovery } from '../state/discoveries'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import './theory.css'
 
 type CategoryFilter = '全部' | string
 type StageFilter = '全部' | TheoryStageId
+type GradeFilter = '全部' | PrimaryGrade
+type SourceFilter = '全部' | CurriculumSource
+
+function parseGradeFilter(value: string): GradeFilter {
+  if (value === '全部') return '全部'
+  const parsed = Number(value)
+  return PRIMARY_GRADES.includes(parsed as PrimaryGrade) ? parsed as PrimaryGrade : '全部'
+}
 
 export default function Theory() {
   const { navigate, theoryFocus, currentStudentId, mode } = useApp()
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [stage, setStage] = useState<StageFilter>('全部')
+  const [grade, setGrade] = useState<GradeFilter>(() => getCurrentStudent()?.grade ?? '全部')
+  const [source, setSource] = useState<SourceFilter>(mode === 'student' ? 'textbook' : '全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
   const [activeDemoValue, setActiveDemoValue] = useState('')
+
+  // currentStudentId 由应用状态负责触发重渲染；直接读取可避免把外部存储读取包装成无效依赖的 useMemo。
+  const currentStudent = getCurrentStudent()
+
+  useEffect(() => {
+    if (!currentStudent?.grade) return
+    setGrade(currentStudent.grade)
+    if (mode === 'student') setSource('textbook')
+  }, [currentStudent?.grade, mode])
 
   const filtered = useMemo(
     () =>
       filterTheoryTopics({
         category: category === '全部' ? undefined : category,
         stage: stage === '全部' ? undefined : stage,
+        grade: grade === '全部' ? undefined : grade,
+        source: source === '全部' ? undefined : source,
       }),
-    [category, stage]
+    [category, grade, source, stage]
   )
   const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? THEORY_TOPICS[0]
   const demoScene = getDemoScene(active.demo.kind)
@@ -67,12 +99,17 @@ export default function Theory() {
 
     setCategory(nextCategory)
     setStage(nextStage)
+    if (theoryFocus.stage) {
+      setGrade('全部')
+    }
     if (nextTopic) setActiveId(nextTopic.id)
   }, [theoryFocus])
 
   const clearFilters = () => {
     setCategory('全部')
     setStage('全部')
+    setGrade('全部')
+    setSource(mode === 'student' ? 'textbook' : '全部')
     setActiveId(THEORY_TOPICS[0].id)
   }
 
@@ -80,13 +117,13 @@ export default function Theory() {
     <div className="theory-lab">
       <section className="theory-lab-head card">
         <div>
-          <span className="theory-kicker">互动音乐探索馆</span>
-          <h2>小学到初中的音乐发现地图</h2>
-          <p>按音乐方向和成长阶段选择发现卡，每张卡都用声音、图形、小游戏和创作入口帮助学生边玩边理解。</p>
+          <span className="theory-kicker">浙江人音版 · 互动音乐探索馆</span>
+          <h2>小学 1—6 年级的音乐发现地图</h2>
+          <p>按教材年级、音乐方向和成长阶段选择发现卡；每张卡都用声音、图形、小游戏和创作入口帮助学生边玩边理解。</p>
         </div>
         <div className="theory-count">
           <b>{filtered.length}</b>
-          <small>当前 / 共 {THEORY_TOPICS.length}</small>
+          <small>当前 / 共 {THEORY_TOPICS.length} 张</small>
         </div>
       </section>
 
@@ -105,6 +142,23 @@ export default function Theory() {
             getLabel={(value) => (value === '全部' ? '全部' : getStageLabel(value as TheoryStageId))}
             onChange={(next) => setStage(next as StageFilter)}
           />
+          <FilterGroup
+            title="教材年级"
+            value={grade === '全部' ? '全部' : String(grade)}
+            options={['全部', ...PRIMARY_GRADES.map(String)]}
+            getLabel={(value) => {
+              const parsed = parseGradeFilter(value)
+              return parsed === '全部' ? '全部年级' : getGradeLabel(parsed)
+            }}
+            onChange={(next) => setGrade(parseGradeFilter(next))}
+          />
+          <FilterGroup
+            title="教材来源"
+            value={source}
+            options={['全部', 'textbook', 'extension']}
+            getLabel={(value) => value === '全部' ? '全部内容' : getCurriculumSourceLabel(value as CurriculumSource)}
+            onChange={(next) => setSource(next as SourceFilter)}
+          />
 
           <div className="topic-list">
             {filtered.length === 0 && (
@@ -120,7 +174,9 @@ export default function Theory() {
                 onClick={() => setActiveId(topic.id)}
               >
                 <b>{topic.title}</b>
-                <small>{topic.level} · {getStageLabel(topic.stage)} · {topic.subtitle}</small>
+                <small>
+                  {topic.curriculum.grades.map(getGradeLabel).join(' / ')} · {getSemesterLabel(topic.curriculum.semester)} · {topic.curriculum.unitTitle}
+                </small>
               </button>
             ))}
           </div>
@@ -132,6 +188,12 @@ export default function Theory() {
               <div>
                 <span>{active.category} · {getStageLabel(active.stage)} · {active.level}</span>
                 <h2>{active.title}</h2>
+                <div className="topic-curriculum-meta" aria-label="教材对照">
+                  <span>{active.curriculum.grades.map(getGradeLabel).join(' / ')}</span>
+                  <span>{getSemesterLabel(active.curriculum.semester)}</span>
+                  <span>{active.curriculum.unitTitle}</span>
+                  <span>{getCurriculumSourceLabel(active.curriculum.source)}</span>
+                </div>
               </div>
               <button className="demo-play" onClick={() => playDemo(active.demo.kind, activeControl)}>
                 ▶ 听演示
@@ -166,6 +228,14 @@ export default function Theory() {
               activeValue={activeControl.value}
               onChange={setActiveDemoValue}
               onPlay={() => playDemo(active.demo.kind, activeControl)}
+              onNavigate={navigate}
+              studentId={currentStudentId}
+              recordEnabled={mode !== 'lecture'}
+            />
+
+            <ZhejiangExtensionCard
+              topic={active}
+              grade={currentStudent?.grade ?? active.curriculum.grades[0]}
               onNavigate={navigate}
             />
 
@@ -309,6 +379,8 @@ function ExplorationLoop({
   onChange,
   onPlay,
   onNavigate,
+  studentId,
+  recordEnabled,
 }: {
   topic: TheoryTopic
   scene: ReturnType<typeof getDemoScene>
@@ -316,6 +388,8 @@ function ExplorationLoop({
   onChange: (value: string) => void
   onPlay: () => void
   onNavigate: ReturnType<typeof useApp>['navigate']
+  studentId: string | null
+  recordEnabled: boolean
 }) {
   const task = buildExplorationTaskCard(topic, scene)
   const steps = task.steps
@@ -390,11 +464,12 @@ function ExplorationLoop({
               </div>
             )}
             {step.id === 'speak' && (
-              <div className="exploration-choice-row wrap">
-                {speakStarters.map((starter) => (
-                  <span key={starter}>{starter}</span>
-                ))}
-              </div>
+              <DiscoveryCapture
+                topic={topic}
+                starters={speakStarters}
+                studentId={studentId}
+                recordEnabled={recordEnabled}
+              />
             )}
             {step.id === 'create' && (
               <div className="exploration-choice-row wrap">
@@ -412,6 +487,112 @@ function ExplorationLoop({
         ))}
       </div>
     </div>
+  )
+}
+
+function DiscoveryCapture({
+  topic,
+  starters,
+  studentId,
+  recordEnabled,
+}: {
+  topic: TheoryTopic
+  starters: string[]
+  studentId: string | null
+  recordEnabled: boolean
+}) {
+  const [statement, setStatement] = useState(starters[0] ?? `我发现：${topic.subtitle}`)
+  const [saved, setSaved] = useState(false)
+
+  const save = () => {
+    const trimmed = statement.trim()
+    if (!trimmed || !recordEnabled) return
+    saveMusicDiscovery({
+      studentId,
+      topicId: topic.id,
+      title: topic.title,
+      statement: trimmed,
+      source: topic.curriculum.source,
+      grade: topic.curriculum.grades[0],
+      semester: topic.curriculum.semester,
+      unitId: topic.curriculum.unitId,
+      unitTitle: topic.curriculum.unitTitle,
+      tags: [topic.category, ...topic.curriculum.focus.split('、').slice(0, 2)],
+    })
+    setSaved(true)
+  }
+
+  return (
+    <div className="discovery-capture">
+      <div className="exploration-choice-row wrap">
+        {starters.map((starter) => (
+          <button
+            key={starter}
+            type="button"
+            className={statement === starter ? 'on' : ''}
+            onClick={() => {
+              setStatement(starter)
+              setSaved(false)
+            }}
+          >
+            {starter}
+          </button>
+        ))}
+      </div>
+      <label className="discovery-input-label">
+        <span>我的发现</span>
+        <textarea
+          value={statement}
+          maxLength={160}
+          rows={2}
+          onChange={(event) => {
+            setStatement(event.target.value)
+            setSaved(false)
+          }}
+          placeholder="用一句话说说你听到了什么变化"
+          disabled={!recordEnabled}
+        />
+      </label>
+      <div className="discovery-capture-foot">
+        <button type="button" className="primary" onClick={save} disabled={!recordEnabled || !statement.trim()}>
+          {saved ? '✓ 已保存发现' : '保存我的发现'}
+        </button>
+        {!recordEnabled && <small>投屏模式不记录个人发现</small>}
+      </div>
+    </div>
+  )
+}
+
+function ZhejiangExtensionCard({
+  topic,
+  grade,
+  onNavigate,
+}: {
+  topic: TheoryTopic
+  grade: PrimaryGrade
+  onNavigate: ReturnType<typeof useApp>['navigate']
+}) {
+  const extension = getZhejiangExtension(topic, grade)
+  return (
+    <section className="zhejiang-extension-card" aria-label="浙江拓展">
+      <div>
+        <span className="theory-kicker">教材外拓展 · 浙江声音</span>
+        <h3>{extension.title}</h3>
+        <p>{extension.connection}</p>
+      </div>
+      <div className="zhejiang-extension-prompt">
+        <span>试试看</span>
+        <p>{extension.prompt}</p>
+        <div className="extension-actions">
+          {extension.keywords.map((keyword) => <span key={keyword}>{keyword}</span>)}
+          {extension.route && (
+            <button type="button" onClick={() => onNavigate(extension.route!)}>
+              去体验
+            </button>
+          )}
+        </div>
+      </div>
+    </section>
   )
 }
 

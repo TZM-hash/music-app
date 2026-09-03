@@ -151,3 +151,34 @@
   background: rgba(255, 149, 0, 0.14);
   color: var(--neon-gold);
 }
+
+.roster-select-label,
+.stu-card-curriculum label {
+  display: grid;
+  gap: 4px;
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.roster-select-label select,
+.stu-card-curriculum select {
+  min-height: 34px;
+  padding: 5px 8px;
+  border: 1px solid var(--line-neon);
+  border-radius: 7px;
+  background: var(--bg-soft);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.stu-card-curriculum {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px;
+  border-radius: 9px;
+  background: rgba(0, 122, 255, 0.045);
+}

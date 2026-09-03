@@ -25,7 +25,6 @@ import TrainingCenter from './pages/TrainingCenter'
 import AdventureMap from './pages/AdventureMap'
 import ClassRoster from './pages/ClassRoster'
 import Dashboard from './pages/Dashboard'
-import TeamBattle from './pages/TeamBattle'
 
 function Shell() {
   const { mode, route, sidebarOpen, setSidebarOpen, navigate, navDirection } = useApp()
@@ -93,7 +92,6 @@ function Shell() {
             {displayedRoute === 'adventure' && <AdventureMap />}
             {mode === 'teacher' && displayedRoute === 'class' && <ClassRoster />}
             {mode === 'teacher' && displayedRoute === 'dashboard' && <Dashboard />}
-            {mode === 'teacher' && displayedRoute === 'battle' && <TeamBattle />}
           </ErrorBoundary>
         </div>
       </div>

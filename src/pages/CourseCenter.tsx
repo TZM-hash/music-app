@@ -3,6 +3,13 @@ import { useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
 import { THEORY_STAGES, TheoryStageId, filterTheoryTopics } from '../music/theoryCatalog'
+import {
+  getGradeLabel,
+  getStageForGrade,
+  getCurriculumUnits,
+  PRIMARY_GRADES,
+  type PrimaryGrade,
+} from '../music/zhejiangCurriculum'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
 import '../components/charts.css'
 import './course.css'
@@ -53,40 +60,20 @@ const COURSES: CourseUnit[] = [
     categories: ['音高与唱名', '节奏与节拍', '记谱与读谱', '调式与音阶', '音程与和声', '曲式结构', '创作与编配'],
     outcomes: ['能分析附点和切分', '能听出大小调基础色彩', '能描述问答乐句和旋律线'],
   },
-  {
-    id: 'junior-basic',
-    icon: '🔎',
-    title: '初中基础：调号、和声与结构分析',
-    stage: '初中 7-8 年级 / 系统',
-    goal: '把读谱、调式、音程、和声色彩、表情处理和合奏层次连成可听见的音乐判断。',
-    duration: '20-25 分钟',
-    color: '#0c8599',
-    categories: ['记谱与读谱', '调式与音阶', '音程与和声', '速度力度与表情', '曲式结构', '创作与编配', '民族与音乐场景'],
-    outcomes: ['能解释调号和临时记号', '能听辨三和弦色彩', '能说出 AB/ABA 结构'],
-  },
-  {
-    id: 'junior-advanced',
-    icon: '🚀',
-    title: '初中进阶：表达、转调与创作应用',
-    stage: '初中 8-9 年级 / 进阶',
-    goal: '尝试移调、复杂节奏、七和弦、终止式、变奏展开和四小节创作，让想法变成作品。',
-    duration: '25-30 分钟',
-    color: '#7048e8',
-    categories: ['音高与唱名', '节奏与节拍', '调式与音阶', '音程与和声', '速度力度与表情', '曲式结构', '创作与编配', '民族与音乐场景'],
-    outcomes: ['能解释终止和张力解决', '能做四小节乐句设计', '能用音乐要素完成听赏表达'],
-  },
 ]
 
 export default function CourseCenter() {
   const { openTheory, openLesson, mode } = useApp()
   const student = getCurrentStudent()
-  const [activeId, setActiveId] = useState<TheoryStageId>('primary-lower')
+  const [activeGrade, setActiveGrade] = useState<PrimaryGrade>(student?.grade ?? 1)
+  const [activeId, setActiveId] = useState<TheoryStageId>(() => getStageForGrade(student?.grade ?? 1))
   const active = useMemo(
     () => COURSES.find((course) => course.id === activeId) ?? COURSES[0],
     [activeId]
   )
-  const activeTopics = filterTheoryTopics({ stage: active.id })
-  const stageLabel = THEORY_STAGES.find((stage) => stage.id === active.id)?.label ?? active.stage
+  const activeTopics = filterTheoryTopics({ grade: activeGrade, source: 'textbook' })
+  const stageLabel = `${getGradeLabel(activeGrade)} · ${THEORY_STAGES.find((stage) => stage.id === active.id)?.label ?? active.stage}`
+  const activeUnits = getCurriculumUnits(activeGrade)
   const progress = loadProgress()
   const completedTopics = activeTopics.filter((topic) => (progress.bestScores[`theory-${topic.id}`] ?? 0) > 0).length
   const categorySignals = active.categories.map((category) => ({
@@ -101,13 +88,29 @@ export default function CourseCenter() {
     <div className="course-page">
       <section className="course-head card">
         <div>
-          <span className="course-kicker">学段总览</span>
-          <h2>各学段音乐学习目标与进度</h2>
+          <span className="course-kicker">浙江人音版小学音乐 · 综合实践</span>
+          <h2>1—6 年级音乐学习目标与进度</h2>
           <p>
-            查看从小学到初中每个学段的目标、产出与发现卡覆盖进度。选定一个学段后，
-            直接进入对应学段的互动课堂开始上课。
+            按教材年级查看声音、节奏、唱名、听赏和创作目标。选定年级后，
+            直接进入对应学段的互动课堂开始探索。
             {mode === 'teacher' ? '适合老师按学段备课与投屏。' : '适合学生按阶段了解自己学到哪里。'}
           </p>
+          <div className="course-grade-picker" aria-label="教材年级">
+            <span>教材年级</span>
+            {PRIMARY_GRADES.map((grade) => (
+              <button
+                key={grade}
+                type="button"
+                className={activeGrade === grade ? 'on' : ''}
+                onClick={() => {
+                  setActiveGrade(grade)
+                  setActiveId(getStageForGrade(grade))
+                }}
+              >
+                {getGradeLabel(grade)}
+              </button>
+            ))}
+          </div>
         </div>
         <div className="course-current">
           <span>{student ? student.avatar : '👤'}</span>
@@ -150,13 +153,17 @@ export default function CourseCenter() {
           <div className="outcome-row">
             <span>{stageLabel}</span>
             <span>{activeTopics.length} 张发现卡</span>
+            <span>{activeUnits.length} 个教材对照主题</span>
             {active.outcomes.map((outcome) => (
               <span key={outcome}>{outcome}</span>
             ))}
           </div>
 
           <div className="course-focus">
-            {active.categories.map((category) => (
+            {activeUnits.slice(0, 6).map((unit) => (
+              <span key={unit.id}>{unit.title}</span>
+            ))}
+            {active.categories.slice(0, 3).map((category) => (
               <span key={category}>{category}</span>
             ))}
           </div>
@@ -188,7 +195,7 @@ export default function CourseCenter() {
               <span className="course-kicker">本学段产出</span>
               <p>{active.outcomes.join(' · ')}</p>
             </div>
-            <small className="course-duration">建议时长：{active.duration}</small>
+            <small className="course-duration">{getGradeLabel(activeGrade)} · 上下册共 {activeUnits.length} 个主题 · 建议时长：{active.duration}</small>
           </div>
 
           <div className="lesson-foot">

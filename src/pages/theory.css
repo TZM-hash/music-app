@@ -1080,3 +1080,127 @@
     min-height: 120px;
   }
 }
+
+.topic-curriculum-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.topic-curriculum-meta span,
+.recommend-meta span {
+  padding: 4px 8px;
+  border: 1px solid var(--line-neon);
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.06);
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.discovery-capture {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(52, 199, 89, 0.06);
+}
+
+.discovery-input-label {
+  display: grid;
+  gap: 5px;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.discovery-input-label textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 1px solid var(--line-neon);
+  border-radius: 8px;
+  background: var(--bg-soft);
+  color: var(--text);
+  font: inherit;
+  line-height: 1.45;
+}
+
+.discovery-capture-foot,
+.extension-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.discovery-capture-foot small {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+}
+
+.zhejiang-extension-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.85fr);
+  gap: 14px;
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(255, 149, 0, 0.3);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(255, 149, 0, 0.08), rgba(255, 255, 255, 0.02));
+}
+
+.zhejiang-extension-card h3 {
+  margin: 4px 0;
+  font-size: 1.05rem;
+}
+
+.zhejiang-extension-card p {
+  color: var(--text-soft);
+  line-height: 1.55;
+}
+
+.zhejiang-extension-prompt {
+  padding: 12px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.zhejiang-extension-prompt > span {
+  color: var(--neon-gold);
+  font-size: 0.75rem;
+  font-weight: 900;
+}
+
+.zhejiang-extension-prompt p {
+  margin: 5px 0 10px;
+  color: var(--text);
+  font-weight: 750;
+}
+
+.extension-actions span {
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(255, 149, 0, 0.14);
+  color: var(--text-soft);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.extension-actions button {
+  margin-left: auto;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 149, 0, 0.35);
+  border-radius: 7px;
+  color: var(--neon-gold);
+  font-weight: 800;
+}
+
+@media (max-width: 760px) {
+  .zhejiang-extension-card {
+    grid-template-columns: 1fr;
+  }
+}

@@ -46,7 +46,6 @@ const GROUPS: NavGroup[] = [
     items: [
       { route: 'class', icon: '👥', label: '学生档案', hint: '名单与个人记录' },
       { route: 'dashboard', icon: '📊', label: '成长观察', hint: '班级表现看板' },
-      { route: 'battle', icon: '⚔️', label: '班级对战', hint: '分组互动竞赛' },
     ],
   },
 ]

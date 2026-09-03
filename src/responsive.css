@@ -1164,3 +1164,63 @@
     overflow: visible !important;
   }
 }
+
+/* 首页本次进度卡片：覆盖历史首页网格，保持单卡布局稳定 */
+@media (min-width: 1024px) and (min-height: 680px) {
+  .content.route-home .music-home {
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    grid-template-rows: minmax(170px, auto) max-content minmax(128px, auto) !important;
+    overflow: auto !important;
+  }
+
+  .content.route-home .music-home > * {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-home .music-hero {
+    grid-column: 1 / 7 !important;
+    grid-row: 1 !important;
+  }
+
+  .content.route-home .pro-recommend {
+    grid-column: 7 / 13 !important;
+    grid-row: 1 !important;
+  }
+
+  .content.route-home .home-progress-card {
+    grid-column: 1 / 7 !important;
+    grid-row: 2 !important;
+  }
+
+  .content.route-home .today-task-card {
+    grid-column: 7 / 13 !important;
+    grid-row: 2 !important;
+  }
+
+  .content.route-home .home-recent-work {
+    grid-column: 1 / 13 !important;
+    grid-row: 3 !important;
+  }
+
+  .content.route-home .home-progress-card {
+    overflow: hidden !important;
+  }
+
+}
+
+@media (max-width: 700px) {
+  .content.route-home .home-progress-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .content.route-home .home-progress-main {
+    grid-template-columns: 1fr !important;
+  }
+
+  .content.route-home .home-progress-growth .growth-track-mini {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

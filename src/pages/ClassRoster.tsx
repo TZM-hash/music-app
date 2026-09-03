@@ -4,7 +4,15 @@ import {
   addStudent,
   removeStudent,
   AVATAR_CHOICES,
+  updateStudentProfile,
 } from '../state/students'
+import {
+  getGradeLabel,
+  getSemesterLabel,
+  PRIMARY_GRADES,
+  type PrimaryGrade,
+  type Semester,
+} from '../music/zhejiangCurriculum'
 import { studentStat } from '../state/stats'
 import { exportClassroomBackup, importClassroomBackup } from '../state/backup'
 import { removeStudentProgress } from '../state/progress'
@@ -17,14 +25,21 @@ export default function ClassRoster() {
   const [, setVersion] = useState(0)
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(AVATAR_CHOICES[0])
+  const [grade, setGrade] = useState<PrimaryGrade>(3)
+  const [semester, setSemester] = useState<Semester>(1)
   const [notice, setNotice] = useState<string | null>(null)
   const importRef = useRef<HTMLInputElement>(null)
   const roster = loadRoster()
 
   const add = () => {
     if (!name.trim()) return
-    addStudent(name, avatar)
+    addStudent(name, avatar, { grade, semester })
     setName('')
+    setVersion((v) => v + 1)
+  }
+
+  const updateCurriculum = (id: string, next: Partial<{ grade: PrimaryGrade; semester: Semester }>) => {
+    updateStudentProfile(id, next)
     setVersion((v) => v + 1)
   }
 
@@ -86,6 +101,21 @@ export default function ClassRoster() {
             onChange={(e) => setName(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && add()}
           />
+          <label className="roster-select-label">
+            年级
+            <select value={grade} onChange={(e) => setGrade(Number(e.target.value) as PrimaryGrade)}>
+              {PRIMARY_GRADES.map((item) => (
+                <option key={item} value={item}>{getGradeLabel(item)}</option>
+              ))}
+            </select>
+          </label>
+          <label className="roster-select-label">
+            册次
+            <select value={semester} onChange={(e) => setSemester(Number(e.target.value) as Semester)}>
+              <option value={1}>{getSemesterLabel(1)}</option>
+              <option value={2}>{getSemesterLabel(2)}</option>
+            </select>
+          </label>
           <button className="add-btn" onClick={add}>
             添加
           </button>
@@ -150,6 +180,34 @@ export default function ClassRoster() {
                   <b>{Math.round((stat?.avgAccuracy ?? 0) * 100)}%</b>
                   <small>正确率</small>
                 </div>
+              </div>
+              <div className="stu-card-curriculum">
+                <label>
+                  年级
+                  <select
+                    aria-label={`${s.name}年级`}
+                    value={s.grade ?? ''}
+                    onChange={(e) => {
+                      if (e.target.value) updateCurriculum(s.id, { grade: Number(e.target.value) as PrimaryGrade })
+                    }}
+                  >
+                    {!s.grade && <option value="">未设置</option>}
+                    {PRIMARY_GRADES.map((item) => (
+                      <option key={item} value={item}>{getGradeLabel(item)}</option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  册次
+                  <select
+                    aria-label={`${s.name}册次`}
+                    value={s.semester ?? 1}
+                    onChange={(e) => updateCurriculum(s.id, { semester: Number(e.target.value) as Semester })}
+                  >
+                    <option value={1}>{getSemesterLabel(1)}</option>
+                    <option value={2}>{getSemesterLabel(2)}</option>
+                  </select>
+                </label>
               </div>
               <button
                 className={`stu-select-btn ${active ? 'on' : ''}`}

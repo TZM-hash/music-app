@@ -592,3 +592,35 @@
     display: none;
   }
 }
+
+.course-grade-picker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+
+.course-grade-picker > span {
+  margin-right: 3px;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.course-grade-picker button {
+  min-height: 32px;
+  padding: 5px 10px;
+  border: 1px solid var(--line-neon);
+  border-radius: 999px;
+  background: rgba(0, 122, 255, 0.04);
+  color: var(--text-soft);
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.course-grade-picker button.on {
+  border-color: var(--neon-cyan);
+  background: rgba(0, 122, 255, 0.14);
+  color: var(--neon-cyan);
+}
