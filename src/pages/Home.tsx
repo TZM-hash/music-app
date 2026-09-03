@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -24,6 +24,14 @@ import {
   focusFromWeakCategory,
 } from '../state/reviewDeepLink'
 import { EXPERIENCE_ACTIVITIES } from '../music/experienceActivities'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+
+const HOME_PRESENTATION_PAGES: readonly PagePagerItem[] = [
+  { id: 'today', label: '今日入口', hint: '今日探险、探索卡片和主行动' },
+  { id: 'progress', label: '本次进度', hint: '查看本次探索的进度概览' },
+  { id: 'tasks', label: '今日任务', hint: '查看挑战、回放和再探索方向' },
+  { id: 'works', label: '我的作品', hint: '查看最近作品并继续创作' },
+]
 
 function formatWorkDate(work: CreativeWork): string {
   const date = new Date(work.createdAt)
@@ -58,6 +66,7 @@ function theoryToReviewQuestions(): ReviewQuestion[] {
 
 export default function Home() {
   const { navigate, mode, openTheory, currentStudentId } = useApp()
+  const [homePage, setHomePage] = useState(0)
   const isLectureMode = mode === 'lecture'
 
   // 学生切换会更新 App context；这里直接读取当前档案，保证首页推荐和“我的发现”立即跟随切换。
@@ -155,7 +164,14 @@ export default function Home() {
   const recommendationCurriculum = recommendationTopic?.curriculum
 
   return (
-    <div className="pro-home music-home">
+    <div className="pro-home music-home presentation-page home-presentation" data-home-page={homePage}>
+      <PagePager
+        items={HOME_PRESENTATION_PAGES}
+        activeIndex={homePage}
+        onChange={setHomePage}
+        ariaLabel="首页展示页面"
+      />
+      <div className="presentation-slide home-presentation-slide">
       <section className="pro-hero card music-hero">
         <div className="hero-copy">
           <span className="pro-kicker">轻松、动态、可互动的音乐探索空间</span>
@@ -482,6 +498,7 @@ export default function Home() {
         </div>
       </section>
 
+      </div>
     </div>
   )
 }

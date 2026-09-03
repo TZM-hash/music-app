@@ -6,8 +6,14 @@ import { ProgressRing, SpectrumBars } from '../components/Charts'
 import { useFillOnMount } from '../components/useFillOnMount'
 import MusicExperienceStage from '../components/MusicExperienceStage'
 import { buildExperienceJourney, getRecommendedActivities } from '../music/experienceActivities'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
 import '../components/charts.css'
 import './training.css'
+
+const TRAINING_PRESENTATION_PAGES: readonly PagePagerItem[] = [
+  { id: 'experience', label: '今日玩乐', hint: '三种短时音乐体验' },
+  { id: 'practice', label: '更多练习', hint: '听感、读谱、跟唱和节奏挑战' },
+]
 
 interface TrainingModule {
   id: string
@@ -105,6 +111,7 @@ const MODULES: TrainingModule[] = [
 
 export default function TrainingCenter() {
   const { navigate, currentStudentId } = useApp()
+  const [trainingPage, setTrainingPage] = useState(0)
   const progress = loadProgress()
   const [activeId, setActiveId] = useState(MODULES[0].id)
   const [activeExperienceId, setActiveExperienceId] = useState('sound-detective')
@@ -131,7 +138,14 @@ export default function TrainingCenter() {
   const averageBest = Math.round(totalBest / MODULES.length)
 
   return (
-    <div className="training-page">
+    <div className="training-page presentation-page training-presentation" data-training-page={trainingPage}>
+      <PagePager
+        items={TRAINING_PRESENTATION_PAGES}
+        activeIndex={trainingPage}
+        onChange={setTrainingPage}
+        ariaLabel="玩乐中心展示页面"
+      />
+      <div className="presentation-slide training-presentation-slide">
       <section className="training-experience-shell" aria-labelledby="training-experience-title">
         <div className="training-experience-intro">
           <div>
@@ -321,6 +335,7 @@ export default function TrainingCenter() {
             </button>
           </div>
         </section>
+      </div>
       </div>
     </div>
   )

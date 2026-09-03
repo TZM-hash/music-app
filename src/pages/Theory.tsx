@@ -27,8 +27,17 @@ import { DemoControl, getDemoScene } from '../music/theoryDemos'
 import { buildExplorationTaskCard } from '../music/explorationLoop'
 import { getZhejiangExtension } from '../music/zhejiangExtensions'
 import { saveMusicDiscovery } from '../state/discoveries'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+import { getPageSlice } from '../components/presentation'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import './theory.css'
+
+const THEORY_PRESENTATION_PAGES: readonly PagePagerItem[] = [
+  { id: 'topics', label: '选主题', hint: '按年级和方向选择教材发现卡' },
+  { id: 'listen', label: '听与看', hint: '阅读概念并试听互动演示' },
+  { id: 'play', label: '玩与说', hint: '完成挑战并留下自己的音乐发现' },
+  { id: 'extend', label: '浙江拓展', hint: '连接浙江声音与课堂表达' },
+]
 
 type CategoryFilter = '全部' | string
 type StageFilter = '全部' | TheoryStageId
@@ -43,6 +52,8 @@ function parseGradeFilter(value: string): GradeFilter {
 
 export default function Theory() {
   const { navigate, theoryFocus, currentStudentId, mode } = useApp()
+  const [theoryPage, setTheoryPage] = useState(0)
+  const [topicPage, setTopicPage] = useState(0)
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [stage, setStage] = useState<StageFilter>('全部')
   const [grade, setGrade] = useState<GradeFilter>(() => getCurrentStudent()?.grade ?? '全部')
@@ -69,6 +80,15 @@ export default function Theory() {
       }),
     [category, grade, source, stage]
   )
+  const topicPageData = useMemo(() => getPageSlice(filtered, topicPage, 8), [filtered, topicPage])
+  const topicPagerItems = useMemo(
+    () => Array.from({ length: topicPageData.pageCount }, (_, index) => ({
+      id: `topic-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页主题`,
+    })),
+    [topicPageData.pageCount]
+  )
   const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? THEORY_TOPICS[0]
   const demoScene = getDemoScene(active.demo.kind)
   const activeControl =
@@ -84,6 +104,14 @@ export default function Theory() {
       setActiveId(filtered[0].id)
     }
   }, [activeId, filtered])
+
+  useEffect(() => {
+    if (topicPageData.pageIndex !== topicPage) setTopicPage(topicPageData.pageIndex)
+  }, [topicPage, topicPageData.pageIndex])
+
+  useEffect(() => {
+    setTopicPage(0)
+  }, [category, grade, source, stage])
 
   useEffect(() => {
     if (!theoryFocus) return
@@ -102,7 +130,10 @@ export default function Theory() {
     if (theoryFocus.stage) {
       setGrade('全部')
     }
-    if (nextTopic) setActiveId(nextTopic.id)
+    if (nextTopic) {
+      setActiveId(nextTopic.id)
+      setTheoryPage(1)
+    }
   }, [theoryFocus])
 
   const clearFilters = () => {
@@ -111,10 +142,18 @@ export default function Theory() {
     setGrade('全部')
     setSource(mode === 'student' ? 'textbook' : '全部')
     setActiveId(THEORY_TOPICS[0].id)
+    setTopicPage(0)
   }
 
   return (
-    <div className="theory-lab">
+    <div className="theory-lab presentation-page theory-presentation" data-theory-page={theoryPage}>
+      <PagePager
+        items={THEORY_PRESENTATION_PAGES}
+        activeIndex={theoryPage}
+        onChange={setTheoryPage}
+        ariaLabel="探索馆展示页面"
+      />
+      <div className="presentation-slide theory-presentation-slide">
       <section className="theory-lab-head card">
         <div>
           <span className="theory-kicker">浙江人音版 · 互动音乐探索馆</span>
@@ -167,11 +206,14 @@ export default function Theory() {
                 <button onClick={clearFilters}>清除筛选</button>
               </div>
             )}
-            {filtered.map((topic) => (
+            {topicPageData.items.map((topic) => (
               <button
                 key={topic.id}
                 className={topic.id === active.id ? 'on' : ''}
-                onClick={() => setActiveId(topic.id)}
+                onClick={() => {
+                  setActiveId(topic.id)
+                  setTheoryPage(1)
+                }}
               >
                 <b>{topic.title}</b>
                 <small>
@@ -180,6 +222,14 @@ export default function Theory() {
               </button>
             ))}
           </div>
+          <PagePager
+            items={topicPagerItems}
+            activeIndex={topicPageData.pageIndex}
+            onChange={setTopicPage}
+            ariaLabel="发现卡列表分页"
+            compact
+            showTabs={false}
+          />
         </aside>
 
         <main className="theory-main">
@@ -200,15 +250,18 @@ export default function Theory() {
               </button>
             </div>
 
-            <DetailedExplanation topic={active} />
+            <div className="theory-presentation-block theory-presentation-learn">
+              <DetailedExplanation topic={active} />
 
-            <TheoryDemoLab
-              topic={active}
-              activeValue={activeControl.value}
-              onChange={setActiveDemoValue}
-            />
+              <TheoryDemoLab
+                topic={active}
+                activeValue={activeControl.value}
+                onChange={setActiveDemoValue}
+              />
+            </div>
 
-            <section className="inline-quiz-panel">
+            <div className="theory-presentation-block theory-presentation-play">
+              <section className="inline-quiz-panel">
               <div className="inline-quiz-copy">
                 <span className="theory-kicker">本关互动题</span>
                 <h3>{active.title}声音挑战</h3>
@@ -220,35 +273,39 @@ export default function Theory() {
                 studentId={currentStudentId ?? 'anonymous'}
                 recordEnabled={mode !== 'lecture'}
               />
-            </section>
+              </section>
 
-            <ExplorationLoop
-              topic={active}
-              scene={demoScene}
-              activeValue={activeControl.value}
-              onChange={setActiveDemoValue}
-              onPlay={() => playDemo(active.demo.kind, activeControl)}
-              onNavigate={navigate}
-              studentId={currentStudentId}
-              recordEnabled={mode !== 'lecture'}
-            />
+              <ExplorationLoop
+                topic={active}
+                scene={demoScene}
+                activeValue={activeControl.value}
+                onChange={setActiveDemoValue}
+                onPlay={() => playDemo(active.demo.kind, activeControl)}
+                onNavigate={navigate}
+                studentId={currentStudentId}
+                recordEnabled={mode !== 'lecture'}
+              />
+            </div>
 
-            <ZhejiangExtensionCard
-              topic={active}
-              grade={currentStudent?.grade ?? active.curriculum.grades[0]}
-              onNavigate={navigate}
-            />
+            <div className="theory-presentation-block theory-presentation-share">
+              <ZhejiangExtensionCard
+                topic={active}
+                grade={currentStudent?.grade ?? active.curriculum.grades[0]}
+                onNavigate={navigate}
+              />
 
-            <div className="point-grid">
-              {active.keyPoints.map((p, i) => (
-                <div key={p} className="point-card">
-                  <span>{i + 1}</span>
-                  <p>{p}</p>
-                </div>
-              ))}
+              <div className="point-grid">
+                {active.keyPoints.map((p, i) => (
+                  <div key={p} className="point-card">
+                    <span>{i + 1}</span>
+                    <p>{p}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
         </main>
+      </div>
       </div>
     </div>
   )
@@ -316,16 +373,16 @@ function FilterGroup({
   onChange: (value: string) => void
 }) {
   return (
-    <div className="theory-filter-group">
-      <div className="side-group-title">{title}</div>
-      <div className="theory-cats">
+    <label className="theory-filter-group">
+      <span className="side-group-title">{title}</span>
+      <select value={value} aria-label={title} onChange={(event) => onChange(event.target.value)}>
         {options.map((option) => (
-          <button key={option} className={value === option ? 'on' : ''} onClick={() => onChange(option)}>
+          <option key={option} value={option}>
             {getLabel(option)}
-          </button>
+          </option>
         ))}
-      </div>
-    </div>
+      </select>
+    </label>
   )
 }
 
@@ -393,12 +450,22 @@ function ExplorationLoop({
 }) {
   const task = buildExplorationTaskCard(topic, scene)
   const steps = task.steps
+  const [stepIndex, setStepIndex] = useState(0)
+  const activeStep = steps[stepIndex] ?? steps[0]
+  const stepPagerItems = useMemo(
+    () => steps.map((step) => ({ id: step.id, label: step.badge, hint: step.prompt })),
+    [steps]
+  )
   const guessControls = scene.controls.slice(0, 2)
   const speakStarters = [
     `我听到：${topic.subtitle}`,
     `我发现：${topic.keyPoints[0]}`,
     '我想把它变成一段小作品',
   ]
+
+  useEffect(() => {
+    setStepIndex(0)
+  }, [topic.id])
 
   return (
     <div className="exploration-loop">
@@ -417,22 +484,29 @@ function ExplorationLoop({
           <span key={checkpoint}>{checkpoint}</span>
         ))}
       </div>
+      <PagePager
+        items={stepPagerItems}
+        activeIndex={stepIndex}
+        onChange={setStepIndex}
+        ariaLabel="声音探险步骤"
+        compact
+      />
       <div className="exploration-steps">
-        {steps.map((step, index) => (
-          <div key={step.id} className={`exploration-step step-${step.id}`}>
+        {activeStep && (
+          <div key={activeStep.id} className={`exploration-step step-${activeStep.id}`}>
             <div className="exploration-step-top">
-              <span className="exploration-index">{index + 1}</span>
-              <span className="task-badge">{step.badge}</span>
+              <span className="exploration-index">{stepIndex + 1}</span>
+              <span className="task-badge">{activeStep.badge}</span>
             </div>
             <div>
-              <b>{step.title}</b>
-              <p>{step.prompt}</p>
-              <small>{step.microGoal}</small>
+              <b>{activeStep.title}</b>
+              <p>{activeStep.prompt}</p>
+              <small>{activeStep.microGoal}</small>
             </div>
-            {step.id === 'listen' && (
-              <button onClick={onPlay}>{step.actionLabel}</button>
+            {activeStep.id === 'listen' && (
+              <button onClick={onPlay}>{activeStep.actionLabel}</button>
             )}
-            {step.id === 'guess' && (
+            {activeStep.id === 'guess' && (
               <div className="exploration-choice-row">
                 {guessControls.map((control) => (
                   <button
@@ -445,7 +519,7 @@ function ExplorationLoop({
                 ))}
               </div>
             )}
-            {step.id === 'play' && (
+            {activeStep.id === 'play' && (
               <div className="exploration-choice-row wrap">
                 {scene.controls.slice(0, 4).map((control) => (
                   <button
@@ -456,14 +530,14 @@ function ExplorationLoop({
                     {control.label}
                   </button>
                 ))}
-                {step.route && (
-                  <button className="primary" onClick={() => onNavigate(step.route!)}>
-                    {step.actionLabel}
+                {activeStep.route && (
+                  <button className="primary" onClick={() => onNavigate(activeStep.route!)}>
+                    {activeStep.actionLabel}
                   </button>
                 )}
               </div>
             )}
-            {step.id === 'speak' && (
+            {activeStep.id === 'speak' && (
               <DiscoveryCapture
                 topic={topic}
                 starters={speakStarters}
@@ -471,12 +545,12 @@ function ExplorationLoop({
                 recordEnabled={recordEnabled}
               />
             )}
-            {step.id === 'create' && (
+            {activeStep.id === 'create' && (
               <div className="exploration-choice-row wrap">
-                <button className="primary" onClick={() => onNavigate(step.route ?? 'mixer')}>
-                  {step.actionLabel}
+                <button className="primary" onClick={() => onNavigate(activeStep.route ?? 'mixer')}>
+                  {activeStep.actionLabel}
                 </button>
-                {topic.actions.filter((action) => action.route !== step.route).slice(0, 2).map((action) => (
+                {topic.actions.filter((action) => action.route !== activeStep.route).slice(0, 2).map((action) => (
                   <button key={action.label} onClick={() => onNavigate(action.route)}>
                     {action.label}
                   </button>
@@ -484,7 +558,7 @@ function ExplorationLoop({
               </div>
             )}
           </div>
-        ))}
+        )}
       </div>
     </div>
   )
@@ -810,7 +884,7 @@ function MiniQuiz({
   const [pickedByQuestion, setPickedByQuestion] = useState<Record<number, number>>({})
   const [quizPage, setQuizPage] = useState(0)
   const mounted = useMounted()
-  const questionsPerPage = 3
+  const questionsPerPage = 1
   const pageCount = Math.ceil(topic.quiz.length / questionsPerPage)
   const visibleQuestions = topic.quiz.slice(
     quizPage * questionsPerPage,
@@ -866,7 +940,7 @@ function MiniQuiz({
       <div className="quiz-summary">
         <div>
           <h4>本关小挑战</h4>
-          <p>每组 3 题，适合边听边点、边玩边答。</p>
+          <p>每次 1 题，适合投屏时听完马上判断。</p>
         </div>
         <strong>{correctCount}/{topic.quiz.length}</strong>
       </div>

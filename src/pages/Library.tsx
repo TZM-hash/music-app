@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { CATEGORY_INFO, SongCategory, Song } from '../music/songs'
 import { allSongs, upsertCustomSong, newSongId, parseJianpu } from '../music/songLibrary'
 import { ensureAudio } from '../music/audioEngine'
@@ -15,12 +15,27 @@ import {
 import { THEORY_STAGES, getStageLabel, type TheoryStageId } from '../music/theoryCatalog'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import StaffView from '../components/StaffView'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+import { getPageSlice } from '../components/presentation'
 import './library.css'
 
 type Filter = SongCategory | 'all'
 type LibraryView = 'songs' | 'encyclopedia'
 type EncyclopediaTypeFilter = EncyclopediaType | 'all'
 type StageFilter = TheoryStageId | 'all'
+
+const LIBRARY_PANEL_PAGES: readonly PagePagerItem[] = [
+  { id: 'list', label: '选择素材', hint: '筛选并选择一条音乐素材' },
+  { id: 'detail', label: '查看详情', hint: '试听、看谱或完成互动题' },
+]
+
+const ENCYCLOPEDIA_DETAIL_PAGES: readonly PagePagerItem[] = [
+  { id: 'story', label: '认识故事', hint: '了解音乐家或作品背景' },
+  { id: 'feature', label: '听见特点', hint: '抓住最重要的音乐特点' },
+  { id: 'listening', label: '作品与听赏', hint: '查看代表作品和听赏线索' },
+  { id: 'practice', label: '课堂要点', hint: '把发现带回课堂活动' },
+  { id: 'quiz', label: '小测验', hint: '用一道题检验自己的发现' },
+]
 
 export default function Library() {
   const { playSongInGame, currentStudentId, mode } = useApp()
@@ -41,6 +56,13 @@ export default function Library() {
   const [impBpm, setImpBpm] = useState(100)
   const [selectedSongId, setSelectedSongId] = useState<string | null>(null)
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null)
+  const [songPage, setSongPage] = useState(0)
+  const [encyclopediaPage, setEncyclopediaPage] = useState(0)
+  const [libraryPanel, setLibraryPanel] = useState(0)
+  const [encyclopediaDetailPage, setEncyclopediaDetailPage] = useState(0)
+  const [isDesktopPresentation, setIsDesktopPresentation] = useState(
+    () => typeof window === 'undefined' || window.innerWidth > 900
+  )
   const resultScrollRef = useRef<HTMLDivElement | null>(null)
   // 统一的旋律试听：重复点击自动停掉上一段，切页自动静音
   const previewCtl = useMelodyPreview()
@@ -75,6 +97,45 @@ export default function Library() {
       }),
     [encyclopediaStage, encyclopediaType, search]
   )
+  const songPageData = useMemo(() => getPageSlice(filtered, songPage, 5), [filtered, songPage])
+  const songPagerItems = useMemo(
+    () => Array.from({ length: songPageData.pageCount }, (_, index) => ({
+      id: `song-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页曲目`,
+    })),
+    [songPageData.pageCount]
+  )
+  const encyclopediaPageData = useMemo(
+    () => getPageSlice(encyclopediaEntries, encyclopediaPage, 4),
+    [encyclopediaEntries, encyclopediaPage]
+  )
+  const encyclopediaPagerItems = useMemo(
+    () => Array.from({ length: encyclopediaPageData.pageCount }, (_, index) => ({
+      id: `encyclopedia-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页音乐故事`,
+    })),
+    [encyclopediaPageData.pageCount]
+  )
+
+  useEffect(() => {
+    if (songPageData.pageIndex !== songPage) setSongPage(songPageData.pageIndex)
+  }, [songPage, songPageData.pageIndex])
+
+  useEffect(() => {
+    if (encyclopediaPageData.pageIndex !== encyclopediaPage) {
+      setEncyclopediaPage(encyclopediaPageData.pageIndex)
+    }
+  }, [encyclopediaPage, encyclopediaPageData.pageIndex])
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 901px)')
+    const update = () => setIsDesktopPresentation(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   const preview = async (song: Song) => {
     await ensureAudio()
@@ -107,6 +168,18 @@ export default function Library() {
     () => encyclopediaEntries.find((entry) => entry.id === selectedEntryId) ?? encyclopediaEntries[0] ?? null,
     [encyclopediaEntries, selectedEntryId]
   )
+  const encyclopediaDetailParts = useMemo(
+    () => selectedEntry?.detail?.split('\n\n') ?? [],
+    [selectedEntry]
+  )
+  const encyclopediaDetailSections = useMemo(
+    () => [
+      encyclopediaDetailParts.slice(0, 1),
+      encyclopediaDetailParts.slice(1, 2),
+      encyclopediaDetailParts.slice(2, 5),
+    ],
+    [encyclopediaDetailParts]
+  )
   const selectedSongCat = selectedSong ? CATEGORY_INFO[selectedSong.category] : null
 
   const doImport = () => {
@@ -133,24 +206,37 @@ export default function Library() {
 
   const selectView = (nextView: LibraryView) => {
     setView(nextView)
+    setSongPage(0)
+    setEncyclopediaPage(0)
+    setLibraryPanel(0)
+    setEncyclopediaDetailPage(0)
     resetResultScroll()
   }
 
   const selectSongFilter = (nextFilter: Filter) => {
     setFilter(nextFilter)
     setSelectedSongId(null)
+    setSongPage(0)
+    setLibraryPanel(0)
+    setEncyclopediaDetailPage(0)
     resetResultScroll()
   }
 
   const selectEncyclopediaType = (nextType: EncyclopediaTypeFilter) => {
     setEncyclopediaType(nextType)
     setSelectedEntryId(null)
+    setEncyclopediaPage(0)
+    setLibraryPanel(0)
+    setEncyclopediaDetailPage(0)
     resetResultScroll()
   }
 
   const selectEncyclopediaStage = (nextStage: StageFilter) => {
     setEncyclopediaStage(nextStage)
     setSelectedEntryId(null)
+    setEncyclopediaPage(0)
+    setLibraryPanel(0)
+    setEncyclopediaDetailPage(0)
     resetResultScroll()
   }
 
@@ -179,8 +265,47 @@ export default function Library() {
     }
   }
 
+  const renderEncyclopediaQuiz = (entry: EncyclopediaEntry) => (
+    <div className="encyclopedia-quiz">
+      {entry.quiz.slice(0, 1).map((q, questionIndex) => {
+        const pickKey = `${entry.id}:${questionIndex}`
+        const picked = quizPicks[pickKey]
+        return (
+          <div key={q.question}>
+            <strong>{q.question}</strong>
+            <div>
+              {q.options.map((option, optionIndex) => {
+                const answered = picked !== undefined
+                const cls = answered
+                  ? optionIndex === q.answer
+                    ? 'right'
+                    : optionIndex === picked
+                      ? 'wrong'
+                      : ''
+                  : ''
+                return (
+                  <button
+                    key={option}
+                    className={cls}
+                    disabled={answered}
+                    onClick={() => answerEncyclopediaQuiz(entry, questionIndex, optionIndex)}
+                  >
+                    {option}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+
   return (
-    <div className={`library library-${view}`}>
+    <div
+      className={`library library-${view} presentation-page library-presentation`}
+      data-library-panel={libraryPanel}
+    >
       <div className="lib-header card">
         <div className="lib-search">
           <input
@@ -191,6 +316,9 @@ export default function Library() {
               setSearch(e.target.value)
               setSelectedSongId(null)
               setSelectedEntryId(null)
+              setSongPage(0)
+              setEncyclopediaPage(0)
+              setEncyclopediaDetailPage(0)
               resetResultScroll()
             }}
           />
@@ -227,6 +355,14 @@ export default function Library() {
           音乐故事 <span>{ENCYCLOPEDIA_ENTRIES.length}</span>
         </button>
       </div>
+      <PagePager
+        items={LIBRARY_PANEL_PAGES}
+        activeIndex={libraryPanel}
+        onChange={setLibraryPanel}
+        ariaLabel="素材库展示区域"
+        compact
+        className="library-panel-pager"
+      />
 
       {view === 'songs' ? (
         <>
@@ -248,9 +384,10 @@ export default function Library() {
           </div>
 
           <div className="library-browser">
+            <div className="library-list-column">
             <div className="library-list song-menu" ref={resultScrollRef}>
               {filtered.length === 0 && <div className="lib-empty">没有匹配的曲目，换个筛选试试～</div>}
-              {filtered.map((song) => {
+              {songPageData.items.map((song) => {
                 const cat = CATEGORY_INFO[song.category]
                 const selected = selectedSong?.id === song.id
                 return (
@@ -258,7 +395,11 @@ export default function Library() {
                     key={song.id}
                     className={`song-menu-row ${selected ? 'active' : ''}`}
                     style={{ borderLeftColor: cat.color }}
-                    onClick={() => setSelectedSongId(song.id)}
+                    onClick={() => {
+                      setSelectedSongId(song.id)
+                      setEncyclopediaDetailPage(0)
+                      setLibraryPanel(1)
+                    }}
                   >
                     <span className="song-menu-icon" style={{ background: cat.color }}>
                       {cat.icon}
@@ -279,6 +420,15 @@ export default function Library() {
                   </button>
                 )
               })}
+            </div>
+            <PagePager
+              items={songPagerItems}
+              activeIndex={songPageData.pageIndex}
+              onChange={setSongPage}
+              ariaLabel="曲目列表分页"
+              compact
+              showTabs={false}
+            />
             </div>
 
             <aside className="library-detail card">
@@ -364,13 +514,18 @@ export default function Library() {
             ))}
           </div>
           <div className="library-browser">
+            <div className="library-list-column">
             <div className="library-list encyclopedia-menu" ref={resultScrollRef}>
               {encyclopediaEntries.length === 0 && <div className="lib-empty">没有匹配的音乐故事，换个筛选试试～</div>}
-              {encyclopediaEntries.map((entry) => (
+              {encyclopediaPageData.items.map((entry) => (
                 <button
                   key={entry.id}
                   className={`encyclopedia-menu-row ${selectedEntry?.id === entry.id ? 'active' : ''}`}
-                  onClick={() => setSelectedEntryId(entry.id)}
+                  onClick={() => {
+                    setSelectedEntryId(entry.id)
+                    setEncyclopediaDetailPage(0)
+                    setLibraryPanel(1)
+                  }}
                 >
                   <span className="encyclopedia-menu-main">
                     <span className="encyclopedia-menu-head">
@@ -385,64 +540,91 @@ export default function Library() {
                 </button>
               ))}
             </div>
+            <PagePager
+              items={encyclopediaPagerItems}
+              activeIndex={encyclopediaPageData.pageIndex}
+              onChange={setEncyclopediaPage}
+              ariaLabel="音乐故事列表分页"
+              compact
+              showTabs={false}
+            />
+            </div>
 
             <aside className="library-detail card encyclopedia-detail">
               {selectedEntry ? (
-                <>
-                  <div className="library-detail-head">
-                    <span className="course-kicker">{selectedEntry.category} · {getStageLabel(selectedEntry.stage)}</span>
-                    <h3>{selectedEntry.title}</h3>
-                    <b>{selectedEntry.subtitle}</b>
-                    <p>{selectedEntry.summary}</p>
-                  </div>
-                  {selectedEntry.detail && (
-                    <div className="encyclopedia-detail-body">
-                      {selectedEntry.detail.split('\n\n').map((para, i) => (
-                        <p key={i}>{para}</p>
+                isDesktopPresentation ? (
+                  <>
+                    <PagePager
+                      items={ENCYCLOPEDIA_DETAIL_PAGES}
+                      activeIndex={encyclopediaDetailPage}
+                      onChange={setEncyclopediaDetailPage}
+                      ariaLabel="音乐故事详情分页"
+                      compact
+                      className="encyclopedia-detail-pager"
+                    />
+                    <div className="library-detail-head">
+                      <span className="course-kicker">{selectedEntry.category} · {getStageLabel(selectedEntry.stage)}</span>
+                      <h3>{selectedEntry.title}</h3>
+                      <b>{selectedEntry.subtitle}</b>
+                      <p>{selectedEntry.summary}</p>
+                    </div>
+                    <div className="encyclopedia-detail-pages" data-detail-page={encyclopediaDetailPage}>
+                      <div className="encyclopedia-detail-story">
+                        {encyclopediaDetailSections.map((section, pageIndex) => (
+                          <div
+                            key={`story-${pageIndex}`}
+                            className="encyclopedia-detail-page"
+                            data-detail-page-index={pageIndex}
+                          >
+                            {section.length > 0 && (
+                              <div className="encyclopedia-detail-body">
+                                {section.map((para, paragraphIndex) => (
+                                  <p key={`${pageIndex}-${paragraphIndex}`}>{para}</p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="encyclopedia-detail-page" data-detail-page-index="3">
+                        <div className="fact-list">
+                          {selectedEntry.keyFacts.map((fact) => (
+                            <span key={fact}>{fact}</span>
+                          ))}
+                        </div>
+                        <div className="classroom-prompt">{selectedEntry.prompt}</div>
+                        <small className="related-count">相关发现 {selectedEntry.relatedTheoryIds.length} 个</small>
+                      </div>
+                      <div className="encyclopedia-detail-page" data-detail-page-index="4">
+                        {renderEncyclopediaQuiz(selectedEntry)}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="library-detail-head">
+                      <span className="course-kicker">{selectedEntry.category} · {getStageLabel(selectedEntry.stage)}</span>
+                      <h3>{selectedEntry.title}</h3>
+                      <b>{selectedEntry.subtitle}</b>
+                      <p>{selectedEntry.summary}</p>
+                    </div>
+                    {selectedEntry.detail && (
+                      <div className="encyclopedia-detail-body">
+                        {selectedEntry.detail.split('\n\n').map((para, i) => (
+                          <p key={i}>{para}</p>
+                        ))}
+                      </div>
+                    )}
+                    <div className="fact-list">
+                      {selectedEntry.keyFacts.map((fact) => (
+                        <span key={fact}>{fact}</span>
                       ))}
                     </div>
-                  )}
-                  <div className="fact-list">
-                    {selectedEntry.keyFacts.map((fact) => (
-                      <span key={fact}>{fact}</span>
-                    ))}
-                  </div>
-                  <div className="classroom-prompt">{selectedEntry.prompt}</div>
-                  <small className="related-count">相关发现 {selectedEntry.relatedTheoryIds.length} 个</small>
-                  <div className="encyclopedia-quiz">
-                    {selectedEntry.quiz.slice(0, 1).map((q, questionIndex) => {
-                      const pickKey = `${selectedEntry.id}:${questionIndex}`
-                      const picked = quizPicks[pickKey]
-                      return (
-                        <div key={q.question}>
-                          <strong>{q.question}</strong>
-                          <div>
-                            {q.options.map((option, optionIndex) => {
-                              const answered = picked !== undefined
-                              const cls = answered
-                                ? optionIndex === q.answer
-                                  ? 'right'
-                                  : optionIndex === picked
-                                    ? 'wrong'
-                                    : ''
-                                : ''
-                              return (
-                                <button
-                                  key={option}
-                                  className={cls}
-                                  disabled={answered}
-                                  onClick={() => answerEncyclopediaQuiz(selectedEntry, questionIndex, optionIndex)}
-                                >
-                                  {option}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </>
+                    <div className="classroom-prompt">{selectedEntry.prompt}</div>
+                    <small className="related-count">相关发现 {selectedEntry.relatedTheoryIds.length} 个</small>
+                    {renderEncyclopediaQuiz(selectedEntry)}
+                  </>
+                )
               ) : (
                 <div className="library-detail-empty">左侧选择一个音乐故事，这里会出现可互动的详情。</div>
               )}
