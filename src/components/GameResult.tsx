@@ -1,9 +1,18 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import Stars from './Stars'
 import { buildMusicAbilitySignals } from '../state/musicAbilities'
 import { celebrate } from './Celebration'
 import { playUI } from '../music/uiSounds'
+import PagePager, { type PagePagerItem } from './PagePager'
+import { getPageSlice } from './presentation'
 import './gameResult.css'
+
+const REVIEW_ROW_PAGE_SIZE = 5
+const REVIEW_PAGES: readonly PagePagerItem[] = [
+  { id: 'summary', label: '结果概览', hint: '查看本轮成绩、徽章和下一步建议' },
+  { id: 'ability', label: '能力反馈', hint: '查看音乐能力诊断与练习建议' },
+  { id: 'questions', label: '逐题回顾', hint: '逐题查看答案与待提高之处' },
+]
 
 export interface ReviewRow {
   /** 左侧标签，如题目、乐句序号、音名 */
@@ -56,11 +65,28 @@ export default function GameResult({
   continueLabel = '回到挑战中心',
 }: Props) {
   const [showReview, setShowReview] = useState(false)
-  const scoreRef = useRef<HTMLDivElement>(null)
+  const [reviewPage, setReviewPage] = useState(0)
+  const [reviewRowsPage, setReviewRowsPage] = useState(0)
+  const [isDesktopPresentation, setIsDesktopPresentation] = useState(
+    () => typeof window === 'undefined' || window.innerWidth > 900,
+  )
+  const [animatedScore, setAnimatedScore] = useState(score)
   const hasCelebrated = useRef('')
   const wrongRows = review?.rows?.filter((r) => !r.ok) ?? []
   const hasReview = !!review && ((review.rows?.length ?? 0) > 0 || (review.stats?.length ?? 0) > 0)
   const diagnosis = buildDiagnosis(stars, review)
+  const reviewRowsPageData = useMemo(
+    () => getPageSlice(review?.rows ?? [], reviewRowsPage, REVIEW_ROW_PAGE_SIZE),
+    [review, reviewRowsPage],
+  )
+  const reviewRowsPagerItems = useMemo<readonly PagePagerItem[]>(
+    () => Array.from({ length: reviewRowsPageData.pageCount }, (_, index) => ({
+      id: `review-rows-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页逐题回顾`,
+    })),
+    [reviewRowsPageData.pageCount],
+  )
   const abilitySignals = buildMusicAbilitySignals({
     gameId,
     stars,
@@ -70,10 +96,20 @@ export default function GameResult({
     advice: review?.advice,
   })
 
+  useEffect(() => {
+    if (reviewRowsPageData.pageIndex !== reviewRowsPage) setReviewRowsPage(reviewRowsPageData.pageIndex)
+  }, [reviewRowsPage, reviewRowsPageData.pageIndex])
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 901px)')
+    const update = () => setIsDesktopPresentation(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
   // 分数滚动动画
   useEffect(() => {
-    const el = scoreRef.current
-    if (!el) return
     const target = score
     const duration = 800
     const start = performance.now()
@@ -81,7 +117,7 @@ export default function GameResult({
     const step = (now: number) => {
       const t = Math.min(1, (now - start) / duration)
       const eased = 1 - Math.pow(1 - t, 3)
-      el.textContent = `${Math.round(target * eased)} 分`
+      setAnimatedScore(Math.round(target * eased))
       if (t < 1) raf = requestAnimationFrame(step)
     }
     raf = requestAnimationFrame(step)
@@ -115,7 +151,7 @@ export default function GameResult({
             <div className="result-stars">
               <Stars count={stars} />
             </div>
-            <div className="result-score" ref={scoreRef}>{score} 分</div>
+            <div className="result-score">{animatedScore} 分</div>
             {isNewBest && <div className="new-best">🎉 新纪录！</div>}
             {!isNewBest && bestScore != null && bestScore > 0 && (
               <div className="best-line">最高分 {bestScore}</div>
@@ -161,10 +197,143 @@ export default function GameResult({
               <button className="btn-ghost" onClick={onHome}>回首页</button>
             </div>
             {hasReview && (
-              <button className="review-link" onClick={() => setShowReview(true)}>
+              <button
+                className="review-link"
+                onClick={() => {
+                  setReviewPage(0)
+                  setReviewRowsPage(0)
+                  setShowReview(true)
+                }}
+              >
                 📋 查看本轮回顾{wrongRows.length > 0 ? `（${wrongRows.length} 处待提高）` : ''}
               </button>
             )}
+          </>
+        ) : isDesktopPresentation ? (
+          <>
+            <h2>📋 本轮回顾</h2>
+            <PagePager
+              items={REVIEW_PAGES}
+              activeIndex={reviewPage}
+              onChange={setReviewPage}
+              ariaLabel="本轮回顾分页"
+              compact
+              className="result-review-pager"
+            />
+            <div className="result-review-pages" data-result-page={reviewPage}>
+              <section className="result-review-page" data-result-page-index="0">
+                <div className="result-review-scoreline">
+                  <div>
+                    <small>本轮得分</small>
+                    <b>{score} 分</b>
+                  </div>
+                  <div>
+                    <small>星级</small>
+                    <span className="result-review-stars"><Stars count={stars} /></span>
+                  </div>
+                  {isNewBest && <div className="result-review-best">🎉 新纪录！</div>}
+                  {!isNewBest && bestScore != null && bestScore > 0 && (
+                    <div className="result-review-best">最高分 {bestScore}</div>
+                  )}
+                </div>
+                {review?.stats && review.stats.length > 0 && (
+                  <div className="review-stats">
+                    {review.stats.map((s) => (
+                      <div key={s.label} className="review-stat">
+                        <b>{s.value}</b>
+                        <small>{s.label}</small>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {review?.advice && <div className="result-advice">💬 {review.advice}</div>}
+                {newBadges.length > 0 && (
+                  <div className="badge-row">
+                    {newBadges.map((b) => (
+                      <div key={b.name} className="badge-pop">
+                        <span>{b.icon}</span>
+                        <small>{b.name}</small>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+
+              <section className="result-review-page" data-result-page-index="1">
+                {diagnosis.length > 0 && (
+                  <div className="diagnosis-panel">
+                    {diagnosis.map((d) => (
+                      <div key={d.label} className={`diagnosis-card ${d.tone ?? 'good'}`}>
+                        <small>{d.label}</small>
+                        <b>{d.value}</b>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className="ability-panel">
+                  {abilitySignals.map((ability) => (
+                    <div key={ability.id} className={`ability-card ${ability.tone}`}>
+                      <div>
+                        <small>{ability.label}</small>
+                        <b>{ability.value}</b>
+                      </div>
+                      <span>
+                        <i style={{ width: `${ability.value}%` }} />
+                      </span>
+                      <p>{ability.tip}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              <section className="result-review-page result-review-questions" data-result-page-index="2">
+                {reviewRowsPageData.items.length > 0 ? (
+                  <div className="review-list">
+                    {reviewRowsPageData.items.map((r, i) => (
+                      <div key={i} className={`review-row ${r.ok ? 'ok' : 'bad'}`}>
+                        <span className="rr-mark">{r.ok ? '✓' : '✗'}</span>
+                        <span className="rr-label">{r.label}</span>
+                        <span className="rr-got">{r.got}</span>
+                        {!r.ok && r.want && <span className="rr-want">应为 {r.want}</span>}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="result-review-empty">本轮没有逐题明细，继续保持探索！</div>
+                )}
+                {reviewRowsPageData.pageCount > 1 && (
+                  <PagePager
+                    items={reviewRowsPagerItems}
+                    activeIndex={reviewRowsPageData.pageIndex}
+                    onChange={setReviewRowsPage}
+                    ariaLabel="逐题回顾分页"
+                    compact
+                    showTabs={false}
+                    className="result-row-pager"
+                  />
+                )}
+              </section>
+            </div>
+            <div className="result-actions">
+              <button className="btn-primary" onClick={onRetry}>
+                再练一次
+              </button>
+              {onContinue && (
+                <button className="btn-secondary" onClick={onContinue}>
+                  {continueLabel}
+                </button>
+              )}
+              <button
+                className="btn-ghost"
+                onClick={() => {
+                  setShowReview(false)
+                  setReviewPage(0)
+                  setReviewRowsPage(0)
+                }}
+              >
+                返回成绩
+              </button>
+            </div>
           </>
         ) : (
           <>
@@ -225,7 +394,14 @@ export default function GameResult({
                   {continueLabel}
                 </button>
               )}
-              <button className="btn-ghost" onClick={() => setShowReview(false)}>
+              <button
+                className="btn-ghost"
+                onClick={() => {
+                  setShowReview(false)
+                  setReviewPage(0)
+                  setReviewRowsPage(0)
+                }}
+              >
                 返回成绩
               </button>
             </div>
