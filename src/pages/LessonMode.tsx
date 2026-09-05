@@ -10,6 +10,7 @@ import {
   filterTheoryTopics,
   getStageLabel,
 } from '../music/theoryCatalog'
+import { getGradeLabel, getStageForGrade, stageMatchesGrade } from '../music/zhejiangCurriculum'
 import './lesson.css'
 
 type LessonStepId = 'warmup' | 'concept' | 'demo' | 'practice' | 'summary'
@@ -29,9 +30,12 @@ function lessonQuestions(topic: TheoryTopic) {
 }
 
 export default function LessonMode() {
-  const { navigate, openTheory, mode, lessonStage } = useApp()
+  const { navigate, openTheory, mode, lessonStage, selectedGrade } = useApp()
   const student = getCurrentStudent()
-  const [stage, setStage] = useState<StageChoice>(lessonStage ?? 'primary-lower')
+  const effectiveGrade = selectedGrade ?? student?.grade
+  const [stage, setStage] = useState<StageChoice>(
+    lessonStage ?? (effectiveGrade ? getStageForGrade(effectiveGrade) : 'primary-lower')
+  )
   const [category, setCategory] = useState<CategoryChoice>('全部')
   const [topicId, setTopicId] = useState(THEORY_TOPICS[0].id)
   const [stepIndex, setStepIndex] = useState(0)
@@ -44,18 +48,28 @@ export default function LessonMode() {
   })
   const [answers, setAnswers] = useState<Record<number, number>>({})
 
-  // 从学段总览跳转过来时（lessonStage），把顶部 tab 落到该学段
+  const availableStages = useMemo(
+    () => THEORY_STAGES.filter((item) => !effectiveGrade || stageMatchesGrade(item.id, effectiveGrade)),
+    [effectiveGrade]
+  )
+
+  // 全局年级优先约束可用内容；从学段总览进入时仅在该年级可用的学段中定位。
   useEffect(() => {
-    if (lessonStage) setStage(lessonStage)
-  }, [lessonStage])
+    if (lessonStage && (!effectiveGrade || stageMatchesGrade(lessonStage, effectiveGrade))) {
+      setStage(lessonStage)
+      return
+    }
+    if (effectiveGrade) setStage(getStageForGrade(effectiveGrade))
+  }, [effectiveGrade, lessonStage])
 
   const filteredTopics = useMemo(
     () =>
       filterTheoryTopics({
         stage: stage === '全部' ? undefined : stage,
         category: category === '全部' ? undefined : category,
+        grade: effectiveGrade,
       }),
-    [category, stage]
+    [category, effectiveGrade, stage]
   )
   const activeTopic = filteredTopics.find((topic) => topic.id === topicId) ?? filteredTopics[0] ?? THEORY_TOPICS[0]
   const activeStep = LESSON_STEPS[stepIndex]
@@ -113,7 +127,10 @@ export default function LessonMode() {
         <div className="lesson-progress-card">
           <b>{progress}%</b>
           <span>本节课探索度</span>
-          <small>{mode === 'lecture' ? '投屏模式不记录学生档案' : student ? `${student.name} 探索中` : '匿名体验'}</small>
+          <small>
+            {effectiveGrade ? `${getGradeLabel(effectiveGrade)}内容 · ` : ''}
+            {mode === 'lecture' ? '投屏模式不记录学生档案' : student ? `${student.name} 探索中` : '匿名体验'}
+          </small>
         </div>
       </section>
 
@@ -127,7 +144,7 @@ export default function LessonMode() {
         >
           全部
         </button>
-        {THEORY_STAGES.map((item) => (
+        {availableStages.map((item) => (
           <button
             key={item.id}
             className={stage === item.id ? 'on' : ''}

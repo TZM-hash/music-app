@@ -43,3 +43,14 @@ test('首页采用任务驱动结构并保留探索卡片', () => {
   assert.doesNotMatch(home, /className="hero-status-grid"/)
   assert.doesNotMatch(home, /className="lesson-flow-mini"/)
 })
+
+test('首页桌面端将学习记录与任务作品对齐为右侧等分双栏', () => {
+  const styles = readSource('src/playful.css')
+
+  assert.match(styles, /--home-lower-half:\s*clamp\(/)
+  assert.match(styles, /\.content\.route-home \.home-progress-card[\s\S]*grid-row:\s*3\s*\/\s*5/)
+  assert.match(styles, /\.content\.route-home \.today-task-card[\s\S]*grid-column:\s*8\s*\/\s*13[\s\S]*grid-row:\s*3/)
+  assert.match(styles, /\.content\.route-home \.home-recent-work[\s\S]*grid-column:\s*8\s*\/\s*13[\s\S]*grid-row:\s*4/)
+  assert.match(styles, /\.content\.route-home \.today-task-card[\s\S]*height:\s*100%[\s\S]*min-height:\s*0/)
+  assert.match(styles, /\.content\.route-home \.home-recent-work[\s\S]*height:\s*100%[\s\S]*min-height:\s*0/)
+})

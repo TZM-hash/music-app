@@ -186,6 +186,15 @@ const STAGE_GRADES: Record<TheoryStageId, PrimaryGrade[]> = {
   'junior-advanced': [6],
 }
 
+/** 返回一个学段对应的教材年级，供全局年级筛选复用。 */
+export function getGradesForStage(stage: TheoryStageId): PrimaryGrade[] {
+  return [...(STAGE_GRADES[stage] ?? [])]
+}
+
+export function stageMatchesGrade(stage: TheoryStageId, grade: PrimaryGrade): boolean {
+  return getGradesForStage(stage).includes(grade)
+}
+
 const CATEGORY_UNIT_NUMBER: Record<string, number> = {
   '音高与唱名': 1,
   '节奏与节拍': 2,

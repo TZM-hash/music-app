@@ -1,5 +1,6 @@
 // 统计分析：为数据看板计算各类聚合指标
 import { loadRoster, loadSessions, sessionsOf, Session, Student } from './students'
+import { matchesLearningScope, type LearningScope } from './learningScope'
 
 export const GAME_META: Record<string, { name: string; icon: string; skill: string }> = {
   'game-taiko': { name: '节奏反应', icon: '🥁', skill: '律动' },
@@ -44,8 +45,10 @@ function buildStat(student: Student, sessions: Session[]): StudentStat {
 }
 
 /** 全班统计（按总星数排序，用于排行榜） */
-export function classStats(): StudentStat[] {
-  const roster = loadRoster()
+export function classStats(scope?: LearningScope): StudentStat[] {
+  const roster = scope
+    ? loadRoster().filter((student) => matchesLearningScope(student, scope))
+    : loadRoster()
   const sessions = loadSessions()
   return roster
     .map((stu) => buildStat(stu, sessions.filter((s) => s.studentId === stu.id)))
@@ -63,9 +66,14 @@ export interface ClassOverview {
   trend: { label: string; count: number }[]
 }
 
-export function classOverview(): ClassOverview {
-  const roster = loadRoster()
-  const sessions = loadSessions()
+export function classOverview(scope?: LearningScope): ClassOverview {
+  const roster = scope
+    ? loadRoster().filter((student) => matchesLearningScope(student, scope))
+    : loadRoster()
+  const scopedStudentIds = new Set(roster.map((student) => student.id))
+  const sessions = scope
+    ? loadSessions().filter((session) => scopedStudentIds.has(session.studentId))
+    : loadSessions()
   const totalStars = sessions.reduce((a, s) => a + s.stars, 0)
   const avgAccuracy =
     sessions.length === 0 ? 0 : sessions.reduce((a, s) => a + s.accuracy, 0) / sessions.length

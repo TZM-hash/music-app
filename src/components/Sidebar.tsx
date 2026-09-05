@@ -1,14 +1,21 @@
+import { useEffect, useState } from 'react'
 import { useApp, type Route } from '../state/appState'
-import { STUDENT_PRIMARY_NAV, STUDENT_SECONDARY_NAV } from './studentNavigation'
+import {
+  STUDENT_INSTRUMENT_NAV,
+  STUDENT_PRIMARY_NAV,
+  STUDENT_SECONDARY_NAV,
+} from './studentNavigation'
 
-const TEACHER_ITEMS: Array<{ route: Route; icon: string; label: string; hint: string }> = [
-  { route: 'class', icon: '👥', label: '学生档案', hint: '名单与个人记录' },
-  { route: 'dashboard', icon: '📊', label: '成长观察', hint: '班级表现看板' },
-]
+const INSTRUMENT_ROUTES = STUDENT_INSTRUMENT_NAV.map((item) => item.route)
 
 export default function Sidebar() {
-  const { route, navigate, mode } = useApp()
+  const { route, navigate } = useApp()
   const openMainRoute = (target: Route) => navigate(target, { history: 'reset' })
+  const [instrumentsOpen, setInstrumentsOpen] = useState(() => INSTRUMENT_ROUTES.includes(route))
+
+  useEffect(() => {
+    if (INSTRUMENT_ROUTES.includes(route)) setInstrumentsOpen(true)
+  }, [route])
 
   return (
     <aside className="sidebar">
@@ -40,8 +47,8 @@ export default function Sidebar() {
           ))}
         </div>
 
-        <details className="side-more-group">
-          <summary>更多入口</summary>
+        <div className="side-more-group">
+          <div className="side-group-title side-more-title">更多入口</div>
           <div className="side-more-list">
             {STUDENT_SECONDARY_NAV.map((item) => (
               <button
@@ -57,12 +64,16 @@ export default function Sidebar() {
               </button>
             ))}
           </div>
-        </details>
+        </div>
 
-        {mode === 'teacher' && (
-          <div className="side-group side-teacher-group">
-            <div className="side-group-title">教师空间</div>
-            {TEACHER_ITEMS.map((item) => (
+        <details
+          className="side-instrument-group"
+          open={instrumentsOpen}
+          onToggle={(event) => setInstrumentsOpen(event.currentTarget.open)}
+        >
+          <summary>乐器</summary>
+          <div className="side-instrument-list">
+            {STUDENT_INSTRUMENT_NAV.map((item) => (
               <button
                 key={item.route}
                 className={`side-item ${route === item.route ? 'active' : ''}`}
@@ -76,7 +87,7 @@ export default function Sidebar() {
               </button>
             ))}
           </div>
-        )}
+        </details>
       </nav>
 
       <div className="side-foot">

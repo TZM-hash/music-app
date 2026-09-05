@@ -1,8 +1,10 @@
 // 全局应用状态：模式（教师/学生）、导航、当前学生、当前曲目
 import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react'
-import { getCurrentStudentId, setCurrentStudentId } from './students'
+import { findStudentById, getCurrentStudentId, loadRoster, setCurrentStudentId } from './students'
 import { createTheoryFocus, TheoryFocus } from './theoryFocus'
 import type { TheoryStageId } from '../music/theoryCatalog'
+import { normalizeClassName, parseGradeSelection } from './learningScope'
+import type { PrimaryGrade } from '../music/zhejiangCurriculum'
 import {
   applyRouteNavigation,
   backButtonLabel,
@@ -43,6 +45,10 @@ interface AppState {
   navDirection: 'forward' | 'back'
   showNoteNames: boolean
   currentStudentId: string | null
+  /** 顶部全局教材年级筛选；为空时显示全部小学年级内容 */
+  selectedGrade: PrimaryGrade | null
+  /** 顶部全局班级筛选；为空时显示全部班级 */
+  selectedClass: string | null
   /** 供游戏使用的当前选中曲目 id（从曲库跳转时带入） */
   activeSongId: string | null
   /** 从成长路线/学段总览进入音乐探索馆时携带的筛选焦点 */
@@ -58,6 +64,8 @@ interface AppState {
   openLesson: (stage?: TheoryStageId, options?: RouteNavigationOptions) => void
   goBack: () => void
   toggleNoteNames: () => void
+  selectGrade: (grade: PrimaryGrade | null) => void
+  selectClass: (className: string | null) => void
   selectStudent: (id: string | null) => void
   playSongInGame: (songId: string, route: Route) => void
   toggleSidebar: () => void
@@ -70,6 +78,8 @@ const PREF_KEY = 'music-edu-prefs-v1'
 interface Prefs {
   mode: AppMode
   showNoteNames: boolean
+  selectedGrade?: PrimaryGrade | null
+  selectedClass?: string | null
 }
 function loadPrefs(): Prefs {
   try {
@@ -79,6 +89,12 @@ function loadPrefs(): Prefs {
       // mode 非法时只纠正 mode，保留用户其它有效偏好（如 showNoteNames）
       if (!['teacher', 'lecture', 'student'].includes(parsed.mode)) {
         return { ...parsed, mode: 'teacher' }
+      }
+      if (parsed.selectedGrade !== undefined) parsed.selectedGrade = parseGradeSelection(parsed.selectedGrade)
+      if (parsed.selectedClass !== undefined) {
+        parsed.selectedClass = typeof parsed.selectedClass === 'string' && parsed.selectedClass.trim()
+          ? parsed.selectedClass.trim()
+          : null
       }
       return parsed
     }
@@ -103,6 +119,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [navDirection, setNavDirection] = useState<'forward' | 'back'>('forward')
   const [showNoteNames, setShowNoteNames] = useState(initial.showNoteNames)
   const [currentStudentId, setCurrentId] = useState<string | null>(() => getCurrentStudentId())
+  const [selectedGrade, setSelectedGradeState] = useState<PrimaryGrade | null>(() => {
+    if (initial.selectedGrade !== undefined) return initial.selectedGrade ?? null
+    return findStudentById(loadRoster(), getCurrentStudentId())?.grade ?? null
+  })
+  const [selectedClass, setSelectedClassState] = useState<string | null>(() => {
+    if (initial.selectedClass !== undefined) return initial.selectedClass ?? null
+    const student = findStudentById(loadRoster(), getCurrentStudentId())
+    return student ? normalizeClassName(student.className) : null
+  })
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
   const [theoryFocus, setTheoryFocus] = useState<TheoryFocus | null>(null)
   const [lessonStage, setLessonStage] = useState<TheoryStageId | null>(null)
@@ -110,8 +135,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // 偏好持久化
   useEffect(() => {
-    savePrefs({ mode, showNoteNames })
-  }, [mode, showNoteNames])
+    savePrefs({ mode, showNoteNames, selectedGrade, selectedClass })
+  }, [mode, showNoteNames, selectedGrade, selectedClass])
 
   const setMode = useCallback((m: AppMode) => setModeState(m), [])
   const navigate = useCallback((r: Route, options?: RouteNavigationOptions) => {
@@ -139,9 +164,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toggleNoteNames = useCallback(() => setShowNoteNames((v) => !v), [])
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), [])
 
+  const selectGrade = useCallback((grade: PrimaryGrade | null) => {
+    setSelectedGradeState(grade)
+    if (!currentStudentId || grade === null) return
+    const current = findStudentById(loadRoster(), currentStudentId)
+    if (current && current.grade !== grade) {
+      setCurrentId(null)
+      setCurrentStudentId(null)
+    }
+  }, [currentStudentId])
+
+  const selectClass = useCallback((className: string | null) => {
+    const nextClass = className?.trim() || null
+    setSelectedClassState(nextClass)
+    if (!currentStudentId || nextClass === null) return
+    const current = findStudentById(loadRoster(), currentStudentId)
+    if (current && normalizeClassName(current.className) !== nextClass) {
+      setCurrentId(null)
+      setCurrentStudentId(null)
+    }
+  }, [currentStudentId])
+
   const selectStudent = useCallback((id: string | null) => {
     setCurrentId(id)
     setCurrentStudentId(id)
+    const student = id ? findStudentById(loadRoster(), id) : null
+    if (student?.grade) setSelectedGradeState(student.grade)
+    if (student) setSelectedClassState(normalizeClassName(student.className))
   }, [])
 
   const playSongInGame = useCallback((songId: string, r: Route) => {
@@ -178,6 +227,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       navDirection,
       showNoteNames,
       currentStudentId,
+      selectedGrade,
+      selectedClass,
       activeSongId,
       theoryFocus,
       lessonStage,
@@ -188,6 +239,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       openLesson,
       goBack,
       toggleNoteNames,
+      selectGrade,
+      selectClass,
       selectStudent,
       playSongInGame,
       toggleSidebar,
@@ -200,6 +253,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       navDirection,
       showNoteNames,
       currentStudentId,
+      selectedGrade,
+      selectedClass,
       activeSongId,
       theoryFocus,
       lessonStage,
@@ -210,6 +265,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       openLesson,
       goBack,
       toggleNoteNames,
+      selectGrade,
+      selectClass,
       selectStudent,
       playSongInGame,
       toggleSidebar,

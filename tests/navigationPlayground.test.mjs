@@ -32,3 +32,36 @@ test('首页保留探索卡并增加今日音乐探险的三个入口', () => {
   assert.match(home, /activity\.title/)
   assert.match(home, /className="pro-recommend card"/)
 })
+
+test('更多入口常驻展示，乐器入口恢复为独立可折叠分组', () => {
+  const nav = readSource('src/components/studentNavigation.ts')
+  const sidebar = readSource('src/components/Sidebar.tsx')
+
+  assert.match(sidebar, /<div className="side-more-group">/)
+  assert.doesNotMatch(sidebar, /<details className="side-more-group">/)
+  assert.match(sidebar, /更多入口/)
+  assert.match(sidebar, /<details[\s\S]*className="side-instrument-group"/)
+  assert.match(sidebar, /STUDENT_INSTRUMENT_NAV/)
+
+  for (const [route, label] of [
+    ['piano', '钢琴'],
+    ['drums', '架子鼓'],
+    ['recorder', '竖笛'],
+    ['xylophone', '木琴'],
+  ]) {
+    assert.match(nav, new RegExp(`route:\\s*['"]${route}['"]`))
+    assert.match(nav, new RegExp(`label:\\s*['"]${label}['"]`))
+  }
+})
+
+test('侧栏移除教师空间及学生档案、成长观察入口', () => {
+  const nav = readSource('src/components/studentNavigation.ts')
+  const sidebar = readSource('src/components/Sidebar.tsx')
+  const secondaryItems = nav.match(/STUDENT_SECONDARY_NAV[^=]*=\s*\[([\s\S]*?)\]/)?.[1] ?? ''
+
+  assert.doesNotMatch(sidebar, /教师空间/)
+  assert.doesNotMatch(sidebar, /学生档案/)
+  assert.doesNotMatch(sidebar, /成长观察/)
+  assert.doesNotMatch(sidebar, /TEACHER_ITEMS/)
+  assert.doesNotMatch(secondaryItems, /route:\s*['"]course['"]/)
+})

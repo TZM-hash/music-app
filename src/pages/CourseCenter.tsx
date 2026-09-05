@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -63,10 +63,16 @@ const COURSES: CourseUnit[] = [
 ]
 
 export default function CourseCenter() {
-  const { openTheory, openLesson, mode } = useApp()
+  const { openTheory, openLesson, mode, selectedGrade, selectGrade } = useApp()
   const student = getCurrentStudent()
-  const [activeGrade, setActiveGrade] = useState<PrimaryGrade>(student?.grade ?? 1)
-  const [activeId, setActiveId] = useState<TheoryStageId>(() => getStageForGrade(student?.grade ?? 1))
+  const activeGrade: PrimaryGrade = selectedGrade ?? student?.grade ?? 1
+  const gradeStage = getStageForGrade(activeGrade)
+  const [activeId, setActiveId] = useState<TheoryStageId>(gradeStage)
+
+  useEffect(() => {
+    setActiveId(gradeStage)
+  }, [gradeStage])
+
   const active = useMemo(
     () => COURSES.find((course) => course.id === activeId) ?? COURSES[0],
     [activeId]
@@ -103,7 +109,7 @@ export default function CourseCenter() {
                 type="button"
                 className={activeGrade === grade ? 'on' : ''}
                 onClick={() => {
-                  setActiveGrade(grade)
+                  selectGrade(grade)
                   setActiveId(getStageForGrade(grade))
                 }}
               >

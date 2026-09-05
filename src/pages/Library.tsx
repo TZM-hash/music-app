@@ -7,12 +7,12 @@ import { useMounted } from '../hooks/useTimers'
 import { useApp } from '../state/appState'
 import {
   ENCYCLOPEDIA_CATEGORIES,
-  ENCYCLOPEDIA_ENTRIES,
   filterEncyclopediaEntries,
   type EncyclopediaEntry,
   type EncyclopediaType,
 } from '../music/encyclopedia'
-import { THEORY_STAGES, getStageLabel, type TheoryStageId } from '../music/theoryCatalog'
+import { filterTheoryTopics, THEORY_STAGES, getStageLabel, type TheoryStageId } from '../music/theoryCatalog'
+import { getGradeLabel } from '../music/zhejiangCurriculum'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import StaffView from '../components/StaffView'
 import './library.css'
@@ -23,7 +23,7 @@ type EncyclopediaTypeFilter = EncyclopediaType | 'all'
 type StageFilter = TheoryStageId | 'all'
 
 export default function Library() {
-  const { playSongInGame, currentStudentId, mode } = useApp()
+  const { playSongInGame, currentStudentId, mode, selectedGrade } = useApp()
   const [view, setView] = useState<LibraryView>('songs')
   const [filter, setFilter] = useState<Filter>('all')
   const [encyclopediaType, setEncyclopediaType] = useState<EncyclopediaTypeFilter>('all')
@@ -54,16 +54,31 @@ export default function Library() {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- version 自增作为缓存失效键：曲库变更后重读
   const songs = useMemo(() => allSongs(), [version])
+  const gradeTopicIds = useMemo(
+    () => new Set(filterTheoryTopics(selectedGrade ? { grade: selectedGrade } : {}).map((topic) => topic.id)),
+    [selectedGrade]
+  )
+  const gradeSongs = useMemo(
+    () => selectedGrade
+      ? songs.filter((song) =>
+          song.custom ||
+          !song.relatedTopics ||
+          song.relatedTopics.length === 0 ||
+          song.relatedTopics.some((topicId) => gradeTopicIds.has(topicId))
+        )
+      : songs,
+    [gradeTopicIds, selectedGrade, songs]
+  )
 
   const filtered = useMemo(
     () =>
-      songs.filter((s) => {
+      gradeSongs.filter((s) => {
         if (filter !== 'all' && s.category !== filter) return false
         if (s.level > maxLevel) return false
         if (search && !s.title.includes(search)) return false
         return true
       }),
-    [filter, maxLevel, search, songs]
+    [filter, gradeSongs, maxLevel, search]
   )
 
   const encyclopediaEntries = useMemo(
@@ -71,9 +86,10 @@ export default function Library() {
       filterEncyclopediaEntries({
         type: encyclopediaType === 'all' ? undefined : encyclopediaType,
         stage: encyclopediaStage === 'all' ? undefined : encyclopediaStage,
+        grade: selectedGrade ?? undefined,
         search,
       }),
-    [encyclopediaStage, encyclopediaType, search]
+    [encyclopediaStage, encyclopediaType, search, selectedGrade]
   )
 
   const preview = async (song: Song) => {
@@ -93,10 +109,10 @@ export default function Library() {
   }
 
   const counts = useMemo(() => {
-    const c: Record<string, number> = { all: songs.length }
-    for (const s of songs) c[s.category] = (c[s.category] ?? 0) + 1
+    const c: Record<string, number> = { all: gradeSongs.length }
+    for (const s of gradeSongs) c[s.category] = (c[s.category] ?? 0) + 1
     return c
-  }, [songs])
+  }, [gradeSongs])
 
   const importPreview = useMemo(() => parseJianpu(impText), [impText])
   const selectedSong = useMemo(
@@ -193,8 +209,9 @@ export default function Library() {
               setSelectedEntryId(null)
               resetResultScroll()
             }}
-          />
-        </div>
+            />
+          </div>
+        {selectedGrade && <span className="lib-scope-note">当前：{getGradeLabel(selectedGrade)}</span>}
         {view === 'songs' && (
           <div className="lib-level">
             <span>难度上限：{'★'.repeat(maxLevel)}</span>
@@ -221,10 +238,10 @@ export default function Library() {
 
       <div className="lib-view-tabs">
         <button className={view === 'songs' ? 'on' : ''} onClick={() => selectView('songs')}>
-          曲库谱例 <span>{songs.length}</span>
+          曲库谱例 <span>{gradeSongs.length}</span>
         </button>
         <button className={view === 'encyclopedia' ? 'on' : ''} onClick={() => selectView('encyclopedia')}>
-          音乐故事 <span>{ENCYCLOPEDIA_ENTRIES.length}</span>
+          音乐故事 <span>{encyclopediaEntries.length}</span>
         </button>
       </div>
 
@@ -334,7 +351,7 @@ export default function Library() {
         <>
           <div className="lib-tabs encyclopedia-tabs">
             <button className={encyclopediaType === 'all' ? 'on' : ''} onClick={() => selectEncyclopediaType('all')}>
-              全部 <span className="tab-count">{ENCYCLOPEDIA_ENTRIES.length}</span>
+              全部 <span className="tab-count">{encyclopediaEntries.length}</span>
             </button>
             {ENCYCLOPEDIA_CATEGORIES.map((cat) => (
               <button
@@ -344,7 +361,7 @@ export default function Library() {
               >
                 {cat.label}
                 <span className="tab-count">
-                  {ENCYCLOPEDIA_ENTRIES.filter((entry) => entry.type === cat.type).length}
+                  {encyclopediaEntries.filter((entry) => entry.type === cat.type).length}
                 </span>
               </button>
             ))}

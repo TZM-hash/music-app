@@ -3,7 +3,18 @@
   margin-top: 6px;
 }
 
-.side-more-group summary {
+.side-more-title {
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  font-weight: 850;
+  padding: 8px 10px;
+}
+
+.side-instrument-group {
+  margin-top: 8px;
+}
+
+.side-instrument-group summary {
   color: var(--text-soft);
   cursor: pointer;
   font-size: 0.76rem;
@@ -12,16 +23,16 @@
   padding: 8px 10px;
 }
 
-.side-more-group summary::-webkit-details-marker {
+.side-instrument-group summary::-webkit-details-marker {
   display: none;
 }
 
-.side-more-group summary::after {
+.side-instrument-group summary::after {
   content: '＋';
   float: right;
 }
 
-.side-more-group[open] summary::after {
+.side-instrument-group[open] summary::after {
   content: '－';
 }
 
@@ -30,8 +41,10 @@
   gap: 4px;
 }
 
-.side-teacher-group {
-  margin-top: 12px;
+.side-instrument-list {
+  display: grid;
+  gap: 4px;
+  margin-top: 4px;
 }
 
 .home-playground {

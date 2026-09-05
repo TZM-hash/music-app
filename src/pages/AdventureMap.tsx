@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Route, useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
-import { getTheoryTopic } from '../music/theoryCatalog'
+import { filterTheoryTopics, getTheoryTopic } from '../music/theoryCatalog'
 import { THEORY_QUESTS } from '../music/theoryQuests'
 import { focusFromTheoryTopic } from '../state/reviewDeepLink'
+import { getGradeLabel } from '../music/zhejiangCurriculum'
 import './course.css'
 
 function routeLabel(route: Route): string {
@@ -23,23 +24,40 @@ function routeLabel(route: Route): string {
 }
 
 export default function AdventureMap() {
-  const { navigate, openTheory } = useApp()
+  const { navigate, openTheory, selectedGrade } = useApp()
   const progress = loadProgress()
   const student = getCurrentStudent()
+  const effectiveGrade = selectedGrade ?? student?.grade
+  const scopedTopicIds = useMemo(
+    () => new Set(filterTheoryTopics(effectiveGrade ? { grade: effectiveGrade } : {}).map((topic) => topic.id)),
+    [effectiveGrade]
+  )
+  const scopedQuests = useMemo(
+    () => effectiveGrade
+      ? THEORY_QUESTS
+          .map((quest) => ({ ...quest, topicIds: quest.topicIds.filter((id) => scopedTopicIds.has(id)) }))
+          .filter((quest) => quest.topicIds.length > 0)
+      : THEORY_QUESTS,
+    [effectiveGrade, scopedTopicIds]
+  )
   const [activeQuestId, setActiveQuestId] = useState(THEORY_QUESTS[0].id)
-  const activeQuest = THEORY_QUESTS.find((quest) => quest.id === activeQuestId) ?? THEORY_QUESTS[0]
+  const activeQuest = scopedQuests.find((quest) => quest.id === activeQuestId) ?? scopedQuests[0] ?? THEORY_QUESTS[0]
+
+  useEffect(() => {
+    if (activeQuest.id !== activeQuestId) setActiveQuestId(activeQuest.id)
+  }, [activeQuest.id, activeQuestId])
 
   const questStats = useMemo(() => {
-    return THEORY_QUESTS.map((quest, index) => {
+    return scopedQuests.map((quest, index) => {
       const completed = quest.topicIds.filter((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0).length
       const pct = Math.round((completed / quest.topicIds.length) * 100)
-      const previous = index === 0 ? null : THEORY_QUESTS[index - 1]
+      const previous = index === 0 ? null : scopedQuests[index - 1]
       const previousStarted = previous
         ? previous.topicIds.some((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0)
         : true
       return { quest, completed, pct, unlocked: index === 0 || previousStarted }
     })
-  }, [progress.bestScores])
+  }, [progress.bestScores, scopedQuests])
 
   const previewTopics = activeQuest.topicIds
     .map((id) => getTheoryTopic(id))
@@ -68,11 +86,12 @@ export default function AdventureMap() {
           <span className="course-kicker">快乐教学 · 边玩边学</span>
           <h2>音乐闯关岛</h2>
           <p>
-            把 100+ 张音乐发现卡整理成九座小岛：先听一听、玩一玩，再进入挑战或创编任务。
+            把音乐发现卡整理成一座座小岛：先听一听、玩一玩，再进入挑战或创编任务。
+            {effectiveGrade ? ` 当前只显示与${getGradeLabel(effectiveGrade)}匹配的关卡。` : ''}
           </p>
         </div>
         <div className="map-summary">
-          <div><b>{THEORY_QUESTS.length}</b><small>音乐岛屿</small></div>
+          <div><b>{scopedQuests.length}</b><small>音乐岛屿</small></div>
           <div><b>{questStats.reduce((sum, item) => sum + item.completed, 0)}</b><small>已闯发现卡</small></div>
           <div><b>{student ? student.avatar : '🎒'}</b><small>{student ? student.name : '匿名冒险'}</small></div>
         </div>

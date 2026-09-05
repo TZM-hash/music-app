@@ -71,9 +71,11 @@ test('推荐活动按年级保持三种能力互补且包含浙江拓展入口',
   }
 })
 
-test('体验旅程始终按听、找、动、玩、创、说六步生成，并带有年龄提示', () => {
+test('体验旅程按听、找、玩、创、说五步生成，不再包含动一动，并带有年龄提示', () => {
   const load = createTsLoader()
-  const { EXPERIENCE_ACTIVITIES, buildExperienceJourney } = load('src/music/experienceActivities.ts')
+  const { EXPERIENCE_ACTIVITIES, buildExperienceJourney } = load(
+    'src/music/experienceActivities.ts'
+  )
 
   const lower = buildExperienceJourney(EXPERIENCE_ACTIVITIES[0], 1)
   const upper = buildExperienceJourney(EXPERIENCE_ACTIVITIES[0], 6)
@@ -82,9 +84,12 @@ test('体验旅程始终按听、找、动、玩、创、说六步生成，并�
   assert.equal(upper.ageBand, 'primary-5-6')
   assert.deepEqual(
     lower.steps.map((step) => step.id),
-    ['listen', 'find', 'move', 'play', 'create', 'share']
+    ['listen', 'find', 'play', 'create', 'share']
+  )
+  assert.equal(
+    lower.steps.some((step) => step.id === 'move'),
+    false
   )
   assert.ok(lower.steps.every((step) => step.prompt.length >= 4))
   assert.notEqual(lower.steps[1].prompt, upper.steps[1].prompt)
 })
-

@@ -6,10 +6,10 @@ import { classOverview } from '../state/stats'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
 import CountUp from '../components/CountUp'
 import '../components/charts.css'
-import { THEORY_TOPICS } from '../music/theoryCatalog'
+import { filterTheoryTopics, THEORY_TOPICS } from '../music/theoryCatalog'
 import { getCurriculumSourceLabel, getGradeLabel, getSemesterLabel } from '../music/zhejiangCurriculum'
 import { recommendExplorationTopic } from '../music/explorationRecommendations'
-import { encyclopediaToReviewQuestions } from '../music/encyclopedia'
+import { encyclopediaToReviewQuestions, filterEncyclopediaEntries } from '../music/encyclopedia'
 import { buildCreativePortfolio, loadCreativeWorks, type CreativeWork } from '../state/creativeWorks'
 import { buildDiscoverySummary, loadMusicDiscoveries } from '../state/discoveries'
 import {
@@ -23,7 +23,7 @@ import {
   focusFromReviewItem,
   focusFromWeakCategory,
 } from '../state/reviewDeepLink'
-import { EXPERIENCE_ACTIVITIES } from '../music/experienceActivities'
+import { EXPERIENCE_ACTIVITIES, getRecommendedActivities } from '../music/experienceActivities'
 
 function formatWorkDate(work: CreativeWork): string {
   const date = new Date(work.createdAt)
@@ -39,8 +39,8 @@ function todayKey(): string {
   return `${now.getFullYear()}-${month}-${day}`
 }
 
-function theoryToReviewQuestions(): ReviewQuestion[] {
-  return THEORY_TOPICS.flatMap((topic) =>
+function theoryToReviewQuestions(topics: typeof THEORY_TOPICS = THEORY_TOPICS): ReviewQuestion[] {
+  return topics.flatMap((topic) =>
     topic.quiz.slice(0, 2).map((question, index) => ({
       id: `theory:${topic.id}:${index}`,
       source: 'theory',
@@ -57,38 +57,66 @@ function theoryToReviewQuestions(): ReviewQuestion[] {
 }
 
 export default function Home() {
-  const { navigate, mode, openTheory, currentStudentId } = useApp()
+  const { navigate, mode, openTheory, currentStudentId, selectedGrade, selectedClass } = useApp()
   const isLectureMode = mode === 'lecture'
 
   // 学生切换会更新 App context；这里直接读取当前档案，保证首页推荐和“我的发现”立即跟随切换。
   const student = getCurrentStudent()
   const studentId = currentStudentId
+  const effectiveGrade = selectedGrade ?? student?.grade
+
+  const gradeTopics = useMemo(
+    () => (effectiveGrade ? filterTheoryTopics({ grade: effectiveGrade }) : THEORY_TOPICS),
+    [effectiveGrade]
+  )
+  const gradeTopicIds = useMemo(() => new Set(gradeTopics.map((topic) => topic.id)), [gradeTopics])
+  const gradeEncyclopediaEntries = useMemo(
+    () => filterEncyclopediaEntries(effectiveGrade ? { grade: effectiveGrade } : {}),
+    [effectiveGrade]
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps -- studentId 作为缓存失效键：学生切换时重读进度
   const progress = useMemo(() => loadProgress(), [studentId])
-  const overview = useMemo(() => classOverview(), [])
+  const overview = useMemo(
+    () => classOverview({ grade: effectiveGrade ?? null, className: selectedClass }),
+    [effectiveGrade, selectedClass]
+  )
   const reviewBook = useMemo(
     () => loadReviewBook(studentId ?? 'anonymous'),
     [studentId]
   )
+  const scopedReviewBook = useMemo(() => {
+    if (!effectiveGrade) return reviewBook
+    const encyclopediaIds = new Set(gradeEncyclopediaEntries.map((entry) => entry.id))
+    const records = Object.fromEntries(
+      Object.entries(reviewBook.records).filter(([_, record]) =>
+        record.source === 'theory'
+          ? gradeTopicIds.has(record.itemId)
+          : record.source === 'encyclopedia'
+            ? encyclopediaIds.has(record.itemId)
+            : true
+      )
+    )
+    return { ...reviewBook, records }
+  }, [effectiveGrade, gradeEncyclopediaEntries, gradeTopicIds, reviewBook])
   const reviewPool = useMemo(
-    () => [...theoryToReviewQuestions(), ...encyclopediaToReviewQuestions()],
-    []
+    () => [...theoryToReviewQuestions(gradeTopics), ...encyclopediaToReviewQuestions(gradeEncyclopediaEntries)],
+    [gradeEncyclopediaEntries, gradeTopics]
   )
   const dailyChallenge = useMemo(
-    () => buildDailyChallenge(reviewBook, reviewPool, todayKey(), 2),
-    [reviewBook, reviewPool]
+    () => buildDailyChallenge(scopedReviewBook, reviewPool, todayKey(), 2),
+    [reviewPool, scopedReviewBook]
   )
-  const wrongAnswers = useMemo(() => getWrongAnswers(reviewBook).slice(0, 1), [reviewBook])
-  const weakCategories = useMemo(() => getWeakCategories(reviewBook).slice(0, 3), [reviewBook])
+  const wrongAnswers = useMemo(() => getWrongAnswers(scopedReviewBook).slice(0, 1), [scopedReviewBook])
+  const weakCategories = useMemo(() => getWeakCategories(scopedReviewBook).slice(0, 3), [scopedReviewBook])
   const creativeWorks = useMemo(() => loadCreativeWorks(studentId), [studentId])
   const creativePortfolio = useMemo(() => buildCreativePortfolio(creativeWorks), [creativeWorks])
   const creativeWorkCount = creativePortfolio.totalWorks
   const latestWork = creativePortfolio.latestWorks[0]
 
   const theoryPracticeCount = useMemo(
-    () => Object.keys(progress.bestScores).filter((key) => key.startsWith('theory-')).length,
-    [progress]
+    () => Array.from(gradeTopicIds).filter((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0).length,
+    [gradeTopicIds, progress]
   )
   const totalStars = useMemo(
     () =>
@@ -98,27 +126,40 @@ export default function Home() {
       ),
     [progress]
   )
-  const knowledgeMastery = theoryPracticeCount / Math.max(1, THEORY_TOPICS.length)
+  const knowledgeMastery = theoryPracticeCount / Math.max(1, gradeTopics.length)
   const completedTopicIds = useMemo(
     () => Object.keys(progress.bestScores)
-      .filter((key) => key.startsWith('theory-'))
+      .filter((key) => key.startsWith('theory-') && gradeTopicIds.has(key.slice('theory-'.length)))
       .map((key) => key.slice('theory-'.length)),
-    [progress]
+    [gradeTopicIds, progress]
   )
   const explorationRecommendation = useMemo(
-    () => recommendExplorationTopic(THEORY_TOPICS, {
-      grade: student?.grade,
+    () => recommendExplorationTopic(gradeTopics, {
+      grade: effectiveGrade,
       semester: student?.semester,
       completedTopicIds,
       weakCategories: weakCategories.map((item) => item.category),
       studentId,
       dayKey: todayKey(),
     }),
-    [completedTopicIds, student?.grade, student?.semester, studentId, weakCategories]
+    [completedTopicIds, effectiveGrade, gradeTopics, student?.semester, studentId, weakCategories]
   )
   const discoverySummary = useMemo(
-    () => buildDiscoverySummary(loadMusicDiscoveries(studentId)),
-    [studentId]
+    () => {
+      const discoveries = loadMusicDiscoveries(studentId)
+      const scoped = effectiveGrade
+        ? discoveries.filter((item) => item.grade === effectiveGrade || (!item.grade && gradeTopicIds.has(item.topicId)))
+        : discoveries
+      return buildDiscoverySummary(scoped)
+    },
+    [effectiveGrade, gradeTopicIds, studentId]
+  )
+  const experienceActivities = useMemo(
+    () => {
+      const scoped = getRecommendedActivities(effectiveGrade)
+      return scoped.length > 0 ? scoped : EXPERIENCE_ACTIVITIES
+    },
+    [effectiveGrade]
   )
 
   const practiceSignals = useMemo(
@@ -133,12 +174,12 @@ export default function Home() {
   )
   const growthTrack = useMemo(
     () => [
-      { label: '发现', value: THEORY_TOPICS.length, tone: 'primary', route: 'theory' as Route },
+      { label: '发现', value: gradeTopics.length, tone: 'primary', route: 'theory' as Route },
       { label: '试玩', value: theoryPracticeCount, tone: 'accent', route: 'training' as Route },
       { label: '创作', value: creativeWorkCount, tone: 'primary', route: 'mixer' as Route },
       { label: '记录', value: overview.totalSessions, tone: 'warm', route: 'adventure' as Route },
     ],
-    [theoryPracticeCount, creativeWorkCount, overview.totalSessions]
+    [creativeWorkCount, gradeTopics.length, overview.totalSessions, theoryPracticeCount]
   )
 
   const recommendation = isLectureMode
@@ -202,7 +243,7 @@ export default function Home() {
           <p>不用先读完说明，选一个入口，马上让耳朵和身体参与进来。</p>
         </div>
         <div className="home-playground-grid">
-          {EXPERIENCE_ACTIVITIES.map((activity) => (
+          {experienceActivities.map((activity) => (
             <button
               key={activity.id}
               type="button"
@@ -225,7 +266,7 @@ export default function Home() {
           <p>{recommendation}</p>
           {recommendationCurriculum && (
             <div className="recommend-meta" aria-label="教材对照信息">
-              <span>{student?.grade ? getGradeLabel(student.grade) : '小学通用'}</span>
+              <span>{effectiveGrade ? getGradeLabel(effectiveGrade) : '小学通用'}</span>
               <span>{getSemesterLabel(recommendationCurriculum.semester)}</span>
               <span>{recommendationCurriculum.unitTitle}</span>
               <span>{getCurriculumSourceLabel(recommendationCurriculum.source)}</span>
@@ -263,7 +304,7 @@ export default function Home() {
           <ProgressRing
             value={knowledgeMastery}
             label="探索完成"
-            caption={`${theoryPracticeCount}/${THEORY_TOPICS.length}`}
+            caption={`${theoryPracticeCount}/${gradeTopics.length}`}
             color="var(--primary)"
             size={96}
           />

@@ -3,6 +3,7 @@ import { useApp, Route } from '../state/appState'
 import { ROUTE_LABELS } from '../state/navigationHistory'
 import { setUISoundEnabled, isUISoundEnabled } from '../music/uiSounds'
 import StudentSelector from './StudentSelector'
+import LearningScopeSelector from './LearningScopeSelector'
 
 const ROUTE_TITLE: Record<Route, string> = ROUTE_LABELS
 
@@ -102,6 +103,8 @@ export default function TopBar() {
       >
         {uiSoundOn ? '🔊 音效' : '🔇 音效'}
       </button>
+
+      <LearningScopeSelector />
 
       {mode !== 'lecture' && <StudentSelector />}
 

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { classOverview, classStats, studentStat, GAME_META } from '../state/stats'
 import { BarChart, LineChart, Donut, Radar, ProgressRing, SpectrumBars } from '../components/Charts'
 import CountUp from '../components/CountUp'
@@ -19,12 +19,19 @@ const GAME_IDS = Object.keys(GAME_META) as Array<keyof typeof GAME_META>
 type FocusGame = 'all' | keyof typeof GAME_META
 
 export default function Dashboard() {
-  const { navigate } = useApp()
-  const overview = classOverview()
+  const { navigate, selectedGrade, selectedClass } = useApp()
+  const scope = useMemo(
+    () => ({ grade: selectedGrade, className: selectedClass }),
+    [selectedClass, selectedGrade]
+  )
+  const overview = useMemo(() => classOverview(scope), [scope])
   const filled = useFillOnMount()
-  const ranking = classStats()
+  const ranking = useMemo(() => classStats(scope), [scope])
   const [selected, setSelected] = useState<string | null>(ranking[0]?.student.id ?? null)
   const [focusGame, setFocusGame] = useState<FocusGame>('all')
+  useEffect(() => {
+    if (!ranking.some((item) => item.student.id === selected)) setSelected(ranking[0]?.student.id ?? null)
+  }, [ranking, selected])
   const detail = selected ? studentStat(selected) : null
 
   const gameSegments = GAME_IDS.map((g) => ({
@@ -92,6 +99,9 @@ export default function Dashboard() {
             通过声谱条、趋势线、能力雷达和排行榜，快速判断全班正在加强哪类能力，
             也能切到单个学生查看听辨、识谱、节奏和演唱的表现。
           </p>
+          <small className="dash-scope-note">
+            {selectedGrade ? `${selectedGrade}年级` : '全部年级'} · {selectedClass ?? '全部班级'}
+          </small>
         </div>
         <div className="dash-command">
           <ProgressRing

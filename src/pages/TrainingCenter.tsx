@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react'
+import { useEffect, useMemo, useState, type CSSProperties } from 'react'
 import { Route, useApp } from '../state/appState'
 import { loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -6,6 +6,8 @@ import { ProgressRing, SpectrumBars } from '../components/Charts'
 import { useFillOnMount } from '../components/useFillOnMount'
 import MusicExperienceStage from '../components/MusicExperienceStage'
 import { buildExperienceJourney, getRecommendedActivities } from '../music/experienceActivities'
+import { buildExperienceInstanceKey } from '../music/experienceGameLogic'
+import { getGradeLabel } from '../music/zhejiangCurriculum'
 import '../components/charts.css'
 import './training.css'
 
@@ -104,17 +106,32 @@ const MODULES: TrainingModule[] = [
 ]
 
 export default function TrainingCenter() {
-  const { navigate, currentStudentId } = useApp()
+  const { navigate, currentStudentId, selectedGrade } = useApp()
   const progress = loadProgress()
   const [activeId, setActiveId] = useState(MODULES[0].id)
   const [activeExperienceId, setActiveExperienceId] = useState('sound-detective')
   const filled = useFillOnMount()
   const currentStudent = getCurrentStudent()
-  const experienceActivities = getRecommendedActivities(currentStudent?.grade)
+  const effectiveGrade = selectedGrade ?? currentStudent?.grade
+  const experienceActivities = useMemo(
+    () => getRecommendedActivities(effectiveGrade),
+    [effectiveGrade]
+  )
+
+  useEffect(() => {
+    if (
+      experienceActivities.length > 0 &&
+      !experienceActivities.some((activity) => activity.id === activeExperienceId)
+    ) {
+      setActiveExperienceId(experienceActivities[0].id)
+    }
+  }, [activeExperienceId, experienceActivities])
+
   const activeExperience =
-    experienceActivities.find((activity) => activity.id === activeExperienceId) ?? experienceActivities[0]
+    experienceActivities.find((activity) => activity.id === activeExperienceId) ??
+    experienceActivities[0]
   const experienceJourney = activeExperience
-    ? buildExperienceJourney(activeExperience, currentStudent?.grade)
+    ? buildExperienceJourney(activeExperience, effectiveGrade)
     : null
   const moduleSignals = MODULES.map((m) => ({
     label: m.former.slice(0, 2),
@@ -125,8 +142,9 @@ export default function TrainingCenter() {
   const active = MODULES.find((m) => m.id === activeId) ?? MODULES[0]
   const activeBest = progress.bestScores[active.route] ?? 0
   const recommended =
-    MODULES.map((m) => ({ module: m, best: progress.bestScores[m.route] ?? 0 }))
-      .sort((a, b) => a.best - b.best)[0]?.module ?? MODULES[0]
+    MODULES.map((m) => ({ module: m, best: progress.bestScores[m.route] ?? 0 })).sort(
+      (a, b) => a.best - b.best
+    )[0]?.module ?? MODULES[0]
   const totalBest = MODULES.reduce((sum, m) => sum + (progress.bestScores[m.route] ?? 0), 0)
   const averageBest = Math.round(totalBest / MODULES.length)
 
@@ -144,7 +162,7 @@ export default function TrainingCenter() {
             </p>
           </div>
           <span className="training-grade-note">
-            {currentStudent?.grade ? `按${currentStudent.grade}年级调整` : '小学通用玩法'}
+            {effectiveGrade ? `按${getGradeLabel(effectiveGrade)}调整` : '小学通用玩法'}
           </span>
         </div>
 
@@ -168,9 +186,14 @@ export default function TrainingCenter() {
 
         {experienceJourney && (
           <MusicExperienceStage
+            key={buildExperienceInstanceKey(
+              currentStudentId,
+              effectiveGrade,
+              experienceJourney.activity.id
+            )}
             journey={experienceJourney}
             studentId={currentStudentId}
-            grade={currentStudent?.grade}
+            grade={effectiveGrade}
             onNavigate={navigate}
             compact
           />
@@ -187,9 +210,7 @@ export default function TrainingCenter() {
           </p>
         </div>
         <div className="training-head-actions">
-          <button onClick={() => setActiveId(recommended.id)}>
-            推荐练习：{recommended.title}
-          </button>
+          <button onClick={() => setActiveId(recommended.id)}>推荐练习：{recommended.title}</button>
           <button className="primary-action" onClick={() => navigate(recommended.route)}>
             开始推荐挑战
           </button>
@@ -228,7 +249,11 @@ export default function TrainingCenter() {
                 onClick={() => setActiveId(m.id)}
                 aria-current={isActive ? 'true' : undefined}
               >
-                <span className="training-nav-icon" style={{ background: m.color }} aria-hidden="true">
+                <span
+                  className="training-nav-icon"
+                  style={{ background: m.color }}
+                  aria-hidden="true"
+                >
                   {m.icon}
                 </span>
                 <span className="training-nav-copy">
@@ -248,7 +273,10 @@ export default function TrainingCenter() {
 
         <section className="training-module-stage card" style={{ borderColor: active.color }}>
           <div className="training-stage-head">
-            <span className="training-icon training-stage-icon" style={{ background: active.color }}>
+            <span
+              className="training-icon training-stage-icon"
+              style={{ background: active.color }}
+            >
               {active.icon}
             </span>
             <div>
@@ -307,7 +335,10 @@ export default function TrainingCenter() {
             <div>
               <b>{activeBest > 0 ? `历史最高 ${activeBest}` : '还没有挑战记录'}</b>
               <small>进入后会记录本机最高分，并同步到能力声谱和首页状态。</small>
-              <div className="training-score-track" aria-label={`${active.title}最高分 ${activeBest}`}>
+              <div
+                className="training-score-track"
+                aria-label={`${active.title}最高分 ${activeBest}`}
+              >
                 <span
                   style={{
                     width: filled ? `${Math.min(100, activeBest)}%` : '0%',

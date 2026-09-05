@@ -8,6 +8,11 @@ import type { PrimaryGrade, Semester } from '../music/zhejiangCurriculum'
 const ROSTER_KEY = 'music-edu-roster-v1'
 const SESSIONS_KEY = 'music-edu-sessions-v1'
 const CURRENT_KEY = 'music-edu-current-student-v1'
+const DEFAULT_CLASS_NAME = '一班'
+
+function normalizeClassName(value: unknown): string {
+  return typeof value === 'string' && value.trim() ? value.trim() : DEFAULT_CLASS_NAME
+}
 
 export interface Student {
   id: string
@@ -17,11 +22,14 @@ export interface Student {
   /** 浙江人音版小学教材定位；旧名册可能没有这两个字段 */
   grade?: PrimaryGrade
   semester?: Semester
+  /** 班级名称；旧名册没有该字段时按一班兼容 */
+  className?: string
 }
 
 export interface StudentCurriculumProfile {
   grade?: PrimaryGrade
   semester?: Semester
+  className?: string
 }
 
 // 一次游戏练习会话
@@ -101,6 +109,7 @@ function seedStudents(): Student[] {
     createdAt: i,
     grade: (i % 6) + 1 as PrimaryGrade,
     semester: 1 as Semester,
+    className: i < 2 ? '一班' : '二班',
   }))
 }
 
@@ -114,6 +123,7 @@ export function addStudent(name: string, avatar?: string, profile?: StudentCurri
     // 新同学先落在小学中段，老师可在名册中调整到实际册次。
     grade: profile?.grade ?? 3,
     semester: profile?.semester ?? 1,
+    className: normalizeClassName(profile?.className ?? DEFAULT_CLASS_NAME),
   }
   list.push(student)
   write(ROSTER_KEY, list)
@@ -128,6 +138,10 @@ function isSemester(value: unknown): value is Semester {
   return value === 1 || value === 2
 }
 
+function isClassName(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0 && value.trim().length <= 24
+}
+
 export function updateStudentProfile(id: string, profile: StudentCurriculumProfile): Student | null {
   const list = loadRoster()
   const index = list.findIndex((student) => student.id === id)
@@ -137,6 +151,7 @@ export function updateStudentProfile(id: string, profile: StudentCurriculumProfi
   const next: Student = { ...current }
   if (profile.grade !== undefined && isPrimaryGrade(profile.grade)) next.grade = profile.grade
   if (profile.semester !== undefined && isSemester(profile.semester)) next.semester = profile.semester
+  if (profile.className !== undefined && isClassName(profile.className)) next.className = profile.className.trim()
   list[index] = next
   write(ROSTER_KEY, list)
   return next

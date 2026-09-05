@@ -91,7 +91,12 @@ export const EXPERIENCE_ACTIVITIES: ExperienceActivity[] = [
       play: '选择颜色、形状和移动方式，让画面跟着音乐呼吸。',
       create: '完成一张音乐小画，再用一句话说出你的理由。',
     },
-    curriculumTopicIds: ['motif', 'pentatonic-scale', 'four-bar-phrase-writing', 'folk-song-region'],
+    curriculumTopicIds: [
+      'motif',
+      'pentatonic-scale',
+      'four-bar-phrase-writing',
+      'folk-song-region',
+    ],
     zhejiangTag: '西湖水乡',
     source: 'extension',
   },
@@ -100,7 +105,7 @@ export const EXPERIENCE_ACTIVITIES: ExperienceActivity[] = [
 const AGE_COPY: Record<ExperienceAgeBand, Record<ExperienceStepId, string>> = {
   'primary-1-2': {
     listen: '先听一听，找一个像小动物或风一样的声音。',
-    find: '哪一个声音更高、更长或更响？点出你的发现。',
+    find: '把每个选项都听一遍，再选出和刚才最像的一个。',
     move: '拍手、跺脚或摇一摇身体，让拍子带你走。',
     play: '试试大按钮，听听每一次点击会变成什么声音。',
     create: '做四拍小作品，让它像一场小小的声音游戏。',
@@ -108,7 +113,7 @@ const AGE_COPY: Record<ExperienceAgeBand, Record<ExperienceStepId, string>> = {
   },
   'primary-3-4': {
     listen: '先听完整片段，再记住一个最明显的声音线索。',
-    find: '比较两种变化，指出它们在节奏、音高或音色上的不同。',
+    find: '反复比较各个选项，依据最明显的声音线索做出选择。',
     move: '跟着稳定拍做回应，停顿时身体也继续数拍。',
     play: '切换不同声音，找出它们在合奏中适合的位置。',
     create: '用四到八拍组合一个有重复和变化的动机。',
@@ -116,7 +121,7 @@ const AGE_COPY: Record<ExperienceAgeBand, Record<ExperienceStepId, string>> = {
   },
   'primary-5-6': {
     listen: '先建立整体印象，再留意结构、织体和表情的变化。',
-    find: '比较两段声音的层次，判断变化如何影响音乐表达。',
+    find: '比较各个选项的结构与表达，确认最符合听感依据的一项。',
     move: '用身体标出强弱和句子方向，感受音乐的呼吸。',
     play: '调整音区、速度或配器，观察音乐性格如何改变。',
     create: '设计一个完整的四小节动机，并安排前后呼应。',
@@ -139,10 +144,13 @@ export function getAgeBand(grade?: PrimaryGrade | number | null): ExperienceAgeB
   return 'primary-1-2'
 }
 
-export function getRecommendedActivities(grade?: PrimaryGrade | number | null): ExperienceActivity[] {
-  const normalizedGrade = typeof grade === 'number' && grade >= 1 && grade <= 6 ? grade as PrimaryGrade : undefined
-  return EXPERIENCE_ACTIVITIES.filter((activity) =>
-    normalizedGrade === undefined || activity.grades.includes(normalizedGrade)
+export function getRecommendedActivities(
+  grade?: PrimaryGrade | number | null
+): ExperienceActivity[] {
+  const normalizedGrade =
+    typeof grade === 'number' && grade >= 1 && grade <= 6 ? (grade as PrimaryGrade) : undefined
+  return EXPERIENCE_ACTIVITIES.filter(
+    (activity) => normalizedGrade === undefined || activity.grades.includes(normalizedGrade)
   )
 }
 
@@ -152,7 +160,8 @@ export function buildExperienceJourney(
 ): ExperienceJourney {
   const ageBand = getAgeBand(grade)
   const copy = AGE_COPY[ageBand]
-  const stepIds: ExperienceStepId[] = ['listen', 'find', 'move', 'play', 'create', 'share']
+  // `move` 暂时保留在 ExperienceStepId 中兼容旧会话数据，但新旅程不再生成该步骤。
+  const stepIds: ExperienceStepId[] = ['listen', 'find', 'play', 'create', 'share']
   const steps = stepIds.map((id) => ({
     id,
     label: STEP_LABELS[id].label,

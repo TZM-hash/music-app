@@ -1,5 +1,6 @@
 import type { ReviewQuestion } from '../state/theoryReview'
 import type { TheoryStageId } from './theoryCatalog'
+import { stageMatchesGrade, type PrimaryGrade } from './zhejiangCurriculum'
 
 export type EncyclopediaType =
   | 'composer'
@@ -36,6 +37,7 @@ export interface EncyclopediaFilter {
   type?: EncyclopediaType
   category?: string
   stage?: TheoryStageId
+  grade?: PrimaryGrade
   search?: string
 }
 
@@ -1378,6 +1380,7 @@ export function filterEncyclopediaEntries(filter: EncyclopediaFilter = {}): Ency
     if (filter.type && entry.type !== filter.type) return false
     if (filter.category && entry.category !== filter.category) return false
     if (filter.stage && entry.stage !== filter.stage) return false
+    if (filter.grade && !stageMatchesGrade(entry.stage, filter.grade)) return false
     if (query) {
       const haystack = `${entry.title} ${entry.subtitle} ${entry.summary} ${entry.keyFacts.join(' ')}`.toLowerCase()
       if (!haystack.includes(query)) return false

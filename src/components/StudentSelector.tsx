@@ -1,12 +1,16 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useApp } from '../state/appState'
 import { loadRoster } from '../state/students'
 import { studentStat } from '../state/stats'
+import { matchesLearningScope } from '../state/learningScope'
 
 export default function StudentSelector() {
-  const { currentStudentId, selectStudent, navigate } = useApp()
+  const { currentStudentId, selectedGrade, selectedClass, selectStudent, navigate } = useApp()
   const [open, setOpen] = useState(false)
-  const roster = loadRoster()
+  const roster = useMemo(
+    () => loadRoster().filter((student) => matchesLearningScope(student, { grade: selectedGrade, className: selectedClass })),
+    [selectedClass, selectedGrade]
+  )
   const current = roster.find((student) => student.id === currentStudentId)
 
   return (
@@ -30,7 +34,14 @@ export default function StudentSelector() {
         <>
           <div className="stu-backdrop" onClick={() => setOpen(false)} />
           <div className="stu-dropdown">
-            <div className="stu-dropdown-title">当前练习对象</div>
+            <div className="stu-dropdown-title">
+              当前练习对象
+              {(selectedGrade || selectedClass) && (
+                <small>
+                  {selectedGrade ? `${selectedGrade}年级` : '全部年级'} · {selectedClass ?? '全部班级'}
+                </small>
+              )}
+            </div>
             <button
               className={`stu-option ${!currentStudentId ? 'on' : ''}`}
               onClick={() => {
@@ -44,6 +55,9 @@ export default function StudentSelector() {
                 <small>不计入班级统计</small>
               </span>
             </button>
+            {roster.length === 0 && (
+              <div className="stu-dropdown-empty">当前年级和班级暂无学生</div>
+            )}
             {roster.map((student) => (
               <StudentOption
                 key={student.id}

@@ -8,9 +8,7 @@ import { recordResult } from '../state/progress'
 import {
   DemoKind,
   THEORY_CATEGORIES,
-  THEORY_STAGES,
   THEORY_TOPICS,
-  TheoryStageId,
   TheoryTopic,
   filterTheoryTopics,
   getStageLabel,
@@ -20,7 +18,6 @@ import {
   getCurriculumSourceLabel,
   getGradeLabel,
   getSemesterLabel,
-  PRIMARY_GRADES,
   PrimaryGrade,
 } from '../music/zhejiangCurriculum'
 import { DemoControl, getDemoScene } from '../music/theoryDemos'
@@ -31,45 +28,35 @@ import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/the
 import './theory.css'
 
 type CategoryFilter = '全部' | string
-type StageFilter = '全部' | TheoryStageId
-type GradeFilter = '全部' | PrimaryGrade
 type SourceFilter = '全部' | CurriculumSource
-
-function parseGradeFilter(value: string): GradeFilter {
-  if (value === '全部') return '全部'
-  const parsed = Number(value)
-  return PRIMARY_GRADES.includes(parsed as PrimaryGrade) ? parsed as PrimaryGrade : '全部'
-}
+type TheoryPanel = 'knowledge' | 'discovery'
 
 export default function Theory() {
-  const { navigate, theoryFocus, currentStudentId, mode } = useApp()
+  const { navigate, theoryFocus, currentStudentId, mode, selectedGrade } = useApp()
   const [category, setCategory] = useState<CategoryFilter>('全部')
-  const [stage, setStage] = useState<StageFilter>('全部')
-  const [grade, setGrade] = useState<GradeFilter>(() => getCurrentStudent()?.grade ?? '全部')
   const [source, setSource] = useState<SourceFilter>(mode === 'student' ? 'textbook' : '全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
   const [activeDemoValue, setActiveDemoValue] = useState('')
+  const [activePanel, setActivePanel] = useState<TheoryPanel>('knowledge')
 
   // currentStudentId 由应用状态负责触发重渲染；直接读取可避免把外部存储读取包装成无效依赖的 useMemo。
   const currentStudent = getCurrentStudent()
-
-  useEffect(() => {
-    if (!currentStudent?.grade) return
-    setGrade(currentStudent.grade)
-    if (mode === 'student') setSource('textbook')
-  }, [currentStudent?.grade, mode])
+  const effectiveGrade = selectedGrade ?? currentStudent?.grade
 
   const filtered = useMemo(
     () =>
       filterTheoryTopics({
         category: category === '全部' ? undefined : category,
-        stage: stage === '全部' ? undefined : stage,
-        grade: grade === '全部' ? undefined : grade,
+        grade: effectiveGrade,
         source: source === '全部' ? undefined : source,
       }),
-    [category, grade, source, stage]
+    [category, effectiveGrade, source]
   )
-  const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? THEORY_TOPICS[0]
+  const gradeTopics = useMemo(
+    () => (effectiveGrade ? filterTheoryTopics({ grade: effectiveGrade }) : THEORY_TOPICS),
+    [effectiveGrade]
+  )
+  const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? gradeTopics[0] ?? THEORY_TOPICS[0]
   const demoScene = getDemoScene(active.demo.kind)
   const activeControl =
     demoScene.controls.find((control) => control.value === activeDemoValue) ?? demoScene.controls[0]
@@ -77,6 +64,7 @@ export default function Theory() {
   // 切换主题时同步选中该主题的默认控件，避免一帧"旧主题+新控件"的错配
   useEffect(() => {
     setActiveDemoValue(demoScene.controls[0]?.value ?? '')
+    setActivePanel('knowledge')
   }, [active.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -88,29 +76,23 @@ export default function Theory() {
   useEffect(() => {
     if (!theoryFocus) return
     const nextCategory = theoryFocus.category ?? '全部'
-    const nextStage = theoryFocus.stage ?? '全部'
     const focusedTopics = filterTheoryTopics({
       category: theoryFocus.category,
       stage: theoryFocus.stage,
+      grade: effectiveGrade,
     })
     const nextTopic =
       (theoryFocus.topicId && focusedTopics.find((topic) => topic.id === theoryFocus.topicId)) ||
       focusedTopics[0]
 
     setCategory(nextCategory)
-    setStage(nextStage)
-    if (theoryFocus.stage) {
-      setGrade('全部')
-    }
     if (nextTopic) setActiveId(nextTopic.id)
-  }, [theoryFocus])
+  }, [effectiveGrade, theoryFocus])
 
   const clearFilters = () => {
     setCategory('全部')
-    setStage('全部')
-    setGrade('全部')
     setSource(mode === 'student' ? 'textbook' : '全部')
-    setActiveId(THEORY_TOPICS[0].id)
+    setActiveId(gradeTopics[0]?.id ?? THEORY_TOPICS[0].id)
   }
 
   return (
@@ -119,7 +101,8 @@ export default function Theory() {
         <div>
           <span className="theory-kicker">浙江人音版 · 互动音乐探索馆</span>
           <h2>小学 1—6 年级的音乐发现地图</h2>
-          <p>按教材年级、音乐方向和成长阶段选择发现卡；每张卡都用声音、图形、小游戏和创作入口帮助学生边玩边理解。</p>
+          <p>按顶部选择的年级匹配发现卡，再按音乐方向和教材来源浏览；每张卡都用声音、图形、小游戏和创作入口帮助学生边玩边理解。</p>
+          <span className="theory-scope-note">{effectiveGrade ? `${getGradeLabel(effectiveGrade)}内容` : '全部年级内容'}</span>
         </div>
         <div className="theory-count">
           <b>{filtered.length}</b>
@@ -136,23 +119,6 @@ export default function Theory() {
             onChange={(next) => setCategory(next)}
           />
           <FilterGroup
-            title="成长阶段"
-            value={stage}
-            options={['全部', ...THEORY_STAGES.map((item) => item.id)]}
-            getLabel={(value) => (value === '全部' ? '全部' : getStageLabel(value as TheoryStageId))}
-            onChange={(next) => setStage(next as StageFilter)}
-          />
-          <FilterGroup
-            title="教材年级"
-            value={grade === '全部' ? '全部' : String(grade)}
-            options={['全部', ...PRIMARY_GRADES.map(String)]}
-            getLabel={(value) => {
-              const parsed = parseGradeFilter(value)
-              return parsed === '全部' ? '全部年级' : getGradeLabel(parsed)
-            }}
-            onChange={(next) => setGrade(parseGradeFilter(next))}
-          />
-          <FilterGroup
             title="教材来源"
             value={source}
             options={['全部', 'textbook', 'extension']}
@@ -160,30 +126,70 @@ export default function Theory() {
             onChange={(next) => setSource(next as SourceFilter)}
           />
 
-          <div className="topic-list">
-            {filtered.length === 0 && (
+          <div className="topic-select">
+            {filtered.length === 0 ? (
               <div className="topic-empty">
                 <b>没有匹配发现卡</b>
-                <button onClick={clearFilters}>清除筛选</button>
+                <button type="button" onClick={clearFilters}>清除筛选</button>
               </div>
+            ) : (
+              <label className="theory-filter-select">
+                <span className="side-group-title">知识点</span>
+                <select
+                  aria-label="选择知识点"
+                  value={active.id}
+                  onChange={(event) => setActiveId(event.target.value)}
+                >
+                  {filtered.map((topic) => (
+                    <option key={topic.id} value={topic.id}>
+                      {topic.title} · {topic.curriculum.grades.map(getGradeLabel).join(' / ')} · {getSemesterLabel(topic.curriculum.semester)}
+                    </option>
+                  ))}
+                </select>
+                <small className="topic-select-hint">共 {filtered.length} 个知识点，选择后查看右侧内容</small>
+              </label>
             )}
-            {filtered.map((topic) => (
-              <button
-                key={topic.id}
-                className={topic.id === active.id ? 'on' : ''}
-                onClick={() => setActiveId(topic.id)}
-              >
-                <b>{topic.title}</b>
-                <small>
-                  {topic.curriculum.grades.map(getGradeLabel).join(' / ')} · {getSemesterLabel(topic.curriculum.semester)} · {topic.curriculum.unitTitle}
-                </small>
-              </button>
-            ))}
           </div>
         </aside>
 
         <main className="theory-main">
-          <section className="topic-panel card">
+          {filtered.length === 0 ? (
+            <section className="topic-panel card theory-empty-panel" aria-live="polite">
+              <div className="theory-empty-state">
+                <span className="theory-empty-icon" aria-hidden="true">🎼</span>
+                <span className="theory-kicker">调整筛选</span>
+                <h2>暂时没有匹配的发现卡</h2>
+                <p>当前年级与所选音乐方向、教材来源没有可展示内容，请更换筛选条件。</p>
+                <button className="primary-action" type="button" onClick={clearFilters}>清除筛选</button>
+              </div>
+            </section>
+          ) : (
+            <section className="topic-panel card">
+            <div className="theory-content-tabs" role="tablist" aria-label="主题内容页面">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activePanel === 'knowledge'}
+                className={`theory-content-tab ${activePanel === 'knowledge' ? 'on' : ''}`}
+                onClick={() => setActivePanel('knowledge')}
+              >
+                <span>📖</span>
+                <b>知识学习</b>
+                <small>理解概念与声音线索</small>
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={activePanel === 'discovery'}
+                className={`theory-content-tab ${activePanel === 'discovery' ? 'on' : ''}`}
+                onClick={() => setActivePanel('discovery')}
+              >
+                <span>🧭</span>
+                <b>探索发现</b>
+                <small>听、玩、创作与分享</small>
+              </button>
+            </div>
+
             <div className="topic-title">
               <div>
                 <span>{active.category} · {getStageLabel(active.stage)} · {active.level}</span>
@@ -200,54 +206,61 @@ export default function Theory() {
               </button>
             </div>
 
-            <DetailedExplanation topic={active} />
+            {activePanel === 'knowledge' ? (
+              <div className="theory-content-page" role="tabpanel" aria-label="知识学习">
+                <DetailedExplanation topic={active} />
 
-            <TheoryDemoLab
-              topic={active}
-              activeValue={activeControl.value}
-              onChange={setActiveDemoValue}
-            />
+                <TheoryDemoLab
+                  topic={active}
+                  activeValue={activeControl.value}
+                  onChange={setActiveDemoValue}
+                />
 
-            <section className="inline-quiz-panel">
-              <div className="inline-quiz-copy">
-                <span className="theory-kicker">本关互动题</span>
-                <h3>{active.title}声音挑战</h3>
-                <p>听完演示后，用一题快速判断学生是否抓住声音变化。</p>
-              </div>
-              <MiniQuiz
-                key={active.id}
-                topic={active}
-                studentId={currentStudentId ?? 'anonymous'}
-                recordEnabled={mode !== 'lecture'}
-              />
-            </section>
+                <section className="inline-quiz-panel">
+                  <div className="inline-quiz-copy">
+                    <span className="theory-kicker">本关互动题</span>
+                    <h3>{active.title}声音挑战</h3>
+                    <p>听完演示后，用一题快速判断学生是否抓住声音变化。</p>
+                  </div>
+                  <MiniQuiz
+                    key={active.id}
+                    topic={active}
+                    studentId={currentStudentId ?? 'anonymous'}
+                    recordEnabled={mode !== 'lecture'}
+                  />
+                </section>
 
-            <ExplorationLoop
-              topic={active}
-              scene={demoScene}
-              activeValue={activeControl.value}
-              onChange={setActiveDemoValue}
-              onPlay={() => playDemo(active.demo.kind, activeControl)}
-              onNavigate={navigate}
-              studentId={currentStudentId}
-              recordEnabled={mode !== 'lecture'}
-            />
-
-            <ZhejiangExtensionCard
-              topic={active}
-              grade={currentStudent?.grade ?? active.curriculum.grades[0]}
-              onNavigate={navigate}
-            />
-
-            <div className="point-grid">
-              {active.keyPoints.map((p, i) => (
-                <div key={p} className="point-card">
-                  <span>{i + 1}</span>
-                  <p>{p}</p>
+                <div className="point-grid">
+                  {active.keyPoints.map((p, i) => (
+                    <div key={p} className="point-card">
+                      <span>{i + 1}</span>
+                      <p>{p}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </section>
+              </div>
+            ) : (
+              <div className="theory-content-page" role="tabpanel" aria-label="探索发现">
+                <ExplorationLoop
+                  topic={active}
+                  scene={demoScene}
+                  activeValue={activeControl.value}
+                  onChange={setActiveDemoValue}
+                  onPlay={() => playDemo(active.demo.kind, activeControl)}
+                  onNavigate={navigate}
+                  studentId={currentStudentId}
+                  recordEnabled={mode !== 'lecture'}
+                />
+
+                <ZhejiangExtensionCard
+                  topic={active}
+                  grade={effectiveGrade ?? active.curriculum.grades[0]}
+                  onNavigate={navigate}
+                />
+              </div>
+            )}
+            </section>
+          )}
         </main>
       </div>
     </div>
@@ -317,14 +330,16 @@ function FilterGroup({
 }) {
   return (
     <div className="theory-filter-group">
-      <div className="side-group-title">{title}</div>
-      <div className="theory-cats">
-        {options.map((option) => (
-          <button key={option} className={value === option ? 'on' : ''} onClick={() => onChange(option)}>
-            {getLabel(option)}
-          </button>
-        ))}
-      </div>
+      <label className="theory-filter-select">
+        <span className="side-group-title">{title}</span>
+        <select aria-label={`选择${title}`} value={value} onChange={(event) => onChange(event.target.value)}>
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {getLabel(option)}
+            </option>
+          ))}
+        </select>
+      </label>
     </div>
   )
 }

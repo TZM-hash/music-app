@@ -17,28 +17,32 @@ import { studentStat } from '../state/stats'
 import { exportClassroomBackup, importClassroomBackup } from '../state/backup'
 import { removeStudentProgress } from '../state/progress'
 import { useApp } from '../state/appState'
+import { classOptionsForRoster, DEFAULT_CLASS_NAME, matchesLearningScope } from '../state/learningScope'
 import Reveal from '../components/Reveal'
 import './class.css'
 
 export default function ClassRoster() {
-  const { currentStudentId, selectStudent, navigate } = useApp()
+  const { currentStudentId, selectStudent, navigate, selectedGrade, selectedClass } = useApp()
   const [, setVersion] = useState(0)
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(AVATAR_CHOICES[0])
   const [grade, setGrade] = useState<PrimaryGrade>(3)
   const [semester, setSemester] = useState<Semester>(1)
+  const [className, setClassName] = useState<string>(DEFAULT_CLASS_NAME)
   const [notice, setNotice] = useState<string | null>(null)
   const importRef = useRef<HTMLInputElement>(null)
-  const roster = loadRoster()
+  const allStudents = loadRoster()
+  const classOptions = classOptionsForRoster(allStudents, grade)
+  const roster = allStudents.filter((student) => matchesLearningScope(student, { grade: selectedGrade, className: selectedClass }))
 
   const add = () => {
     if (!name.trim()) return
-    addStudent(name, avatar, { grade, semester })
+    addStudent(name, avatar, { grade, semester, className })
     setName('')
     setVersion((v) => v + 1)
   }
 
-  const updateCurriculum = (id: string, next: Partial<{ grade: PrimaryGrade; semester: Semester }>) => {
+  const updateCurriculum = (id: string, next: Partial<{ grade: PrimaryGrade; semester: Semester; className: string }>) => {
     updateStudentProfile(id, next)
     setVersion((v) => v + 1)
   }
@@ -114,6 +118,14 @@ export default function ClassRoster() {
             <select value={semester} onChange={(e) => setSemester(Number(e.target.value) as Semester)}>
               <option value={1}>{getSemesterLabel(1)}</option>
               <option value={2}>{getSemesterLabel(2)}</option>
+            </select>
+          </label>
+          <label className="roster-select-label">
+            班级
+            <select value={className} onChange={(e) => setClassName(e.target.value)}>
+              {classOptions.map((item) => (
+                <option key={item} value={item}>{item}</option>
+              ))}
             </select>
           </label>
           <button className="add-btn" onClick={add}>
@@ -206,6 +218,18 @@ export default function ClassRoster() {
                   >
                     <option value={1}>{getSemesterLabel(1)}</option>
                     <option value={2}>{getSemesterLabel(2)}</option>
+                  </select>
+                </label>
+                <label>
+                  班级
+                  <select
+                    aria-label={`${s.name}班级`}
+                    value={s.className ?? DEFAULT_CLASS_NAME}
+                    onChange={(e) => updateCurriculum(s.id, { className: e.target.value })}
+                  >
+                    {classOptionsForRoster(allStudents, s.grade ?? null).map((item) => (
+                      <option key={item} value={item}>{item}</option>
+                    ))}
                   </select>
                 </label>
               </div>
