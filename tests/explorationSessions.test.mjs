@@ -53,6 +53,7 @@ test('exploration sessions advance in fixed order and only complete at reflect a
   assert.equal(session.grade, 4)
   assert.equal(advanceExplorationStage(session, 'evidence', 200), session)
   assert.equal(advanceExplorationStage(session, 'unknown', 200), session)
+  assert.equal(advanceExplorationStage(session, 'listen', 200), session)
 
   for (const stage of ['express', 'evidence', 'concept', 'relisten', 'reflect']) {
     session = advanceExplorationStage(session, stage, session.updatedAt + 1)
@@ -94,7 +95,7 @@ test('response updates preserve subjective choices and normalize known fields', 
 
 test('exploration progress stays within bounds and completed sessions report one', () => {
   const load = createTsLoader()
-  const { createExplorationSession, advanceExplorationStage, updateExplorationSession, getExplorationProgress } =
+  const { createExplorationSession, advanceExplorationStage, updateExplorationSession, getExplorationProgress, isExplorationComplete } =
     load('src/state/explorationSessions.ts')
   let session = createExplorationSession('jasmine', 'student-1', 2, 100)
   assert.equal(getExplorationProgress(session), 0)
@@ -102,11 +103,14 @@ test('exploration progress stays within bounds and completed sessions report one
   assert.equal(getExplorationProgress(session), 1 / 6)
   assert.equal(getExplorationProgress({ ...session, stage: 'not-a-stage' }), 0)
   session = advanceExplorationStage(session, 'evidence', 300)
+  assert.equal(advanceExplorationStage(session, 'express', 350), session)
   session = advanceExplorationStage(session, 'concept', 400)
   session = advanceExplorationStage(session, 'relisten', 500)
   session = updateExplorationSession(session, { relistenChoice: 'keep' }, 600)
   session = advanceExplorationStage(session, 'reflect', 700)
   assert.equal(getExplorationProgress(session), 1)
+  assert.equal(session.completedAt, 700)
+  assert.equal(isExplorationComplete(session), true)
 })
 
 test('sessions persist by student and unit while anonymous sessions remain in memory', () => {
@@ -115,10 +119,14 @@ test('sessions persist by student and unit while anonymous sessions remain in me
     const load = createTsLoader()
     const { createExplorationSession, loadExplorationSession, saveExplorationSession, clearExplorationSession } =
       load('src/state/explorationSessions.ts')
+
+    assert.equal(storage.get('music-edu-exploration-sessions-v1'), undefined)
+    saveExplorationSession(createExplorationSession('anonymous', null, null, 400))
+    assert.equal(storage.get('music-edu-exploration-sessions-v1'), undefined)
+
     saveExplorationSession(createExplorationSession('jasmine', 'student-1', 4, 100))
     saveExplorationSession(createExplorationSession('other', 'student-1', 4, 200))
     saveExplorationSession(createExplorationSession('jasmine', 'student-2', 5, 300))
-    saveExplorationSession(createExplorationSession('anonymous', null, null, 400))
 
     assert.equal(loadExplorationSession('student-1', 'jasmine').startedAt, 100)
     assert.equal(loadExplorationSession('student-1', 'other').startedAt, 200)
@@ -132,6 +140,24 @@ test('sessions persist by student and unit while anonymous sessions remain in me
     assert.ok(storage.get('music-edu-exploration-sessions-v1'))
   } finally {
     storage.restore()
+  }
+})
+
+test('missing localStorage does not throw and returns default values', () => {
+  const previous = globalThis.localStorage
+  const hadStorage = Object.prototype.hasOwnProperty.call(globalThis, 'localStorage')
+  delete globalThis.localStorage
+  try {
+    const load = createTsLoader()
+    const { createExplorationSession, loadExplorationSession, saveExplorationSession, clearExplorationSession } =
+      load('src/state/explorationSessions.ts')
+    assert.equal(loadExplorationSession('student-1', 'jasmine'), null)
+    assert.doesNotThrow(() => saveExplorationSession(createExplorationSession('jasmine', 'student-1', 4, 100)))
+    assert.doesNotThrow(() => clearExplorationSession('student-1', 'jasmine'))
+    assert.equal(loadExplorationSession('student-1', 'jasmine'), null)
+  } finally {
+    if (hadStorage) globalThis.localStorage = previous
+    else delete globalThis.localStorage
   }
 })
 

@@ -24,3 +24,15 @@
 ## Concerns
 
 - Node emits its existing experimental `localStorage` availability warning during tests without `--localstorage-file`; the focused tests install an in-memory fake storage and all assertions pass.
+
+## Reviewer Follow-up
+
+- Updated `tests/explorationSessions.test.mjs` to assert the storage key is absent both immediately before and immediately after saving an anonymous session, while retaining student/unit persistence isolation and clear behavior coverage.
+- Added a no-`localStorage` test that temporarily deletes `globalThis.localStorage` and verifies load, save, and clear do not throw and load returns `null`.
+- Added explicit rejection assertions for repeated and backward stage advancement.
+- Added the reverse completion path assertion: an existing `relistenChoice` causes completion when the session subsequently advances into `reflect`.
+
+Follow-up verification:
+
+- `npm test -- tests/explorationSessions.test.mjs`: passed, 150 tests, 0 failures.
+- `npm run build`: passed, TypeScript and Vite production build completed successfully.
