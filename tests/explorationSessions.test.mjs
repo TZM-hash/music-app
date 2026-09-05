@@ -117,11 +117,15 @@ test('changing path clears the old expression selection for the express stage', 
     'src/state/explorationSessions.ts'
   )
 
-  let session = updateExplorationSession(createExplorationSession('jasmine', 'student-1', 3, 100), {
-    firstFeelingId: 'bright',
-    pathId: 'emotion',
-    expressionId: 'warm',
-  }, 200)
+  let session = updateExplorationSession(
+    createExplorationSession('jasmine', 'student-1', 3, 100),
+    {
+      firstFeelingId: 'bright',
+      pathId: 'emotion',
+      expressionId: 'warm',
+    },
+    200
+  )
   assert.equal(Boolean(session.firstFeelingId && session.pathId && session.expressionId), true)
 
   session = updateExplorationSession(session, { pathId: 'movement' }, 300)
