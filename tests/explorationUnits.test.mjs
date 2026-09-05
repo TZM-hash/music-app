@@ -57,9 +57,7 @@ test('茉莉花探索单元提供四条路径、音乐证据和二次聆听内�
   assert.match(JASMINE_EXPLORATION_UNIT.culture.body, /地域|江苏/)
   assert.match(JASMINE_EXPLORATION_UNIT.relisten.prompt, /再听|听到/)
   assert.ok(JASMINE_EXPLORATION_UNIT.relisten.choices.length >= 3)
-  assert.ok(
-    JASMINE_EXPLORATION_UNIT.relisten.choices.every((choice) => choice.label.length > 0)
-  )
+  assert.ok(JASMINE_EXPLORATION_UNIT.relisten.choices.every((choice) => choice.label.length > 0))
 })
 
 test('探索单元按年级映射低中高三种支架', () => {

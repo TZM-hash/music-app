@@ -67,7 +67,7 @@ test('探索剧场恢复反思、支持回退修订并隔离切换单元后的�
   assert.match(source, /setReflection\(restored\?\.relistenReflection \?\? ''\)/)
   assert.match(source, /relistenReflection:\s*reflection/)
   assert.match(source, /goToPreviousStage/)
-  assert.match(source, />上一步</)
+  assert.match(source, />\s*上一步\s*</)
   assert.match(source, /onClick=\{\(\) => goToStage\(stage\.id\)\}/)
   assert.match(source, /completedAt:\s*undefined/)
   assert.match(

@@ -25,7 +25,10 @@ export default function LessonMode() {
           <span className="lesson-kicker">今日探索 · 先听见，再找到依据</span>
           <h2>音乐探索剧场</h2>
           <p>
-            {unit.question} {effectiveGrade ? `当前为${getGradeLabel(effectiveGrade)}支架。` : '可以从自己的感受开始。'}
+            {unit.question}{' '}
+            {effectiveGrade
+              ? `当前为${getGradeLabel(effectiveGrade)}支架。`
+              : '可以从自己的感受开始。'}
           </p>
         </div>
         <div className="lesson-progress-card exploration-lesson-meta">
@@ -45,7 +48,11 @@ export default function LessonMode() {
         />
       </section>
 
-      {completeNotice && <p className="lesson-complete-notice" role="status">{completeNotice}</p>}
+      {completeNotice && (
+        <p className="lesson-complete-notice" role="status">
+          {completeNotice}
+        </p>
+      )}
 
       <section className="lesson-support-bar card" aria-label="课堂支持入口">
         <div>
@@ -54,9 +61,15 @@ export default function LessonMode() {
           <small>完成后会留下“我的音乐发现”，再去作品、听觉实验室或音乐线索库延伸。</small>
         </div>
         <div className="lesson-support-actions">
-          <button type="button" onClick={() => navigate('course')}>换一首作品</button>
-          <button type="button" onClick={() => navigate('training')}>去听觉实验室</button>
-          <button type="button" onClick={() => navigate('theory')}>查看音乐线索</button>
+          <button type="button" onClick={() => navigate('course')}>
+            换一首作品
+          </button>
+          <button type="button" onClick={() => navigate('training')}>
+            去听觉实验室
+          </button>
+          <button type="button" onClick={() => navigate('theory')}>
+            查看音乐线索
+          </button>
         </div>
       </section>
     </div>

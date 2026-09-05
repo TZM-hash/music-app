@@ -32,20 +32,32 @@ function installStorage() {
   const values = new Map()
   const previous = globalThis.localStorage
   globalThis.localStorage = {
-    getItem(key) { return values.get(key) ?? null },
-    setItem(key, value) { values.set(key, String(value)) },
-    removeItem(key) { values.delete(key) },
+    getItem(key) {
+      return values.get(key) ?? null
+    },
+    setItem(key, value) {
+      values.set(key, String(value))
+    },
+    removeItem(key) {
+      values.delete(key)
+    },
   }
   return {
     get: (key) => values.get(key),
-    restore: () => { globalThis.localStorage = previous },
+    restore: () => {
+      globalThis.localStorage = previous
+    },
   }
 }
 
 test('exploration sessions advance in fixed order and only complete at reflect after a relisten choice', () => {
   const load = createTsLoader()
-  const { createExplorationSession, advanceExplorationStage, updateExplorationSession, isExplorationComplete } =
-    load('src/state/explorationSessions.ts')
+  const {
+    createExplorationSession,
+    advanceExplorationStage,
+    updateExplorationSession,
+    isExplorationComplete,
+  } = load('src/state/explorationSessions.ts')
 
   let session = createExplorationSession('jasmine', ' student-1 ', 4, 100)
   assert.equal(session.stage, 'listen')
@@ -70,17 +82,23 @@ test('exploration sessions advance in fixed order and only complete at reflect a
 
 test('response updates preserve subjective choices and normalize known fields', () => {
   const load = createTsLoader()
-  const { createExplorationSession, updateExplorationSession } = load('src/state/explorationSessions.ts')
-  const session = updateExplorationSession(createExplorationSession('jasmine', 'student-1', 3, 100), {
-    firstFeelingId: ' gentle ',
-    pathId: 'story',
-    expressionId: ' river ',
-    evidenceId: ' flowing ',
-    conceptIds: [' melody ', 'melody', 'timbre', '', 42],
-    relistenChoice: 'change',
-    relistenReflection: ` ${'a'.repeat(300)} `,
-    ignored: 'value',
-  }, 200)
+  const { createExplorationSession, updateExplorationSession } = load(
+    'src/state/explorationSessions.ts'
+  )
+  const session = updateExplorationSession(
+    createExplorationSession('jasmine', 'student-1', 3, 100),
+    {
+      firstFeelingId: ' gentle ',
+      pathId: 'story',
+      expressionId: ' river ',
+      evidenceId: ' flowing ',
+      conceptIds: [' melody ', 'melody', 'timbre', '', 42],
+      relistenChoice: 'change',
+      relistenReflection: ` ${'a'.repeat(300)} `,
+      ignored: 'value',
+    },
+    200
+  )
 
   assert.equal(session.firstFeelingId, 'gentle')
   assert.equal(session.pathId, 'story')
@@ -95,8 +113,13 @@ test('response updates preserve subjective choices and normalize known fields', 
 
 test('exploration progress stays within bounds and completed sessions report one', () => {
   const load = createTsLoader()
-  const { createExplorationSession, advanceExplorationStage, updateExplorationSession, getExplorationProgress, isExplorationComplete } =
-    load('src/state/explorationSessions.ts')
+  const {
+    createExplorationSession,
+    advanceExplorationStage,
+    updateExplorationSession,
+    getExplorationProgress,
+    isExplorationComplete,
+  } = load('src/state/explorationSessions.ts')
   let session = createExplorationSession('jasmine', 'student-1', 2, 100)
   assert.equal(getExplorationProgress(session), 0)
   session = advanceExplorationStage(session, 'express', 200)
@@ -117,8 +140,12 @@ test('sessions persist by student and unit while anonymous sessions remain in me
   const storage = installStorage()
   try {
     const load = createTsLoader()
-    const { createExplorationSession, loadExplorationSession, saveExplorationSession, clearExplorationSession } =
-      load('src/state/explorationSessions.ts')
+    const {
+      createExplorationSession,
+      loadExplorationSession,
+      saveExplorationSession,
+      clearExplorationSession,
+    } = load('src/state/explorationSessions.ts')
 
     assert.equal(storage.get('music-edu-exploration-sessions-v1'), undefined)
     saveExplorationSession(createExplorationSession('anonymous', null, null, 400))
@@ -149,10 +176,16 @@ test('missing localStorage does not throw and returns default values', () => {
   delete globalThis.localStorage
   try {
     const load = createTsLoader()
-    const { createExplorationSession, loadExplorationSession, saveExplorationSession, clearExplorationSession } =
-      load('src/state/explorationSessions.ts')
+    const {
+      createExplorationSession,
+      loadExplorationSession,
+      saveExplorationSession,
+      clearExplorationSession,
+    } = load('src/state/explorationSessions.ts')
     assert.equal(loadExplorationSession('student-1', 'jasmine'), null)
-    assert.doesNotThrow(() => saveExplorationSession(createExplorationSession('jasmine', 'student-1', 4, 100)))
+    assert.doesNotThrow(() =>
+      saveExplorationSession(createExplorationSession('jasmine', 'student-1', 4, 100))
+    )
     assert.doesNotThrow(() => clearExplorationSession('student-1', 'jasmine'))
     assert.equal(loadExplorationSession('student-1', 'jasmine'), null)
   } finally {
@@ -165,16 +198,21 @@ test('malformed storage data and records return null without throwing', () => {
   const storage = installStorage()
   try {
     const load = createTsLoader()
-    const { loadExplorationSession, clearExplorationSession } = load('src/state/explorationSessions.ts')
+    const { loadExplorationSession, clearExplorationSession } = load(
+      'src/state/explorationSessions.ts'
+    )
     globalThis.localStorage.setItem('music-edu-exploration-sessions-v1', '{not json')
     assert.equal(loadExplorationSession('student-1', 'jasmine'), null)
     assert.doesNotThrow(() => clearExplorationSession('student-1', 'jasmine'))
 
-    globalThis.localStorage.setItem('music-edu-exploration-sessions-v1', JSON.stringify([
-      { studentId: 'student-1', unitId: 'jasmine', updatedAt: 1 },
-      { studentId: 'student-1', unitId: 'jasmine', stage: 'listen' },
-      { studentId: 'student-1', unitId: 'jasmine', stage: 'invalid', updatedAt: 1 },
-    ]))
+    globalThis.localStorage.setItem(
+      'music-edu-exploration-sessions-v1',
+      JSON.stringify([
+        { studentId: 'student-1', unitId: 'jasmine', updatedAt: 1 },
+        { studentId: 'student-1', unitId: 'jasmine', stage: 'listen' },
+        { studentId: 'student-1', unitId: 'jasmine', stage: 'invalid', updatedAt: 1 },
+      ])
+    )
     assert.equal(loadExplorationSession('student-1', 'jasmine'), null)
   } finally {
     storage.restore()

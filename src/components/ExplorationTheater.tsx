@@ -90,8 +90,10 @@ export default function ExplorationTheater({
   onComplete,
 }: ExplorationTheaterProps) {
   const band = getExplorationAgeBand(grade)
-  const [session, setSession] = useState<ExplorationSession>(() =>
-    loadExplorationSession(studentId, unit.id) ?? createExplorationSession(unit.id, studentId, grade)
+  const [session, setSession] = useState<ExplorationSession>(
+    () =>
+      loadExplorationSession(studentId, unit.id) ??
+      createExplorationSession(unit.id, studentId, grade)
   )
   const [hasListened, setHasListened] = useState(false)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -103,7 +105,10 @@ export default function ExplorationTheater({
   const savedRef = useRef(false)
 
   const fragment = useMemo(() => getSongFragment(unit.songId, 0, 12), [unit.songId])
-  const currentStageIndex = Math.max(0, STAGES.findIndex((stage) => stage.id === session.stage))
+  const currentStageIndex = Math.max(
+    0,
+    STAGES.findIndex((stage) => stage.id === session.stage)
+  )
   const currentStage = STAGES[currentStageIndex] ?? STAGES[0]
   const selectedPath = unit.paths.find((path) => path.id === session.pathId)
   const visibleConcepts = useMemo(
@@ -148,42 +153,39 @@ export default function ExplorationTheater({
     setIsPlaying(false)
   }, [])
 
-  const playCues = useCallback(
-    async (cues: ExplorationCue[], onFinished?: () => void) => {
-      stopAllAudio()
-      const token = tokenRef.current + 1
-      tokenRef.current = token
-      setIsPlaying(true)
-      setAudioUnavailable(false)
-      try {
-        const ready = await ensureAudio()
-        if (!ready) {
-          if (tokenRef.current === token) {
-            setAudioUnavailable(true)
-            setIsPlaying(false)
-            onFinished?.()
-          }
-          return
-        }
-        for (const cue of cues) {
-          if (tokenRef.current !== token) return
-          playNote(cue.note, durationForBeats(cue.beats), cue.velocity, cue.patch)
-          await new Promise<void>((resolve) => window.setTimeout(resolve, getCueDurationMs(cue, 72)))
-        }
-        if (tokenRef.current === token) {
-          setIsPlaying(false)
-          onFinished?.()
-        }
-      } catch {
+  const playCues = useCallback(async (cues: ExplorationCue[], onFinished?: () => void) => {
+    stopAllAudio()
+    const token = tokenRef.current + 1
+    tokenRef.current = token
+    setIsPlaying(true)
+    setAudioUnavailable(false)
+    try {
+      const ready = await ensureAudio()
+      if (!ready) {
         if (tokenRef.current === token) {
           setAudioUnavailable(true)
           setIsPlaying(false)
           onFinished?.()
         }
+        return
       }
-    },
-    []
-  )
+      for (const cue of cues) {
+        if (tokenRef.current !== token) return
+        playNote(cue.note, durationForBeats(cue.beats), cue.velocity, cue.patch)
+        await new Promise<void>((resolve) => window.setTimeout(resolve, getCueDurationMs(cue, 72)))
+      }
+      if (tokenRef.current === token) {
+        setIsPlaying(false)
+        onFinished?.()
+      }
+    } catch {
+      if (tokenRef.current === token) {
+        setAudioUnavailable(true)
+        setIsPlaying(false)
+        onFinished?.()
+      }
+    }
+  }, [])
 
   const updateResponse = useCallback((response: Parameters<typeof updateExplorationSession>[1]) => {
     setSession((current) => updateExplorationSession(current, response))
@@ -191,7 +193,8 @@ export default function ExplorationTheater({
 
   const canContinue =
     (session.stage === 'listen' && hasListened) ||
-    (session.stage === 'express' && Boolean(session.firstFeelingId && session.pathId && session.expressionId)) ||
+    (session.stage === 'express' &&
+      Boolean(session.firstFeelingId && session.pathId && session.expressionId)) ||
     (session.stage === 'evidence' && Boolean(session.evidenceId)) ||
     session.stage === 'concept' ||
     (session.stage === 'relisten' && Boolean(session.relistenChoice))
@@ -206,25 +209,28 @@ export default function ExplorationTheater({
     setSession((current) => advanceExplorationStage(current, next.id))
   }, [canContinue, currentStageIndex, session.stage, updateResponse, visibleConcepts])
 
-  const goToStage = useCallback((stage: ExplorationStageId) => {
-    const targetIndex = STAGES.findIndex((item) => item.id === stage)
-    if (targetIndex < 0 || targetIndex > currentStageIndex) return
-    if (targetIndex === currentStageIndex) return
+  const goToStage = useCallback(
+    (stage: ExplorationStageId) => {
+      const targetIndex = STAGES.findIndex((item) => item.id === stage)
+      if (targetIndex < 0 || targetIndex > currentStageIndex) return
+      if (targetIndex === currentStageIndex) return
 
-    savedRef.current = false
-    setSaveNotice('')
+      savedRef.current = false
+      setSaveNotice('')
 
-    setSession((current) => {
-      const currentIndex = STAGES.findIndex((item) => item.id === current.stage)
-      if (targetIndex > currentIndex || stage === current.stage) return current
-      return {
-        ...current,
-        stage,
-        completedAt: undefined,
-        updatedAt: Date.now(),
-      }
-    })
-  }, [currentStageIndex])
+      setSession((current) => {
+        const currentIndex = STAGES.findIndex((item) => item.id === current.stage)
+        if (targetIndex > currentIndex || stage === current.stage) return current
+        return {
+          ...current,
+          stage,
+          completedAt: undefined,
+          updatedAt: Date.now(),
+        }
+      })
+    },
+    [currentStageIndex]
+  )
 
   const goToPreviousStage = useCallback(() => {
     const previous = STAGES[currentStageIndex - 1]
@@ -267,10 +273,14 @@ export default function ExplorationTheater({
       <span className="exploration-eyebrow">第一遍，不急着找答案</span>
       <h2>先听一听，你的身体和心情有什么变化？</h2>
       <p className="exploration-prompt">{unit.question}</p>
-      <button className="exploration-play-button" type="button" onClick={() => {
-        if (isPlaying) stopPlayback()
-        else void playCues(fragment, () => setHasListened(true))
-      }}>
+      <button
+        className="exploration-play-button"
+        type="button"
+        onClick={() => {
+          if (isPlaying) stopPlayback()
+          else void playCues(fragment, () => setHasListened(true))
+        }}
+      >
         {isPlaying ? '停止播放' : hasListened ? '再听一次' : '播放音乐片段'}
       </button>
       <p className="exploration-support">先听见自己的感觉，等一会儿再说它为什么这样。</p>
@@ -285,8 +295,15 @@ export default function ExplorationTheater({
         <h3>我的第一感觉</h3>
         <div className="exploration-choice-grid">
           {FEELINGS.map((feeling) => (
-            <button key={feeling.id} type="button" aria-pressed={session.firstFeelingId === feeling.id} className={session.firstFeelingId === feeling.id ? 'selected' : ''} onClick={() => updateResponse({ firstFeelingId: feeling.id })}>
-              <b>{feeling.label}</b><small>{feeling.hint}</small>
+            <button
+              key={feeling.id}
+              type="button"
+              aria-pressed={session.firstFeelingId === feeling.id}
+              className={session.firstFeelingId === feeling.id ? 'selected' : ''}
+              onClick={() => updateResponse({ firstFeelingId: feeling.id })}
+            >
+              <b>{feeling.label}</b>
+              <small>{feeling.hint}</small>
             </button>
           ))}
         </div>
@@ -295,8 +312,15 @@ export default function ExplorationTheater({
         <h3>从哪条路走进音乐？</h3>
         <div className="exploration-path-grid">
           {unit.paths.map((path) => (
-            <button key={path.id} type="button" aria-pressed={session.pathId === path.id} className={session.pathId === path.id ? 'selected' : ''} onClick={() => updateResponse({ pathId: path.id })}>
-              <b>{path.label}</b><small>{path.prompt}</small>
+            <button
+              key={path.id}
+              type="button"
+              aria-pressed={session.pathId === path.id}
+              className={session.pathId === path.id ? 'selected' : ''}
+              onClick={() => updateResponse({ pathId: path.id })}
+            >
+              <b>{path.label}</b>
+              <small>{path.prompt}</small>
             </button>
           ))}
         </div>
@@ -306,14 +330,23 @@ export default function ExplorationTheater({
           <h3>{selectedPath.prompt}</h3>
           <div className="exploration-choice-grid">
             {selectedPath.choices.map((choice) => (
-              <button key={choice.id} type="button" aria-pressed={session.expressionId === choice.id} className={session.expressionId === choice.id ? 'selected' : ''} onClick={() => updateResponse({ expressionId: choice.id })}>
-                <b>{choice.label}</b><small>{choice.hint}</small>
+              <button
+                key={choice.id}
+                type="button"
+                aria-pressed={session.expressionId === choice.id}
+                className={session.expressionId === choice.id ? 'selected' : ''}
+                onClick={() => updateResponse({ expressionId: choice.id })}
+              >
+                <b>{choice.label}</b>
+                <small>{choice.hint}</small>
               </button>
             ))}
           </div>
         </div>
       )}
-      <p className="exploration-feedback" role="status">没有唯一答案，接下来一起找依据。</p>
+      <p className="exploration-feedback" role="status">
+        没有唯一答案，接下来一起找依据。
+      </p>
     </section>
   )
 
@@ -323,22 +356,43 @@ export default function ExplorationTheater({
       <h2>{unit.evidence.prompt}</h2>
       <div className="exploration-evidence-grid">
         {(['flowing', 'jumping'] as const).map((variant) => {
-          const option = unit.evidence.options.find((item) => item.id === variant) ?? unit.evidence.options[0]
+          const option =
+            unit.evidence.options.find((item) => item.id === variant) ?? unit.evidence.options[0]
           return (
-            <article className={`exploration-evidence-card ${evidencePreview === variant ? 'previewing' : ''}`} key={variant}>
+            <article
+              className={`exploration-evidence-card ${evidencePreview === variant ? 'previewing' : ''}`}
+              key={variant}
+            >
               <span>{variant === 'flowing' ? 'A' : 'B'}</span>
               <h3>{option?.label}</h3>
-              <button type="button" aria-pressed={evidencePreview === variant} onClick={() => {
-                setEvidencePreview(variant)
-                void playCues(getEvidenceVariant(unit.id, variant))
-              }}>试听这一段</button>
+              <button
+                type="button"
+                aria-pressed={evidencePreview === variant}
+                onClick={() => {
+                  setEvidencePreview(variant)
+                  void playCues(getEvidenceVariant(unit.id, variant))
+                }}
+              >
+                试听这一段
+              </button>
               <small>先试听，再确认你听到的音乐证据。</small>
             </article>
           )
         })}
       </div>
-      <button className="exploration-confirm-button" type="button" disabled={!evidencePreview} onClick={() => updateResponse({ evidenceId: evidencePreview ?? undefined })}>确认我的听见</button>
-      {selectedEvidence && <p className="exploration-feedback" role="status">{selectedEvidence.feedback} 你是从音乐的哪里听出来的？</p>}
+      <button
+        className="exploration-confirm-button"
+        type="button"
+        disabled={!evidencePreview}
+        onClick={() => updateResponse({ evidenceId: evidencePreview ?? undefined })}
+      >
+        确认我的听见
+      </button>
+      {selectedEvidence && (
+        <p className="exploration-feedback" role="status">
+          {selectedEvidence.feedback} 你是从音乐的哪里听出来的？
+        </p>
+      )}
     </section>
   )
 
@@ -349,13 +403,25 @@ export default function ExplorationTheater({
       <div className="exploration-concept-grid">
         {visibleConcepts.map((concept) => (
           <article className="exploration-concept-card" key={concept.id}>
-            <span>音乐线索</span><h3>{concept.title}</h3><b>{concept.short}</b><p>{concept.body}</p>
-            <button type="button" onClick={() => void playCues(fragment)}>再听一次：{concept.listenPrompt}</button>
+            <span>音乐线索</span>
+            <h3>{concept.title}</h3>
+            <b>{concept.short}</b>
+            <p>{concept.body}</p>
+            <button type="button" onClick={() => void playCues(fragment)}>
+              再听一次：{concept.listenPrompt}
+            </button>
           </article>
         ))}
       </div>
       {band === 'primary-5-6' && (
-        <aside className="exploration-culture-card"><span>{unit.culture.title}</span><p>{unit.culture.ageBands[band] ?? unit.culture.body}</p><p>{unit.culture.body}</p><button type="button" onClick={() => void playCues(fragment)}>带着文化线索再听</button></aside>
+        <aside className="exploration-culture-card">
+          <span>{unit.culture.title}</span>
+          <p>{unit.culture.ageBands[band] ?? unit.culture.body}</p>
+          <p>{unit.culture.body}</p>
+          <button type="button" onClick={() => void playCues(fragment)}>
+            带着文化线索再听
+          </button>
+        </aside>
       )}
     </section>
   )
@@ -364,13 +430,32 @@ export default function ExplorationTheater({
     <section className="exploration-stage-card">
       <span className="exploration-eyebrow">第二次聆听</span>
       <h2>{unit.relisten.prompt}</h2>
-      <button className="exploration-play-button secondary" type="button" onClick={() => void playCues(fragment)}>再听一次</button>
+      <button
+        className="exploration-play-button secondary"
+        type="button"
+        onClick={() => void playCues(fragment)}
+      >
+        再听一次
+      </button>
       <div className="exploration-choice-grid relisten-grid">
         {unit.relisten.choices.map((choice) => (
-          <button key={choice.id} type="button" aria-pressed={selectedRelisten?.id === choice.id} className={selectedRelisten?.id === choice.id ? 'selected' : ''} onClick={() => selectRelisten(choice)}><b>{choice.label}</b><small>{choice.hint}</small></button>
+          <button
+            key={choice.id}
+            type="button"
+            aria-pressed={selectedRelisten?.id === choice.id}
+            className={selectedRelisten?.id === choice.id ? 'selected' : ''}
+            onClick={() => selectRelisten(choice)}
+          >
+            <b>{choice.label}</b>
+            <small>{choice.hint}</small>
+          </button>
         ))}
       </div>
-      {selectedRelisten && <p className="exploration-feedback" role="status">第二次你可能注意到：{selectedRelisten.hint}</p>}
+      {selectedRelisten && (
+        <p className="exploration-feedback" role="status">
+          第二次你可能注意到：{selectedRelisten.hint}
+        </p>
+      )}
     </section>
   )
 
@@ -379,41 +464,150 @@ export default function ExplorationTheater({
       <span className="exploration-eyebrow">把发现留下来</span>
       <h2>我的音乐发现</h2>
       <div className="exploration-discovery-preview">
-        <span>{unit.icon} {unit.title}</span>
+        <span>
+          {unit.icon} {unit.title}
+        </span>
         <h3>{selectedFeeling?.label ?? '我的第一感觉'}</h3>
-        <p>我从「{pathLabel(unit, session.pathId)}」走进这段音乐，听到了「{selectedEvidence?.label ?? '音乐里的变化'}」。</p>
-        <small>音乐词语：{visibleConcepts.map((concept) => concept.title).join('、') || '旋律'}</small>
+        <p>
+          我从「{pathLabel(unit, session.pathId)}」走进这段音乐，听到了「
+          {selectedEvidence?.label ?? '音乐里的变化'}」。
+        </p>
+        <small>
+          音乐词语：{visibleConcepts.map((concept) => concept.title).join('、') || '旋律'}
+        </small>
         <small>再听之后：{selectedRelisten?.label ?? '我还在整理自己的新线索'}</small>
       </div>
-      <label className="exploration-reflection-field">我的新发现（可以写一句话，也可以请老师帮你记录）
-        <textarea value={reflection} onChange={(event) => { setReflection(event.target.value); updateResponse({ relistenReflection: event.target.value }) }} maxLength={160} placeholder={reflectionFor(unit, band, selectedFeeling?.label ?? '', selectedEvidence?.label ?? '', '')} />
+      <label className="exploration-reflection-field">
+        我的新发现（可以写一句话，也可以请老师帮你记录）
+        <textarea
+          value={reflection}
+          onChange={(event) => {
+            setReflection(event.target.value)
+            updateResponse({ relistenReflection: event.target.value })
+          }}
+          maxLength={160}
+          placeholder={reflectionFor(
+            unit,
+            band,
+            selectedFeeling?.label ?? '',
+            selectedEvidence?.label ?? '',
+            ''
+          )}
+        />
       </label>
-      <button className="exploration-save-button" type="button" onClick={saveDiscovery}>保存我的音乐发现</button>
-      {saveNotice && <p className="exploration-feedback" role="status">{saveNotice}</p>}
+      <button className="exploration-save-button" type="button" onClick={saveDiscovery}>
+        保存我的音乐发现
+      </button>
+      {saveNotice && (
+        <p className="exploration-feedback" role="status">
+          {saveNotice}
+        </p>
+      )}
     </section>
   )
 
-  const content = currentStage.id === 'listen' ? renderListen() : currentStage.id === 'express' ? renderExpress() : currentStage.id === 'evidence' ? renderEvidence() : currentStage.id === 'concept' ? renderConcept() : currentStage.id === 'relisten' ? renderRelisten() : renderReflect()
+  const content =
+    currentStage.id === 'listen'
+      ? renderListen()
+      : currentStage.id === 'express'
+        ? renderExpress()
+        : currentStage.id === 'evidence'
+          ? renderEvidence()
+          : currentStage.id === 'concept'
+            ? renderConcept()
+            : currentStage.id === 'relisten'
+              ? renderRelisten()
+              : renderReflect()
 
   return (
-    <div className="exploration-theater" style={{ '--exploration-accent': unit.color } as React.CSSProperties}>
+    <div
+      className="exploration-theater"
+      style={{ '--exploration-accent': unit.color } as React.CSSProperties}
+    >
       <header className="exploration-theater-head">
-        <div><span className="exploration-eyebrow">音乐探索剧场</span><h1>{unit.title}</h1><p>{unit.question}</p></div>
-        {onExit && <button type="button" className="exploration-exit-button" onClick={onExit}>先离开</button>}
+        <div>
+          <span className="exploration-eyebrow">音乐探索剧场</span>
+          <h1>{unit.title}</h1>
+          <p>{unit.question}</p>
+        </div>
+        {onExit && (
+          <button type="button" className="exploration-exit-button" onClick={onExit}>
+            先离开
+          </button>
+        )}
       </header>
       <div className="exploration-theater-layout exploration-theater__layout">
         <nav className="exploration-stage-nav" aria-label="探索阶段">
-          {STAGES.map((stage, index) => <button key={stage.id} type="button" aria-current={stage.id === session.stage ? 'step' : undefined} disabled={index > currentStageIndex} onClick={() => goToStage(stage.id)} className={stage.id === session.stage ? 'active' : index < currentStageIndex ? 'done' : ''}><b>{index + 1}</b><span>{stage.label}</span><small>{stage.hint}</small></button>)}
+          {STAGES.map((stage, index) => (
+            <button
+              key={stage.id}
+              type="button"
+              aria-current={stage.id === session.stage ? 'step' : undefined}
+              disabled={index > currentStageIndex}
+              onClick={() => goToStage(stage.id)}
+              className={
+                stage.id === session.stage ? 'active' : index < currentStageIndex ? 'done' : ''
+              }
+            >
+              <b>{index + 1}</b>
+              <span>{stage.label}</span>
+              <small>{stage.hint}</small>
+            </button>
+          ))}
         </nav>
         <main className="exploration-main">
-          {audioUnavailable && <p className="exploration-audio-notice" aria-live="polite">设备暂时没有发出声音，但仍可以继续选择、比较和保存发现。</p>}
+          {audioUnavailable && (
+            <p className="exploration-audio-notice" aria-live="polite">
+              设备暂时没有发出声音，但仍可以继续选择、比较和保存发现。
+            </p>
+          )}
           {content}
           <div className="exploration-stage-actions">
-            {currentStage.id !== 'listen' && <button type="button" className="exploration-previous-button" onClick={goToPreviousStage}>上一步</button>}
-            {currentStage.id !== 'reflect' && <button type="button" className="exploration-next-button" disabled={!canContinue || isPlaying} onClick={continueStage}>{currentStage.id === 'listen' ? '开始表达' : currentStage.id === 'express' ? '找一找依据' : currentStage.id === 'evidence' ? '看看音乐线索' : currentStage.id === 'concept' ? '带着线索再听' : '整理我的发现'}</button>}
+            {currentStage.id !== 'listen' && (
+              <button
+                type="button"
+                className="exploration-previous-button"
+                onClick={goToPreviousStage}
+              >
+                上一步
+              </button>
+            )}
+            {currentStage.id !== 'reflect' && (
+              <button
+                type="button"
+                className="exploration-next-button"
+                disabled={!canContinue || isPlaying}
+                onClick={continueStage}
+              >
+                {currentStage.id === 'listen'
+                  ? '开始表达'
+                  : currentStage.id === 'express'
+                    ? '找一找依据'
+                    : currentStage.id === 'evidence'
+                      ? '看看音乐线索'
+                      : currentStage.id === 'concept'
+                        ? '带着线索再听'
+                        : '整理我的发现'}
+              </button>
+            )}
           </div>
         </main>
-        <aside className="exploration-discovery-rail"><span className="exploration-eyebrow">本次发现</span><strong>{selectedFeeling?.label ?? '先听，再留下感觉'}</strong><p>{selectedEvidence ? `我从${selectedEvidence.label}听到了变化。` : '每个答案都可以从音乐里寻找依据。'}</p><small>进度 {Math.round(((currentStageIndex + (currentStage.id === 'reflect' ? 1 : 0)) / STAGES.length) * 100)}%</small></aside>
+        <aside className="exploration-discovery-rail">
+          <span className="exploration-eyebrow">本次发现</span>
+          <strong>{selectedFeeling?.label ?? '先听，再留下感觉'}</strong>
+          <p>
+            {selectedEvidence
+              ? `我从${selectedEvidence.label}听到了变化。`
+              : '每个答案都可以从音乐里寻找依据。'}
+          </p>
+          <small>
+            进度{' '}
+            {Math.round(
+              ((currentStageIndex + (currentStage.id === 'reflect' ? 1 : 0)) / STAGES.length) * 100
+            )}
+            %
+          </small>
+        </aside>
       </div>
     </div>
   )

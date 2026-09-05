@@ -1,5 +1,13 @@
 // 全局应用状态：模式（教师/学生）、导航、当前学生、当前曲目
-import { createContext, useContext, useState, useCallback, useEffect, useMemo, ReactNode } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useMemo,
+  ReactNode,
+} from 'react'
 import { findStudentById, getCurrentStudentId, loadRoster, setCurrentStudentId } from './students'
 import { createTheoryFocus, TheoryFocus } from './theoryFocus'
 import type { TheoryStageId } from '../music/theoryCatalog'
@@ -94,11 +102,13 @@ function loadPrefs(): Prefs {
       if (!['teacher', 'lecture', 'student'].includes(parsed.mode)) {
         return { ...parsed, mode: 'teacher' }
       }
-      if (parsed.selectedGrade !== undefined) parsed.selectedGrade = parseGradeSelection(parsed.selectedGrade)
+      if (parsed.selectedGrade !== undefined)
+        parsed.selectedGrade = parseGradeSelection(parsed.selectedGrade)
       if (parsed.selectedClass !== undefined) {
-        parsed.selectedClass = typeof parsed.selectedClass === 'string' && parsed.selectedClass.trim()
-          ? parsed.selectedClass.trim()
-          : null
+        parsed.selectedClass =
+          typeof parsed.selectedClass === 'string' && parsed.selectedClass.trim()
+            ? parsed.selectedClass.trim()
+            : null
       }
       return parsed
     }
@@ -175,26 +185,32 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toggleNoteNames = useCallback(() => setShowNoteNames((v) => !v), [])
   const toggleSidebar = useCallback(() => setSidebarOpen((v) => !v), [])
 
-  const selectGrade = useCallback((grade: PrimaryGrade | null) => {
-    setSelectedGradeState(grade)
-    if (!currentStudentId || grade === null) return
-    const current = findStudentById(loadRoster(), currentStudentId)
-    if (current && current.grade !== grade) {
-      setCurrentId(null)
-      setCurrentStudentId(null)
-    }
-  }, [currentStudentId])
+  const selectGrade = useCallback(
+    (grade: PrimaryGrade | null) => {
+      setSelectedGradeState(grade)
+      if (!currentStudentId || grade === null) return
+      const current = findStudentById(loadRoster(), currentStudentId)
+      if (current && current.grade !== grade) {
+        setCurrentId(null)
+        setCurrentStudentId(null)
+      }
+    },
+    [currentStudentId]
+  )
 
-  const selectClass = useCallback((className: string | null) => {
-    const nextClass = className?.trim() || null
-    setSelectedClassState(nextClass)
-    if (!currentStudentId || nextClass === null) return
-    const current = findStudentById(loadRoster(), currentStudentId)
-    if (current && normalizeClassName(current.className) !== nextClass) {
-      setCurrentId(null)
-      setCurrentStudentId(null)
-    }
-  }, [currentStudentId])
+  const selectClass = useCallback(
+    (className: string | null) => {
+      const nextClass = className?.trim() || null
+      setSelectedClassState(nextClass)
+      if (!currentStudentId || nextClass === null) return
+      const current = findStudentById(loadRoster(), currentStudentId)
+      if (current && normalizeClassName(current.className) !== nextClass) {
+        setCurrentId(null)
+        setCurrentStudentId(null)
+      }
+    },
+    [currentStudentId]
+  )
 
   const selectStudent = useCallback((id: string | null) => {
     setCurrentId(id)

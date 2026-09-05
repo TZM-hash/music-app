@@ -62,11 +62,11 @@ function readAll(): MusicDiscovery[] {
     return parsed.filter((item): item is MusicDiscovery => {
       return Boolean(
         item &&
-          typeof item.id === 'string' &&
-          typeof item.topicId === 'string' &&
-          typeof item.title === 'string' &&
-          typeof item.statement === 'string' &&
-          typeof item.createdAt === 'number'
+        typeof item.id === 'string' &&
+        typeof item.topicId === 'string' &&
+        typeof item.title === 'string' &&
+        typeof item.statement === 'string' &&
+        typeof item.createdAt === 'number'
       )
     })
   } catch {
@@ -130,10 +130,16 @@ export function addMusicDiscoveryToList(
   discovery: MusicDiscovery,
   limit = MAX_DISCOVERIES
 ): MusicDiscovery[] {
-  return sortLatest([discovery, ...existing.filter((item) => item.id !== discovery.id)]).slice(0, limit)
+  return sortLatest([discovery, ...existing.filter((item) => item.id !== discovery.id)]).slice(
+    0,
+    limit
+  )
 }
 
-export function saveMusicDiscovery(draft: MusicDiscoveryDraft, createdAt = Date.now()): MusicDiscovery {
+export function saveMusicDiscovery(
+  draft: MusicDiscoveryDraft,
+  createdAt = Date.now()
+): MusicDiscovery {
   const existing = readAll()
   const discovery = createMusicDiscovery(draft, createdAt, nextSequence(existing))
   writeAll(addMusicDiscoveryToList(existing, discovery))

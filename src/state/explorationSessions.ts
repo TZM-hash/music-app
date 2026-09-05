@@ -25,7 +25,14 @@ export interface ExplorationSession extends ExplorationResponse {
 
 export const EXPLORATION_SESSION_STORE_KEY = 'music-edu-exploration-sessions-v1'
 
-const STAGES: ExplorationStageId[] = ['listen', 'express', 'evidence', 'concept', 'relisten', 'reflect']
+const STAGES: ExplorationStageId[] = [
+  'listen',
+  'express',
+  'evidence',
+  'concept',
+  'relisten',
+  'reflect',
+]
 const MAX_ID_LENGTH = 80
 const MAX_CONCEPT_IDS = 8
 const MAX_REFLECTION_LENGTH = 240
@@ -51,7 +58,9 @@ function normalizeString(value: unknown, maxLength = MAX_ID_LENGTH): string | un
 function normalizeConceptIds(value: unknown): string[] | undefined {
   if (!Array.isArray(value)) return undefined
   const unique = Array.from(
-    new Set(value.map((item) => normalizeString(item)).filter((item): item is string => Boolean(item)))
+    new Set(
+      value.map((item) => normalizeString(item)).filter((item): item is string => Boolean(item))
+    )
   ).slice(0, MAX_CONCEPT_IDS)
   return unique
 }
@@ -112,7 +121,12 @@ export function updateExplorationSession(
   const conceptIds = normalizeConceptIds(response.conceptIds)
 
   if (firstFeelingId !== undefined) next.firstFeelingId = firstFeelingId
-  if (response.pathId === 'emotion' || response.pathId === 'movement' || response.pathId === 'story' || response.pathId === 'culture') {
+  if (
+    response.pathId === 'emotion' ||
+    response.pathId === 'movement' ||
+    response.pathId === 'story' ||
+    response.pathId === 'culture'
+  ) {
     next.pathId = response.pathId
   }
   if (expressionId !== undefined) next.expressionId = expressionId
@@ -152,7 +166,11 @@ function readSessions(): ExplorationSession[] {
     const raw = localStorage.getItem(EXPLORATION_SESSION_STORE_KEY)
     if (!raw) return []
     const parsed: unknown = JSON.parse(raw)
-    return Array.isArray(parsed) ? parsed.map(parseSession).filter((session): session is ExplorationSession => session !== null) : []
+    return Array.isArray(parsed)
+      ? parsed
+          .map(parseSession)
+          .filter((session): session is ExplorationSession => session !== null)
+      : []
   } catch {
     return []
   }
@@ -162,7 +180,9 @@ function parseSession(value: unknown): ExplorationSession | null {
   if (!value || typeof value !== 'object') return null
   const record = value as Record<string, unknown>
   const unitId = normalizeString(record.unitId)
-  const studentId = normalizeStudentId(typeof record.studentId === 'string' ? record.studentId : null)
+  const studentId = normalizeStudentId(
+    typeof record.studentId === 'string' ? record.studentId : null
+  )
   if (!unitId || !studentId || !isStage(record.stage) || !isTimestamp(record.updatedAt)) return null
 
   const startedAt = isTimestamp(record.startedAt) ? record.startedAt : record.updatedAt
@@ -174,7 +194,11 @@ function parseSession(value: unknown): ExplorationSession | null {
     startedAt,
     updatedAt: record.updatedAt,
   }
-  const response = updateExplorationSession(session, record as ExplorationResponse, session.updatedAt)
+  const response = updateExplorationSession(
+    session,
+    record as ExplorationResponse,
+    session.updatedAt
+  )
   if (isTimestamp(record.completedAt) && response.stage === 'reflect' && response.relistenChoice) {
     response.completedAt = record.completedAt
   }
@@ -197,9 +221,11 @@ export function loadExplorationSession(
   const normalizedStudentId = normalizeStudentId(studentId)
   const normalizedUnitId = normalizeString(unitId)
   if (!normalizedStudentId || !normalizedUnitId) return null
-  return readSessions().find(
-    (session) => session.studentId === normalizedStudentId && session.unitId === normalizedUnitId
-  ) ?? null
+  return (
+    readSessions().find(
+      (session) => session.studentId === normalizedStudentId && session.unitId === normalizedUnitId
+    ) ?? null
+  )
 }
 
 export function saveExplorationSession(session: ExplorationSession): void {
@@ -215,11 +241,16 @@ export function saveExplorationSession(session: ExplorationSession): void {
   writeSessions([...sessions, normalized])
 }
 
-export function clearExplorationSession(studentId: string | null | undefined, unitId: string): void {
+export function clearExplorationSession(
+  studentId: string | null | undefined,
+  unitId: string
+): void {
   const normalizedStudentId = normalizeStudentId(studentId)
   const normalizedUnitId = normalizeString(unitId)
   if (!normalizedStudentId || !normalizedUnitId) return
-  writeSessions(readSessions().filter(
-    (session) => session.studentId !== normalizedStudentId || session.unitId !== normalizedUnitId
-  ))
+  writeSessions(
+    readSessions().filter(
+      (session) => session.studentId !== normalizedStudentId || session.unitId !== normalizedUnitId
+    )
+  )
 }

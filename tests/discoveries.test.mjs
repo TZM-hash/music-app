@@ -34,27 +34,36 @@ beforeEach(() => {
 
 test('我的音乐发现按学生隔离并按最新时间排序', () => {
   const discoveries = loadDiscoveries()
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-a',
-    topicId: 'steady-beat',
-    title: '稳定拍',
-    statement: '我发现脚步要一直走。',
-    grade: 2,
-  }, 100)
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-a',
-    topicId: 'pitch-up-down',
-    title: '音的高低',
-    statement: '我发现旋律会向上走。',
-    grade: 2,
-  }, 200)
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-b',
-    topicId: 'sound-four-properties',
-    title: '声音的四个要素',
-    statement: '我发现声音有不同的样子。',
-    grade: 1,
-  }, 300)
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-a',
+      topicId: 'steady-beat',
+      title: '稳定拍',
+      statement: '我发现脚步要一直走。',
+      grade: 2,
+    },
+    100
+  )
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-a',
+      topicId: 'pitch-up-down',
+      title: '音的高低',
+      statement: '我发现旋律会向上走。',
+      grade: 2,
+    },
+    200
+  )
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-b',
+      topicId: 'sound-four-properties',
+      title: '声音的四个要素',
+      statement: '我发现声音有不同的样子。',
+      grade: 1,
+    },
+    300
+  )
 
   const own = discoveries.loadMusicDiscoveries('stu-a')
   assert.equal(own.length, 2)
@@ -65,13 +74,16 @@ test('我的音乐发现按学生隔离并按最新时间排序', () => {
 
 test('发现摘要提供数量、最近记录和友好文案', () => {
   const discoveries = loadDiscoveries()
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-a',
-    topicId: 'pentatonic-scale',
-    title: '五声音阶',
-    statement: '五个音也能写出旋律。',
-    source: 'textbook',
-  }, 500)
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-a',
+      topicId: 'pentatonic-scale',
+      title: '五声音阶',
+      statement: '五个音也能写出旋律。',
+      source: 'textbook',
+    },
+    500
+  )
 
   const summary = discoveries.buildDiscoverySummary(discoveries.loadMusicDiscoveries('stu-a'))
   assert.equal(summary.total, 1)
@@ -81,18 +93,24 @@ test('发现摘要提供数量、最近记录和友好文案', () => {
 
 test('删除学生时可以级联清理发现记录', () => {
   const discoveries = loadDiscoveries()
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-a',
-    topicId: 'steady-beat',
-    title: '稳定拍',
-    statement: '我能跟着拍点走。',
-  }, 100)
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-b',
-    topicId: 'tempo-basic',
-    title: '速度',
-    statement: '我能听出快慢。',
-  }, 200)
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-a',
+      topicId: 'steady-beat',
+      title: '稳定拍',
+      statement: '我能跟着拍点走。',
+    },
+    100
+  )
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-b',
+      topicId: 'tempo-basic',
+      title: '速度',
+      statement: '我能听出快慢。',
+    },
+    200
+  )
 
   discoveries.removeStudentDiscoveries('stu-a')
   assert.equal(discoveries.loadMusicDiscoveries('stu-a').length, 0)
@@ -101,19 +119,22 @@ test('删除学生时可以级联清理发现记录', () => {
 
 test('探索发现卡保存感受、路径、音乐证据和二次聆听变化', () => {
   const discoveries = loadDiscoveries()
-  discoveries.saveMusicDiscovery({
-    studentId: 'stu-a',
-    unitId: 'jasmine',
-    topicId: 'pentatonic-scale',
-    title: '茉莉花 · 江南的味道',
-    statement: '我从平稳的旋律里听到温柔。',
-    path: 'emotion',
-    firstFeeling: '温柔',
-    evidence: ['级进', '音色柔和'],
-    concepts: ['旋律', '五声音阶'],
-    relistenChoice: 'new-clue',
-    relistenReflection: '第二次听到了旋律里的五个音。',
-  }, 600)
+  discoveries.saveMusicDiscovery(
+    {
+      studentId: 'stu-a',
+      unitId: 'jasmine',
+      topicId: 'pentatonic-scale',
+      title: '茉莉花 · 江南的味道',
+      statement: '我从平稳的旋律里听到温柔。',
+      path: 'emotion',
+      firstFeeling: '温柔',
+      evidence: ['级进', '音色柔和'],
+      concepts: ['旋律', '五声音阶'],
+      relistenChoice: 'new-clue',
+      relistenReflection: '第二次听到了旋律里的五个音。',
+    },
+    600
+  )
 
   const [saved] = discoveries.loadMusicDiscoveries('stu-a')
   assert.equal(saved.unitId, 'jasmine')
@@ -122,10 +143,19 @@ test('探索发现卡保存感受、路径、音乐证据和二次聆听变化',
 })
 
 test('旧发现记录没有新增字段时仍然可以读取', () => {
-  globalThis.localStorage.setItem('music-edu-discoveries-v1', JSON.stringify([{
-    id: 'legacy-1', studentId: 'stu-old', topicId: 'steady-beat',
-    title: '稳定拍', statement: '我能跟着拍点走。', createdAt: 100,
-  }]))
+  globalThis.localStorage.setItem(
+    'music-edu-discoveries-v1',
+    JSON.stringify([
+      {
+        id: 'legacy-1',
+        studentId: 'stu-old',
+        topicId: 'steady-beat',
+        title: '稳定拍',
+        statement: '我能跟着拍点走。',
+        createdAt: 100,
+      },
+    ])
+  )
   const discoveries = loadDiscoveries()
   const [legacy] = discoveries.loadMusicDiscoveries('stu-old')
   assert.equal(legacy.title, '稳定拍')

@@ -2,12 +2,7 @@ import type { PrimaryGrade } from './zhejiangCurriculum'
 
 export type ExplorationPath = 'emotion' | 'movement' | 'story' | 'culture'
 export type ExplorationStageId =
-  | 'listen'
-  | 'express'
-  | 'evidence'
-  | 'concept'
-  | 'relisten'
-  | 'reflect'
+  'listen' | 'express' | 'evidence' | 'concept' | 'relisten' | 'reflect'
 export type ExplorationAgeBand = 'primary-1-2' | 'primary-3-4' | 'primary-5-6'
 
 export interface ExplorationChoice {
@@ -111,7 +106,12 @@ export const JASMINE_EXPLORATION_UNIT: ExplorationUnit = {
       choices: [
         { id: 'culture-water-town', label: '水乡小桥', hint: '河水、桥影和细雨', color: '#acd1d9' },
         { id: 'culture-jasmine', label: '茉莉花香', hint: '清淡又有记忆的香气', color: '#e8e4bb' },
-        { id: 'culture-folk-song', label: '人们传唱的民歌', hint: '不同地方唱出自己的味道', color: '#e2b69e' },
+        {
+          id: 'culture-folk-song',
+          label: '人们传唱的民歌',
+          hint: '不同地方唱出自己的味道',
+          color: '#e2b69e',
+        },
       ],
     },
   ],
@@ -188,9 +188,24 @@ export const JASMINE_EXPLORATION_UNIT: ExplorationUnit = {
   relisten: {
     prompt: '带着自己的感受和刚发现的线索，再听一次。你想怎样更新自己的发现？',
     choices: [
-      { id: 'keep-feeling', label: '保留原来的感受', hint: '我还是这样听，但现在知道了原因。', color: '#b7d99b' },
-      { id: 'add-clue', label: '增加一个新的音乐线索', hint: '我又听到了旋律、音色或地域的线索。', color: '#acd1d9' },
-      { id: 'change-interpretation', label: '改变自己的理解', hint: '新的线索让我想到了不同的画面。', color: '#e2b69e' },
+      {
+        id: 'keep-feeling',
+        label: '保留原来的感受',
+        hint: '我还是这样听，但现在知道了原因。',
+        color: '#b7d99b',
+      },
+      {
+        id: 'add-clue',
+        label: '增加一个新的音乐线索',
+        hint: '我又听到了旋律、音色或地域的线索。',
+        color: '#acd1d9',
+      },
+      {
+        id: 'change-interpretation',
+        label: '改变自己的理解',
+        hint: '新的线索让我想到了不同的画面。',
+        color: '#e2b69e',
+      },
     ],
   },
   reflectionPrompts: {
@@ -206,9 +221,7 @@ export function getExplorationUnit(id?: string): ExplorationUnit {
   return EXPLORATION_UNITS.find((unit) => unit.id === id) ?? JASMINE_EXPLORATION_UNIT
 }
 
-export function getExplorationAgeBand(
-  grade?: PrimaryGrade | number | null
-): ExplorationAgeBand {
+export function getExplorationAgeBand(grade?: PrimaryGrade | number | null): ExplorationAgeBand {
   if (typeof grade !== 'number' || !Number.isInteger(grade) || grade < 1 || grade > 6) {
     return 'primary-1-2'
   }
