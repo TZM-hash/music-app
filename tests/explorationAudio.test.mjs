@@ -34,11 +34,13 @@ function createTsLoader() {
 const audio = () => createTsLoader()('src/music/explorationAudio.ts')
 
 test('茉莉花旋律非空、无休止符并包含完整音频提示字段', () => {
-  const melody = audio().getSongMelody('jasmine')
+  const { getSongMelody } = audio()
+  const melody = getSongMelody('jasmine')
 
   assert.ok(melody.length > 0)
   assert.ok(melody.every((cue) => cue.note !== 'rest'))
   assert.ok(melody.every((cue) => cue.note && cue.beats > 0 && cue.velocity > 0 && cue.patch))
+  assert.deepEqual(getSongMelody('unknown-song'), [])
 })
 
 test('茉莉花片段按可演奏旋律切出八个提示', () => {
@@ -76,16 +78,42 @@ test('茉莉花流动与跳跃证据变体长度相同但音符序列不同', ()
   )
 })
 
-test('返回结果和提示对象相互独立', () => {
-  const { getSongMelody } = audio()
-  const first = getSongMelody('jasmine')
-  const second = getSongMelody('jasmine')
+test('未知证据单元和无效变体回退到流动的茉莉花片段', () => {
+  const { getEvidenceVariant } = audio()
+  const flowing = getEvidenceVariant('jasmine', 'flowing')
 
-  first.pop()
-  first[0].note = 'C9'
+  assert.deepEqual(getEvidenceVariant('unknown-unit', 'flowing'), flowing)
+  assert.deepEqual(getEvidenceVariant('jasmine', 'invalid-variant'), flowing)
+})
 
-  assert.notEqual(first.length, second.length)
-  assert.notEqual(first[0].note, second[0].note)
+test('旋律、片段和两种证据变体的返回结果相互独立', () => {
+  const { getSongMelody, getSongFragment, getEvidenceVariant } = audio()
+  const melody = getSongMelody('jasmine')
+  const fragment = getSongFragment('jasmine', 0, 8)
+  const flowing = getEvidenceVariant('jasmine', 'flowing')
+  const jumping = getEvidenceVariant('jasmine', 'jumping')
+  const melodyLength = melody.length
+  const fragmentLength = fragment.length
+  const flowingLength = flowing.length
+  const jumpingLength = jumping.length
+
+  melody.pop()
+  melody[0].note = 'C9'
+  fragment.pop()
+  fragment[0].note = 'D9'
+  flowing.pop()
+  flowing[0].note = 'E9'
+  jumping.pop()
+  jumping[0].note = 'F9'
+
+  assert.equal(getSongMelody('jasmine').length, melodyLength)
+  assert.equal(getSongMelody('jasmine')[0].note, 'E4')
+  assert.equal(getSongFragment('jasmine', 0, 8).length, fragmentLength)
+  assert.equal(getSongFragment('jasmine', 0, 8)[0].note, 'E4')
+  assert.equal(getEvidenceVariant('jasmine', 'flowing').length, flowingLength)
+  assert.equal(getEvidenceVariant('jasmine', 'flowing')[0].note, 'E4')
+  assert.equal(getEvidenceVariant('jasmine', 'jumping').length, jumpingLength)
+  assert.equal(getEvidenceVariant('jasmine', 'jumping')[0].note, 'E4')
 })
 
 test('提示时长按拍数换算并处理无效速度与短拍', () => {

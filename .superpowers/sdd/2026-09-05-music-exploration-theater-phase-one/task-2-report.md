@@ -28,3 +28,14 @@
 
 - Audio playback integration is intentionally deferred to later UI tasks, per the brief.
 - The repository test script expands the focused command to the full test suite because it is configured as `node --test tests/*.test.mjs`; the full suite passed.
+
+## Review fix
+
+- Updated `tests/explorationAudio.test.mjs` with explicit assertions that unknown song ids return `[]`, and unknown evidence unit ids or invalid variants return the flowing jasmine fragment.
+- Expanded copy-isolation coverage to mutate arrays and cue objects from melody, fragment, flowing evidence, and jumping evidence results, then verified later calls are unchanged.
+- No implementation changes were needed; the review findings exposed test coverage gaps only.
+
+### Verification commands and outputs
+
+- `npm test -- tests/explorationAudio.test.mjs` — passed: `144` tests, `144` passed, `0` failed.
+- `npm run build` — passed: TypeScript compilation and Vite production build completed; `1111 modules transformed`, `dist/index.html 6,174.39 kB`.
