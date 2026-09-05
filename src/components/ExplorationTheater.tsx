@@ -121,7 +121,7 @@ export default function ExplorationTheater({
     setSession(restored ?? createExplorationSession(unit.id, studentId, grade))
     setHasListened(false)
     setEvidencePreview(null)
-    setReflection('')
+    setReflection(restored?.relistenReflection ?? '')
     setSaveNotice('')
     savedRef.current = false
   }, [grade, studentId, unit.id])
@@ -130,10 +130,17 @@ export default function ExplorationTheater({
     saveExplorationSession(session)
   }, [session])
 
-  useEffect(() => () => {
+  useEffect(() => {
     tokenRef.current += 1
     stopAllAudio()
-  }, [])
+    setIsPlaying(false)
+    setAudioUnavailable(false)
+
+    return () => {
+      tokenRef.current += 1
+      stopAllAudio()
+    }
+  }, [unit.id])
 
   const stopPlayback = useCallback(() => {
     tokenRef.current += 1
@@ -198,6 +205,31 @@ export default function ExplorationTheater({
     if (!next) return
     setSession((current) => advanceExplorationStage(current, next.id))
   }, [canContinue, currentStageIndex, session.stage, updateResponse, visibleConcepts])
+
+  const goToStage = useCallback((stage: ExplorationStageId) => {
+    const targetIndex = STAGES.findIndex((item) => item.id === stage)
+    if (targetIndex < 0 || targetIndex > currentStageIndex) return
+    if (targetIndex === currentStageIndex) return
+
+    savedRef.current = false
+    setSaveNotice('')
+
+    setSession((current) => {
+      const currentIndex = STAGES.findIndex((item) => item.id === current.stage)
+      if (targetIndex > currentIndex || stage === current.stage) return current
+      return {
+        ...current,
+        stage,
+        completedAt: undefined,
+        updatedAt: Date.now(),
+      }
+    })
+  }, [currentStageIndex])
+
+  const goToPreviousStage = useCallback(() => {
+    const previous = STAGES[currentStageIndex - 1]
+    if (previous) goToStage(previous.id)
+  }, [currentStageIndex, goToStage])
 
   const selectRelisten = (choice: ExplorationChoice) => {
     const normalized = choiceForRelisten(choice.id)
@@ -371,12 +403,15 @@ export default function ExplorationTheater({
       </header>
       <div className="exploration-theater-layout exploration-theater__layout">
         <nav className="exploration-stage-nav" aria-label="探索阶段">
-          {STAGES.map((stage, index) => <button key={stage.id} type="button" aria-current={stage.id === session.stage ? 'step' : undefined} disabled={index > currentStageIndex} className={stage.id === session.stage ? 'active' : index < currentStageIndex ? 'done' : ''}><b>{index + 1}</b><span>{stage.label}</span><small>{stage.hint}</small></button>)}
+          {STAGES.map((stage, index) => <button key={stage.id} type="button" aria-current={stage.id === session.stage ? 'step' : undefined} disabled={index > currentStageIndex} onClick={() => goToStage(stage.id)} className={stage.id === session.stage ? 'active' : index < currentStageIndex ? 'done' : ''}><b>{index + 1}</b><span>{stage.label}</span><small>{stage.hint}</small></button>)}
         </nav>
         <main className="exploration-main">
           {audioUnavailable && <p className="exploration-audio-notice" aria-live="polite">设备暂时没有发出声音，但仍可以继续选择、比较和保存发现。</p>}
           {content}
-          {currentStage.id !== 'reflect' && <div className="exploration-stage-actions"><button type="button" className="exploration-next-button" disabled={!canContinue || isPlaying} onClick={continueStage}>{currentStage.id === 'listen' ? '开始表达' : currentStage.id === 'express' ? '找一找依据' : currentStage.id === 'evidence' ? '看看音乐线索' : currentStage.id === 'concept' ? '带着线索再听' : '整理我的发现'}</button></div>}
+          <div className="exploration-stage-actions">
+            {currentStage.id !== 'listen' && <button type="button" className="exploration-previous-button" onClick={goToPreviousStage}>上一步</button>}
+            {currentStage.id !== 'reflect' && <button type="button" className="exploration-next-button" disabled={!canContinue || isPlaying} onClick={continueStage}>{currentStage.id === 'listen' ? '开始表达' : currentStage.id === 'express' ? '找一找依据' : currentStage.id === 'evidence' ? '看看音乐线索' : currentStage.id === 'concept' ? '带着线索再听' : '整理我的发现'}</button>}
+          </div>
         </main>
         <aside className="exploration-discovery-rail"><span className="exploration-eyebrow">本次发现</span><strong>{selectedFeeling?.label ?? '先听，再留下感觉'}</strong><p>{selectedEvidence ? `我从${selectedEvidence.label}听到了变化。` : '每个答案都可以从音乐里寻找依据。'}</p><small>进度 {Math.round(((currentStageIndex + (currentStage.id === 'reflect' ? 1 : 0)) / STAGES.length) * 100)}%</small></aside>
       </div>

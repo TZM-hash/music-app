@@ -60,3 +60,22 @@ test('探索剧场使用观察性反馈而不是统一审美答案', () => {
   assert.match(source, /再听/)
   assert.doesNotMatch(source, /审美正确|你的感受是错误的/)
 })
+
+test('探索剧场恢复反思、支持回退修订并隔离切换单元后的播放', () => {
+  const source = readSource('src/components/ExplorationTheater.tsx')
+
+  assert.match(source, /setReflection\(restored\?\.relistenReflection \?\? ''\)/)
+  assert.match(source, /relistenReflection:\s*reflection/)
+  assert.match(source, /goToPreviousStage/)
+  assert.match(source, />上一步</)
+  assert.match(source, /onClick=\{\(\) => goToStage\(stage\.id\)\}/)
+  assert.match(source, /completedAt:\s*undefined/)
+  assert.match(
+    source,
+    /const goToStage[\s\S]*?savedRef\.current = false[\s\S]*?setSaveNotice\(''\)/
+  )
+  assert.match(
+    source,
+    /useEffect\(\(\) => \{[\s\S]*?tokenRef\.current \+= 1[\s\S]*?stopAllAudio\(\)[\s\S]*?setIsPlaying\(false\)[\s\S]*?return \(\) => \{[\s\S]*?tokenRef\.current \+= 1[\s\S]*?stopAllAudio\(\)[\s\S]*?\}\s*\}, \[unit\.id\]\)/
+  )
+})
