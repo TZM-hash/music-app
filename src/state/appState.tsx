@@ -55,6 +55,8 @@ interface AppState {
   theoryFocus: TheoryFocus | null
   /** 从学段总览进入互动课堂时携带的学段（lesson 为学习主轴） */
   lessonStage: TheoryStageId | null
+  /** 当前互动课堂承载的探索单元；缺省时由页面回退到茉莉花试点 */
+  explorationUnitId: string | null
   /** 窄屏时侧边栏是否展开 */
   sidebarOpen: boolean
   setMode: (m: AppMode) => void
@@ -62,6 +64,8 @@ interface AppState {
   openTheory: (focus?: TheoryFocus, options?: RouteNavigationOptions) => void
   /** 进入互动课堂，可携带学段（让顶部 tab 自动落到该学段） */
   openLesson: (stage?: TheoryStageId, options?: RouteNavigationOptions) => void
+  /** 进入音乐探索剧场，默认打开茉莉花试点 */
+  openExploration: (unitId?: string, options?: RouteNavigationOptions) => void
   goBack: () => void
   toggleNoteNames: () => void
   selectGrade: (grade: PrimaryGrade | null) => void
@@ -131,6 +135,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [activeSongId, setActiveSongId] = useState<string | null>(null)
   const [theoryFocus, setTheoryFocus] = useState<TheoryFocus | null>(null)
   const [lessonStage, setLessonStage] = useState<TheoryStageId | null>(null)
+  const [explorationUnitId, setExplorationUnitId] = useState<string | null>(null)
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   // 偏好持久化
@@ -152,6 +157,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [])
   const openLesson = useCallback((stage?: TheoryStageId, options?: RouteNavigationOptions) => {
     if (stage) setLessonStage(stage)
+    setNavigation((current) => applyRouteNavigation(current, 'lesson', options))
+    setNavDirection('forward')
+    setSidebarOpen(false)
+  }, [])
+  const openExploration = useCallback((unitId = 'jasmine', options?: RouteNavigationOptions) => {
+    setExplorationUnitId(unitId)
     setNavigation((current) => applyRouteNavigation(current, 'lesson', options))
     setNavDirection('forward')
     setSidebarOpen(false)
@@ -215,6 +226,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (route !== 'lesson' && lessonStage) setLessonStage(null)
   }, [route, lessonStage])
 
+  useEffect(() => {
+    if (route !== 'lesson' && explorationUnitId) setExplorationUnitId(null)
+  }, [route, explorationUnitId])
+
   // memo 化 context value：否则每次 Provider 重渲染都会生成新对象，
   // 导致所有 useApp() 消费者（几乎全站）无差别重渲染。
   const value = useMemo<AppState>(
@@ -232,11 +247,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       activeSongId,
       theoryFocus,
       lessonStage,
+      explorationUnitId,
       sidebarOpen,
       setMode,
       navigate,
       openTheory,
       openLesson,
+      openExploration,
       goBack,
       toggleNoteNames,
       selectGrade,
@@ -258,11 +275,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
       activeSongId,
       theoryFocus,
       lessonStage,
+      explorationUnitId,
       sidebarOpen,
       setMode,
       navigate,
       openTheory,
       openLesson,
+      openExploration,
       goBack,
       toggleNoteNames,
       selectGrade,

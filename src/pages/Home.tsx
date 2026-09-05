@@ -57,7 +57,7 @@ function theoryToReviewQuestions(topics: typeof THEORY_TOPICS = THEORY_TOPICS): 
 }
 
 export default function Home() {
-  const { navigate, mode, openTheory, currentStudentId, selectedGrade, selectedClass } = useApp()
+  const { navigate, mode, openTheory, openExploration, currentStudentId, selectedGrade, selectedClass } = useApp()
   const isLectureMode = mode === 'lecture'
 
   // 学生切换会更新 App context；这里直接读取当前档案，保证首页推荐和“我的发现”立即跟随切换。
@@ -199,12 +199,12 @@ export default function Home() {
     <div className="pro-home music-home">
       <section className="pro-hero card music-hero">
         <div className="hero-copy">
-          <span className="pro-kicker">轻松、动态、可互动的音乐探索空间</span>
+          <span className="pro-kicker">今日探索 · 轻松、动态、可互动的音乐空间</span>
           <h1>继续今天的音乐探索。</h1>
           <p>沿着听、玩、挑战和创作的课堂主线，完成下一步就好。</p>
           <div className="hero-actions">
-            <button className="primary-action" onClick={() => navigate(continueRoute)}>
-              {continueLabel}
+            <button className="primary-action" onClick={() => openExploration('jasmine')}>
+              {continueLabel.replace('探险', '探索')}
             </button>
           </div>
         </div>
@@ -276,13 +276,7 @@ export default function Home() {
         <div className="pro-actions">
           <button
             className="primary-action"
-            onClick={() => recommendationTopic
-              ? openTheory({
-                  topicId: recommendationTopic.id,
-                  category: recommendationTopic.category,
-                  stage: recommendationTopic.stage,
-                })
-              : navigate('lesson')}
+            onClick={() => openExploration('jasmine')}
           >
             开始探索
           </button>
@@ -382,7 +376,9 @@ export default function Home() {
             <button
               type="button"
               className="home-progress-discovery-item"
-              onClick={() => openTheory({ topicId: discoverySummary.latest[0].topicId })}
+              onClick={() => discoverySummary.latest[0].unitId === 'jasmine'
+                ? openExploration('jasmine')
+                : openTheory({ topicId: discoverySummary.latest[0].topicId })}
             >
               <span>“{discoverySummary.latest[0].statement}”</span>
               <small>{discoverySummary.latest[0].title} · 再听一遍</small>
