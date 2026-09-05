@@ -111,6 +111,27 @@ test('response updates preserve subjective choices and normalize known fields', 
   assert.equal(session.updatedAt, 200)
 })
 
+test('changing path clears the old expression selection for the express stage', () => {
+  const load = createTsLoader()
+  const { createExplorationSession, updateExplorationSession } = load(
+    'src/state/explorationSessions.ts'
+  )
+
+  let session = updateExplorationSession(createExplorationSession('jasmine', 'student-1', 3, 100), {
+    firstFeelingId: 'bright',
+    pathId: 'emotion',
+    expressionId: 'warm',
+  }, 200)
+  assert.equal(Boolean(session.firstFeelingId && session.pathId && session.expressionId), true)
+
+  session = updateExplorationSession(session, { pathId: 'movement' }, 300)
+
+  assert.equal(session.pathId, 'movement')
+  assert.equal(session.expressionId, undefined)
+  assert.equal(session.firstFeelingId, 'bright')
+  assert.equal(Boolean(session.firstFeelingId && session.pathId && session.expressionId), false)
+})
+
 test('exploration progress stays within bounds and completed sessions report one', () => {
   const load = createTsLoader()
   const {

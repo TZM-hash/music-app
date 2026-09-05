@@ -127,6 +127,7 @@ export function updateExplorationSession(
     response.pathId === 'story' ||
     response.pathId === 'culture'
   ) {
+    if (next.pathId !== response.pathId) delete next.expressionId
     next.pathId = response.pathId
   }
   if (expressionId !== undefined) next.expressionId = expressionId
