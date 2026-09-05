@@ -1,7 +1,5 @@
 import type { PrimaryGrade, Semester } from '../music/zhejiangCurriculum'
-
-// Kept local until the planned explorationUnits module is present in this checkout.
-export type ExplorationPath = 'emotion' | 'movement' | 'story' | 'culture'
+import type { ExplorationPath } from '../music/explorationUnits'
 
 export type DiscoverySource = 'textbook' | 'extension'
 
