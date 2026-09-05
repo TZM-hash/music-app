@@ -26,6 +26,32 @@ test('探索剧场包含试听、确认、再听和无音频降级路径', () =>
   assert.match(source, /再听一次/)
   assert.match(source, /evidenceId/)
   assert.match(source, /relistenChoice/)
+  assert.match(source, /getSongFragment/)
+  assert.match(source, /getEvidenceVariant/)
+  assert.match(source, /getCueDurationMs/)
+  assert.match(source, /loadExplorationSession/)
+  assert.match(source, /createExplorationSession/)
+  assert.match(source, /updateExplorationSession/)
+  assert.match(source, /advanceExplorationStage/)
+  assert.match(source, /saveExplorationSession/)
+  assert.match(source, /saveMusicDiscovery/)
+})
+
+test('探索剧场声明完整 props 和响应式三栏布局契约', () => {
+  const component = readSource('src/components/ExplorationTheater.tsx')
+  const styles = readSource('src/components/explorationTheater.css')
+  assert.match(component, /export interface ExplorationTheaterProps/)
+  for (const prop of ['unit', 'studentId', 'grade', 'onExit', 'onComplete']) {
+    assert.match(component, new RegExp(`\\b${prop}\\b`))
+  }
+  assert.match(component, /aria-current=/)
+  assert.match(component, /disabled=/)
+  assert.match(component, /aria-pressed=/)
+  assert.match(component, /role="status"/)
+  assert.match(styles, /\.exploration-theater\s*\{/)
+  assert.match(styles, /grid-template-columns:\s*174px\s+minmax\(0, 1fr\)\s+210px/)
+  assert.match(styles, /@media\s*\(max-width:\s*720px\)/)
+  assert.match(styles, /\.exploration-theater__layout\s*\{[\s\S]*?display:\s*block/)
 })
 
 test('探索剧场使用观察性反馈而不是统一审美答案', () => {
