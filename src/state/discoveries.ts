@@ -1,5 +1,8 @@
 import type { PrimaryGrade, Semester } from '../music/zhejiangCurriculum'
 
+// Kept local until the planned explorationUnits module is present in this checkout.
+export type ExplorationPath = 'emotion' | 'movement' | 'story' | 'culture'
+
 export type DiscoverySource = 'textbook' | 'extension'
 
 export interface MusicDiscovery {
@@ -13,6 +16,12 @@ export interface MusicDiscovery {
   semester?: Semester
   unitId?: string
   unitTitle?: string
+  path?: ExplorationPath
+  firstFeeling?: string
+  evidence?: string[]
+  concepts?: string[]
+  relistenChoice?: string
+  relistenReflection?: string
   tags: string[]
   createdAt: number
 }
@@ -27,6 +36,12 @@ export interface MusicDiscoveryDraft {
   semester?: Semester
   unitId?: string
   unitTitle?: string
+  path?: ExplorationPath
+  firstFeeling?: string
+  evidence?: string[]
+  concepts?: string[]
+  relistenChoice?: string
+  relistenReflection?: string
   tags?: string[]
 }
 
@@ -99,7 +114,15 @@ export function createMusicDiscovery(
     ...(draft.semester !== undefined ? { semester: draft.semester } : {}),
     ...(draft.unitId ? { unitId: draft.unitId } : {}),
     ...(draft.unitTitle ? { unitTitle: draft.unitTitle } : {}),
-    tags: Array.from(new Set((draft.tags ?? []).filter(Boolean))).slice(0, 6),
+    ...(draft.path ? { path: draft.path } : {}),
+    ...(draft.firstFeeling ? { firstFeeling: draft.firstFeeling.trim().slice(0, 40) } : {}),
+    evidence: Array.from(new Set((draft.evidence ?? []).filter(Boolean))).slice(0, 8),
+    concepts: Array.from(new Set((draft.concepts ?? []).filter(Boolean))).slice(0, 8),
+    ...(draft.relistenChoice ? { relistenChoice: draft.relistenChoice } : {}),
+    ...(draft.relistenReflection
+      ? { relistenReflection: draft.relistenReflection.trim().slice(0, 160) }
+      : {}),
+    tags: Array.from(new Set((draft.tags ?? []).filter(Boolean))).slice(0, 8),
     createdAt,
   }
 }

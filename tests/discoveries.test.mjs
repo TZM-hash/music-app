@@ -98,3 +98,36 @@ test('删除学生时可以级联清理发现记录', () => {
   assert.equal(discoveries.loadMusicDiscoveries('stu-a').length, 0)
   assert.equal(discoveries.loadMusicDiscoveries('stu-b').length, 1)
 })
+
+test('探索发现卡保存感受、路径、音乐证据和二次聆听变化', () => {
+  const discoveries = loadDiscoveries()
+  discoveries.saveMusicDiscovery({
+    studentId: 'stu-a',
+    unitId: 'jasmine',
+    topicId: 'pentatonic-scale',
+    title: '茉莉花 · 江南的味道',
+    statement: '我从平稳的旋律里听到温柔。',
+    path: 'emotion',
+    firstFeeling: '温柔',
+    evidence: ['级进', '音色柔和'],
+    concepts: ['旋律', '五声音阶'],
+    relistenChoice: 'new-clue',
+    relistenReflection: '第二次听到了旋律里的五个音。',
+  }, 600)
+
+  const [saved] = discoveries.loadMusicDiscoveries('stu-a')
+  assert.equal(saved.unitId, 'jasmine')
+  assert.deepEqual(saved.evidence, ['级进', '音色柔和'])
+  assert.equal(saved.relistenChoice, 'new-clue')
+})
+
+test('旧发现记录没有新增字段时仍然可以读取', () => {
+  globalThis.localStorage.setItem('music-edu-discoveries-v1', JSON.stringify([{
+    id: 'legacy-1', studentId: 'stu-old', topicId: 'steady-beat',
+    title: '稳定拍', statement: '我能跟着拍点走。', createdAt: 100,
+  }]))
+  const discoveries = loadDiscoveries()
+  const [legacy] = discoveries.loadMusicDiscoveries('stu-old')
+  assert.equal(legacy.title, '稳定拍')
+  assert.equal(legacy.unitId, undefined)
+})
