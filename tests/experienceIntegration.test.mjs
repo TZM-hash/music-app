@@ -141,6 +141,26 @@ test('首页主探索动作进入探索剧场而不是直接打开理论目录',
   assert.match(home, /今日探索/)
 })
 
+test('茉莉花发现卡回到探索剧场，旧发现卡保持理论回看兼容', () => {
+  const home = readSource('src/pages/Home.tsx')
+
+  assert.match(home, /discoverySummary\.latest\[0\]\.unitId/)
+  assert.match(home, /openExploration\('jasmine'\)/)
+  assert.match(home, /openTheory\(/)
+})
+
+test('闯关地图展示当前学生的发现入口并兼容探索剧场回看', () => {
+  const map = readSource('src/pages/AdventureMap.tsx')
+
+  assert.match(map, /loadMusicDiscoveries/)
+  assert.match(map, /buildDiscoverySummary/)
+  assert.match(map, /我的发现/)
+  assert.match(map, /discoverySummary\.latest\[0\]\.unitId/)
+  assert.match(map, /openExploration\('jasmine'\)/)
+  assert.match(map, /openTheory\(/)
+  assert.match(map, /完成一次探索后，这里会出现你的音乐证据/)
+})
+
 test('旧音乐探险舞台和训练中心入口仍然保留', () => {
   const training = readSource('src/pages/TrainingCenter.tsx')
   assert.match(training, /MusicExperienceStage/)

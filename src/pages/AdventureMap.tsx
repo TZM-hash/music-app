@@ -6,6 +6,7 @@ import { filterTheoryTopics, getTheoryTopic } from '../music/theoryCatalog'
 import { THEORY_QUESTS } from '../music/theoryQuests'
 import { focusFromTheoryTopic } from '../state/reviewDeepLink'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
+import { buildDiscoverySummary, loadMusicDiscoveries } from '../state/discoveries'
 import './course.css'
 
 function routeLabel(route: Route): string {
@@ -24,10 +25,14 @@ function routeLabel(route: Route): string {
 }
 
 export default function AdventureMap() {
-  const { navigate, openTheory, selectedGrade } = useApp()
+  const { navigate, openTheory, openExploration, currentStudentId, selectedGrade } = useApp()
   const progress = loadProgress()
   const student = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? student?.grade
+  const discoverySummary = useMemo(
+    () => buildDiscoverySummary(loadMusicDiscoveries(currentStudentId)),
+    [currentStudentId]
+  )
   const scopedTopicIds = useMemo(
     () => new Set(filterTheoryTopics(effectiveGrade ? { grade: effectiveGrade } : {}).map((topic) => topic.id)),
     [effectiveGrade]
@@ -115,6 +120,27 @@ export default function AdventureMap() {
             探索发现
           </button>
         </div>
+      </section>
+
+      <section className="leader-panel card discovery-replay-panel" aria-label="我的发现">
+        <div>
+          <span className="course-kicker">我的发现</span>
+          <h3>把听到的证据再听一次</h3>
+          <p>{discoverySummary.total > 0 ? `已经留下 ${discoverySummary.total} 条音乐发现。` : '完成一次探索后，这里会出现你的音乐证据。'}</p>
+        </div>
+        {discoverySummary.latest[0] ? (
+          <button className="big-start" type="button" onClick={() => discoverySummary.latest[0].unitId === 'jasmine'
+            ? openExploration('jasmine')
+            : openTheory({ topicId: discoverySummary.latest[0].topicId })}>
+            <b>{discoverySummary.latest[0].title}</b>
+            <span>{discoverySummary.latest[0].statement}</span>
+            <small>再听一次</small>
+          </button>
+        ) : (
+          <button className="lesson-secondary" type="button" onClick={() => openExploration('jasmine')}>
+            开始今日探索
+          </button>
+        )}
       </section>
 
       <div className="map-track quest-track">
