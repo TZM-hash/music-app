@@ -159,6 +159,16 @@ test('探索馆保持左侧筛选和线索卡、右侧具体内容', () => {
   assert.match(presentation, /route-theory[\s\S]*theory-layout[\s\S]*grid-template-columns/)
 })
 
+test('探索馆可以从教材来源下拉切换人音版参考课件知识点', () => {
+  const theory = read('src/pages/Theory.tsx')
+
+  assert.match(theory, /renyin-reference/)
+  assert.match(theory, /getReferenceKnowledgePoints/)
+  assert.match(theory, /getReferenceActivities/)
+  assert.match(theory, /参考课件知识点/)
+  assert.match(theory, /ReferenceActivityStage/)
+})
+
 test('作品地图和素材库由同一工作区承载', () => {
   const app = read('src/App.tsx')
   const course = read('src/pages/CourseCenter.tsx')

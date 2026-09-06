@@ -309,6 +309,15 @@ export default function Home() {
               <small>{activity.subtitle}</small>
             </button>
           ))}
+          <button
+            type="button"
+            className="home-playground-door home-playground-door-reference"
+            onClick={() => navigate('training')}
+          >
+            <span aria-hidden="true">🌲</span>
+            <strong>森林乐器大冒险</strong>
+            <small>一年级上册参考课件：先听、再玩、再总结</small>
+          </button>
         </div>
       </section>
 

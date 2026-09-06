@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import ExplorationTheater from '../components/ExplorationTheater'
+import GradeOneForestQuest from '../components/reference/GradeOneForestQuest'
 import { EXPLORATION_UNITS, getExplorationUnit } from '../music/explorationUnits'
+import { GRADE_ONE_ACTIVITIES } from '../music/referenceLessons/gradeOneUpper'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
 import { getCurrentStudent } from '../state/students'
 import { useApp } from '../state/appState'
@@ -13,6 +15,8 @@ export default function LessonMode() {
   const effectiveGrade = selectedGrade ?? student?.grade ?? null
   const unit = getExplorationUnit(explorationUnitId ?? 'jasmine')
   const [completeNotice, setCompleteNotice] = useState('')
+  const [showGradeOneQuest, setShowGradeOneQuest] = useState(false)
+  const [gradeOneCompleted, setGradeOneCompleted] = useState<string[]>([])
 
   const handleComplete = (discovery: MusicDiscovery) => {
     setCompleteNotice(`已保存“${discovery.title}”这张音乐发现卡。`)
@@ -64,6 +68,25 @@ export default function LessonMode() {
         />
       </section>
 
+      {effectiveGrade === 1 && showGradeOneQuest && (
+        <section className="lesson-reference-quest card" aria-labelledby="lesson-reference-quest-title">
+          <div>
+            <span className="lesson-kicker">一年级上册参考课件</span>
+            <h2 id="lesson-reference-quest-title">森林乐器大冒险</h2>
+          </div>
+          <GradeOneForestQuest
+            activities={GRADE_ONE_ACTIVITIES}
+            completedActivityIds={gradeOneCompleted}
+            onComplete={(activityId) => {
+              setGradeOneCompleted((current) =>
+                current.includes(activityId) ? current : [...current, activityId]
+              )
+              setCompleteNotice(`森林活动“${activityId}”已经完成。`)
+            }}
+          />
+        </section>
+      )}
+
       {completeNotice && (
         <p className="lesson-complete-notice" role="status">
           {completeNotice}
@@ -77,6 +100,11 @@ export default function LessonMode() {
           <small>完成后会留下“我的音乐发现”，再去作品、听觉实验室或音乐线索库延伸。</small>
         </div>
         <div className="lesson-support-actions">
+          {effectiveGrade === 1 && (
+            <button type="button" onClick={() => setShowGradeOneQuest((current) => !current)}>
+              {showGradeOneQuest ? '收起森林地图' : '打开一年级森林地图'}
+            </button>
+          )}
           <button type="button" onClick={() => navigate('training')}>
             去听觉实验室
           </button>

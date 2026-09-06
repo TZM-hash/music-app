@@ -785,3 +785,14 @@
     grid-template-columns: 1fr;
   }
 }
+
+.training-reference-quest {
+  display: grid;
+  gap: 1rem;
+  border-color: rgba(196, 143, 54, 0.28);
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.96), rgba(237, 247, 239, 0.96));
+}
+
+.training-reference-quest .grade-one-forest-quest {
+  margin-top: 0.2rem;
+}

@@ -143,3 +143,93 @@
   font-size: 1.8rem;
   letter-spacing: 0.14em;
 }
+
+.grade-one-forest-quest {
+  display: grid;
+  gap: 1rem;
+  color: #23382f;
+}
+
+.grade-one-forest-quest__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.grade-one-forest-quest__header h1 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+}
+
+.grade-one-forest-quest__header p {
+  margin: 0.4rem 0 0;
+  color: #526a5d;
+}
+
+.grade-one-forest-quest__reward {
+  display: grid;
+  justify-items: end;
+  color: #7b5b2a;
+}
+
+.grade-one-forest-quest__reward strong {
+  font-size: 2rem;
+}
+
+.grade-one-forest-quest__map {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.grade-one-forest-quest__map button {
+  display: grid;
+  gap: 0.35rem;
+  min-height: 4.6rem;
+  place-content: center;
+  font-size: 0.76rem;
+  text-align: center;
+}
+
+.grade-one-forest-quest__map button span {
+  font-size: 1.25rem;
+}
+
+.grade-one-forest-quest__map button.active {
+  border-color: #c48f36;
+  background: #f8e5b6;
+  color: #6a4d1d;
+}
+
+.grade-one-forest-quest__map button.complete {
+  border-color: #6d9c78;
+  background: #e8f1eb;
+}
+
+.grade-one-forest-quest__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(13rem, 18rem);
+  gap: 1rem;
+  align-items: start;
+}
+
+.grade-one-forest-quest__reflection {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1rem;
+  border-left: 0.25rem solid #c48f36;
+  border-radius: 0.85rem;
+  background: #fff9e8;
+}
+
+.grade-one-forest-quest__reflection p,
+.grade-one-forest-quest__reflection small {
+  margin: 0;
+  color: #526a5d;
+  line-height: 1.55;
+}
+
+.grade-one-forest-quest__reflection strong {
+  color: #7b5b2a;
+}

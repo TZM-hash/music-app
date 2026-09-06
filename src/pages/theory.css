@@ -1351,3 +1351,44 @@
     grid-template-columns: 1fr;
   }
 }
+
+.reference-courseware-panel {
+  display: grid;
+  gap: 1rem;
+  border-color: rgba(196, 143, 54, 0.28);
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.96), rgba(237, 247, 239, 0.96));
+}
+
+.reference-courseware-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.reference-courseware-panel__header h2 {
+  margin: 0.35rem 0 0;
+}
+
+.reference-courseware-panel__header p {
+  max-width: 52rem;
+  margin: 0.5rem 0 0;
+  color: var(--text-soft);
+  line-height: 1.6;
+}
+
+.reference-courseware-panel__reflection {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  border-left: 0.25rem solid var(--neon-gold);
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.7);
+}
+
+.reference-courseware-panel__reflection span,
+.reference-courseware-panel__reflection small,
+.reference-courseware-panel__reflection p {
+  color: var(--text-soft);
+  line-height: 1.5;
+}

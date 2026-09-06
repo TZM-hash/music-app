@@ -570,3 +570,9 @@
     width: 100%;
   }
 }
+
+.lesson-reference-quest {
+  display: grid;
+  gap: 1rem;
+  border-color: rgba(196, 143, 54, 0.28);
+}

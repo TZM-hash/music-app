@@ -25,11 +25,20 @@ import { buildExplorationTaskCard } from '../music/explorationLoop'
 import { getZhejiangExtension } from '../music/zhejiangExtensions'
 import { saveMusicDiscovery } from '../state/discoveries'
 import PagePager from '../components/PagePager'
+import ReferenceActivityStage from '../components/reference/ReferenceActivityStage'
+import GradeOneForestQuest from '../components/reference/GradeOneForestQuest'
+import {
+  getReferenceKnowledgePoints,
+  type ReferenceGrade,
+  type ReferenceKnowledgePoint,
+} from '../music/referenceCourseware'
+import { getReferenceActivities } from '../music/referenceActivityCatalog'
+import type { JourneyStepId } from '../music/referenceCourseware'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import './theory.css'
 
 type CategoryFilter = '全部' | string
-type SourceFilter = '全部' | CurriculumSource
+type SourceFilter = '全部' | CurriculumSource | 'renyin-reference'
 type TheoryPanel = 'knowledge' | 'discovery'
 
 export default function Theory() {
@@ -39,6 +48,11 @@ export default function Theory() {
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
   const [activeDemoValue, setActiveDemoValue] = useState('')
   const [activePanel, setActivePanel] = useState<TheoryPanel>('knowledge')
+  const [activeReferenceId, setActiveReferenceId] = useState('')
+  const [showForestQuest, setShowForestQuest] = useState(false)
+  const [referenceEvidence, setReferenceEvidence] = useState<string[]>([])
+  const [referenceObservation, setReferenceObservation] = useState('')
+  const [referenceNotice, setReferenceNotice] = useState('')
 
   // currentStudentId 由应用状态负责触发重渲染；直接读取可避免把外部存储读取包装成无效依赖的 useMemo。
   const currentStudent = getCurrentStudent()
@@ -46,13 +60,30 @@ export default function Theory() {
 
   const filtered = useMemo(
     () =>
-      filterTheoryTopics({
-        category: category === '全部' ? undefined : category,
-        grade: effectiveGrade,
-        source: source === '全部' ? undefined : source,
-      }),
+      source === 'renyin-reference'
+        ? []
+        : filterTheoryTopics({
+            category: category === '全部' ? undefined : category,
+            grade: effectiveGrade,
+            source: source === '全部' ? undefined : source,
+          }),
     [category, effectiveGrade, source]
   )
+  const referencePoints = useMemo(
+    () =>
+      getReferenceKnowledgePoints({
+        grade:
+          effectiveGrade && effectiveGrade <= 3
+            ? (effectiveGrade as ReferenceGrade)
+            : undefined,
+      }),
+    [effectiveGrade]
+  )
+  const activeReferencePoint: ReferenceKnowledgePoint | undefined =
+    referencePoints.find((point) => point.id === activeReferenceId) ?? referencePoints[0]
+  const activeReferenceActivity = activeReferencePoint
+    ? getReferenceActivities({ knowledgePointId: activeReferencePoint.id })[0]
+    : undefined
   const gradeTopics = useMemo(
     () => (effectiveGrade ? filterTheoryTopics({ grade: effectiveGrade }) : THEORY_TOPICS),
     [effectiveGrade]
@@ -75,6 +106,16 @@ export default function Theory() {
   }, [activeId, filtered])
 
   useEffect(() => {
+    if (source !== 'renyin-reference') {
+      setShowForestQuest(false)
+      return
+    }
+    if (referencePoints.length > 0 && !referencePoints.some((point) => point.id === activeReferenceId)) {
+      setActiveReferenceId(referencePoints[0].id)
+    }
+  }, [activeReferenceId, referencePoints, source])
+
+  useEffect(() => {
     if (!theoryFocus) return
     const nextCategory = theoryFocus.category ?? '全部'
     const focusedTopics = filterTheoryTopics({
@@ -94,6 +135,8 @@ export default function Theory() {
     setCategory('全部')
     setSource(mode === 'student' ? 'textbook' : '全部')
     setActiveId(gradeTopics[0]?.id ?? THEORY_TOPICS[0].id)
+    setActiveReferenceId('')
+    setShowForestQuest(false)
   }
 
   return (
@@ -123,13 +166,47 @@ export default function Theory() {
           <FilterGroup
             title="教材来源"
             value={source}
-            options={['全部', 'textbook', 'extension']}
-            getLabel={(value) => value === '全部' ? '全部内容' : getCurriculumSourceLabel(value as CurriculumSource)}
+            options={['全部', 'textbook', 'extension', 'renyin-reference']}
+            getLabel={(value) =>
+              value === '全部'
+                ? '全部内容'
+                : value === 'renyin-reference'
+                  ? '人音版参考课件'
+                  : getCurriculumSourceLabel(value as CurriculumSource)
+            }
             onChange={(next) => setSource(next as SourceFilter)}
           />
 
           <div className="topic-select topic-list">
-            {filtered.length === 0 ? (
+            {source === 'renyin-reference' ? (
+              referencePoints.length === 0 ? (
+                <div className="topic-empty">
+                  <b>当前年级暂时没有参考课件</b>
+                  <button type="button" onClick={clearFilters}>返回教材内容</button>
+                </div>
+              ) : (
+                <label className="theory-filter-select">
+                  <span className="side-group-title">参考课件知识点</span>
+                  <select
+                    aria-label="选择参考课件知识点"
+                    value={activeReferencePoint?.id ?? ''}
+                    onChange={(event) => {
+                      setActiveReferenceId(event.target.value)
+                      setShowForestQuest(false)
+                      setReferenceEvidence([])
+                      setReferenceObservation('')
+                    }}
+                  >
+                    {referencePoints.map((point) => (
+                      <option key={point.id} value={point.id}>
+                        {point.title} · {getGradeLabel(point.grade)} · 上册
+                      </option>
+                    ))}
+                  </select>
+                  <small className="topic-select-hint">先听、再感受，最后用短卡片认识概念</small>
+                </label>
+              )
+            ) : filtered.length === 0 ? (
               <div className="topic-empty">
                 <b>没有匹配发现卡</b>
                 <button type="button" onClick={clearFilters}>清除筛选</button>
@@ -155,7 +232,62 @@ export default function Theory() {
         </aside>
 
         <main className="theory-main">
-          {filtered.length === 0 ? (
+          {source === 'renyin-reference' ? (
+            <section className="reference-courseware-panel card" aria-labelledby="reference-courseware-title">
+              <header className="reference-courseware-panel__header">
+                <div>
+                  <span className="theory-kicker">人音版参考课件 · 先听再探索</span>
+                  <h2 id="reference-courseware-title">
+                    {activeReferencePoint?.title ?? '选择一个参考课件知识点'}
+                  </h2>
+                  <p>{activeReferencePoint?.shortPrompt ?? '从声音、动作和故事开始。'}</p>
+                </div>
+                {effectiveGrade === 1 && activeReferenceActivity && (
+                  <button
+                    type="button"
+                    className="primary-action"
+                    onClick={() => setShowForestQuest((current) => !current)}
+                  >
+                    {showForestQuest ? '回到单个知识点' : '打开森林地图'}
+                  </button>
+                )}
+              </header>
+              {showForestQuest && effectiveGrade === 1 ? (
+                <GradeOneForestQuest
+                  onComplete={(activityId) =>
+                    setReferenceNotice(`已完成一年级森林活动：${activityId}。`)
+                  }
+                />
+              ) : activeReferenceActivity ? (
+                <ReferenceActivityStage
+                  activity={activeReferenceActivity}
+                  onEvidence={(value) =>
+                    setReferenceEvidence((current) => Array.from(new Set([...current, value])))
+                  }
+                  onObservation={setReferenceObservation}
+                  onStepComplete={(step: JourneyStepId) => {
+                    if (step === 'try' || step === 'reflect') {
+                      setReferenceNotice('这条听觉线索已经留下，可以继续听下一个变化。')
+                    }
+                  }}
+                />
+              ) : (
+                <div className="theory-empty-state">
+                  <span className="theory-empty-icon" aria-hidden="true">🎧</span>
+                  <h3>当前筛选没有可打开的参考活动</h3>
+                  <p>请选择一年级、二年级或三年级，再从左侧知识点开始。</p>
+                </div>
+              )}
+              {(referenceEvidence.length > 0 || referenceObservation || referenceNotice) && (
+                <aside className="reference-courseware-panel__reflection" aria-live="polite">
+                  <strong>我的听觉线索</strong>
+                  <span>{referenceEvidence.join(' · ') || '还没有选择线索'}</span>
+                  {referenceObservation && <small>{referenceObservation}</small>}
+                  {referenceNotice && <p>{referenceNotice}</p>}
+                </aside>
+              )}
+            </section>
+          ) : filtered.length === 0 ? (
             <section className="topic-panel card theory-empty-panel" aria-live="polite">
               <div className="theory-empty-state">
                 <span className="theory-empty-icon" aria-hidden="true">🎼</span>

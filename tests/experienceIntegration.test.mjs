@@ -24,6 +24,15 @@ test('玩乐中心展示三种音乐探险玩法并使用当前学生年级', ()
   assert.match(source, /key=\{buildExperienceInstanceKey\(/)
 })
 
+test('玩乐中心保留旧玩法并提供一年级森林乐器大冒险', () => {
+  const source = readSource('src/pages/TrainingCenter.tsx')
+
+  assert.match(source, /GradeOneForestQuest/)
+  assert.match(source, /森林乐器大冒险/)
+  assert.match(source, /GRADE_ONE_ACTIVITIES/)
+  assert.match(source, /MusicExperienceStage/)
+})
+
 test('训练中心顶部展示桌面听觉实验室入口和三张工具卡', () => {
   const source = readSource('src/pages/TrainingCenter.tsx')
 

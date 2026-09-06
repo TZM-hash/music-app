@@ -8,9 +8,11 @@ import MusicExperienceStage from '../components/MusicExperienceStage'
 import MusicMicroscope from '../components/MusicMicroscope'
 import InstrumentExplorer from '../components/InstrumentExplorer'
 import RhythmMovementLab from '../components/RhythmMovementLab'
+import GradeOneForestQuest from '../components/reference/GradeOneForestQuest'
 import { buildExperienceJourney, getRecommendedActivities } from '../music/experienceActivities'
 import { buildExperienceInstanceKey } from '../music/experienceGameLogic'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
+import { GRADE_ONE_ACTIVITIES } from '../music/referenceLessons/gradeOneUpper'
 import {
   EXPLORATION_TOOL_CATALOG,
   JASMINE_INSTRUMENT_SAMPLES,
@@ -167,6 +169,7 @@ export default function TrainingCenter() {
   const { navigate, openExploration, currentStudentId, selectedGrade } = useApp()
   const [trainingPage, setTrainingPage] = useState(0)
   const progress = loadProgress()
+  const [gradeOneCompleted, setGradeOneCompleted] = useState<string[]>([])
   const [activeId, setActiveId] = useState(MODULES[0].id)
   const [activeExperienceId, setActiveExperienceId] = useState('sound-detective')
   const [activeAuditoryToolId, setActiveAuditoryToolId] = useState<ExplorationToolId | null>(null)
@@ -217,6 +220,12 @@ export default function TrainingCenter() {
   }
 
   const returnToJasmine = () => openExploration('jasmine')
+
+  const handleGradeOneComplete = (activityId: string) => {
+    setGradeOneCompleted((current) =>
+      current.includes(activityId) ? current : [...current, activityId]
+    )
+  }
 
   const handleAuditoryLabNote = (note: MusicDiscoveryToolNote) => {
     const tool = AUDITORY_LAB_TOOLS.find((item) => item.id === note.toolId)
@@ -351,6 +360,22 @@ export default function TrainingCenter() {
             {renderAuditoryLabTool()}
           </section>
         )}
+      </section>
+
+      <section className="training-reference-quest card" aria-labelledby="training-reference-quest-title">
+        <div className="training-experience-intro">
+          <div>
+            <span className="training-kicker">参考课件 · 一年级上册</span>
+            <h2 id="training-reference-quest-title">森林乐器大冒险</h2>
+            <p>从故事、动作、乐器和节奏开始，完成一段先听再玩的音乐探索。</p>
+          </div>
+          <span className="training-grade-note">{gradeOneCompleted.length} 颗星已点亮</span>
+        </div>
+        <GradeOneForestQuest
+          activities={GRADE_ONE_ACTIVITIES}
+          completedActivityIds={gradeOneCompleted}
+          onComplete={handleGradeOneComplete}
+        />
       </section>
 
       <section className="training-experience-shell" aria-labelledby="training-experience-title">
