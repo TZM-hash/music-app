@@ -1,6 +1,7 @@
 import type { JourneyStepId, ReferenceActivity } from '../../music/referenceCourseware'
 import ListenChoiceActivity from './ListenChoiceActivity'
 import InstrumentDetectiveActivity from './InstrumentDetectiveActivity'
+import LayeredListeningActivity from './LayeredListeningActivity'
 import MovementActivity from './MovementActivity'
 import ReviewQuestActivity from './ReviewQuestActivity'
 import RhythmBuilderActivity from './RhythmBuilderActivity'
@@ -18,6 +19,8 @@ export default function ReferenceActivityStage(props: ReferenceActivityStageProp
   const { activity } = props
   if (activity.kind === 'listen-and-choose') return <ListenChoiceActivity {...props} />
   if (activity.kind === 'instrument-detective') return <InstrumentDetectiveActivity {...props} />
+  if (activity.kind === 'layered-listening') return <LayeredListeningActivity {...props} />
+  if (activity.kind === 'note-ladder') return <ListenChoiceActivity {...props} />
   if (activity.kind === 'meter-movement') return <MovementActivity {...props} />
   if (activity.kind === 'review-quest') return <ReviewQuestActivity {...props} />
   return <RhythmBuilderActivity {...props} />

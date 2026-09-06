@@ -48,6 +48,15 @@ test('节奏活动支持节奏卡、点击和不重复的 Space 输入', () => {
   assert.match(source, /onStepComplete|onEvidence/)
 })
 
+test('多声部活动支持独立声部开关和叠加试听', () => {
+  const source = read('src/components/reference/LayeredListeningActivity.tsx')
+  assert.match(source, /声部/)
+  assert.match(source, /叠加试听/)
+  assert.match(source, /aria-pressed/)
+  assert.match(source, /playNote/)
+  assert.match(source, /onStepComplete\('try'\)/)
+})
+
 test('动作活动提供情绪和力度的主观表达选项', () => {
   const source = read('src/components/reference/MovementActivity.tsx')
   assert.match(source, /情绪/)

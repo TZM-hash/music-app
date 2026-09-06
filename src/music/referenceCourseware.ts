@@ -1,4 +1,5 @@
 import { GRADE_ONE_ACTIVITY_IDS } from './referenceLessons/gradeOneUpper'
+import { GRADE_TWO_ACTIVITY_IDS } from './referenceLessons/gradeTwoUpper'
 
 export type ReferenceCourseSource = 'zhejiang' | 'renyin-reference' | 'original'
 export type ReferenceGrade = 1 | 2 | 3
@@ -75,7 +76,7 @@ const point = (
   title,
   shortPrompt,
   concepts,
-  activityIds: GRADE_ONE_ACTIVITY_IDS[id] ?? [],
+  activityIds: GRADE_ONE_ACTIVITY_IDS[id] ?? GRADE_TWO_ACTIVITY_IDS[id] ?? [],
 })
 
 export const REFERENCE_KNOWLEDGE_POINTS: ReferenceKnowledgePoint[] = [

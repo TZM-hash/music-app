@@ -5,6 +5,7 @@ import {
   type ReferenceGrade,
 } from './referenceCourseware'
 import { GRADE_ONE_ACTIVITIES } from './referenceLessons/gradeOneUpper'
+import { GRADE_TWO_ACTIVITIES } from './referenceLessons/gradeTwoUpper'
 
 export interface ReferenceActivityFilter {
   grade?: ReferenceGrade
@@ -12,7 +13,10 @@ export interface ReferenceActivityFilter {
   knowledgePointId?: string
 }
 
-export const REFERENCE_ACTIVITIES: ReferenceActivity[] = [...GRADE_ONE_ACTIVITIES]
+export const REFERENCE_ACTIVITIES: ReferenceActivity[] = [
+  ...GRADE_ONE_ACTIVITIES,
+  ...GRADE_TWO_ACTIVITIES,
+]
 
 export function getReferenceActivities(filter: ReferenceActivityFilter = {}): ReferenceActivity[] {
   const pointById = new Map(REFERENCE_KNOWLEDGE_POINTS.map((point) => [point.id, point]))
