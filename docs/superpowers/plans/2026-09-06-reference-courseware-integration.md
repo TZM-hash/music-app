@@ -600,7 +600,7 @@ git commit -m "chore: record reference courseware verification"
 | Task 7 二年级内容 | `cdc192e` | 已完成 |
 | Task 8 三年级内容 | `d973c6b` | 已完成 |
 | Task 9 按需资源与动画 | `e41828d` | 已完成 |
-| Task 10 全量验证与记录 | 待提交 | 记录中 |
+| Task 10 全量验证与记录 | `a6bb7bc` | 已完成 |
 
 当前验证证据：全量测试 `239/239` 通过，Lint 通过，TypeScript/Vite 构建通过；全仓库 `npm run format:check` 仍会报告既有的 133 个未格式化文件，已对本次新增/修改的参考资源文件做定向格式检查并通过。为避免引入与本需求无关的大规模格式化，本计划保留该基线问题并在验证日志中记录。
 
