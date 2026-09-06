@@ -63,3 +63,41 @@ test('乐器侧栏覆盖实际使用的音色，并接入通用试听页', () =>
   assert.match(app, /InstrumentSoundPage/)
   assert.match(routes, /'woodblock'/)
 })
+
+test('木鱼、铃铛、八音盒、拨弦使用彼此独立的专用音源', () => {
+  const source = read('src/music/audioEngine.ts')
+
+  assert.match(source, /function playWoodblockSound/)
+  assert.match(source, /function playBellSound/)
+  assert.match(source, /function playMusicboxSound/)
+  assert.match(source, /function playPluckSound/)
+  assert.match(source, /function playGongSound/)
+  assert.match(source, /PluckSynth/)
+
+  assert.doesNotMatch(source, /case 'woodblock':\s*playDrum\('tom'\)/s)
+  assert.doesNotMatch(source, /case 'gong':\s*playDrum\('crash'\)/s)
+  assert.doesNotMatch(source, /case 'bell':\s*playNote\(pitch, duration, velocity, 'musicbox'\)/s)
+  assert.doesNotMatch(source, /case 'handbell':\s*playNote\(pitch, duration, velocity, 'musicbox'\)/s)
+  assert.doesNotMatch(source, /case 'pipa':\s*case 'pluck':\s*triggerVoice\('pluck'/s)
+  assert.match(source, /kind === 'bell'[\s\S]*getBellSynth/)
+  assert.match(source, /kind === 'pluck'[\s\S]*getPluckSynth/)
+  assert.match(source, /woodblockBody\?\.triggerRelease/)
+})
+
+test('新增乐器按钢琴、架子鼓、竖笛、木琴的模式提供对应互动', () => {
+  const page = read('src/pages/InstrumentSoundPage.tsx')
+  const catalog = read('src/music/instrumentSounds.ts')
+
+  assert.match(catalog, /interaction:\s*'keyboard'/)
+  assert.match(catalog, /interaction:\s*'drum-pad'/)
+  assert.match(catalog, /interaction:\s*'wind-fingering'/)
+  assert.match(catalog, /interaction:\s*'mallet-bars'/)
+
+  assert.match(page, /attackInstrumentSound/)
+  assert.match(page, /releaseInstrumentSound/)
+  assert.match(page, /onPointerDown/)
+  assert.match(page, /onPointerUp/)
+  assert.match(page, /keydown/)
+  assert.match(page, /role="grid"/)
+  assert.match(page, /Visualizer/)
+})

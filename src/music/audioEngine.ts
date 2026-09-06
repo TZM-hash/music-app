@@ -12,6 +12,7 @@ import {
   MembraneSynth,
   MetalSynth,
   NoiseSynth,
+  PluckSynth,
   PolySynth,
   Reverb,
   Sampler,
@@ -145,9 +146,14 @@ function getOtherSynth(patch: Exclude<TonePatch, 'piano'>): PolySynth {
   if (!synths[patch]) {
     switch (patch) {
       case 'musicbox':
-        synths.musicbox = new PolySynth(Synth, {
+        // 八音盒需要明亮的金属泛音；不要用碰钟/铃铛的金属打击音代替。
+        synths.musicbox = new PolySynth(FMSynth, {
+          harmonicity: 8,
+          modulationIndex: 11,
           oscillator: { type: 'sine' },
-          envelope: { attack: 0.002, decay: 0.1, sustain: 0, release: 0.6 },
+          envelope: { attack: 0.001, decay: 0.28, sustain: 0, release: 0.48 },
+          modulation: { type: 'sine' },
+          modulationEnvelope: { attack: 0.001, decay: 0.18, sustain: 0, release: 0.24 },
         }).toDestination()
         synths.musicbox.volume.value = currentVolume - 6
         break
@@ -188,6 +194,15 @@ export function setVolume(v: number): void {
   for (const p of Object.keys(synths) as Exclude<TonePatch, 'piano'>[]) {
     if (synths[p]) synths[p]!.volume.value = v + PATCH_VOLUME_OFFSET[p]
   }
+  if (woodblockBody) woodblockBody.volume.value = v - 3
+  if (woodblockAttack) woodblockAttack.volume.value = v - 13
+  if (bellSynth) bellSynth.volume.value = v - 11
+  if (handbellSynth) handbellSynth.volume.value = v - 10
+  if (gongSynth) gongSynth.volume.value = v - 8
+  if (pluckSynth) pluckSynth.volume.value = v - 4
+  if (diziSynth) diziSynth.volume.value = v - 5
+  if (trumpetSynth) trumpetSynth.volume.value = v - 6
+  if (xylophoneSynth) xylophoneSynth.volume.value = v - 4
 }
 
 export function getVolume(): number {
@@ -244,6 +259,146 @@ export function playNote(note: string, duration = '4n', velocity = 0.85, patch?:
   }
 }
 
+// —— 专用乐器音源 ——
+// 这些音源不走通用鼓/钢琴映射，保证“听辨乐器”时每个入口都有自己的声音性格。
+let woodblockBody: Synth | null = null
+let woodblockAttack: NoiseSynth | null = null
+let bellSynth: MetalSynth | null = null
+let handbellSynth: MetalSynth | null = null
+let gongSynth: MetalSynth | null = null
+let pluckSynth: PluckSynth | null = null
+
+function getWoodblockVoices(): { body: Synth; attack: NoiseSynth } {
+  if (!woodblockBody) {
+    woodblockBody = new Synth({
+      oscillator: { type: 'triangle' },
+      envelope: { attack: 0.001, decay: 0.09, sustain: 0, release: 0.06 },
+    }).toDestination()
+    woodblockBody.volume.value = currentVolume - 3
+  }
+  if (!woodblockAttack) {
+    woodblockAttack = new NoiseSynth({
+      noise: { type: 'pink' },
+      envelope: { attack: 0.001, decay: 0.025, sustain: 0, release: 0.015 },
+    }).toDestination()
+    woodblockAttack.volume.value = currentVolume - 13
+  }
+  return { body: woodblockBody, attack: woodblockAttack }
+}
+
+function playWoodblockSound(note = 'C4', velocity = 0.8): void {
+  const { body, attack } = getWoodblockVoices()
+  body.triggerAttackRelease(note, '16n', undefined, velocity)
+  attack.triggerAttackRelease('32n', undefined, Math.min(1, velocity * 0.65))
+}
+
+function getBellSynth(handbell: boolean): MetalSynth {
+  if (handbell) {
+    if (!handbellSynth) {
+      handbellSynth = new MetalSynth({
+        harmonicity: 5.07,
+        modulationIndex: 22,
+        resonance: 5200,
+        octaves: 2.6,
+        envelope: { attack: 0.001, decay: 0.7, release: 0.38 },
+      }).toDestination()
+      handbellSynth.volume.value = currentVolume - 10
+    }
+    return handbellSynth
+  }
+  if (!bellSynth) {
+    bellSynth = new MetalSynth({
+      harmonicity: 3.8,
+      modulationIndex: 15,
+      resonance: 3900,
+      octaves: 3.8,
+      envelope: { attack: 0.001, decay: 1.35, release: 0.8 },
+    }).toDestination()
+    bellSynth.volume.value = currentVolume - 11
+  }
+  return bellSynth
+}
+
+function playBellSound(note = 'C5', duration = '2n', velocity = 0.8, handbell = false): void {
+  getBellSynth(handbell).triggerAttackRelease(note, duration, undefined, velocity)
+}
+
+function playGongSound(note = 'C3', duration = '2n', velocity = 0.8): void {
+  if (!gongSynth) {
+    gongSynth = new MetalSynth({
+      harmonicity: 1.35,
+      modulationIndex: 34,
+      resonance: 260,
+      octaves: 2.4,
+      envelope: { attack: 0.004, decay: 2.2, release: 1.3 },
+    }).toDestination()
+    gongSynth.volume.value = currentVolume - 8
+  }
+  gongSynth.triggerAttackRelease(note, duration, undefined, velocity)
+}
+
+function playMusicboxSound(note = 'C5', duration = '4n', velocity = 0.8): void {
+  getOtherSynth('musicbox').triggerAttackRelease(note, duration, undefined, velocity)
+}
+
+function getPluckSynth(): PluckSynth {
+  if (!pluckSynth) {
+    pluckSynth = new PluckSynth({
+      attackNoise: 1.8,
+      dampening: 3200,
+      resonance: 0.82,
+      release: 0.42,
+    }).toDestination()
+    pluckSynth.volume.value = currentVolume - 4
+  }
+  return pluckSynth
+}
+
+function playPluckSound(note = 'E4'): void {
+  getPluckSynth().triggerAttack(note)
+}
+
+let diziSynth: PolySynth | null = null
+let trumpetSynth: PolySynth | null = null
+
+function getWindSynth(instrument: 'dizi' | 'trumpet'): PolySynth {
+  if (instrument === 'dizi') {
+    if (!diziSynth) {
+      diziSynth = new PolySynth(Synth, {
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.08, decay: 0.18, sustain: 0.72, release: 0.24 },
+      }).toDestination()
+      diziSynth.volume.value = currentVolume - 5
+    }
+    return diziSynth
+  }
+  if (!trumpetSynth) {
+    trumpetSynth = new PolySynth(Synth, {
+      oscillator: { type: 'sawtooth' },
+      envelope: { attack: 0.045, decay: 0.16, sustain: 0.68, release: 0.2 },
+    }).toDestination()
+    trumpetSynth.volume.value = currentVolume - 6
+  }
+  return trumpetSynth
+}
+
+/** 按住吹奏类乐器，沿用竖笛的 attack/release 交互，而不是一次性短音。 */
+export function attackInstrumentSound(
+  instrument: InstrumentSoundId,
+  note = 'C4',
+  velocity = 0.8
+): void {
+  if (instrument === 'dizi' || instrument === 'trumpet') {
+    getWindSynth(instrument).triggerAttack(note, undefined, velocity)
+    return
+  }
+  playInstrumentSound(instrument, note, '4n', velocity)
+}
+
+export function releaseInstrumentSound(instrument: InstrumentSoundId, note = 'C4'): void {
+  if (instrument === 'dizi' || instrument === 'trumpet') getWindSynth(instrument).triggerRelease(note)
+}
+
 /**
  * 为探索馆、乐器侧栏和课件兜底提供可辨识的合成乐器音色。
  * 真实采样由调用方优先播放；这里只负责不依赖外部文件的桌面端兜底。
@@ -261,13 +416,13 @@ export function playInstrumentSound(
       playDrum('kick')
       return
     case 'woodblock':
-      playDrum('tom')
+      playWoodblockSound(pitch, velocity)
       return
     case 'clappers':
       playDrum('clap')
       return
     case 'gong':
-      playDrum('crash')
+      playGongSound(pitch, duration, velocity)
       return
     case 'cymbal':
       playDrum('crash')
@@ -276,7 +431,7 @@ export function playInstrumentSound(
       playNote(pitch, duration, velocity, 'piano')
       return
     case 'musicbox':
-      playNote(pitch, duration, velocity, 'musicbox')
+      playMusicboxSound(pitch, duration, velocity)
       return
     case 'erhu':
     case 'violin':
@@ -298,16 +453,16 @@ export function playInstrumentSound(
       return
     case 'pipa':
     case 'pluck':
-      triggerVoice('pluck', pitch, currentVolume - 2)
+      playPluckSound(pitch)
       return
     case 'bell':
-      playNote(pitch, duration, velocity, 'musicbox')
+      playBellSound(pitch, duration, velocity)
       return
     case 'synth':
       triggerVoice('synth', pitch, currentVolume - 2)
       return
     case 'handbell':
-      playNote(pitch, duration, velocity, 'musicbox')
+      playBellSound(pitch, duration, velocity, true)
       return
     case 'strings':
     case 'orchestra':
@@ -650,6 +805,19 @@ export function triggerVoice(kind: VoiceKind, note: string, volumeDb: number, ti
     playDrum(kind === 'clap' ? 'clap' : kind, time)
     return
   }
+  // 混音器也必须复用真实的铃铛/拨弦音源，不能退回到正弦/三角波占位音色。
+  if (kind === 'bell') {
+    const voice = getBellSynth(false)
+    voice.volume.value = volumeDb
+    voice.triggerAttackRelease(note, '16n', time)
+    return
+  }
+  if (kind === 'pluck') {
+    const voice = getPluckSynth()
+    voice.volume.value = volumeDb
+    voice.triggerAttack(note, time)
+    return
+  }
   const synth = getMixSynth(kind)
   synth.volume.value = volumeDb
   synth.triggerAttackRelease(note, '16n', time)
@@ -838,6 +1006,15 @@ export function stopAllAudio(): void {
     for (const p of Object.keys(synths) as Exclude<TonePatch, 'piano'>[]) {
       synths[p]?.releaseAll?.()
     }
+    woodblockBody?.triggerRelease()
+    woodblockAttack?.triggerRelease()
+    bellSynth?.triggerRelease()
+    handbellSynth?.triggerRelease()
+    gongSynth?.triggerRelease()
+    pluckSynth?.triggerRelease()
+    diziSynth?.releaseAll?.()
+    trumpetSynth?.releaseAll?.()
+    xylophoneSynth?.releaseAll?.()
   } catch {
     /* ignore */
   }

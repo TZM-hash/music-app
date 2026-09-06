@@ -1,17 +1,17 @@
 .instrument-sound-page {
   display: grid;
-  gap: 22px;
-  max-width: 1120px;
+  gap: 20px;
+  max-width: 1160px;
   margin: 0 auto;
-  padding: 30px 34px 44px;
+  padding: 28px 34px 44px;
 }
 
 .instrument-sound-page__hero,
-.instrument-sound-page__panel,
+.instrument-sound__interaction-card,
 .instrument-sound-page__prompt {
   border: 1px solid rgba(120, 137, 175, 0.22);
   border-radius: 24px;
-  background: rgba(255, 255, 255, 0.78);
+  background: rgba(255, 255, 255, 0.82);
   box-shadow: 0 18px 45px rgba(38, 56, 94, 0.08);
 }
 
@@ -35,7 +35,7 @@
   box-shadow: 0 10px 22px rgba(38, 56, 94, 0.1);
 }
 
-.instrument-sound-page__eyebrow {
+.instrument-sound__eyebrow {
   color: #7b6aab;
   font-size: 12px;
   font-weight: 800;
@@ -61,69 +61,321 @@
 }
 
 .instrument-sound-page__hero p {
-  max-width: 720px;
+  max-width: 760px;
   margin-top: 10px;
   color: #68708a;
   line-height: 1.7;
 }
 
-.instrument-sound-page__panel {
+.instrument-sound__interaction-card {
+  position: relative;
   padding: 26px 30px 28px;
+  overflow: hidden;
 }
 
-.instrument-sound-page__panel-heading {
+.instrument-sound__section-title {
   display: flex;
   align-items: end;
   justify-content: space-between;
   gap: 20px;
 }
 
-.instrument-sound-page__keys {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: 16px;
-  margin-top: 26px;
+.instrument-sound__keyboard-hint {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #f1efff;
+  color: #7663a9;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
 }
 
-.instrument-sound-page__keys button {
-  min-height: 116px;
+.instrument-sound__keyboard,
+.instrument-sound__pads {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.instrument-sound__keyboard {
+  grid-template-columns: repeat(10, minmax(66px, 1fr));
+  align-items: end;
+}
+
+.instrument-sound__key,
+.instrument-sound__pad,
+.instrument-sound__wind-note,
+.instrument-sound__mallet-bar {
   border: 1px solid #d9e0f1;
-  border-radius: 20px;
-  background: #f8faff;
   color: #26365e;
   cursor: pointer;
+  font: inherit;
   transition:
-    transform 160ms ease,
-    border-color 160ms ease,
-    background 160ms ease;
+    transform 150ms ease,
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
 }
 
-.instrument-sound-page__keys button:hover,
-.instrument-sound-page__keys button.active {
-  border-color: #8b7bc2;
+.instrument-sound__key {
+  min-height: 146px;
+  padding: 18px 8px 12px;
+  border-radius: 0 0 18px 18px;
+  border-top: 8px solid var(--key-color, #7b6aab);
+  background: linear-gradient(#fff, #f4f6fd);
+  box-shadow: 0 8px 0 #dfe4f2;
+}
+
+.instrument-sound__key:hover,
+.instrument-sound__key.active,
+.instrument-sound__pad:hover,
+.instrument-sound__pad.active,
+.instrument-sound__wind-note:hover,
+.instrument-sound__wind-note.active,
+.instrument-sound__mallet-bar:hover,
+.instrument-sound__mallet-bar.active {
+  border-color: var(--key-color, #8b7bc2);
   background: #eeeaff;
-  transform: translateY(-3px);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 22px rgba(74, 67, 138, 0.14);
 }
 
-.instrument-sound-page__keys strong,
-.instrument-sound-page__keys small {
+.instrument-sound__key strong,
+.instrument-sound__key small,
+.instrument-sound__key span,
+.instrument-sound__pad strong,
+.instrument-sound__pad span,
+.instrument-sound__pad small,
+.instrument-sound__wind-note strong,
+.instrument-sound__wind-note small,
+.instrument-sound__wind-note span {
   display: block;
 }
 
-.instrument-sound-page__keys strong {
+.instrument-sound__key strong {
+  font-size: 25px;
+}
+
+.instrument-sound__key small,
+.instrument-sound__wind-note small {
+  margin-top: 6px;
+  color: #7b6aab;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.instrument-sound__key span,
+.instrument-sound__pad small,
+.instrument-sound__wind-note span {
+  margin-top: 14px;
+  color: #8b92aa;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+
+.instrument-sound__hint,
+.instrument-sound-page__live {
+  color: #68708a;
+  line-height: 1.7;
+}
+
+.instrument-sound__hint {
+  margin-top: 18px !important;
+}
+
+.instrument-sound__play-rhythm {
+  padding: 10px 16px;
+  border: 1px solid #b6a8e6;
+  border-radius: 12px;
+  background: #f1efff;
+  color: #66549c;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.instrument-sound__pads {
+  grid-template-columns: repeat(6, minmax(100px, 1fr));
+}
+
+.instrument-sound__pad {
+  min-height: 126px;
+  padding: 16px 10px;
+  border-radius: 20px;
+  background: #f8faff;
+}
+
+.instrument-sound__pad strong {
+  color: #7b6aab;
   font-size: 28px;
 }
 
-.instrument-sound-page__keys small {
-  margin-top: 8px;
-  color: #7b6aab;
-  font-weight: 700;
+.instrument-sound__pad span {
+  margin-top: 9px;
+  font-size: 13px;
+  font-weight: 800;
 }
 
-.instrument-sound-page__live {
-  min-height: 24px;
-  margin-top: 18px !important;
-  color: #68708a;
+.instrument-sound__rhythm {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(36px, 1fr));
+  gap: 8px;
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #f6f7fc;
+}
+
+.instrument-sound__rhythm button {
+  min-height: 38px;
+  border: 1px solid #d9e0f1;
+  border-radius: 10px;
+  background: #fff;
+  color: #8b92aa;
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.instrument-sound__rhythm button.on {
+  border-color: #9c8bd3;
+  background: #e7e1ff;
+  color: #65529c;
+}
+
+.instrument-sound__rhythm button.current {
+  outline: 3px solid rgba(234, 165, 77, 0.42);
+  transform: translateY(-2px);
+}
+
+.instrument-sound__wind-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 28px;
+  align-items: stretch;
+  margin-top: 24px;
+}
+
+.instrument-sound__wind-notes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(90px, 1fr));
+  gap: 12px;
+}
+
+.instrument-sound__wind-note {
+  min-height: 112px;
+  padding: 12px 8px;
+  border-radius: 18px;
+  background: #f8faff;
+}
+
+.instrument-sound__wind-note strong {
+  font-size: 28px;
+}
+
+.instrument-sound__fingering {
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  border-radius: 20px;
+  background: #f7f8fd;
+}
+
+.instrument-sound__fingering-title {
+  color: #59627c;
+  font-weight: 800;
+}
+
+.instrument-sound__fingering-body {
+  display: grid;
+  grid-template-columns: repeat(4, 36px);
+  gap: 8px;
+  justify-content: center;
+  margin: 18px 0 12px;
+}
+
+.instrument-sound__mouth,
+.instrument-sound__foot {
+  grid-column: 1 / -1;
+  height: 14px;
+  border-radius: 999px;
+  background: #d9def1;
+}
+
+.instrument-sound__foot {
+  width: 70%;
+  justify-self: center;
+}
+
+.instrument-sound__hole {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 2px solid #bbc4dc;
+  border-radius: 50%;
+  color: #8790aa;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.instrument-sound__hole.pressed {
+  border-color: #7564ad;
+  background: #7564ad;
+  color: #fff;
+}
+
+.instrument-sound__hole.thumb {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+.instrument-sound__legend {
+  color: #8b92aa;
+  font-size: 12px;
+}
+
+.instrument-sound__mallet-stage {
+  position: relative;
+  min-height: 330px;
+  margin-top: 22px;
+  padding: 20px 12px 10px;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f4f7ff, #fffaf0);
+  overflow: hidden;
+}
+
+.instrument-sound__mallet-bars {
+  display: flex;
+  align-items: end;
+  justify-content: center;
+  gap: 10px;
+  height: 270px;
+}
+
+.instrument-sound__mallet-bar {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100px;
+  height: var(--bar-height, 78%);
+  padding: 16px 8px 12px;
+  border-radius: 14px 14px 22px 22px;
+  border-top: 8px solid var(--key-color, #7b6aab);
+  background: linear-gradient(#fff, #edf1fc);
+  box-shadow: 0 8px 0 #dce3f2;
+}
+
+.instrument-sound__mallet-bar b {
+  color: #59627c;
+  font-size: 18px;
+}
+
+.instrument-sound__mallet-bar span {
+  color: #8b92aa;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .instrument-sound-page__prompt {
@@ -140,4 +392,71 @@
 
 .instrument-sound-page__prompt strong {
   color: #7b6aab;
+}
+
+.instrument-sound-page__live {
+  min-height: 26px;
+  padding: 0 6px;
+}
+
+@media (max-width: 900px) {
+  .instrument-sound__keyboard {
+    grid-template-columns: repeat(5, minmax(70px, 1fr));
+  }
+
+  .instrument-sound__pads {
+    grid-template-columns: repeat(3, minmax(110px, 1fr));
+  }
+
+  .instrument-sound__wind-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .instrument-sound-page {
+    padding: 18px 14px 32px;
+  }
+
+  .instrument-sound-page__hero,
+  .instrument-sound__interaction-card {
+    padding: 20px;
+  }
+
+  .instrument-sound-page__hero {
+    align-items: flex-start;
+  }
+
+  .instrument-sound-page__icon {
+    flex-basis: 60px;
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+  }
+
+  .instrument-sound-page h1 {
+    font-size: 26px;
+  }
+
+  .instrument-sound__section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .instrument-sound__keyboard-hint {
+    white-space: normal;
+  }
+
+  .instrument-sound__keyboard {
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+  }
+
+  .instrument-sound__pads,
+  .instrument-sound__wind-notes {
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+  }
+
+  .instrument-sound__mallet-bars {
+    gap: 5px;
+  }
 }
