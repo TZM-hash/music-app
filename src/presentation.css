@@ -2660,7 +2660,7 @@
     overflow: visible !important;
   }
 
-  /* 今日探索：四张展示页合并为一张连续的桌面工作区。 */
+  /* 今日探索：两页桌面工作区；第二页集中呈现截图参考中的学习记录。 */
   .content.route-home .home-presentation {
     height: auto !important;
     min-height: 0 !important;
@@ -2698,6 +2698,27 @@
   .content.route-home .home-presentation-slide > .today-task-card,
   .content.route-home .home-presentation-slide > .home-recent-work {
     display: block !important;
+  }
+
+  .content.route-home .home-presentation[data-home-page='0'] .home-presentation-slide > .home-progress-card,
+  .content.route-home .home-presentation[data-home-page='0'] .home-presentation-slide > .today-task-card,
+  .content.route-home .home-presentation[data-home-page='0'] .home-presentation-slide > .home-recent-work {
+    display: none !important;
+  }
+
+  .content.route-home .home-presentation[data-home-page='0'] .home-presentation-slide > .music-hero,
+  .content.route-home .home-presentation[data-home-page='0'] .home-presentation-slide > .home-playground,
+  .content.route-home .home-presentation[data-home-page='0'] .home-presentation-slide > .pro-recommend,
+  .content.route-home .home-presentation[data-home-page='1'] .home-presentation-slide > .home-progress-card,
+  .content.route-home .home-presentation[data-home-page='1'] .home-presentation-slide > .today-task-card,
+  .content.route-home .home-presentation[data-home-page='1'] .home-presentation-slide > .home-recent-work {
+    display: grid !important;
+  }
+
+  .content.route-home .home-presentation[data-home-page='1'] .home-presentation-slide > .music-hero,
+  .content.route-home .home-presentation[data-home-page='1'] .home-presentation-slide > .home-playground,
+  .content.route-home .home-presentation[data-home-page='1'] .home-presentation-slide > .pro-recommend {
+    display: none !important;
   }
 
   /* 探索馆：左侧筛选/线索卡和右侧具体内容同时可见。 */

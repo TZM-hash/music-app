@@ -55,13 +55,21 @@ test('首页桌面端将学习记录与任务作品对齐为右侧等分双栏',
   assert.match(styles, /\.content\.route-home \.home-recent-work[\s\S]*height:\s*100%[\s\S]*min-height:\s*0/)
 })
 
-test('今日探索在一个连续页面展示全部主要区块', () => {
+test('今日探索保留两页分页，并将学习记录内容集中到第二页', () => {
   const home = readSource('src/pages/Home.tsx')
+  const presentation = readSource('src/presentation.css')
 
-  assert.doesNotMatch(home, /HOME_PRESENTATION_PAGES/)
-  assert.doesNotMatch(home, /<PagePager/)
+  assert.match(home, /HOME_PRESENTATION_PAGES/)
+  assert.match(home, /<PagePager/)
+  assert.match(home, /data-home-page={homePage}/)
+  assert.match(home, /id: 'today'/)
+  assert.match(home, /id: 'records'/)
+  assert.doesNotMatch(home, /id: 'tasks'|id: 'works'/)
   assert.match(home, /className="home-playground card"/)
   assert.match(home, /className="home-progress-card card"/)
   assert.match(home, /className="review-rail card today-task-card"/)
   assert.match(home, /className="portfolio-panel card home-recent-work"/)
+  assert.match(presentation, /\.home-presentation\[data-home-page='1'\] \.home-presentation-slide > \.home-progress-card/)
+  assert.match(presentation, /\.home-presentation\[data-home-page='1'\] \.home-presentation-slide > \.today-task-card/)
+  assert.match(presentation, /\.home-presentation\[data-home-page='1'\] \.home-presentation-slide > \.home-recent-work/)
 })

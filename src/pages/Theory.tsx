@@ -151,18 +151,6 @@ export default function Theory() {
                 <small className="topic-select-hint">共 {filtered.length} 个知识点，选择后查看右侧内容</small>
               </label>
             )}
-            {filtered.map((topic) => (
-              <button
-                key={topic.id}
-                className={topic.id === active.id ? 'on' : undefined}
-                onClick={() => setActiveId(topic.id)}
-              >
-                <b>{topic.title}</b>
-                <small>
-                  {topic.curriculum.grades.map(getGradeLabel).join(' / ')} · {getSemesterLabel(topic.curriculum.semester)} · {topic.curriculum.unitTitle}
-                </small>
-              </button>
-            ))}
           </div>
         </aside>
 

@@ -142,7 +142,8 @@ test('探索馆蓝色知识点区域使用下拉菜单选择主题', () => {
 
   assert.match(theory, /aria-label="选择知识点"/)
   assert.match(theory, /topic-select/)
-  assert.doesNotMatch(theory, /className=\{topic\.id === active\.id \? 'on' : ''\}/)
+  assert.doesNotMatch(theory, /className=\{topic\.id === active\.id/)
+  assert.doesNotMatch(theory, /onClick=\{\(\) => setActiveId\(topic\.id\)\}/)
 })
 
 test('探索馆保持左侧筛选和线索卡、右侧具体内容', () => {

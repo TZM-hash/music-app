@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { Route, useApp } from '../state/appState'
 import { BADGE_INFO, loadProgress } from '../state/progress'
 import { getCurrentStudent } from '../state/students'
@@ -30,6 +30,14 @@ import {
 } from '../state/theoryReview'
 import { focusFromReviewItem, focusFromWeakCategory } from '../state/reviewDeepLink'
 import { EXPERIENCE_ACTIVITIES, getRecommendedActivities } from '../music/experienceActivities'
+
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+
+const HOME_PRESENTATION_PAGES: readonly PagePagerItem[] = [
+  { id: 'today', label: '今日入口', hint: '开始今日探索与音乐探险' },
+  { id: 'records', label: '学习记录', hint: '查看本次进度、今日任务和最近作品' },
+]
+
 function formatWorkDate(work: CreativeWork): string {
   const date = new Date(work.createdAt)
   const month = `${date.getMonth() + 1}`.padStart(2, '0')
@@ -71,6 +79,7 @@ export default function Home() {
     selectedGrade,
     selectedClass,
   } = useApp()
+  const [homePage, setHomePage] = useState(0)
   const isLectureMode = mode === 'lecture'
 
   // 学生切换会更新 App context；这里直接读取当前档案，保证首页推荐和“我的发现”立即跟随切换。
@@ -228,7 +237,13 @@ export default function Home() {
   const recommendationCurriculum = recommendationTopic?.curriculum
 
   return (
-    <div className="pro-home music-home presentation-page home-presentation">
+    <div className="pro-home music-home presentation-page home-presentation" data-home-page={homePage}>
+      <PagePager
+        items={HOME_PRESENTATION_PAGES}
+        activeIndex={homePage}
+        onChange={setHomePage}
+        ariaLabel="首页展示页面"
+      />
       <div className="presentation-slide home-presentation-slide">
       <section className="pro-hero card music-hero">
         <div className="hero-copy">
