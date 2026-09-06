@@ -57,6 +57,17 @@ test('主要内容页面统一读取顶部全局年级', () => {
   }
 })
 
+test('互动课堂以探索剧场承载当前年级并保留教师支持入口', () => {
+  const lesson = read('src/pages/LessonMode.tsx')
+
+  assert.match(lesson, /ExplorationTheater/)
+  assert.match(lesson, /getGradeLabel/)
+  assert.match(lesson, /今日探索|探索剧场/)
+  assert.match(lesson, /navigate\('course'\)/)
+  assert.match(lesson, /navigate\('training'\)/)
+  assert.match(lesson, /navigate\('theory'\)/)
+})
+
 test('探索馆左侧分类筛选使用下拉菜单', () => {
   const theory = read('src/pages/Theory.tsx')
 

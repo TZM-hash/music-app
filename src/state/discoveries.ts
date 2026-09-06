@@ -1,7 +1,5 @@
 import type { PrimaryGrade, Semester } from '../music/zhejiangCurriculum'
-
-// Kept local until the planned explorationUnits module is present in this checkout.
-export type ExplorationPath = 'emotion' | 'movement' | 'story' | 'culture'
+import type { ExplorationPath } from '../music/explorationUnits'
 
 export type DiscoverySource = 'textbook' | 'extension'
 
@@ -64,11 +62,11 @@ function readAll(): MusicDiscovery[] {
     return parsed.filter((item): item is MusicDiscovery => {
       return Boolean(
         item &&
-          typeof item.id === 'string' &&
-          typeof item.topicId === 'string' &&
-          typeof item.title === 'string' &&
-          typeof item.statement === 'string' &&
-          typeof item.createdAt === 'number'
+        typeof item.id === 'string' &&
+        typeof item.topicId === 'string' &&
+        typeof item.title === 'string' &&
+        typeof item.statement === 'string' &&
+        typeof item.createdAt === 'number'
       )
     })
   } catch {
@@ -132,10 +130,16 @@ export function addMusicDiscoveryToList(
   discovery: MusicDiscovery,
   limit = MAX_DISCOVERIES
 ): MusicDiscovery[] {
-  return sortLatest([discovery, ...existing.filter((item) => item.id !== discovery.id)]).slice(0, limit)
+  return sortLatest([discovery, ...existing.filter((item) => item.id !== discovery.id)]).slice(
+    0,
+    limit
+  )
 }
 
-export function saveMusicDiscovery(draft: MusicDiscoveryDraft, createdAt = Date.now()): MusicDiscovery {
+export function saveMusicDiscovery(
+  draft: MusicDiscoveryDraft,
+  createdAt = Date.now()
+): MusicDiscovery {
   const existing = readAll()
   const discovery = createMusicDiscovery(draft, createdAt, nextSequence(existing))
   writeAll(addMusicDiscoveryToList(existing, discovery))

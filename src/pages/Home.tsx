@@ -7,10 +7,18 @@ import { ProgressRing, SpectrumBars } from '../components/Charts'
 import CountUp from '../components/CountUp'
 import '../components/charts.css'
 import { filterTheoryTopics, THEORY_TOPICS } from '../music/theoryCatalog'
-import { getCurriculumSourceLabel, getGradeLabel, getSemesterLabel } from '../music/zhejiangCurriculum'
+import {
+  getCurriculumSourceLabel,
+  getGradeLabel,
+  getSemesterLabel,
+} from '../music/zhejiangCurriculum'
 import { recommendExplorationTopic } from '../music/explorationRecommendations'
 import { encyclopediaToReviewQuestions, filterEncyclopediaEntries } from '../music/encyclopedia'
-import { buildCreativePortfolio, loadCreativeWorks, type CreativeWork } from '../state/creativeWorks'
+import {
+  buildCreativePortfolio,
+  loadCreativeWorks,
+  type CreativeWork,
+} from '../state/creativeWorks'
 import { buildDiscoverySummary, loadMusicDiscoveries } from '../state/discoveries'
 import {
   buildDailyChallenge,
@@ -19,10 +27,7 @@ import {
   loadReviewBook,
   type ReviewQuestion,
 } from '../state/theoryReview'
-import {
-  focusFromReviewItem,
-  focusFromWeakCategory,
-} from '../state/reviewDeepLink'
+import { focusFromReviewItem, focusFromWeakCategory } from '../state/reviewDeepLink'
 import { EXPERIENCE_ACTIVITIES, getRecommendedActivities } from '../music/experienceActivities'
 
 function formatWorkDate(work: CreativeWork): string {
@@ -57,7 +62,15 @@ function theoryToReviewQuestions(topics: typeof THEORY_TOPICS = THEORY_TOPICS): 
 }
 
 export default function Home() {
-  const { navigate, mode, openTheory, currentStudentId, selectedGrade, selectedClass } = useApp()
+  const {
+    navigate,
+    mode,
+    openTheory,
+    openExploration,
+    currentStudentId,
+    selectedGrade,
+    selectedClass,
+  } = useApp()
   const isLectureMode = mode === 'lecture'
 
   // 学生切换会更新 App context；这里直接读取当前档案，保证首页推荐和“我的发现”立即跟随切换。
@@ -81,10 +94,7 @@ export default function Home() {
     () => classOverview({ grade: effectiveGrade ?? null, className: selectedClass }),
     [effectiveGrade, selectedClass]
   )
-  const reviewBook = useMemo(
-    () => loadReviewBook(studentId ?? 'anonymous'),
-    [studentId]
-  )
+  const reviewBook = useMemo(() => loadReviewBook(studentId ?? 'anonymous'), [studentId])
   const scopedReviewBook = useMemo(() => {
     if (!effectiveGrade) return reviewBook
     const encyclopediaIds = new Set(gradeEncyclopediaEntries.map((entry) => entry.id))
@@ -100,22 +110,33 @@ export default function Home() {
     return { ...reviewBook, records }
   }, [effectiveGrade, gradeEncyclopediaEntries, gradeTopicIds, reviewBook])
   const reviewPool = useMemo(
-    () => [...theoryToReviewQuestions(gradeTopics), ...encyclopediaToReviewQuestions(gradeEncyclopediaEntries)],
+    () => [
+      ...theoryToReviewQuestions(gradeTopics),
+      ...encyclopediaToReviewQuestions(gradeEncyclopediaEntries),
+    ],
     [gradeEncyclopediaEntries, gradeTopics]
   )
   const dailyChallenge = useMemo(
     () => buildDailyChallenge(scopedReviewBook, reviewPool, todayKey(), 2),
     [reviewPool, scopedReviewBook]
   )
-  const wrongAnswers = useMemo(() => getWrongAnswers(scopedReviewBook).slice(0, 1), [scopedReviewBook])
-  const weakCategories = useMemo(() => getWeakCategories(scopedReviewBook).slice(0, 3), [scopedReviewBook])
+  const wrongAnswers = useMemo(
+    () => getWrongAnswers(scopedReviewBook).slice(0, 1),
+    [scopedReviewBook]
+  )
+  const weakCategories = useMemo(
+    () => getWeakCategories(scopedReviewBook).slice(0, 3),
+    [scopedReviewBook]
+  )
   const creativeWorks = useMemo(() => loadCreativeWorks(studentId), [studentId])
   const creativePortfolio = useMemo(() => buildCreativePortfolio(creativeWorks), [creativeWorks])
   const creativeWorkCount = creativePortfolio.totalWorks
   const latestWork = creativePortfolio.latestWorks[0]
 
   const theoryPracticeCount = useMemo(
-    () => Array.from(gradeTopicIds).filter((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0).length,
+    () =>
+      Array.from(gradeTopicIds).filter((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0)
+        .length,
     [gradeTopicIds, progress]
   )
   const totalStars = useMemo(
@@ -128,39 +149,40 @@ export default function Home() {
   )
   const knowledgeMastery = theoryPracticeCount / Math.max(1, gradeTopics.length)
   const completedTopicIds = useMemo(
-    () => Object.keys(progress.bestScores)
-      .filter((key) => key.startsWith('theory-') && gradeTopicIds.has(key.slice('theory-'.length)))
-      .map((key) => key.slice('theory-'.length)),
+    () =>
+      Object.keys(progress.bestScores)
+        .filter(
+          (key) => key.startsWith('theory-') && gradeTopicIds.has(key.slice('theory-'.length))
+        )
+        .map((key) => key.slice('theory-'.length)),
     [gradeTopicIds, progress]
   )
   const explorationRecommendation = useMemo(
-    () => recommendExplorationTopic(gradeTopics, {
-      grade: effectiveGrade,
-      semester: student?.semester,
-      completedTopicIds,
-      weakCategories: weakCategories.map((item) => item.category),
-      studentId,
-      dayKey: todayKey(),
-    }),
+    () =>
+      recommendExplorationTopic(gradeTopics, {
+        grade: effectiveGrade,
+        semester: student?.semester,
+        completedTopicIds,
+        weakCategories: weakCategories.map((item) => item.category),
+        studentId,
+        dayKey: todayKey(),
+      }),
     [completedTopicIds, effectiveGrade, gradeTopics, student?.semester, studentId, weakCategories]
   )
-  const discoverySummary = useMemo(
-    () => {
-      const discoveries = loadMusicDiscoveries(studentId)
-      const scoped = effectiveGrade
-        ? discoveries.filter((item) => item.grade === effectiveGrade || (!item.grade && gradeTopicIds.has(item.topicId)))
-        : discoveries
-      return buildDiscoverySummary(scoped)
-    },
-    [effectiveGrade, gradeTopicIds, studentId]
-  )
-  const experienceActivities = useMemo(
-    () => {
-      const scoped = getRecommendedActivities(effectiveGrade)
-      return scoped.length > 0 ? scoped : EXPERIENCE_ACTIVITIES
-    },
-    [effectiveGrade]
-  )
+  const discoverySummary = useMemo(() => {
+    const discoveries = loadMusicDiscoveries(studentId)
+    const scoped = effectiveGrade
+      ? discoveries.filter(
+          (item) =>
+            item.grade === effectiveGrade || (!item.grade && gradeTopicIds.has(item.topicId))
+        )
+      : discoveries
+    return buildDiscoverySummary(scoped)
+  }, [effectiveGrade, gradeTopicIds, studentId])
+  const experienceActivities = useMemo(() => {
+    const scoped = getRecommendedActivities(effectiveGrade)
+    return scoped.length > 0 ? scoped : EXPERIENCE_ACTIVITIES
+  }, [effectiveGrade])
 
   const practiceSignals = useMemo(
     () => [
@@ -170,7 +192,13 @@ export default function Home() {
       { label: '星数', value: totalStars, color: 'var(--accent-2)' },
       { label: '回放', value: wrongAnswers.length, color: 'var(--danger)' },
     ],
-    [theoryPracticeCount, overview.totalSessions, creativeWorkCount, totalStars, wrongAnswers.length]
+    [
+      theoryPracticeCount,
+      overview.totalSessions,
+      creativeWorkCount,
+      totalStars,
+      wrongAnswers.length,
+    ]
   )
   const growthTrack = useMemo(
     () => [
@@ -199,12 +227,12 @@ export default function Home() {
     <div className="pro-home music-home">
       <section className="pro-hero card music-hero">
         <div className="hero-copy">
-          <span className="pro-kicker">轻松、动态、可互动的音乐探索空间</span>
+          <span className="pro-kicker">今日探索 · 轻松、动态、可互动的音乐空间</span>
           <h1>继续今天的音乐探索。</h1>
           <p>沿着听、玩、挑战和创作的课堂主线，完成下一步就好。</p>
           <div className="hero-actions">
-            <button className="primary-action" onClick={() => navigate(continueRoute)}>
-              {continueLabel}
+            <button className="primary-action" onClick={() => openExploration('jasmine')}>
+              {continueLabel.replace('探险', '探索')}
             </button>
           </div>
         </div>
@@ -213,7 +241,9 @@ export default function Home() {
           <div className="hero-console">
             <div className="hero-console-head">
               <span>LIVE CLASS</span>
-              <b>{isLectureMode ? '互动投屏中' : student ? `${student.name} 的探索台` : '访客体验'}</b>
+              <b>
+                {isLectureMode ? '互动投屏中' : student ? `${student.name} 的探索台` : '访客体验'}
+              </b>
             </div>
 
             <div className="hero-wave" aria-hidden="true">
@@ -274,16 +304,7 @@ export default function Home() {
           )}
         </div>
         <div className="pro-actions">
-          <button
-            className="primary-action"
-            onClick={() => recommendationTopic
-              ? openTheory({
-                  topicId: recommendationTopic.id,
-                  category: recommendationTopic.category,
-                  stage: recommendationTopic.stage,
-                })
-              : navigate('lesson')}
-          >
+          <button className="primary-action" onClick={() => openExploration('jasmine')}>
             开始探索
           </button>
           <button onClick={() => navigate('course')}>查看学段总览</button>
@@ -312,19 +333,27 @@ export default function Home() {
 
         <div className="home-progress-stats" aria-label="本次进度统计">
           <div className="home-progress-stat">
-            <b><CountUp target={theoryPracticeCount} /></b>
+            <b>
+              <CountUp target={theoryPracticeCount} />
+            </b>
             <span>已探索</span>
           </div>
           <div className="home-progress-stat">
-            <b><CountUp target={overview.totalSessions} /></b>
+            <b>
+              <CountUp target={overview.totalSessions} />
+            </b>
             <span>挑战次数</span>
           </div>
           <div className="home-progress-stat">
-            <b><CountUp target={creativeWorkCount} /></b>
+            <b>
+              <CountUp target={creativeWorkCount} />
+            </b>
             <span>创作作品</span>
           </div>
           <div className="home-progress-stat">
-            <b><CountUp target={totalStars} /></b>
+            <b>
+              <CountUp target={totalStars} />
+            </b>
             <span>获得星星</span>
           </div>
         </div>
@@ -345,7 +374,11 @@ export default function Home() {
             </div>
             <div className="growth-track-mini">
               {growthTrack.map((node) => (
-                <button key={node.label} className={`growth-node ${node.tone}`} onClick={() => navigate(node.route)}>
+                <button
+                  key={node.label}
+                  className={`growth-node ${node.tone}`}
+                  onClick={() => navigate(node.route)}
+                >
                   <b>{node.value}</b>
                   <span>{node.label}</span>
                 </button>
@@ -357,12 +390,18 @@ export default function Home() {
         <div className="home-progress-badges">
           <div className="home-progress-section-head">
             <b>已获得徽章</b>
-            <small>{progress.badges.length > 0 ? `${progress.badges.length} 枚` : '完成挑战后解锁'}</small>
+            <small>
+              {progress.badges.length > 0 ? `${progress.badges.length} 枚` : '完成挑战后解锁'}
+            </small>
           </div>
           {progress.badges.length > 0 ? (
             <div className="home-progress-badge-list">
               {progress.badges.map((badge) => (
-                <div key={badge} className="home-progress-badge" title={BADGE_INFO[badge]?.name ?? badge}>
+                <div
+                  key={badge}
+                  className="home-progress-badge"
+                  title={BADGE_INFO[badge]?.name ?? badge}
+                >
                   <span aria-hidden="true">{BADGE_INFO[badge]?.icon ?? '★'}</span>
                   <b>{BADGE_INFO[badge]?.name ?? badge}</b>
                 </div>
@@ -376,13 +415,19 @@ export default function Home() {
         <div className="home-progress-discovery">
           <div className="home-progress-section-head">
             <b>我的发现</b>
-            <small>{discoverySummary.total > 0 ? `${discoverySummary.total} 条` : '完成探索后留下'}</small>
+            <small>
+              {discoverySummary.total > 0 ? `${discoverySummary.total} 条` : '完成探索后留下'}
+            </small>
           </div>
           {discoverySummary.latest[0] ? (
             <button
               type="button"
               className="home-progress-discovery-item"
-              onClick={() => openTheory({ topicId: discoverySummary.latest[0].topicId })}
+              onClick={() =>
+                discoverySummary.latest[0].unitId === 'jasmine'
+                  ? openExploration('jasmine')
+                  : openTheory({ topicId: discoverySummary.latest[0].topicId })
+              }
             >
               <span>“{discoverySummary.latest[0].statement}”</span>
               <small>{discoverySummary.latest[0].title} · 再听一遍</small>
@@ -413,7 +458,11 @@ export default function Home() {
               </div>
               <div className="daily-rail">
                 {dailyChallenge.length === 0 ? (
-                  <button type="button" className="daily-rail-empty" onClick={() => navigate('training')}>
+                  <button
+                    type="button"
+                    className="daily-rail-empty"
+                    onClick={() => navigate('training')}
+                  >
                     <strong>暂无今日挑战</strong>
                     <small>进入挑战中心开始练习</small>
                   </button>
@@ -451,7 +500,11 @@ export default function Home() {
                   </button>
                 ) : (
                   wrongAnswers.map((item) => (
-                    <button key={item.id} type="button" onClick={() => openTheory(focusFromReviewItem(item))}>
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => openTheory(focusFromReviewItem(item))}
+                    >
                       <strong>{item.itemTitle}</strong>
                       <small>
                         {item.options[item.lastSelectedAnswer ?? -1] ?? '未选择'} →{' '}
@@ -496,7 +549,11 @@ export default function Home() {
           <div>
             <span className="pro-kicker">最近作品</span>
             <h2>{creativePortfolio.totalWorks > 0 ? '继续你的创作' : '留下第一段灵感'}</h2>
-            <p>{creativePortfolio.totalWorks > 0 ? creativePortfolio.headline : '作品详情可以在混音创作中继续编辑。'}</p>
+            <p>
+              {creativePortfolio.totalWorks > 0
+                ? creativePortfolio.headline
+                : '作品详情可以在混音创作中继续编辑。'}
+            </p>
           </div>
           <div className="portfolio-count">
             <b>{creativePortfolio.totalWorks}</b>
@@ -522,7 +579,6 @@ export default function Home() {
           </button>
         </div>
       </section>
-
     </div>
   )
 }

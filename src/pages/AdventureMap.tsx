@@ -6,6 +6,7 @@ import { filterTheoryTopics, getTheoryTopic } from '../music/theoryCatalog'
 import { THEORY_QUESTS } from '../music/theoryQuests'
 import { focusFromTheoryTopic } from '../state/reviewDeepLink'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
+import { buildDiscoverySummary, loadMusicDiscoveries } from '../state/discoveries'
 import './course.css'
 
 function routeLabel(route: Route): string {
@@ -24,24 +25,34 @@ function routeLabel(route: Route): string {
 }
 
 export default function AdventureMap() {
-  const { navigate, openTheory, selectedGrade } = useApp()
+  const { navigate, openTheory, openExploration, currentStudentId, selectedGrade } = useApp()
   const progress = loadProgress()
   const student = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? student?.grade
+  const discoverySummary = useMemo(
+    () => buildDiscoverySummary(loadMusicDiscoveries(currentStudentId)),
+    [currentStudentId]
+  )
   const scopedTopicIds = useMemo(
-    () => new Set(filterTheoryTopics(effectiveGrade ? { grade: effectiveGrade } : {}).map((topic) => topic.id)),
+    () =>
+      new Set(
+        filterTheoryTopics(effectiveGrade ? { grade: effectiveGrade } : {}).map((topic) => topic.id)
+      ),
     [effectiveGrade]
   )
   const scopedQuests = useMemo(
-    () => effectiveGrade
-      ? THEORY_QUESTS
-          .map((quest) => ({ ...quest, topicIds: quest.topicIds.filter((id) => scopedTopicIds.has(id)) }))
-          .filter((quest) => quest.topicIds.length > 0)
-      : THEORY_QUESTS,
+    () =>
+      effectiveGrade
+        ? THEORY_QUESTS.map((quest) => ({
+            ...quest,
+            topicIds: quest.topicIds.filter((id) => scopedTopicIds.has(id)),
+          })).filter((quest) => quest.topicIds.length > 0)
+        : THEORY_QUESTS,
     [effectiveGrade, scopedTopicIds]
   )
   const [activeQuestId, setActiveQuestId] = useState(THEORY_QUESTS[0].id)
-  const activeQuest = scopedQuests.find((quest) => quest.id === activeQuestId) ?? scopedQuests[0] ?? THEORY_QUESTS[0]
+  const activeQuest =
+    scopedQuests.find((quest) => quest.id === activeQuestId) ?? scopedQuests[0] ?? THEORY_QUESTS[0]
 
   useEffect(() => {
     if (activeQuest.id !== activeQuestId) setActiveQuestId(activeQuest.id)
@@ -49,7 +60,9 @@ export default function AdventureMap() {
 
   const questStats = useMemo(() => {
     return scopedQuests.map((quest, index) => {
-      const completed = quest.topicIds.filter((id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0).length
+      const completed = quest.topicIds.filter(
+        (id) => (progress.bestScores[`theory-${id}`] ?? 0) > 0
+      ).length
       const pct = Math.round((completed / quest.topicIds.length) * 100)
       const previous = index === 0 ? null : scopedQuests[index - 1]
       const previousStarted = previous
@@ -91,16 +104,27 @@ export default function AdventureMap() {
           </p>
         </div>
         <div className="map-summary">
-          <div><b>{scopedQuests.length}</b><small>音乐岛屿</small></div>
-          <div><b>{questStats.reduce((sum, item) => sum + item.completed, 0)}</b><small>已闯发现卡</small></div>
-          <div><b>{student ? student.avatar : '🎒'}</b><small>{student ? student.name : '匿名冒险'}</small></div>
+          <div>
+            <b>{scopedQuests.length}</b>
+            <small>音乐岛屿</small>
+          </div>
+          <div>
+            <b>{questStats.reduce((sum, item) => sum + item.completed, 0)}</b>
+            <small>已闯发现卡</small>
+          </div>
+          <div>
+            <b>{student ? student.avatar : '🎒'}</b>
+            <small>{student ? student.name : '匿名冒险'}</small>
+          </div>
         </div>
       </section>
 
       <section className="call-panel card quest-spotlight">
         <div>
           <span className="course-kicker">当前任务</span>
-          <h3>{activeQuest.icon} {activeQuest.title}</h3>
+          <h3>
+            {activeQuest.icon} {activeQuest.title}
+          </h3>
           <p>{activeQuest.mission}</p>
           <div className="quest-reward">完成奖励：{activeQuest.reward}</div>
         </div>
@@ -115,6 +139,41 @@ export default function AdventureMap() {
             探索发现
           </button>
         </div>
+      </section>
+
+      <section className="leader-panel card discovery-replay-panel" aria-label="我的发现">
+        <div>
+          <span className="course-kicker">我的发现</span>
+          <h3>把听到的证据再听一次</h3>
+          <p>
+            {discoverySummary.total > 0
+              ? `已经留下 ${discoverySummary.total} 条音乐发现。`
+              : '完成一次探索后，这里会出现你的音乐证据。'}
+          </p>
+        </div>
+        {discoverySummary.latest[0] ? (
+          <button
+            className="big-start"
+            type="button"
+            onClick={() =>
+              discoverySummary.latest[0].unitId === 'jasmine'
+                ? openExploration('jasmine')
+                : openTheory({ topicId: discoverySummary.latest[0].topicId })
+            }
+          >
+            <b>{discoverySummary.latest[0].title}</b>
+            <span>{discoverySummary.latest[0].statement}</span>
+            <small>再听一次</small>
+          </button>
+        ) : (
+          <button
+            className="lesson-secondary"
+            type="button"
+            onClick={() => openExploration('jasmine')}
+          >
+            开始今日探索
+          </button>
+        )}
       </section>
 
       <div className="map-track quest-track">
@@ -132,11 +191,15 @@ export default function AdventureMap() {
             </span>
             <h3>{quest.title}</h3>
             <p>{quest.mood}</p>
-            <div className="station-skill">{quest.topicIds.length} 张发现卡 · {routeLabel(quest.practiceRoute)}</div>
+            <div className="station-skill">
+              {quest.topicIds.length} 张发现卡 · {routeLabel(quest.practiceRoute)}
+            </div>
             <div className="station-progress">
               <span style={{ width: `${pct}%`, background: quest.color }} />
             </div>
-            <small>{completed}/{quest.topicIds.length} 张发现卡已点亮</small>
+            <small>
+              {completed}/{quest.topicIds.length} 张发现卡已点亮
+            </small>
           </button>
         ))}
       </div>
@@ -162,7 +225,9 @@ export default function AdventureMap() {
               title={topic!.subtitle}
             >
               <b>{topic!.title}</b>
-              <small>{topic!.category} · {topic!.level}</small>
+              <small>
+                {topic!.category} · {topic!.level}
+              </small>
               <span>{topic!.subtitle}</span>
             </button>
           ))}
