@@ -1,9 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { allSongs } from '../music/songLibrary'
 import { CATEGORY_INFO, SongCategory, Song } from '../music/songs'
 import { ensureAudio } from '../music/audioEngine'
 import { useMelodyPreview } from '../hooks/useMelodyPreview'
 import { useMounted } from '../hooks/useTimers'
+import PagePager from './PagePager'
+import { getPageSlice } from './presentation'
 import './songPicker.css'
 
 interface DifficultyOption {
@@ -49,12 +51,36 @@ export default function SongPicker({
   const [cat, setCat] = useState<SongCategory | 'all'>('all')
   const [selectedId, setSelectedId] = useState<string>(initialSongId ?? songs[0]?.id ?? '')
   const [previewing, setPreviewing] = useState<string | null>(null)
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(min-width: 901px)').matches
+  )
+  const [songPage, setSongPage] = useState(0)
   // 统一的旋律试听：重复点击自动停掉上一段，切页自动静音
   const previewCtl = useMelodyPreview()
   const mounted = useMounted()
 
   const filtered = songs.filter((s) => cat === 'all' || s.category === cat)
+  const songPageData = useMemo(
+    () => getPageSlice(filtered, songPage, isDesktop ? 6 : 0),
+    [filtered, isDesktop, songPage]
+  )
   const selected = songs.find((s) => s.id === selectedId) ?? filtered[0] ?? songs[0]
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 901px)')
+    const update = () => setIsDesktop(media.matches)
+    update()
+    media.addEventListener?.('change', update)
+    return () => media.removeEventListener?.('change', update)
+  }, [])
+
+  useEffect(() => {
+    setSongPage(0)
+  }, [cat, isDesktop])
+
+  useEffect(() => {
+    if (songPageData.pageIndex !== songPage) setSongPage(songPageData.pageIndex)
+  }, [songPage, songPageData.pageIndex])
 
   const preview = async (song: Song, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -102,7 +128,7 @@ export default function SongPicker({
           </div>
 
           <div className="picker-list">
-            {filtered.map((s) => (
+            {songPageData.items.map((s) => (
               <div
                 key={s.id}
                 role="button"
@@ -140,6 +166,21 @@ export default function SongPicker({
               </div>
             ))}
           </div>
+          {isDesktop && songPageData.pageCount > 1 && (
+            <PagePager
+              items={Array.from({ length: songPageData.pageCount }, (_, index) => ({
+                id: `song-page-${index}`,
+                label: `${index + 1}`,
+                hint: `第 ${index + 1} 页曲目`,
+              }))}
+              activeIndex={songPageData.pageIndex}
+              onChange={setSongPage}
+              ariaLabel="选曲列表分页"
+              className="picker-page-pager"
+              compact
+              showTabs={false}
+            />
+          )}
         </div>
 
         {/* 右侧：难度 + 开始 */}

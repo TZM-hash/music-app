@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ensureAudio, triggerVoice, VoiceKind, VOICE_INFO, setVolume, getVolume, startTransportLoop, scheduleVisual } from '../music/audioEngine'
 import { useApp } from '../state/appState'
 import { useMounted } from '../hooks/useTimers'
@@ -8,9 +8,12 @@ import {
   saveCreativeWork,
   type CreativeWork,
 } from '../state/creativeWorks'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+import { getPageSlice } from '../components/presentation'
 import './mixer.css'
 
 const STEPS = 16
+const TRACK_PAGE_SIZE = 4
 const PITCHES = ['C2', 'D2', 'E2', 'G2', 'A2', 'C3', 'D3', 'E3', 'G3', 'A3', 'C4', 'D4', 'E4', 'F4', 'G4', 'A4', 'C5', 'D5', 'E5']
 
 interface Track {
@@ -195,6 +198,10 @@ export default function Mixer() {
   const [projectName, setProjectName] = useState('我的节奏小作品')
   const [creativeNote, setCreativeNote] = useState('我想让这段音乐听起来更有律动。')
   const [lastSavedTitle, setLastSavedTitle] = useState('')
+  const [trackPage, setTrackPage] = useState(0)
+  const [isDesktopPresentation, setIsDesktopPresentation] = useState(
+    () => typeof window === 'undefined' || window.innerWidth > 900,
+  )
   const [creativeWorks, setCreativeWorks] = useState<CreativeWork[]>(() =>
     loadCreativeWorks(currentStudentId).filter((work) => work.source === 'mixer')
   )
@@ -206,6 +213,27 @@ export default function Mixer() {
   swingRef.current = swing
 
   const anySolo = tracks.some((t) => t.solo)
+  const trackPageData = useMemo(() => getPageSlice(tracks, trackPage, TRACK_PAGE_SIZE), [trackPage, tracks])
+  const trackPagerItems = useMemo<readonly PagePagerItem[]>(
+    () => Array.from({ length: trackPageData.pageCount }, (_, index) => ({
+      id: `track-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页音轨`,
+    })),
+    [trackPageData.pageCount],
+  )
+
+  useEffect(() => {
+    if (trackPageData.pageIndex !== trackPage) setTrackPage(trackPageData.pageIndex)
+  }, [trackPage, trackPageData.pageIndex])
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 901px)')
+    const update = () => setIsDesktopPresentation(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   const stop = useCallback(() => {
     stopRef.current?.()
@@ -268,7 +296,10 @@ export default function Mixer() {
   const changeVoice = (tid: number, voice: VoiceKind) => {
     updateTrack(tid, { voice, note: VOICE_INFO[voice].defaultNote })
   }
-  const addTrack = () => setTracks((ts) => [...ts, makeTrack('piano')])
+  const addTrack = () => {
+    setTrackPage(Math.floor(tracks.length / TRACK_PAGE_SIZE))
+    setTracks((ts) => [...ts, makeTrack('piano')])
+  }
   const removeTrack = (tid: number) => {
     if (!window.confirm('确定删除这条音轨吗？')) return
     setTracks((ts) => ts.filter((t) => t.id !== tid))
@@ -289,6 +320,7 @@ export default function Mixer() {
 
   const applyPreset = (p: Preset) => {
     if (hasAnyStep() && !window.confirm(`确定用「${p.name}」替换当前节奏吗？`)) return
+    setTrackPage(0)
     setTracks(presetToTracks(p))
     setBpm(p.bpm)
   }
@@ -330,6 +362,7 @@ export default function Mixer() {
     setLastSavedTitle(work.title)
   }
   const loadProject = (p: SavedProject) => {
+    setTrackPage(0)
     setTracks(p.tracks.map((t) => {
       const tr = makeTrack(t.voice, t.steps.map((s) => (s ? 1 : 0)))
       tr.note = t.note
@@ -361,6 +394,8 @@ export default function Mixer() {
       setCreativeNote(work.reflection || creativeNote)
     }
   }
+
+  const visibleTracks = isDesktopPresentation ? trackPageData.items : tracks
 
   const deleteCreativeWork = (id: string) => {
     if (!window.confirm('确定删除这条创作记录吗？')) return
@@ -533,8 +568,9 @@ export default function Mixer() {
       </div>
 
       {/* 音轨 */}
-      <div className="mix-tracks">
-        {tracks.map((t) => {
+      <div className="mix-track-stage">
+        <div className="mix-tracks">
+        {visibleTracks.map((t) => {
           const info = VOICE_INFO[t.voice]
           const dimmed = anySolo && !t.solo
           return (
@@ -582,6 +618,18 @@ export default function Mixer() {
             </div>
           )
         })}
+        </div>
+        {isDesktopPresentation && trackPageData.pageCount > 1 && (
+          <PagePager
+            items={trackPagerItems}
+            activeIndex={trackPageData.pageIndex}
+            onChange={setTrackPage}
+            ariaLabel="音轨分页"
+            compact
+            showTabs={false}
+            className="mix-track-pager"
+          />
+        )}
       </div>
 
       {/* 分享码导出弹窗 */}

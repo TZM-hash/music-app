@@ -19,8 +19,15 @@ import {
   type ExplorationToolId,
   type MusicDiscoveryToolNote,
 } from '../music/explorationTools'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
 import '../components/charts.css'
 import './training.css'
+
+const TRAINING_PRESENTATION_PAGES: readonly PagePagerItem[] = [
+  { id: 'experience', label: '今日玩乐', hint: '三种短时音乐体验' },
+  { id: 'auditory', label: '听觉实验室', hint: '比较声音、记录线索并回到作品' },
+  { id: 'practice', label: '更多练习', hint: '听感、读谱、跟唱和节奏挑战' },
+]
 
 interface TrainingModule {
   id: string
@@ -158,6 +165,7 @@ const AUDITORY_LAB_TOOLS: AuditoryLabTool[] = [
 
 export default function TrainingCenter() {
   const { navigate, openExploration, currentStudentId, selectedGrade } = useApp()
+  const [trainingPage, setTrainingPage] = useState(0)
   const progress = loadProgress()
   const [activeId, setActiveId] = useState(MODULES[0].id)
   const [activeExperienceId, setActiveExperienceId] = useState('sound-detective')
@@ -252,7 +260,14 @@ export default function TrainingCenter() {
   }
 
   return (
-    <div className="training-page">
+    <div className="training-page presentation-page training-presentation" data-training-page={trainingPage}>
+      <PagePager
+        items={TRAINING_PRESENTATION_PAGES}
+        activeIndex={trainingPage}
+        onChange={setTrainingPage}
+        ariaLabel="玩乐中心展示页面"
+      />
+      <div className="presentation-slide training-presentation-slide">
       <section className="training-auditory-lab card" aria-labelledby="training-auditory-lab-title">
         <div className="training-auditory-lab-hero">
           <div>
@@ -540,6 +555,7 @@ export default function TrainingCenter() {
             </button>
           </div>
         </section>
+      </div>
       </div>
     </div>
   )

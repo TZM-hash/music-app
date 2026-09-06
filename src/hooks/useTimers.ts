@@ -13,14 +13,17 @@ export function useTimers() {
   const timers = useRef<Set<number>>(new Set())
   const alive = useRef(true)
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    // React StrictMode 在开发环境会模拟一次“卸载后重新挂载”；
+    // 重新挂载时必须恢复可用状态，否则后续登记的计时器会被永久跳过。
+    alive.current = true
+    const timerSet = timers.current
+    return () => {
       alive.current = false
-      timers.current.forEach((id) => window.clearTimeout(id))
-      timers.current.clear()
-    },
-    []
-  )
+      timerSet.forEach((id) => window.clearTimeout(id))
+      timerSet.clear()
+    }
+  }, [])
 
   const later = useCallback((fn: () => void, ms: number): number => {
     const id = window.setTimeout(() => {
@@ -41,11 +44,12 @@ export function useTimers() {
 
 export function useMounted() {
   const mounted = useRef(true)
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    // 与 useTimers 一样，兼容 StrictMode 的开发期重新挂载模拟。
+    mounted.current = true
+    return () => {
       mounted.current = false
-    },
-    []
-  )
+    }
+  }, [])
   return mounted
 }

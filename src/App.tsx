@@ -71,7 +71,7 @@ function Shell() {
       <div className="main-col">
         <TopBar />
         <div
-          className={`content route-${displayedRoute} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''} ${leaving ? 'leaving' : ''} ${navDirection === 'back' ? 'nav-back' : 'nav-forward'}`}
+          className={`content presentation-viewport route-${displayedRoute} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''} ${leaving ? 'leaving' : ''} ${navDirection === 'back' ? 'nav-back' : 'nav-forward'}`}
         >
           <ErrorBoundary key={displayedRoute} onReset={() => navigate('home', { history: 'reset' })}>
             {displayedRoute === 'home' && <Home />}

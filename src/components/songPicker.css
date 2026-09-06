@@ -62,6 +62,17 @@
   align-content: start;
   padding-right: 4px;
 }
+
+@media (min-width: 901px) {
+  .picker-list {
+    overflow: hidden;
+  }
+
+  .picker-page-pager {
+    flex: 0 0 auto;
+    margin-top: 0;
+  }
+}
 .picker-song {
   display: flex;
   align-items: center;

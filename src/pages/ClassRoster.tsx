@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   loadRoster,
   addStudent,
@@ -19,7 +19,11 @@ import { removeStudentProgress } from '../state/progress'
 import { useApp } from '../state/appState'
 import { classOptionsForRoster, DEFAULT_CLASS_NAME, matchesLearningScope } from '../state/learningScope'
 import Reveal from '../components/Reveal'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+import { getPageSlice } from '../components/presentation'
 import './class.css'
+
+const ROSTER_PAGE_SIZE = 3
 
 export default function ClassRoster() {
   const { currentStudentId, selectStudent, navigate, selectedGrade, selectedClass } = useApp()
@@ -30,10 +34,35 @@ export default function ClassRoster() {
   const [semester, setSemester] = useState<Semester>(1)
   const [className, setClassName] = useState<string>(DEFAULT_CLASS_NAME)
   const [notice, setNotice] = useState<string | null>(null)
+  const [rosterPage, setRosterPage] = useState(0)
+  const [isDesktopPresentation, setIsDesktopPresentation] = useState(
+    () => typeof window === 'undefined' || window.innerWidth > 900,
+  )
   const importRef = useRef<HTMLInputElement>(null)
   const allStudents = loadRoster()
   const classOptions = classOptionsForRoster(allStudents, grade)
   const roster = allStudents.filter((student) => matchesLearningScope(student, { grade: selectedGrade, className: selectedClass }))
+  const rosterPageData = useMemo(() => getPageSlice(roster, rosterPage, ROSTER_PAGE_SIZE), [roster, rosterPage])
+  const rosterPagerItems = useMemo<readonly PagePagerItem[]>(
+    () => Array.from({ length: rosterPageData.pageCount }, (_, index) => ({
+      id: `roster-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页学生名册`,
+    })),
+    [rosterPageData.pageCount],
+  )
+
+  useEffect(() => {
+    if (rosterPageData.pageIndex !== rosterPage) setRosterPage(rosterPageData.pageIndex)
+  }, [rosterPage, rosterPageData.pageIndex])
+
+  useEffect(() => {
+    const media = window.matchMedia('(min-width: 901px)')
+    const update = () => setIsDesktopPresentation(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   const add = () => {
     if (!name.trim()) return
@@ -158,11 +187,11 @@ export default function ClassRoster() {
       </div>
 
       <div className="roster-grid">
-        {roster.map((s, index) => {
+        {(isDesktopPresentation ? rosterPageData.items : roster).map((s, index) => {
           const stat = studentStat(s.id)
           const active = currentStudentId === s.id
           return (
-            <Reveal key={s.id} index={index}>
+            <Reveal key={s.id} index={isDesktopPresentation ? rosterPageData.pageIndex * ROSTER_PAGE_SIZE + index : index}>
             <div className={`stu-card card ${active ? 'active' : ''}`}>
               <div className="stu-card-head">
                 <span className="stu-card-avatar">{s.avatar}</span>
@@ -244,6 +273,17 @@ export default function ClassRoster() {
           )
         })}
       </div>
+      {isDesktopPresentation && rosterPageData.pageCount > 1 && (
+        <PagePager
+          items={rosterPagerItems}
+          activeIndex={rosterPageData.pageIndex}
+          onChange={setRosterPage}
+          ariaLabel="学生名册分页"
+          compact
+          showTabs={false}
+          className="roster-pager"
+        />
+      )}
     </div>
   )
 }

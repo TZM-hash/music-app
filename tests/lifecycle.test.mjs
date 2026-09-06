@@ -24,6 +24,9 @@ function makeTimerRegistry() {
       timers.forEach((id) => clearTimeout(id))
       timers.clear()
     },
+    mount() {
+      alive = true
+    },
     size: () => timers.size,
   }
 }
@@ -55,6 +58,17 @@ test('useTimers: cancel 可单独取消某个定时器', async () => {
   const id = reg.later(() => fired++, 10)
   reg.later(() => fired++, 15)
   reg.cancel(id)
+  await new Promise((r) => setTimeout(r, 40))
+  assert.equal(fired, 1)
+  reg.destroy()
+})
+
+test('useTimers: 重新挂载后可以继续登记计时器', async () => {
+  const reg = makeTimerRegistry()
+  let fired = 0
+  reg.destroy() // 模拟 StrictMode 的第一次 effect cleanup
+  reg.mount() // 模拟随后重新执行 effect setup
+  reg.later(() => fired++, 10)
   await new Promise((r) => setTimeout(r, 40))
   assert.equal(fired, 1)
   reg.destroy()

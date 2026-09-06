@@ -7,7 +7,15 @@ import { THEORY_QUESTS } from '../music/theoryQuests'
 import { focusFromTheoryTopic } from '../state/reviewDeepLink'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
 import { buildDiscoverySummary, loadMusicDiscoveries } from '../state/discoveries'
+import PagePager, { type PagePagerItem } from '../components/PagePager'
+import { getPageSlice } from '../components/presentation'
 import './course.css'
+
+const ADVENTURE_PRESENTATION_PAGES: readonly PagePagerItem[] = [
+  { id: 'mission', label: '当前任务', hint: '查看当前小岛和下一步行动' },
+  { id: 'map', label: '音乐地图', hint: '分组查看九座音乐岛屿' },
+  { id: 'cards', label: '发现卡', hint: '查看当前岛屿的主题卡片' },
+]
 
 function routeLabel(route: Route): string {
   const labels: Partial<Record<Route, string>> = {
@@ -26,6 +34,8 @@ function routeLabel(route: Route): string {
 
 export default function AdventureMap() {
   const { navigate, openTheory, openExploration, currentStudentId, selectedGrade } = useApp()
+  const [adventurePage, setAdventurePage] = useState(0)
+  const [questPage, setQuestPage] = useState(0)
   const progress = loadProgress()
   const student = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? student?.grade
@@ -76,6 +86,15 @@ export default function AdventureMap() {
     .map((id) => getTheoryTopic(id))
     .filter(Boolean)
     .slice(0, 6)
+  const questPageData = useMemo(() => getPageSlice(questStats, questPage, 6), [questPage, questStats])
+  const questPagerItems = useMemo(
+    () => Array.from({ length: questPageData.pageCount }, (_, index) => ({
+      id: `quest-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 组音乐岛屿`,
+    })),
+    [questPageData.pageCount]
+  )
 
   const openExploreTheory = () => {
     const first = previewTopics[0]
@@ -93,8 +112,15 @@ export default function AdventureMap() {
   }
 
   return (
-    <div className="adventure-page quest-page">
-      <section className="course-head card adventure-head">
+    <div className="adventure-page quest-page presentation-page adventure-presentation" data-adventure-page={adventurePage}>
+      <PagePager
+        items={ADVENTURE_PRESENTATION_PAGES}
+        activeIndex={adventurePage}
+        onChange={setAdventurePage}
+        ariaLabel="我的展示页面"
+      />
+      <div className="presentation-slide adventure-presentation-slide">
+      <section className="course-head card adventure-head adventure-presentation-mission">
         <div>
           <span className="course-kicker">快乐教学 · 边玩边学</span>
           <h2>音乐闯关岛</h2>
@@ -119,7 +145,7 @@ export default function AdventureMap() {
         </div>
       </section>
 
-      <section className="call-panel card quest-spotlight">
+      <section className="call-panel card quest-spotlight adventure-presentation-mission">
         <div>
           <span className="course-kicker">当前任务</span>
           <h3>
@@ -176,8 +202,9 @@ export default function AdventureMap() {
         )}
       </section>
 
+      <div className="adventure-presentation-map">
       <div className="map-track quest-track">
-        {questStats.map(({ quest, completed, pct, unlocked }, index) => (
+        {questPageData.items.map(({ quest, completed, pct, unlocked }) => (
           <button
             key={quest.id}
             className={`station quest-card card ${pct >= 100 ? 'done' : ''} ${unlocked ? '' : 'locked'} ${quest.id === activeQuest.id ? 'active' : ''}`}
@@ -185,7 +212,7 @@ export default function AdventureMap() {
             disabled={!unlocked}
             title={`${quest.title}：${quest.mood}。${quest.topicIds.length} 张发现卡 · ${routeLabel(quest.practiceRoute)}`}
           >
-            <span className="station-index">{index + 1}</span>
+            <span className="station-index">{questStats.findIndex((item) => item.quest.id === quest.id) + 1}</span>
             <span className="station-icon" style={{ background: quest.color }}>
               {quest.icon}
             </span>
@@ -203,8 +230,17 @@ export default function AdventureMap() {
           </button>
         ))}
       </div>
+      <PagePager
+        items={questPagerItems}
+        activeIndex={questPageData.pageIndex}
+        onChange={setQuestPage}
+        ariaLabel="音乐岛屿分页"
+        compact
+        showTabs={false}
+      />
+      </div>
 
-      <section className="leader-panel card quest-topic-panel">
+      <section className="leader-panel card quest-topic-panel adventure-presentation-cards">
         <div>
           <span className="course-kicker">岛屿发现卡</span>
           <h3>{activeQuest.title}会遇到这些关卡</h3>
@@ -241,6 +277,7 @@ export default function AdventureMap() {
           </button>
         </div>
       </section>
+      </div>
     </div>
   )
 }
