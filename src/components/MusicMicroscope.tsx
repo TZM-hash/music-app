@@ -24,6 +24,8 @@ function durationForBeats(beats: number): string {
 function createJumpingCues(cues: ExplorationCue[]): ExplorationCue[] {
   return cues.map((cue, index) => ({
     ...cue,
+    note: cue.note.replace(/(\d)$/, (_, octave: string) => String(Math.max(1, Number(octave) + (index % 2 === 0 ? 1 : -1)))),
+    beats: index % 2 === 0 ? Math.max(0.5, cue.beats * 0.5) : cue.beats * 1.5,
     velocity: Math.max(0.45, Math.min(1, cue.velocity + (index % 2 === 0 ? 0.1 : -0.08))),
   }))
 }
@@ -127,7 +129,10 @@ export default function MusicMicroscope({ cues, evidenceLabels, onNote, onReturn
                 key={`${cue.note}-${index}`}
                 className={index === markedCueIndex ? 'marked' : ''}
                 aria-pressed={index === markedCueIndex}
-                onClick={() => setMarkedCueIndex(index)}
+                onClick={() => {
+                  if (isPlaying) stopPlayback()
+                  setMarkedCueIndex(index)
+                }}
               >
                 <strong>{index + 1}</strong>
                 <span>{cue.note}</span>

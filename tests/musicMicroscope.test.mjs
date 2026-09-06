@@ -39,6 +39,17 @@ test('音乐显微镜支持证据切换、保存观察和回到作品再听', ()
   assert.match(source, /观察|observation/)
 })
 
+test('音乐显微镜 B 试听改变旋律或节奏数据，而不只是力度', () => {
+  const source = read('src/components/MusicMicroscope.tsx')
+  assert.match(source, /createJumpingCues[\s\S]*note\s*:/)
+  assert.match(source, /createJumpingCues[\s\S]*beats\s*:/)
+})
+
+test('音乐显微镜选择新的时间线音符时会停止旧试听', () => {
+  const source = read('src/components/MusicMicroscope.tsx')
+  assert.match(source, /onClick=\{\(\) => \{[\s\S]*stopPlayback\(\)[\s\S]*setMarkedCueIndex\(index\)/)
+})
+
 test('音乐显微镜样式只定义桌面三栏工具，不添加移动断点', () => {
   const styles = read('src/components/explorationTools.css')
   assert.match(styles, /\.music-microscope\s*\{/) 

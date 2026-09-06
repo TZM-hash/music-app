@@ -86,3 +86,13 @@ test('工具观察记录会过滤、裁剪、去重并限制数量', () => {
   assert.deepEqual(notes[0].evidence, ['旋律', '音色'])
   assert.equal(normalizeToolNotes({ toolId: 'microscope' }), undefined)
 })
+
+test('只有证据的工具观察也能持久化为空文本观察', () => {
+  const load = createTsLoader()
+  const { normalizeToolNotes } = load('src/music/explorationTools.ts')
+  const notes = normalizeToolNotes([
+    { toolId: 'microscope', observation: '', evidence: ['更跳跃'] },
+  ])
+
+  assert.deepEqual(notes, [{ toolId: 'microscope', observation: '', evidence: ['更跳跃'] }])
+})

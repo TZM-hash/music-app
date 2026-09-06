@@ -124,9 +124,6 @@ export function normalizeToolNotes(value: unknown): MusicDiscoveryToolNote[] | u
   for (const item of value) {
     if (!item || typeof item !== 'object') continue
     const candidate = item as { toolId?: unknown; observation?: unknown; evidence?: unknown }
-    if (!isToolId(candidate.toolId) || typeof candidate.observation !== 'string') continue
-    const observation = candidate.observation.trim().slice(0, 160)
-    if (!observation) continue
     const evidence = Array.isArray(candidate.evidence)
       ? Array.from(
           new Set(
@@ -137,6 +134,9 @@ export function normalizeToolNotes(value: unknown): MusicDiscoveryToolNote[] | u
           )
         ).slice(0, 4)
       : []
+    if (!isToolId(candidate.toolId) || typeof candidate.observation !== 'string') continue
+    const observation = candidate.observation.trim().slice(0, 160)
+    if (!observation && evidence.length === 0) continue
     notes.push({ toolId: candidate.toolId, observation, evidence })
     if (notes.length === 3) break
   }
