@@ -2659,4 +2659,108 @@
     min-height: 0 !important;
     overflow: visible !important;
   }
+
+  /* 今日探索：四张展示页合并为一张连续的桌面工作区。 */
+  .content.route-home .home-presentation {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-home .home-presentation-slide {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-home .home-presentation-slide > * {
+    display: block !important;
+    flex: none !important;
+    grid-column: auto !important;
+    grid-row: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-home .home-presentation-slide > .music-hero {
+    display: grid !important;
+  }
+
+  .content.route-home .home-presentation-slide > .home-playground,
+  .content.route-home .home-presentation-slide > .pro-recommend,
+  .content.route-home .home-presentation-slide > .home-progress-card,
+  .content.route-home .home-presentation-slide > .today-task-card,
+  .content.route-home .home-presentation-slide > .home-recent-work {
+    display: block !important;
+  }
+
+  /* 探索馆：左侧筛选/线索卡和右侧具体内容同时可见。 */
+  .content.route-theory .theory-presentation {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-theory .theory-presentation-slide {
+    display: block !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-theory .theory-presentation-slide > .theory-lab-head {
+    display: flex !important;
+    margin-bottom: 14px !important;
+  }
+
+  .content.route-theory .theory-presentation-slide > .theory-layout {
+    display: grid !important;
+    grid-template-columns: minmax(270px, 320px) minmax(0, 1fr) !important;
+    gap: 14px !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-theory .theory-nav,
+  .content.route-theory .theory-main,
+  .content.route-theory .topic-panel {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-theory .theory-nav {
+    position: sticky !important;
+    top: 12px !important;
+    align-self: start !important;
+  }
+
+  .content.route-theory .topic-list {
+    max-height: min(62vh, 720px) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .content.route-theory .theory-presentation .topic-panel > .theory-presentation-block {
+    display: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.route-theory .theory-presentation[data-theory-panel='knowledge'] .topic-panel > .theory-presentation-learn {
+    display: grid !important;
+  }
+
+  .content.route-theory .theory-presentation[data-theory-panel='discovery'] .topic-panel > .theory-presentation-play,
+  .content.route-theory .theory-presentation[data-theory-panel='discovery'] .topic-panel > .theory-presentation-share {
+    display: grid !important;
+  }
 }

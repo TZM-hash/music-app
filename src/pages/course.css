@@ -5,6 +5,47 @@
   gap: 16px;
 }
 
+.course-workspace-tabs {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--line-neon);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+.course-workspace-tabs button {
+  min-height: 38px;
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-soft);
+  font-weight: 900;
+}
+
+.course-workspace-tabs button:hover,
+.course-workspace-tabs button:focus-visible,
+.course-workspace-tabs button.on {
+  border-color: rgba(0, 122, 255, 0.24);
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--neon-cyan);
+  outline: none;
+}
+
+.course-materials-panel {
+  min-width: 0;
+  padding: 14px;
+  overflow: visible;
+}
+
+.course-materials-panel > .library {
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+}
+
 @media (min-width: 1024px) {
   .course-current-grade {
     display: flex;
@@ -29,6 +70,11 @@
     grid-template-columns: 220px minmax(360px, 1fr) 310px;
     gap: 16px;
     align-items: start;
+  }
+
+  .course-materials-panel > .library .library-browser {
+    min-height: 500px;
+    overflow: visible;
   }
 
   .course-filter-rail,

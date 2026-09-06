@@ -84,6 +84,12 @@
 .exploration-stage-nav button:not(:disabled) {
   cursor: pointer;
 }
+.exploration-stage-nav button:hover,
+.exploration-stage-nav button:focus-visible {
+  border-color: color-mix(in srgb, var(--exploration-accent) 36%, transparent);
+  background: color-mix(in srgb, var(--exploration-accent) 9%, transparent);
+  outline: none;
+}
 .exploration-stage-nav button.active {
   border-color: color-mix(in srgb, var(--exploration-accent) 48%, transparent);
   background: color-mix(in srgb, var(--exploration-accent) 16%, transparent);

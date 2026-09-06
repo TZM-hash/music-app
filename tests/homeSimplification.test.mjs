@@ -54,3 +54,14 @@ test('首页桌面端将学习记录与任务作品对齐为右侧等分双栏',
   assert.match(styles, /\.content\.route-home \.today-task-card[\s\S]*height:\s*100%[\s\S]*min-height:\s*0/)
   assert.match(styles, /\.content\.route-home \.home-recent-work[\s\S]*height:\s*100%[\s\S]*min-height:\s*0/)
 })
+
+test('今日探索在一个连续页面展示全部主要区块', () => {
+  const home = readSource('src/pages/Home.tsx')
+
+  assert.doesNotMatch(home, /HOME_PRESENTATION_PAGES/)
+  assert.doesNotMatch(home, /<PagePager/)
+  assert.match(home, /className="home-playground card"/)
+  assert.match(home, /className="home-progress-card card"/)
+  assert.match(home, /className="review-rail card today-task-card"/)
+  assert.match(home, /className="portfolio-panel card home-recent-work"/)
+})

@@ -18,7 +18,7 @@ export const STUDENT_PRIMARY_NAV: StudentPrimaryNavItem[] = [
 /** 学段总览由首页和课堂内的上下文入口承载，避免与顶部年级筛选重复。 */
 export const STUDENT_SECONDARY_NAV: StudentPrimaryNavItem[] = [
   { route: 'lesson', icon: '📖', label: '互动课堂', hint: '听玩创一节课' },
-  { route: 'library', icon: '📚', label: '素材库', hint: '歌曲与故事素材' },
+  { route: 'library', icon: '📚', label: '作品与素材', hint: '作品地图、歌曲与故事' },
 ]
 
 /** 具体乐器作为次级入口收纳，避免占用主导航但保持随时可用。 */

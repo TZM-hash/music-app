@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/appState'
 import { getCurrentStudent } from '../state/students'
+import Library from './Library'
 import {
   EXPLORATION_UNITS,
   JASMINE_EXPLORATION_UNIT,
@@ -183,6 +184,8 @@ interface WorkFilters {
   tagFilter: string | FilterValue
 }
 
+type WorkspaceView = 'works' | 'materials'
+
 function filterWorks(works: WorkSummary[], filters: WorkFilters): WorkSummary[] {
   return works.filter((work) => {
     const gradeMatches = filters.gradeFilter === 'all' || work.grades.includes(filters.gradeFilter)
@@ -194,9 +197,12 @@ function filterWorks(works: WorkSummary[], filters: WorkFilters): WorkSummary[] 
 }
 
 export default function CourseCenter() {
-  const { openTheory, openLesson, openExploration, mode, selectedGrade, selectGrade } = useApp()
+  const { openTheory, openLesson, openExploration, mode, route, selectedGrade, selectGrade } = useApp()
   const student = getCurrentStudent()
   const currentGrade = selectedGrade ?? student?.grade ?? null
+  const [workspaceView, setWorkspaceView] = useState<WorkspaceView>(
+    route === 'library' ? 'materials' : 'works'
+  )
   const [gradeFilter, setGradeFilter] = useState<WorkFilter>(currentGrade ?? 'all')
   const [sourceFilter, setSourceFilter] = useState<CurriculumSource | FilterValue>('all')
   const [pathFilter, setPathFilter] = useState<ExplorationPath | FilterValue>('all')
@@ -268,9 +274,9 @@ export default function CourseCenter() {
       <section className="course-head card">
         <div>
           <span className="course-kicker">浙江人音版小学音乐 · 综合实践</span>
-          <h2>作品地图</h2>
+          <h2>作品与素材</h2>
           <p>
-            从一段作品开始，沿着声音、情绪、动作和文化线索进入互动课堂。
+            从一段作品或一条素材开始，沿着声音、情绪、动作和文化线索进入互动课堂。
             {mode === 'teacher' ? '适合老师按年级备课与投屏。' : '适合学生按自己的问题选择作品。'}
           </p>
           <div className="course-current-grade" aria-label="当前年级摘要">
@@ -285,6 +291,33 @@ export default function CourseCenter() {
         </div>
       </section>
 
+      <div className="course-workspace-tabs" role="tablist" aria-label="作品与素材工作区">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={workspaceView === 'works'}
+          className={workspaceView === 'works' ? 'on' : ''}
+          onClick={() => setWorkspaceView('works')}
+        >
+          🗺️ 作品地图
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={workspaceView === 'materials'}
+          className={workspaceView === 'materials' ? 'on' : ''}
+          onClick={() => setWorkspaceView('materials')}
+        >
+          📚 曲库与故事
+        </button>
+      </div>
+
+      {workspaceView === 'materials' ? (
+        <section className="course-materials-panel card" aria-label="曲库与故事素材">
+          <Library initialView="songs" />
+        </section>
+      ) : (
+        <>
       <div className="course-works-map">
         <aside className="course-filter-rail card" aria-label="作品地图筛选">
           <div className="course-filter-heading">
@@ -538,6 +571,8 @@ export default function CourseCenter() {
           </section>
         </div>
       </section>
+        </>
+      )}
 
       <section className="course-support-bar card" aria-label="教师支持">
         <div>

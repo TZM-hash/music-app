@@ -24,17 +24,9 @@ import { DemoControl, getDemoScene } from '../music/theoryDemos'
 import { buildExplorationTaskCard } from '../music/explorationLoop'
 import { getZhejiangExtension } from '../music/zhejiangExtensions'
 import { saveMusicDiscovery } from '../state/discoveries'
-import PagePager, { type PagePagerItem } from '../components/PagePager'
-import { getPageSlice } from '../components/presentation'
+import PagePager from '../components/PagePager'
 import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/theoryReview'
 import './theory.css'
-
-const THEORY_PRESENTATION_PAGES: readonly PagePagerItem[] = [
-  { id: 'topics', label: '找线索', hint: '按年级和声音入口选择发现卡' },
-  { id: 'listen', label: '听见', hint: '先听现象，再看简短提示' },
-  { id: 'play', label: '试一试', hint: '比较、表达并留下自己的发现' },
-  { id: 'extend', label: '连接文化', hint: '把声音线索带回浙江课堂' },
-]
 
 type CategoryFilter = '全部' | string
 type SourceFilter = '全部' | CurriculumSource
@@ -42,8 +34,6 @@ type TheoryPanel = 'knowledge' | 'discovery'
 
 export default function Theory() {
   const { navigate, theoryFocus, currentStudentId, mode, selectedGrade } = useApp()
-  const [theoryPage, setTheoryPage] = useState(0)
-  const [topicPage, setTopicPage] = useState(0)
   const [category, setCategory] = useState<CategoryFilter>('全部')
   const [source, setSource] = useState<SourceFilter>(mode === 'student' ? 'textbook' : '全部')
   const [activeId, setActiveId] = useState(THEORY_TOPICS[0].id)
@@ -67,15 +57,6 @@ export default function Theory() {
     () => (effectiveGrade ? filterTheoryTopics({ grade: effectiveGrade }) : THEORY_TOPICS),
     [effectiveGrade]
   )
-  const topicPageData = useMemo(() => getPageSlice(filtered, topicPage, 8), [filtered, topicPage])
-  const topicPagerItems = useMemo(
-    () => Array.from({ length: topicPageData.pageCount }, (_, index) => ({
-      id: `topic-page-${index}`,
-      label: `${index + 1}`,
-      hint: `第 ${index + 1} 页主题`,
-    })),
-    [topicPageData.pageCount]
-  )
   const active = filtered.find((t) => t.id === activeId) ?? filtered[0] ?? gradeTopics[0] ?? THEORY_TOPICS[0]
   const demoScene = getDemoScene(active.demo.kind)
   const activeControl =
@@ -92,14 +73,6 @@ export default function Theory() {
       setActiveId(filtered[0].id)
     }
   }, [activeId, filtered])
-
-  useEffect(() => {
-    if (topicPageData.pageIndex !== topicPage) setTopicPage(topicPageData.pageIndex)
-  }, [topicPage, topicPageData.pageIndex])
-
-  useEffect(() => {
-    setTopicPage(0)
-  }, [category, effectiveGrade, source])
 
   useEffect(() => {
     if (!theoryFocus) return
@@ -121,17 +94,10 @@ export default function Theory() {
     setCategory('全部')
     setSource(mode === 'student' ? 'textbook' : '全部')
     setActiveId(gradeTopics[0]?.id ?? THEORY_TOPICS[0].id)
-    setTopicPage(0)
   }
 
   return (
-    <div className="theory-lab presentation-page theory-presentation" data-theory-page={theoryPage}>
-      <PagePager
-        items={THEORY_PRESENTATION_PAGES}
-        activeIndex={theoryPage}
-        onChange={setTheoryPage}
-        ariaLabel="探索馆展示页面"
-      />
+    <div className="theory-lab presentation-page theory-presentation" data-theory-panel={activePanel}>
       <div className="presentation-slide theory-presentation-slide">
       <section className="theory-lab-head card">
         <div>
@@ -185,14 +151,11 @@ export default function Theory() {
                 <small className="topic-select-hint">共 {filtered.length} 个知识点，选择后查看右侧内容</small>
               </label>
             )}
-            {topicPageData.items.map((topic) => (
+            {filtered.map((topic) => (
               <button
                 key={topic.id}
                 className={topic.id === active.id ? 'on' : undefined}
-                onClick={() => {
-                  setActiveId(topic.id)
-                  setTheoryPage(1)
-                }}
+                onClick={() => setActiveId(topic.id)}
               >
                 <b>{topic.title}</b>
                 <small>
@@ -201,14 +164,6 @@ export default function Theory() {
               </button>
             ))}
           </div>
-          <PagePager
-            items={topicPagerItems}
-            activeIndex={topicPageData.pageIndex}
-            onChange={setTopicPage}
-            ariaLabel="发现卡列表分页"
-            compact
-            showTabs={false}
-          />
         </aside>
 
         <main className="theory-main">
@@ -230,10 +185,7 @@ export default function Theory() {
                 role="tab"
                 aria-selected={activePanel === 'knowledge'}
                 className={`theory-content-tab ${activePanel === 'knowledge' ? 'on' : ''}`}
-                onClick={() => {
-                  setActivePanel('knowledge')
-                  setTheoryPage(1)
-                }}
+                onClick={() => setActivePanel('knowledge')}
               >
                 <span>📖</span>
                 <b>知识学习</b>
@@ -244,10 +196,7 @@ export default function Theory() {
                 role="tab"
                 aria-selected={activePanel === 'discovery'}
                 className={`theory-content-tab ${activePanel === 'discovery' ? 'on' : ''}`}
-                onClick={() => {
-                  setActivePanel('discovery')
-                  setTheoryPage(2)
-                }}
+                onClick={() => setActivePanel('discovery')}
               >
                 <span>🧭</span>
                 <b>探索发现</b>

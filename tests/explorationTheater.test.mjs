@@ -80,6 +80,14 @@ test('探索剧场恢复反思、支持回退修订并隔离切换单元后的�
   )
 })
 
+test('互动课堂阶段 1 到 6 都可以直接点击切换', () => {
+  const source = readSource('src/components/ExplorationTheater.tsx')
+
+  assert.match(source, /onClick=\{\(\) => goToStage\(stage\.id\)\}/)
+  assert.doesNotMatch(source, /disabled=\{index > currentStageIndex\}/)
+  assert.doesNotMatch(source, /targetIndex > currentIndex/)
+})
+
 test('探索剧场按阶段接入工具并合并保存有界观察', () => {
   const source = readSource('src/components/ExplorationTheater.tsx')
   assert.match(source, /unit\.tools/)

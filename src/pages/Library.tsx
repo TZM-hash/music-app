@@ -24,6 +24,10 @@ type LibraryView = 'songs' | 'encyclopedia'
 type EncyclopediaTypeFilter = EncyclopediaType | 'all'
 type StageFilter = TheoryStageId | 'all'
 
+interface LibraryProps {
+  initialView?: LibraryView
+}
+
 const LIBRARY_PANEL_PAGES: readonly PagePagerItem[] = [
   { id: 'list', label: '选择素材', hint: '筛选并选择一条音乐素材' },
   { id: 'detail', label: '查看详情', hint: '试听、看谱或完成互动题' },
@@ -37,9 +41,9 @@ const ENCYCLOPEDIA_DETAIL_PAGES: readonly PagePagerItem[] = [
   { id: 'quiz', label: '小测验', hint: '用一道题检验自己的发现' },
 ]
 
-export default function Library() {
+export default function Library({ initialView = 'songs' }: LibraryProps) {
   const { playSongInGame, currentStudentId, mode, selectedGrade } = useApp()
-  const [view, setView] = useState<LibraryView>('songs')
+  const [view, setView] = useState<LibraryView>(initialView)
   const [filter, setFilter] = useState<Filter>('all')
   const [encyclopediaType, setEncyclopediaType] = useState<EncyclopediaTypeFilter>('all')
   const [encyclopediaStage, setEncyclopediaStage] = useState<StageFilter>('all')

@@ -245,15 +245,14 @@ export default function ExplorationTheater({
   const goToStage = useCallback(
     (stage: ExplorationStageId) => {
       const targetIndex = STAGES.findIndex((item) => item.id === stage)
-      if (targetIndex < 0 || targetIndex > currentStageIndex) return
+      if (targetIndex < 0) return
       if (targetIndex === currentStageIndex) return
 
       savedRef.current = false
       setSaveNotice('')
 
       setSession((current) => {
-        const currentIndex = STAGES.findIndex((item) => item.id === current.stage)
-        if (targetIndex > currentIndex || stage === current.stage) return current
+        if (stage === current.stage) return current
         return {
           ...current,
           stage,
@@ -686,7 +685,6 @@ export default function ExplorationTheater({
               key={stage.id}
               type="button"
               aria-current={stage.id === session.stage ? 'step' : undefined}
-              disabled={index > currentStageIndex}
               onClick={() => goToStage(stage.id)}
               className={
                 stage.id === session.stage ? 'active' : index < currentStageIndex ? 'done' : ''

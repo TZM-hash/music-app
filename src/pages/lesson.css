@@ -73,6 +73,41 @@
   font-weight: 800;
 }
 
+@media (min-width: 1024px) {
+  .exploration-lesson-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+  }
+
+  .exploration-lesson-picker {
+    display: flex;
+    min-width: 250px;
+    flex-direction: column;
+    gap: 6px;
+    color: var(--text-soft);
+    font-size: 0.78rem;
+    font-weight: 900;
+  }
+
+  .exploration-lesson-picker select {
+    min-height: 42px;
+    padding: 9px 34px 9px 11px;
+    border: 1px solid var(--line-neon);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
+    font: inherit;
+    font-weight: 800;
+  }
+
+  .exploration-lesson-picker select:focus-visible {
+    border-color: var(--neon-cyan);
+    outline: 3px solid rgba(0, 122, 255, 0.14);
+  }
+}
+
 .lesson-hero {
   display: flex;
   align-items: center;

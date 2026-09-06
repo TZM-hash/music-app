@@ -105,7 +105,8 @@ test('互动课堂以探索剧场承载当前年级并保留教师支持入口',
   assert.match(lesson, /ExplorationTheater/)
   assert.match(lesson, /getGradeLabel/)
   assert.match(lesson, /今日探索|探索剧场/)
-  assert.match(lesson, /navigate\('course'\)/)
+  assert.match(lesson, /openExploration\(/)
+  assert.match(lesson, /选择互动课堂作品/)
   assert.match(lesson, /navigate\('training'\)/)
   assert.match(lesson, /navigate\('theory'\)/)
 })
@@ -142,4 +143,29 @@ test('探索馆蓝色知识点区域使用下拉菜单选择主题', () => {
   assert.match(theory, /aria-label="选择知识点"/)
   assert.match(theory, /topic-select/)
   assert.doesNotMatch(theory, /className=\{topic\.id === active\.id \? 'on' : ''\}/)
+})
+
+test('探索馆保持左侧筛选和线索卡、右侧具体内容', () => {
+  const theory = read('src/pages/Theory.tsx')
+  const presentation = read('src/presentation.css')
+
+  assert.match(theory, /className="theory-nav card"/)
+  assert.match(theory, /title="音乐方向"/)
+  assert.match(theory, /title="教材来源"/)
+  assert.match(theory, /side-group-title">线索卡/)
+  assert.match(theory, /className="theory-main"/)
+  assert.doesNotMatch(theory, /THEORY_PRESENTATION_PAGES/)
+  assert.match(presentation, /route-theory[\s\S]*theory-layout[\s\S]*grid-template-columns/)
+})
+
+test('作品地图和素材库由同一工作区承载', () => {
+  const app = read('src/App.tsx')
+  const course = read('src/pages/CourseCenter.tsx')
+  const sidebar = read('src/components/studentNavigation.ts')
+
+  assert.match(app, /displayedRoute === 'library'[\s\S]*CourseCenter/)
+  assert.match(course, /作品地图/)
+  assert.match(course, /曲库与故事/)
+  assert.match(course, /Library|library-view|素材库/)
+  assert.match(sidebar, /作品与素材/)
 })

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import ExplorationTheater from '../components/ExplorationTheater'
-import { getExplorationUnit } from '../music/explorationUnits'
+import { EXPLORATION_UNITS, getExplorationUnit } from '../music/explorationUnits'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
 import { getCurrentStudent } from '../state/students'
 import { useApp } from '../state/appState'
@@ -8,7 +8,7 @@ import type { MusicDiscovery } from '../state/discoveries'
 import './lesson.css'
 
 export default function LessonMode() {
-  const { navigate, currentStudentId, selectedGrade, explorationUnitId } = useApp()
+  const { navigate, openExploration, currentStudentId, selectedGrade, explorationUnitId } = useApp()
   const student = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? student?.grade ?? null
   const unit = getExplorationUnit(explorationUnitId ?? 'jasmine')
@@ -21,15 +21,31 @@ export default function LessonMode() {
   return (
     <div className="lesson-page exploration-lesson-page">
       <section className="lesson-hero card exploration-lesson-hero">
-        <div>
-          <span className="lesson-kicker">今日探索 · 先听见，再找到依据</span>
-          <h2>音乐探索剧场</h2>
-          <p>
-            {unit.question}{' '}
-            {effectiveGrade
-              ? `当前为${getGradeLabel(effectiveGrade)}支架。`
-              : '可以从自己的感受开始。'}
-          </p>
+        <div className="exploration-lesson-title">
+          <div>
+            <span className="lesson-kicker">今日探索 · 先听见，再找到依据</span>
+            <h2>音乐探索剧场</h2>
+            <p>
+              {unit.question}{' '}
+              {effectiveGrade
+                ? `当前为${getGradeLabel(effectiveGrade)}支架。`
+                : '可以从自己的感受开始。'}
+            </p>
+          </div>
+          <label className="exploration-lesson-picker">
+            <span>选择作品</span>
+            <select
+              aria-label="选择互动课堂作品"
+              value={unit.id}
+              onChange={(event) => openExploration(event.target.value)}
+            >
+              {EXPLORATION_UNITS.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.title}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
         <div className="lesson-progress-card exploration-lesson-meta">
           <b>{unit.icon}</b>
@@ -61,9 +77,6 @@ export default function LessonMode() {
           <small>完成后会留下“我的音乐发现”，再去作品、听觉实验室或音乐线索库延伸。</small>
         </div>
         <div className="lesson-support-actions">
-          <button type="button" onClick={() => navigate('course')}>
-            换一首作品
-          </button>
           <button type="button" onClick={() => navigate('training')}>
             去听觉实验室
           </button>

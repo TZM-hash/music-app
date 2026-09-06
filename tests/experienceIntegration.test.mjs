@@ -171,6 +171,15 @@ test('LessonMode 以探索剧场承载茉莉花试点并保留支持入口', () 
   assert.match(lesson, /navigate\('training'\)|navigate\('theory'\)|navigate\('course'\)/)
 })
 
+test('互动课堂标题栏可以直接选择作品', () => {
+  const lesson = readSource('src/pages/LessonMode.tsx')
+
+  assert.match(lesson, /EXPLORATION_UNITS/)
+  assert.match(lesson, /<select/)
+  assert.match(lesson, /openExploration\(/)
+  assert.doesNotMatch(lesson, />\s*换一首作品\s*</)
+})
+
 test('首页主探索动作进入探索剧场而不是直接打开理论目录', () => {
   const home = readSource('src/pages/Home.tsx')
   assert.match(home, /openExploration/)

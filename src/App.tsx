@@ -19,7 +19,6 @@ import EchoGame from './pages/games/EchoGame'
 import TaikoGame from './pages/games/TaikoGame'
 import SingGame from './pages/games/SingGame'
 import ReadGame from './pages/games/ReadGame'
-import Library from './pages/Library'
 import Theory from './pages/Theory'
 import CourseCenter from './pages/CourseCenter'
 import TrainingCenter from './pages/TrainingCenter'
@@ -86,7 +85,7 @@ function Shell() {
             {displayedRoute === 'game-taiko' && <TaikoGame />}
             {displayedRoute === 'game-sing' && <SingGame />}
             {displayedRoute === 'game-read' && <ReadGame />}
-            {displayedRoute === 'library' && <Library />}
+            {displayedRoute === 'library' && <CourseCenter />}
             {displayedRoute === 'theory' && <Theory />}
             {displayedRoute === 'course' && <CourseCenter />}
             {displayedRoute === 'training' && <TrainingCenter />}
