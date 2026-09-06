@@ -292,7 +292,7 @@ export default function ExplorationTheater({
     if (expandedTool.id === 'microscope') {
       return (
         <MusicMicroscope
-          cues={unit.songId === 'jasmine' ? JASMINE_MICROSCOPE_CUES : fragment.slice(0, 8)}
+          cues={unit.toolData?.microscopeCues ?? (unit.songId === 'jasmine' ? JASMINE_MICROSCOPE_CUES : fragment.slice(0, 8))}
           evidenceLabels={expandedTool.evidenceLabels}
           onNote={handleToolNote}
           onReturn={onReturn}
@@ -301,8 +301,8 @@ export default function ExplorationTheater({
     }
     if (expandedTool.id === 'instrument') {
       return (
-        <InstrumentExplorer
-          samples={JASMINE_INSTRUMENT_SAMPLES}
+      <InstrumentExplorer
+          samples={unit.toolData?.instrumentSamples ?? JASMINE_INSTRUMENT_SAMPLES}
           onNote={handleToolNote}
           onReturn={onReturn}
         />
@@ -310,7 +310,7 @@ export default function ExplorationTheater({
     }
     return (
       <RhythmMovementLab
-        pattern={JASMINE_RHYTHM_PATTERN}
+        pattern={unit.toolData?.rhythmPattern ?? JASMINE_RHYTHM_PATTERN}
         onNote={handleToolNote}
         onReturn={onReturn}
       />

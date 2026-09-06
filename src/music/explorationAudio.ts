@@ -1,4 +1,4 @@
-import { BUILTIN_SONGS } from './songs'
+import { BUILTIN_SONGS, type MelodyNote } from './songs'
 
 export type ExplorationPatch = 'piano' | 'musicbox' | 'strings'
 
@@ -15,6 +15,48 @@ const DEFAULT_VELOCITY = 0.8
 const DEFAULT_PATCH: ExplorationPatch = 'piano'
 const EVIDENCE_LENGTH = 8
 
+// These are short, original classroom demonstration motifs. They are listening
+// prompts for comparing musical clues, not recordings or transcriptions of the
+// referenced works.
+const EXPLORATION_MELODIES: Record<string, MelodyNote[]> = {
+  'spring-festival-overture': [
+    { note: 'E4', beats: 0.5 }, { note: 'G4', beats: 0.5 }, { note: 'A4', beats: 1 },
+    { note: 'C5', beats: 1 }, { note: 'A4', beats: 1 }, { note: 'G4', beats: 0.5 },
+    { note: 'A4', beats: 0.5 }, { note: 'C5', beats: 1 }, { note: 'D5', beats: 1 },
+    { note: 'C5', beats: 2 },
+  ],
+  'jiangnan-sizhu': [
+    { note: 'D4', beats: 1 }, { note: 'G4', beats: 1 }, { note: 'A4', beats: 0.5 },
+    { note: 'B4', beats: 0.5 }, { note: 'A4', beats: 1 }, { note: 'G4', beats: 1 },
+    { note: 'E4', beats: 1 }, { note: 'G4', beats: 1 }, { note: 'A4', beats: 1 },
+    { note: 'G4', beats: 2 },
+  ],
+  'yue-opera': [
+    { note: 'G4', beats: 1 }, { note: 'A4', beats: 0.5 }, { note: 'B4', beats: 0.5 },
+    { note: 'A4', beats: 1.5 }, { note: 'G4', beats: 0.5 }, { note: 'E4', beats: 1 },
+    { note: 'D4', beats: 0.5 }, { note: 'E4', beats: 0.5 }, { note: 'G4', beats: 2 },
+  ],
+  'liang-zhu': [
+    { note: 'E4', beats: 1 }, { note: 'E4', beats: 1 }, { note: 'G4', beats: 1 },
+    { note: 'E4', beats: 1 }, { note: 'A4', beats: 1 }, { note: 'A4', beats: 1 },
+    { note: 'C5', beats: 2 }, { note: 'A4', beats: 1 }, { note: 'G4', beats: 1 },
+  ],
+  'dragon-boat-rhythm': [
+    { note: 'C4', beats: 1 }, { note: 'C4', beats: 1 }, { note: 'G4', beats: 1 },
+    { note: 'C4', beats: 1 }, { note: 'C4', beats: 1 }, { note: 'G4', beats: 1 },
+    { note: 'A4', beats: 1 }, { note: 'G4', beats: 1 }, { note: 'C5', beats: 2 },
+  ],
+}
+
+const EXPLORATION_UNIT_SONGS: Record<string, string> = {
+  jasmine: 'jasmine',
+  'spring-festival-overture': 'spring-festival-overture',
+  'jiangnan-sizhu': 'jiangnan-sizhu',
+  'yue-opera': 'yue-opera',
+  'liang-zhu': 'liang-zhu',
+  'dragon-boat-rhythm': 'dragon-boat-rhythm',
+}
+
 function copyCue(cue: ExplorationCue): ExplorationCue {
   return { ...cue }
 }
@@ -25,9 +67,10 @@ function findSong(songId: string) {
 
 export function getSongMelody(songId: string): ExplorationCue[] {
   const song = findSong(songId)
-  if (!song) return []
+  const melody = song?.melody ?? EXPLORATION_MELODIES[songId]
+  if (!melody) return []
 
-  return song.melody
+  return melody
     .filter((cue) => cue.note !== 'rest')
     .map((cue) => ({
       note: cue.note,
@@ -49,8 +92,10 @@ export function getEvidenceVariant(
   unitId: string,
   variant: ExplorationCueVariant
 ): ExplorationCue[] {
-  const flowing = getSongFragment('jasmine', 0, EVIDENCE_LENGTH)
-  if (unitId !== 'jasmine' || variant === 'flowing' || variant !== 'jumping') return flowing
+  const songId = EXPLORATION_UNIT_SONGS[unitId] ?? 'jasmine'
+  const flowing = getSongFragment(songId, 0, EVIDENCE_LENGTH)
+  if (variant === 'flowing') return flowing
+  if (variant !== 'jumping') return flowing
 
   const jumpingNotes = ['E4', 'C5', 'G4', 'C5', 'E4', 'A4', 'C5', 'E4']
   return flowing.map((cue, index) => ({

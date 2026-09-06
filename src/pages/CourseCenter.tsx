@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/appState'
 import { getCurrentStudent } from '../state/students'
-import { JASMINE_EXPLORATION_UNIT, type ExplorationPath } from '../music/explorationUnits'
+import {
+  EXPLORATION_UNITS,
+  JASMINE_EXPLORATION_UNIT,
+  type ExplorationPath,
+  type ExplorationUnit,
+} from '../music/explorationUnits'
 import { filterTheoryTopics, type TheoryStageId, type TheoryTopic } from '../music/theoryCatalog'
 import {
   getCurriculumSourceLabel,
@@ -142,7 +147,34 @@ const JASMINE_WORK: WorkSummary = {
   explorationUnitId: 'jasmine',
 }
 
-const WORK_SUMMARIES: WorkSummary[] = [JASMINE_WORK, ...filterTheoryTopics().map(topicToWork)]
+function unitToWork(unit: ExplorationUnit): WorkSummary {
+  const firstGrade = unit.grades?.[0] ?? 1
+  return {
+    id: unit.id,
+    title: unit.title,
+    subtitle: unit.subtitle,
+    icon: unit.icon,
+    color: unit.color,
+    source: unit.source,
+    grades: unit.grades ?? [...PRIMARY_GRADES],
+    semester: unit.semester ?? 1,
+    stage: getStageForGrade(firstGrade),
+    unitTitle: unit.curriculumUnitTitle ?? '音乐欣赏',
+    focus: unit.question,
+    paths: unit.paths.map((path) => path.id),
+    tags: unit.tags ?? [],
+    tools: unit.tools?.map((tool) => tool.title) ?? [],
+    culture: unit.culture.title,
+    explorationUnitId: unit.id,
+  }
+}
+
+const EXTENSION_WORKS = EXPLORATION_UNITS.filter((unit) => unit.id !== 'jasmine').map(unitToWork)
+const WORK_SUMMARIES: WorkSummary[] = [
+  JASMINE_WORK,
+  ...EXTENSION_WORKS,
+  ...filterTheoryTopics().map(topicToWork),
+]
 
 interface WorkFilters {
   gradeFilter: WorkFilter
@@ -214,6 +246,10 @@ export default function CourseCenter() {
   const handleStartExploration = (work: WorkSummary) => {
     if (work.explorationUnitId === 'jasmine') {
       openExploration('jasmine')
+      return
+    }
+    if (work.explorationUnitId) {
+      openExploration(work.explorationUnitId)
       return
     }
     if (work.topicId) {

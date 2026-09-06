@@ -6,6 +6,7 @@ import { filterTheoryTopics, getTheoryTopic } from '../music/theoryCatalog'
 import { THEORY_QUESTS } from '../music/theoryQuests'
 import { focusFromTheoryTopic } from '../state/reviewDeepLink'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
+import { getRecommendedExplorationUnit } from '../music/explorationUnits'
 import { buildDiscoverySummary, loadMusicDiscoveries } from '../state/discoveries'
 import PagePager, { type PagePagerItem } from '../components/PagePager'
 import { getPageSlice } from '../components/presentation'
@@ -47,6 +48,7 @@ export default function AdventureMap() {
   const progress = loadProgress()
   const student = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? student?.grade
+  const recommendedExplorationUnit = getRecommendedExplorationUnit(effectiveGrade)
   const discoveries = useMemo(() => loadMusicDiscoveries(currentStudentId), [currentStudentId])
   const discoverySummary = useMemo(() => buildDiscoverySummary(discoveries), [discoveries])
   const scopedTopicIds = useMemo(
@@ -296,8 +298,11 @@ export default function AdventureMap() {
             <button className="big-start" onClick={openExploreTheory}>
               进入探索馆
             </button>
-            <button className="lesson-secondary" onClick={() => openExploration('jasmine')}>
-              再听茉莉花
+            <button
+              className="lesson-secondary"
+              onClick={() => openExploration(recommendedExplorationUnit.id)}
+            >
+              开始 {recommendedExplorationUnit.title}
             </button>
           </div>
         </div>

@@ -1,5 +1,11 @@
 import type { PrimaryGrade } from './zhejiangCurriculum'
-import type { ExplorationToolReference } from './explorationTools'
+import type {
+  ExplorationToolReference,
+  InstrumentSample,
+  RhythmPattern,
+} from './explorationTools'
+import type { ExplorationCue } from './explorationAudio'
+import { ZHEJIANG_EXPLORATION_UNITS } from './explorationExtensionUnits'
 
 export type ExplorationPath = 'emotion' | 'movement' | 'story' | 'culture'
 export type ExplorationStageId =
@@ -46,6 +52,10 @@ export interface ExplorationUnit {
   color: string
   source: 'textbook' | 'extension'
   songId: string
+  grades?: PrimaryGrade[]
+  semester?: 1 | 2
+  curriculumUnitTitle?: string
+  tags?: string[]
   curriculumTopicIds: string[]
   paths: ExplorationPathConfig[]
   evidence: { prompt: string; options: ExplorationEvidenceOption[] }
@@ -58,6 +68,11 @@ export interface ExplorationUnit {
   relisten: { prompt: string; choices: ExplorationChoice[] }
   reflectionPrompts: Partial<Record<ExplorationAgeBand, string>>
   tools?: ExplorationToolReference[]
+  toolData?: {
+    microscopeCues?: ExplorationCue[]
+    instrumentSamples?: InstrumentSample[]
+    rhythmPattern?: RhythmPattern
+  }
 }
 
 export const JASMINE_EXPLORATION_UNIT: ExplorationUnit = {
@@ -233,10 +248,25 @@ export const JASMINE_EXPLORATION_UNIT: ExplorationUnit = {
   },
 }
 
-export const EXPLORATION_UNITS: ExplorationUnit[] = [JASMINE_EXPLORATION_UNIT]
+export const EXPLORATION_UNITS: ExplorationUnit[] = [
+  JASMINE_EXPLORATION_UNIT,
+  ...ZHEJIANG_EXPLORATION_UNITS,
+]
 
 export function getExplorationUnit(id?: string): ExplorationUnit {
   return EXPLORATION_UNITS.find((unit) => unit.id === id) ?? JASMINE_EXPLORATION_UNIT
+}
+
+export function getRecommendedExplorationUnit(
+  grade?: PrimaryGrade | number | null
+): ExplorationUnit {
+  if (typeof grade !== 'number' || !Number.isInteger(grade) || grade < 1 || grade > 6) {
+    return JASMINE_EXPLORATION_UNIT
+  }
+  const candidates = EXPLORATION_UNITS.filter(
+    (unit) => unit.id !== JASMINE_EXPLORATION_UNIT.id && unit.grades?.includes(grade as PrimaryGrade)
+  )
+  return candidates[(grade - 1) % Math.max(candidates.length, 1)] ?? JASMINE_EXPLORATION_UNIT
 }
 
 export function getExplorationAgeBand(grade?: PrimaryGrade | number | null): ExplorationAgeBand {

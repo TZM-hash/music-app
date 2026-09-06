@@ -13,6 +13,7 @@ import {
   getSemesterLabel,
 } from '../music/zhejiangCurriculum'
 import { recommendExplorationTopic } from '../music/explorationRecommendations'
+import { getRecommendedExplorationUnit } from '../music/explorationUnits'
 import { encyclopediaToReviewQuestions, filterEncyclopediaEntries } from '../music/encyclopedia'
 import {
   buildCreativePortfolio,
@@ -178,6 +179,10 @@ export default function Home() {
       }),
     [completedTopicIds, effectiveGrade, gradeTopics, student?.semester, studentId, weakCategories]
   )
+  const recommendedExplorationUnit = useMemo(
+    () => getRecommendedExplorationUnit(effectiveGrade),
+    [effectiveGrade]
+  )
   const discoverySummary = useMemo(() => {
     const discoveries = loadMusicDiscoveries(studentId)
     const scoped = effectiveGrade
@@ -247,7 +252,10 @@ export default function Home() {
           <h1>继续今天的音乐探索。</h1>
           <p>沿着听、玩、挑战和创作的课堂主线，完成下一步就好。</p>
           <div className="hero-actions">
-            <button className="primary-action" onClick={() => openExploration('jasmine')}>
+            <button
+              className="primary-action"
+              onClick={() => openExploration(recommendedExplorationUnit.id)}
+            >
               {continueLabel.replace('探险', '探索')}
             </button>
           </div>
@@ -320,7 +328,10 @@ export default function Home() {
           )}
         </div>
         <div className="pro-actions">
-          <button className="primary-action" onClick={() => openExploration('jasmine')}>
+          <button
+            className="primary-action"
+            onClick={() => openExploration(recommendedExplorationUnit.id)}
+          >
             开始探索
           </button>
           <button onClick={() => navigate('course')}>查看学段总览</button>
