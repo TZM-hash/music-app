@@ -5,6 +5,8 @@ import LayeredListeningActivity from './LayeredListeningActivity'
 import MovementActivity from './MovementActivity'
 import ReviewQuestActivity from './ReviewQuestActivity'
 import RhythmBuilderActivity from './RhythmBuilderActivity'
+import SoundDictationActivity from './SoundDictationActivity'
+import VoiceFormActivity from './VoiceFormActivity'
 import './referenceActivities.css'
 
 export interface ReferenceActivityStageProps {
@@ -21,6 +23,8 @@ export default function ReferenceActivityStage(props: ReferenceActivityStageProp
   if (activity.kind === 'instrument-detective') return <InstrumentDetectiveActivity {...props} />
   if (activity.kind === 'layered-listening') return <LayeredListeningActivity {...props} />
   if (activity.kind === 'note-ladder') return <ListenChoiceActivity {...props} />
+  if (activity.kind === 'voice-form-guess') return <VoiceFormActivity {...props} />
+  if (activity.kind === 'sound-dictation') return <SoundDictationActivity {...props} />
   if (activity.kind === 'meter-movement') return <MovementActivity {...props} />
   if (activity.kind === 'review-quest') return <ReviewQuestActivity {...props} />
   return <RhythmBuilderActivity {...props} />

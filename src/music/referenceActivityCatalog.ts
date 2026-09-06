@@ -6,6 +6,7 @@ import {
 } from './referenceCourseware'
 import { GRADE_ONE_ACTIVITIES } from './referenceLessons/gradeOneUpper'
 import { GRADE_TWO_ACTIVITIES } from './referenceLessons/gradeTwoUpper'
+import { GRADE_THREE_ACTIVITIES } from './referenceLessons/gradeThreeUpper'
 
 export interface ReferenceActivityFilter {
   grade?: ReferenceGrade
@@ -16,6 +17,7 @@ export interface ReferenceActivityFilter {
 export const REFERENCE_ACTIVITIES: ReferenceActivity[] = [
   ...GRADE_ONE_ACTIVITIES,
   ...GRADE_TWO_ACTIVITIES,
+  ...GRADE_THREE_ACTIVITIES,
 ]
 
 export function getReferenceActivities(filter: ReferenceActivityFilter = {}): ReferenceActivity[] {

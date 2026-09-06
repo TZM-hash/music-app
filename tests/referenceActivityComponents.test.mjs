@@ -57,6 +57,25 @@ test('多声部活动支持独立声部开关和叠加试听', () => {
   assert.match(source, /onStepComplete\('try'\)/)
 })
 
+test('演唱形式活动提供齐唱、合唱、轮唱示例和进入顺序线索', () => {
+  const source = read('src/components/reference/VoiceFormActivity.tsx')
+  assert.match(source, /齐唱/)
+  assert.match(source, /合唱/)
+  assert.match(source, /轮唱/)
+  assert.match(source, /ensureAudio/)
+  assert.match(source, /进入|同时|错开/)
+  assert.match(source, /onStepComplete\('try'\)/)
+})
+
+test('听音记谱活动支持音符排列、试听和保存谱面线索', () => {
+  const source = read('src/components/reference/SoundDictationActivity.tsx')
+  assert.match(source, /听音记谱/)
+  assert.match(source, /NOTE_OPTIONS/)
+  assert.match(source, /playNote/)
+  assert.match(source, /保存这条谱面/)
+  assert.match(source, /onEvidence/)
+})
+
 test('动作活动提供情绪和力度的主观表达选项', () => {
   const source = read('src/components/reference/MovementActivity.tsx')
   assert.match(source, /情绪/)
