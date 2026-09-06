@@ -50,7 +50,7 @@
 - Produces: `classifyReferenceFile(path)`, `buildReferenceInventory(entries)` 和可重复生成的资源清单。
 - Consumes: `E:\人音版小学音乐\软件\一上`、`二上`、`三上`，只读扫描，不修改源目录。
 
-- [ ] **Step 1: 写失败测试。**
+- [x] **Step 1: 写失败测试。**
 
 为索引逻辑建立内存 fixture，覆盖目录名识别、扩展名分类、`__MACOSX`/备份排除、重复哈希归并和未知文件保留为待审条目：
 
@@ -66,13 +66,13 @@ test('索引排除元数据和备份，并按哈希归并重复资源', () => {
 })
 ```
 
-- [ ] **Step 2: 运行定向测试确认失败。**
+- [x] **Step 2: 运行定向测试确认失败。**
 
 Run: `npm test -- tests/referenceCoursewareInventory.test.mjs`
 
 Expected: FAIL because the inventory helpers do not exist。
 
-- [ ] **Step 3: 实现索引脚本和台账格式。**
+- [x] **Step 3: 实现索引脚本和台账格式。**
 
 脚本读取命令行参数 `--root E:\人音版小学音乐\软件 --out docs\reference-courseware`，按相对路径生成以下字段：`grade`、`semester`、`relativePath`、`extension`、`kind`、`size`、`sha256`、`status`、`duplicateOf`、`candidateUses`。文件类型使用 `audio`、`image`、`video`、`html`、`script`、`style`、`document`、`unknown`；排除路径包含 `__MACOSX`、`.DS_Store`、`backup`、`备份`、`副本` 的条目。脚本不存在源目录时退出并显示明确错误，不创建空台账。
 
@@ -85,13 +85,13 @@ node scripts/reference-courseware-inventory.mjs --root 'E:\人音版小学音乐
 
 同时把已识别的一至三年级知识点按“年级—主题—知识点—互动玩法—资源候选—当前入口—状态”写入 `content-matrix.md`，不把无法确认教材单元的条目标记为浙江教材同步。
 
-- [ ] **Step 4: 运行测试并核对生成物。**
+- [x] **Step 4: 运行测试并核对生成物。**
 
 Run: `npm test -- tests/referenceCoursewareInventory.test.mjs`
 
 Expected: PASS；`asset-manifest.json` 可以重复生成且排序稳定，`content-matrix.md` 包含一年级的歌唱姿势、节奏、强弱、拍子、长短、高低、乐器和复习，二年级的唱名/音符/乐器/节拍/多声部，三年级的情绪/力度/演唱形式/声部/听音记谱/伴奏和复习。
 
-- [ ] **Step 5: 提交阶段 0 台账。**
+- [x] **Step 5: 提交阶段 0 台账。**
 
 ```powershell
 git add scripts/reference-courseware-inventory.mjs docs/reference-courseware tests/referenceCoursewareInventory.test.mjs
@@ -151,27 +151,27 @@ export interface ReferenceActivity {
 }
 ```
 
-- [ ] **Step 1: 写失败测试。**
+- [x] **Step 1: 写失败测试。**
 
 测试 `getReferenceKnowledgePoints({ grade, source, search })` 的年级、来源和关键词筛选；测试每个活动引用存在的知识点、至少包含 `listen`、`try`、`reflect`，并拒绝空的反馈文案。
 
-- [ ] **Step 2: 运行定向测试确认失败。**
+- [x] **Step 2: 运行定向测试确认失败。**
 
 Run: `npm test -- tests/referenceCourseware.test.mjs`
 
 Expected: FAIL because the new registry and validation helpers do not exist。
 
-- [ ] **Step 3: 实现模型和注册表。**
+- [x] **Step 3: 实现模型和注册表。**
 
 将“人音版参考”和“浙江课程”分开，先登记全部一至三年级知识点的稳定 ID；活动先登记活动 ID、类型、短提示、步骤和反馈，不把页面 JSX 写进数据文件。导出 `REFERENCE_KNOWLEDGE_POINTS`、`REFERENCE_ACTIVITIES`、`getReferenceKnowledgePoints()`、`getReferenceActivities()` 和 `validateReferenceCatalog()`。
 
-- [ ] **Step 4: 运行测试和构建。**
+- [x] **Step 4: 运行测试和构建。**
 
 Run: `npm test -- tests/referenceCourseware.test.mjs`; `npm run build`
 
 Expected: PASS；旧的 `zhejiangCurriculum`、`theoryCatalog` 测试不受影响。
 
-- [ ] **Step 5: 提交数据模型。**
+- [x] **Step 5: 提交数据模型。**
 
 ```powershell
 git add src/music/referenceCourseware.ts src/music/referenceActivityCatalog.ts tests/referenceCourseware.test.mjs
@@ -210,21 +210,21 @@ export function submitJourney(state: JourneyState, activity: ReferenceActivity):
 }
 ```
 
-- [ ] **Step 1: 写状态转换失败测试。**
+- [x] **Step 1: 写状态转换失败测试。**
 
 覆盖初始状态、重复完成步骤不重复计数、跳过试听不能直接完成、重试增加 attempts、完成后计算 1—3 星，并验证音频不可用时 `heardAudioIds` 不会阻塞保存观察。
 
-- [ ] **Step 2: 运行定向测试确认失败。**
+- [x] **Step 2: 运行定向测试确认失败。**
 
 Run: `npm test -- tests/learningJourney.test.mjs`
 
 Expected: FAIL because the state transition functions do not exist。
 
-- [ ] **Step 3: 实现纯状态机。**
+- [x] **Step 3: 实现纯状态机。**
 
 步骤推进只允许活动定义中的顺序；`reflect` 完成后才能提交。`submitJourney` 用已完成步骤、尝试次数和是否执行创编计算星级，不根据学生的情绪或主观选择判错。组件接收 `activity`、`onComplete`、`onReturn`，只负责流程外壳，不在其中写年级知识点。
 
-- [ ] **Step 4: 接入已有进度保存。**
+- [x] **Step 4: 接入已有进度保存。**
 
 完成时调用：
 
@@ -234,13 +234,13 @@ recordResult(`reference-activity:${activity.id}`, 1, result.stars, result.score)
 
 这样复用当前学生隔离、匿名范围、徽章和旧进度迁移逻辑；探索总结继续调用 `saveMusicDiscovery()`。
 
-- [ ] **Step 5: 运行定向测试、Lint 和 Build。**
+- [x] **Step 5: 运行定向测试、Lint 和 Build。**
 
 Run: `npm test -- tests/learningJourney.test.mjs tests/progress.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS。
 
-- [ ] **Step 6: 提交旅程基础。**
+- [x] **Step 6: 提交旅程基础。**
 
 ```powershell
 git add src/music/learningJourney.ts src/components/LearningJourney.tsx src/components/learningJourney.css tests/learningJourney.test.mjs
@@ -272,31 +272,31 @@ export interface ReferenceActivityStageProps {
 }
 ```
 
-- [ ] **Step 1: 写组件契约测试。**
+- [x] **Step 1: 写组件契约测试。**
 
 测试组件源码契约和可访问性：听辨活动必须有重播、候选试听、`aria-live`；乐器活动必须显示“示例声音”而不是“真实录音”；节奏活动必须支持点击和不重复的 Space；动作活动必须提供情绪/力度/拍子动作选项；复习活动必须显示星级和总结。
 
-- [ ] **Step 2: 运行定向测试确认失败。**
+- [x] **Step 2: 运行定向测试确认失败。**
 
 Run: `npm test -- tests/referenceActivityComponents.test.mjs`
 
 Expected: FAIL because the activity components do not exist。
 
-- [ ] **Step 3: 实现通用活动渲染器。**
+- [x] **Step 3: 实现通用活动渲染器。**
 
 `ReferenceActivityStage` 按 `activity.kind` 选择子组件；子组件只回传证据和完成事件，不直接写 localStorage。播放统一调用 `ensureAudio`、`playNote` 或已有探索音频入口；异常时显示“设备暂时没有发出声音，但仍可以继续观察和保存”。
 
-- [ ] **Step 4: 实现桌面视觉。**
+- [x] **Step 4: 实现桌面视觉。**
 
 复用参考课件的地图、角色对话、星级、音符飘动、节奏卡翻转、金蛋和庆祝粒子等视觉意图，但使用当前 CSS/React 状态实现。基础布局使用主舞台、操作区和反馈侧栏，不新增移动端媒体查询。
 
-- [ ] **Step 5: 运行定向测试、Lint 和 Build。**
+- [x] **Step 5: 运行定向测试、Lint 和 Build。**
 
 Run: `npm test -- tests/referenceActivityComponents.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS。
 
-- [ ] **Step 6: 提交活动容器。**
+- [x] **Step 6: 提交活动容器。**
 
 ```powershell
 git add src/components/reference tests/referenceActivityComponents.test.mjs
@@ -318,31 +318,31 @@ git commit -m "feat: add reusable reference music activities"
 - Produces: 一年级上册全部知识点和活动定义，包含 `posture`、`x-xx-rhythm`、`dynamics`、`meter-2-3`、`duration`、`pitch`、`clappers`、`woodblock`、`bell`、`labor-rhythm`、`gong-drum-cymbal`、`concert-review` 对应的稳定 ID。
 - Consumes: Task 2 的数据模型、Task 4 的活动组件和 Task 1 的资源候选 ID。
 
-- [ ] **Step 1: 写内容完整性测试。**
+- [x] **Step 1: 写内容完整性测试。**
 
 测试一年级知识点 ID 全部存在、每个 ID 至少关联一个活动；测试活动步骤包含试听、操作和总结；测试森林关卡按序章、1—5 关、终章提供地图状态和星级输出。
 
-- [ ] **Step 2: 运行测试确认失败。**
+- [x] **Step 2: 运行测试确认失败。**
 
 Run: `npm test -- tests/referenceGradeOne.test.mjs`
 
 Expected: FAIL because the grade-one registry is incomplete。
 
-- [ ] **Step 3: 登记一年级内容和参考玩法。**
+- [x] **Step 3: 登记一年级内容和参考玩法。**
 
 将森林地图、角色对话、乐器听辨、节奏卡匹配、长短音、节奏创编、通关庆祝转为活动数据和 `GradeOneForestQuest` 编排器。知识卡每次只显示一个概念，复习活动把歌唱姿势、声音四要素和乐器名称作为简短回顾。
 
-- [ ] **Step 4: 绑定清洗后的资源。**
+- [x] **Step 4: 绑定清洗后的资源。**
 
 只引用 `asset-manifest.json` 中 `status=selected` 的资源；资源缺失时使用现有合成音色、CSS/SVG 背景和文字降级，不在组件中硬编码 E 盘路径。
 
-- [ ] **Step 5: 运行一年级测试、全量测试、Lint 和 Build。**
+- [x] **Step 5: 运行一年级测试、全量测试、Lint 和 Build。**
 
 Run: `npm test -- tests/referenceGradeOne.test.mjs tests/referenceCourseware.test.mjs tests/learningJourney.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS。
 
-- [ ] **Step 6: 提交一年级样板。**
+- [x] **Step 6: 提交一年级样板。**
 
 ```powershell
 git add src/music/referenceLessons/gradeOneUpper.ts src/components/reference/GradeOneForestQuest.tsx src/music/referenceCourseware.ts src/music/referenceActivityCatalog.ts tests/referenceGradeOne.test.mjs
@@ -370,31 +370,31 @@ git commit -m "feat: add grade one reference exploration"
 - 今日探索保留两页结构，第二页可打开当天参考活动；首页其它区块和现有进度卡不改变。
 - 玩乐中心显示一年级小游戏入口，原有 `MusicExperienceStage`、听觉实验室和 legacy games 继续存在。
 
-- [ ] **Step 1: 写布局和入口回归测试。**
+- [x] **Step 1: 写布局和入口回归测试。**
 
 新增断言：`Theory.tsx` 有教材来源/知识点下拉；`LessonMode.tsx` 有标题栏作品选择和参考活动入口；`Home.tsx` 保留两页而不是四页；`TrainingCenter.tsx` 保留旧活动；`ExplorationTheater.tsx` 允许阶段 1—6 直接切换。
 
-- [ ] **Step 2: 运行定向测试确认失败或建立缺口清单。**
+- [x] **Step 2: 运行定向测试确认失败或建立缺口清单。**
 
 Run: `npm test -- tests/curriculumUi.test.mjs tests/experienceIntegration.test.mjs tests/explorationTheater.test.mjs`
 
 Expected: 只允许新增参考入口相关断言失败；已有阶段功能测试不得被删除或静默跳过。
 
-- [ ] **Step 3: 接入筛选和活动入口。**
+- [x] **Step 3: 接入筛选和活动入口。**
 
 通过 `referenceSource`、`referenceGrade`、`referenceKnowledgePointId` 页面状态驱动右侧内容；无匹配内容显示可理解的空状态。入口跳转使用现有 `openExploration`/`navigate`，不新增路由枚举。
 
-- [ ] **Step 4: 接入一年级样板。**
+- [x] **Step 4: 接入一年级样板。**
 
 从探索馆、互动课堂和玩乐中心分别打开同一个稳定 activity ID，完成后统一调用 `recordResult` 并更新发现卡预览；刷新页面后能够重新加载进度，不要求从首页重新开始。
 
-- [ ] **Step 5: 运行定向测试、Lint 和 Build。**
+- [x] **Step 5: 运行定向测试、Lint 和 Build。**
 
 Run: `npm test -- tests/curriculumUi.test.mjs tests/experienceIntegration.test.mjs tests/explorationTheater.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS；旧页面入口和阶段一至四测试保持绿色。
 
-- [ ] **Step 6: 提交一年级桌面整合。**
+- [x] **Step 6: 提交一年级桌面整合。**
 
 ```powershell
 git add src/pages/Theory.tsx src/pages/LessonMode.tsx src/pages/Home.tsx src/pages/TrainingCenter.tsx src/components/ExplorationTheater.tsx src/music/explorationUnits.ts tests/curriculumUi.test.mjs tests/experienceIntegration.test.mjs tests/explorationTheater.test.mjs
@@ -415,27 +415,27 @@ git commit -m "feat: connect grade one exploration to desktop learning flows"
 - Produces: `do-mi-sol`、`135-polyphony`、`fast-rhythm`、`solfege-listen`、`135-hearing`、`meter-creation`、`note-values-2-4-8-16`、`violin-piano-flute`、`fa-si-high-do`、`meter-2-3`、`percussion-family`、`grade-two-review`。
 - Reuses: `note-ladder`、`rhythm-builder`、`instrument-detective`、`layered-listening`、`review-quest`。
 
-- [ ] **Step 1: 写二年级知识点覆盖测试。**
+- [x] **Step 1: 写二年级知识点覆盖测试。**
 
 逐项断言知识点、活动引用、试听和反馈；音符时值活动必须区分二分、四分、八分和十六分，不能只用一个“节奏”标签代替。
 
-- [ ] **Step 2: 运行测试确认缺口。**
+- [x] **Step 2: 运行测试确认缺口。**
 
 Run: `npm test -- tests/referenceGradeTwo.test.mjs`
 
 Expected: FAIL until the complete registry is added。
 
-- [ ] **Step 3: 实现二年级内容。**
+- [x] **Step 3: 实现二年级内容。**
 
 把 `do/mi/sol` 和 `fa/si/高音 do` 放入音高阶梯与听辨；把 135 多声部做成可开关的声部层；把四种时值做成可拖拽节奏卡；小提琴、钢琴、笛子使用音色样本比较，明确文化或演奏方式线索；打击乐器提供分类和再次试听。
 
-- [ ] **Step 4: 运行二年级测试、全量测试、Lint 和 Build。**
+- [x] **Step 4: 运行二年级测试、全量测试、Lint 和 Build。**
 
 Run: `npm test -- tests/referenceGradeTwo.test.mjs tests/referenceCourseware.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS。
 
-- [ ] **Step 5: 提交二年级内容。**
+- [x] **Step 5: 提交二年级内容。**
 
 ```powershell
 git add src/music/referenceLessons/gradeTwoUpper.ts src/music/referenceActivityCatalog.ts src/components/reference/ReferenceActivityStage.tsx tests/referenceGradeTwo.test.mjs
@@ -456,27 +456,27 @@ git commit -m "feat: add grade two reference exploration"
 - Produces: `solfege-note-names`、`dynamics-marks`、`music-emotion`、`low-567-high-1`、`labor-chant`、`sound-dictation`、`ostinato-accompaniment`、`voice-ranges`、`two-part`、`unison-chorus-round`、`polyphony`、`crescendo-diminuendo`、`grade-three-review`。
 - Reuses: `listen-and-choose`、`meter-movement`、`voice-form-guess`、`layered-listening`、`sound-dictation`、`review-quest`。
 
-- [ ] **Step 1: 写三年级知识点覆盖测试。**
+- [x] **Step 1: 写三年级知识点覆盖测试。**
 
 测试情绪活动允许主观选择并要求学生选择听觉依据；演唱形式活动至少包含齐唱、合唱、轮唱；声部活动可以单独试听和叠加；力度活动包含强、弱、渐强、渐弱；听音记谱和固定节奏伴奏都有试听后操作。
 
-- [ ] **Step 2: 运行测试确认缺口。**
+- [x] **Step 2: 运行测试确认缺口。**
 
 Run: `npm test -- tests/referenceGradeThree.test.mjs`
 
 Expected: FAIL until the complete registry is added。
 
-- [ ] **Step 3: 实现三年级内容。**
+- [x] **Step 3: 实现三年级内容。**
 
 把情绪、动作、劳动场景和文化故事作为活动线索；把男高、男低、女高、女中、童声标记为听辨线索，不要求学生只依赖文字记忆；渐强/渐弱用音量轨迹和再次试听表现；多声部使用可视化层叠和关闭/打开声部；总结卡同时显示主观感受和听觉证据。
 
-- [ ] **Step 4: 运行三年级测试、全量测试、Lint 和 Build。**
+- [x] **Step 4: 运行三年级测试、全量测试、Lint 和 Build。**
 
 Run: `npm test -- tests/referenceGradeThree.test.mjs tests/referenceGradeOne.test.mjs tests/referenceGradeTwo.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS。
 
-- [ ] **Step 5: 提交三年级内容。**
+- [x] **Step 5: 提交三年级内容。**
 
 ```powershell
 git add src/music/referenceLessons/gradeThreeUpper.ts src/music/referenceActivityCatalog.ts src/components/reference/ReferenceActivityStage.tsx tests/referenceGradeThree.test.mjs
@@ -510,31 +510,31 @@ export function getReferenceAsset(id: string): ReferenceAsset | undefined
 export function getActivityAssets(activityId: string): ReferenceAsset[]
 ```
 
-- [ ] **Step 1: 写资源访问测试。**
+- [x] **Step 1: 写资源访问测试。**
 
 测试活动只能取得清单内资源、路径为项目相对路径、默认 `preload='none'`，缺失资源返回 `undefined` 而不是抛出异常。
 
-- [ ] **Step 2: 运行测试确认失败。**
+- [x] **Step 2: 运行测试确认失败。**
 
 Run: `npm test -- tests/referenceAssets.test.mjs`
 
 Expected: FAIL because the asset registry does not exist。
 
-- [ ] **Step 3: 生成项目资源映射。**
+- [x] **Step 3: 生成项目资源映射。**
 
 从 Task 1 的 manifest 选出一年级样板实际引用的音频、角色、背景和图标，复制到 `public/reference-courseware/g1/s1/`；二、三年级在对应阶段再加入。所有复制动作必须使用明确文件列表，禁止把 E 盘目录作为 glob 直接复制。
 
-- [ ] **Step 4: 实现动画和加载状态。**
+- [x] **Step 4: 实现动画和加载状态。**
 
 加入地图解锁、角色对话、音符浮动、节奏卡翻转、乐器发光、金蛋开启和庆祝粒子等桌面动画；为音频和图片提供加载中、不可用和再次尝试状态；不新增移动端媒体查询。
 
-- [ ] **Step 5: 运行资源测试、Lint 和 Build。**
+- [x] **Step 5: 运行资源测试、Lint 和 Build。**
 
 Run: `npm test -- tests/referenceAssets.test.mjs`; `npm run lint`; `npm run build`
 
 Expected: PASS，构建产物不包含未引用的参考目录大文件。
 
-- [ ] **Step 6: 提交资源和动画。**
+- [x] **Step 6: 提交资源和动画。**
 
 ```powershell
 git add src/music/referenceAssets.ts src/components/reference public/reference-courseware tests/referenceAssets.test.mjs
@@ -550,7 +550,7 @@ git commit -m "feat: add lazy reference courseware assets"
 - Read: `docs/superpowers/specs/2026-09-06-reference-courseware-integration-design.md`
 - Read: `docs/reference-courseware/content-matrix.md`
 
-- [ ] **Step 1: 运行全量检查。**
+- [x] **Step 1: 运行全量检查。**
 
 ```powershell
 $ErrorActionPreference = 'Stop'
@@ -562,28 +562,47 @@ npm run build
 
 Expected: four commands all exit 0；记录实际测试数量和构建输出。
 
-- [ ] **Step 2: 做源码完整性扫描。**
+- [x] **Step 2: 做源码完整性扫描。**
 
 使用 `rg` 扫描 `src`、`tests` 和 `docs/reference-courseware`，确认没有新增未完成标记、E 盘绝对资源路径和把人音版标记为浙江教材的错误来源标签。
 
-- [ ] **Step 3: 做电脑端主流程验收。**
+- [x] **Step 3: 做电脑端主流程验收。**
 
 按以下路径逐项验证：探索馆教材来源下拉 → 一年级知识点下拉 → 森林/乐器活动 → 试听和反馈 → 发现卡保存 → 刷新恢复；互动课堂标题栏作品选择 → 左侧 1—6 阶段切换 → 二年级音符时值 → 三年级情绪/演唱形式；今日探索第一页 → 第二页 → 复习总结；玩乐中心 → 独立小游戏。只验收 1280×720、1440×900、1920×1080 桌面尺寸，不做手机和平板视觉验收。
 
-- [ ] **Step 4: 验证旧功能不受影响。**
+- [x] **Step 4: 验证旧功能不受影响。**
 
 运行现有 `phaseThree.test.mjs`、`phaseFour.test.mjs`、`experienceIntegration.test.mjs`、`explorationSessions.test.mjs`、`progress.test.mjs` 和全部测试；确认旧 `library` 路由、理论入口、乐器页、游戏页、教师入口仍能打开。
 
-- [ ] **Step 5: 写验证记录。**
+- [x] **Step 5: 写验证记录。**
 
 在 `verification-log.md` 中记录日期、提交 ID、命令、结果、桌面尺寸、音频不可用降级结果、资源清单数量和未处理源文件数量；失败项必须写明原因和下一步，不用“已完成”掩盖失败。
 
-- [ ] **Step 6: 提交最终执行记录。**
+- [x] **Step 6: 提交最终执行记录。**
 
 ```powershell
 git add docs/reference-courseware/verification-log.md docs/superpowers/plans/2026-09-06-reference-courseware-integration.md
 git commit -m "chore: record reference courseware verification"
 ```
+
+## 执行记录（2026-09-06）
+
+本计划按当前会话执行，未使用子代理；所有改动范围限定为桌面端。阶段提交如下，后续可通过提交 ID 恢复上下文：
+
+| 任务 | 提交 | 状态 |
+| --- | --- | --- |
+| Task 1 参考课件索引 | `a70e04c` | 已完成 |
+| Task 2 统一数据模型 | `7068a7d` | 已完成 |
+| Task 3 学习旅程状态机 | `f0daa5f` | 已完成 |
+| Task 4 通用互动活动 | `5902824` | 已完成 |
+| Task 5 一年级森林样板 | `d579592` | 已完成 |
+| Task 6 桌面页面接入 | `d2b164f` | 已完成 |
+| Task 7 二年级内容 | `cdc192e` | 已完成 |
+| Task 8 三年级内容 | `d973c6b` | 已完成 |
+| Task 9 按需资源与动画 | `e41828d` | 已完成 |
+| Task 10 全量验证与记录 | 待提交 | 记录中 |
+
+当前验证证据：全量测试 `239/239` 通过，Lint 通过，TypeScript/Vite 构建通过；全仓库 `npm run format:check` 仍会报告既有的 133 个未格式化文件，已对本次新增/修改的参考资源文件做定向格式检查并通过。为避免引入与本需求无关的大规模格式化，本计划保留该基线问题并在验证日志中记录。
 
 ## Plan Self-Review
 

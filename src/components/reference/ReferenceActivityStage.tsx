@@ -26,15 +26,25 @@ export default function ReferenceActivityStage(props: ReferenceActivityStageProp
   const [unavailableAssets, setUnavailableAssets] = useState<string[]>([])
 
   const stage =
-    activity.kind === 'listen-and-choose' ? <ListenChoiceActivity {...props} /> :
-    activity.kind === 'instrument-detective' ? <InstrumentDetectiveActivity {...props} /> :
-    activity.kind === 'layered-listening' ? <LayeredListeningActivity {...props} /> :
-    activity.kind === 'note-ladder' ? <ListenChoiceActivity {...props} /> :
-    activity.kind === 'voice-form-guess' ? <VoiceFormActivity {...props} /> :
-    activity.kind === 'sound-dictation' ? <SoundDictationActivity {...props} /> :
-    activity.kind === 'meter-movement' ? <MovementActivity {...props} /> :
-    activity.kind === 'review-quest' ? <ReviewQuestActivity {...props} /> :
-    <RhythmBuilderActivity {...props} />
+    activity.kind === 'listen-and-choose' ? (
+      <ListenChoiceActivity {...props} />
+    ) : activity.kind === 'instrument-detective' ? (
+      <InstrumentDetectiveActivity {...props} />
+    ) : activity.kind === 'layered-listening' ? (
+      <LayeredListeningActivity {...props} />
+    ) : activity.kind === 'note-ladder' ? (
+      <ListenChoiceActivity {...props} />
+    ) : activity.kind === 'voice-form-guess' ? (
+      <VoiceFormActivity {...props} />
+    ) : activity.kind === 'sound-dictation' ? (
+      <SoundDictationActivity {...props} />
+    ) : activity.kind === 'meter-movement' ? (
+      <MovementActivity {...props} />
+    ) : activity.kind === 'review-quest' ? (
+      <ReviewQuestActivity {...props} />
+    ) : (
+      <RhythmBuilderActivity {...props} />
+    )
 
   return (
     <>
@@ -44,7 +54,9 @@ export default function ReferenceActivityStage(props: ReferenceActivityStageProp
           assets={assets}
           unavailableAssets={unavailableAssets}
           onUnavailable={(asset) =>
-            setUnavailableAssets((current) => (current.includes(asset.id) ? current : [...current, asset.id]))
+            setUnavailableAssets((current) =>
+              current.includes(asset.id) ? current : [...current, asset.id]
+            )
           }
         />
       )}
@@ -58,14 +70,21 @@ interface ReferenceAssetShelfProps {
   onUnavailable: (asset: ReferenceAsset) => void
 }
 
-function ReferenceAssetShelf({ assets, unavailableAssets, onUnavailable }: ReferenceAssetShelfProps) {
+function ReferenceAssetShelf({
+  assets,
+  unavailableAssets,
+  onUnavailable,
+}: ReferenceAssetShelfProps) {
   return (
     <section className="reference-activity__assets" aria-label="参考课件声音素材">
       <strong>参考声音素材（按需加载）</strong>
       {assets.map((asset) => {
         const unavailable = unavailableAssets.includes(asset.id)
         return (
-          <div className={`reference-activity__asset${unavailable ? ' reference-activity__asset--unavailable' : ''}`} key={asset.id}>
+          <div
+            className={`reference-activity__asset${unavailable ? ' reference-activity__asset--unavailable' : ''}`}
+            key={asset.id}
+          >
             <strong>{asset.alt ?? '参考声音'}</strong>
             {asset.kind === 'audio' ? (
               <audio
