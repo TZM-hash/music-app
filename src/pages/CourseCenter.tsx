@@ -18,6 +18,50 @@ import './course.css'
 type FilterValue = 'all'
 type WorkFilter = PrimaryGrade | FilterValue
 
+interface CourseUnit {
+  id: TheoryStageId
+  icon: string
+  title: string
+  stage: string
+  goal: string
+  duration: string
+  color: string
+  outcomes: string[]
+}
+
+const COURSES: CourseUnit[] = [
+  {
+    id: 'primary-lower',
+    icon: '🌱',
+    title: '小学低段：听见高低长短',
+    stage: '小学 1-2 年级 / 启蒙',
+    goal: '从听、拍、唱和模仿开始，慢慢形成对高低、长短、强弱和音色的直观感受。',
+    duration: '10-15 分钟',
+    color: '#2f9e44',
+    outcomes: ['能分辨高低长短强弱', '能跟稳定拍做反应', '能唱出 1-5 的基本唱名'],
+  },
+  {
+    id: 'primary-middle',
+    icon: '🧭',
+    title: '小学中段：读懂谱面基本信息',
+    stage: '小学 3-4 年级 / 基础',
+    goal: '把音名、线间、谱号、拍号、速度力度和反复记号变成看得懂、唱得出的音乐线索。',
+    duration: '15-20 分钟',
+    color: '#f59f00',
+    outcomes: ['能读基本线间关系', '能说明 2/4、3/4、4/4', '能识别 p、f 和反复记号'],
+  },
+  {
+    id: 'primary-upper',
+    icon: '🎼',
+    title: '小学高段：连接旋律、节奏与调式',
+    stage: '小学 5-6 年级 / 提升',
+    goal: '理解半音全音、低音谱号、附点切分三连音、五声音阶、音程和乐句呼吸。',
+    duration: '20 分钟',
+    color: '#d6336c',
+    outcomes: ['能分析附点和切分', '能听出大小调基础色彩', '能描述问答乐句和旋律线'],
+  },
+]
+
 interface WorkSummary {
   id: string
   title: string
@@ -126,9 +170,15 @@ export default function CourseCenter() {
   const [pathFilter, setPathFilter] = useState<ExplorationPath | FilterValue>('all')
   const [tagFilter, setTagFilter] = useState<string | FilterValue>('all')
   const [selectedWorkId, setSelectedWorkId] = useState(JASMINE_WORK.id)
+  const [activeCourseId, setActiveCourseId] = useState<TheoryStageId>(
+    getStageForGrade(currentGrade ?? 1)
+  )
 
   useEffect(() => {
-    if (selectedGrade !== null) setGradeFilter(selectedGrade)
+    if (selectedGrade !== null) {
+      setGradeFilter(selectedGrade)
+      setActiveCourseId(getStageForGrade(selectedGrade))
+    }
   }, [selectedGrade])
 
   const filteredWorks = useMemo(
@@ -143,12 +193,17 @@ export default function CourseCenter() {
     () => Array.from(new Set(WORK_SUMMARIES.flatMap((work) => work.tags))).sort(),
     []
   )
-  const detailGrade = selectedWork?.grades[0] ?? currentGrade ?? 1
+  const displayedGrade = gradeFilter === 'all' ? null : gradeFilter
+  const detailGrade = selectedWork?.grades[0] ?? displayedGrade ?? 1
   const detailStage = getStageForGrade(detailGrade)
-  const currentUnits = currentGrade ? getCurriculumUnits(currentGrade) : []
-  const gradeSummary = currentGrade
-    ? `${getGradeLabel(currentGrade)} · ${currentUnits.length} 个教材主题`
+  const displayedUnits = displayedGrade ? getCurriculumUnits(displayedGrade) : []
+  const gradeSummary = displayedGrade
+    ? `${getGradeLabel(displayedGrade)} · ${displayedUnits.length} 个教材主题`
     : '全部小学年级 · 选择年级开始探索'
+  const activeCourse = useMemo(
+    () => COURSES.find((course) => course.id === activeCourseId) ?? COURSES[0],
+    [activeCourseId]
+  )
 
   const handleGradeChange = (value: string) => {
     const nextGrade = value === 'all' ? 'all' : (Number(value) as PrimaryGrade)
@@ -301,7 +356,7 @@ export default function CourseCenter() {
                 type="button"
                 className="lesson-secondary"
                 onClick={() => {
-                  setGradeFilter(currentGrade ?? 'all')
+                  setGradeFilter(gradeFilter)
                   setSourceFilter('all')
                   setPathFilter('all')
                   setTagFilter('all')
@@ -380,6 +435,73 @@ export default function CourseCenter() {
           )}
         </aside>
       </div>
+
+      <section className="course-legacy-panel card" aria-label="课程入口">
+        <div className="course-section-heading">
+          <div>
+            <span className="course-kicker">课程入口</span>
+            <h2>按学段进入课堂</h2>
+          </div>
+          <span>
+            {activeCourse.stage} · {activeCourse.duration}
+          </span>
+        </div>
+        <div className="course-layout">
+          <div className="course-list">
+            {COURSES.map((course) => (
+              <button
+                key={course.id}
+                type="button"
+                className={`course-tab card ${course.id === activeCourse.id ? 'on' : ''}`}
+                onClick={() => setActiveCourseId(course.id)}
+                style={{ borderColor: course.id === activeCourse.id ? course.color : undefined }}
+              >
+                <span className="course-icon" style={{ background: course.color }}>
+                  {course.icon}
+                </span>
+                <span>
+                  <b>{course.title}</b>
+                  <small>
+                    {course.stage} · {course.duration}
+                  </small>
+                </span>
+              </button>
+            ))}
+          </div>
+          <section className="lesson-board card">
+            <div className="lesson-title">
+              <span className="course-icon big" style={{ background: activeCourse.color }}>
+                {activeCourse.icon}
+              </span>
+              <div>
+                <h2>{activeCourse.title}</h2>
+                <p>{activeCourse.goal}</p>
+              </div>
+            </div>
+            <div className="outcome-row">
+              {activeCourse.outcomes.map((outcome) => (
+                <span key={outcome}>{outcome}</span>
+              ))}
+            </div>
+            <div className="lesson-foot">
+              <button
+                className="big-start"
+                type="button"
+                onClick={() => openLesson(activeCourse.id)}
+              >
+                进入这个学段的课堂
+              </button>
+              <button
+                className="lesson-secondary"
+                type="button"
+                onClick={() => openTheory({ stage: activeCourse.id })}
+              >
+                进入音乐探索馆
+              </button>
+            </div>
+          </section>
+        </div>
+      </section>
 
       <section className="course-support-bar card" aria-label="教师支持">
         <div>

@@ -53,3 +53,33 @@ After implementation, the focused run passed 27/27 tests with 0 failures.
 - The work map intentionally uses curriculum theory topics as the first batch of mapped works; only Jasmine has a full exploration-theater route in this task. Other mapped cards preserve theory navigation.
 - Desktop visual acceptance was not performed in a browser. Audio behavior remains dependent on browser audio policy, as in the existing exploration flow.
 - Pre-existing untracked `.superpowers` briefs, review diffs, and progress artifacts were left untouched and were not included in the commit.
+
+## Review Fixes
+
+The Task 5 review identified three issues. All three were fixed:
+
+1. Restored the legacy `COURSES` stage entries beside the works map. The section keeps the three existing lower/middle/upper primary-stage entries, selection behavior, direct `openLesson(activeCourse.id)` classroom action, and direct theory action. Teacher support actions remain below the map.
+2. Moved the new works-map layout and dependent map sizing/style rules into the existing `@media (min-width: 1024px)` boundary. No `max-width` media query or mobile/tablet navigation change was added.
+3. Added `displayedGrade`, derived from the active map grade filter. The summary now says `全部小学年级` when the all-grade filter is selected, and empty-state reset preserves that all-grade selection instead of falling back to the student or global grade.
+
+## Review-Fix TDD Evidence
+
+### Red
+
+Added focused assertions for legacy course entries/actions, desktop-only map CSS scoping, and all-grade summary/reset behavior. Before the fixes, the focused run reported 26 passing and 4 failing tests: the new legacy-entry assertions, the desktop-boundary assertion, and the all-grade assertion failed as expected.
+
+### Green
+
+Command:
+
+    node --test tests/curriculumUi.test.mjs tests/experienceIntegration.test.mjs
+
+After the fixes, the focused run passed 30/30 tests with 0 failures. `npx tsc -b --pretty false` also passed in the same verification cycle.
+
+## Review-Fix Verification
+
+- `node --test tests/curriculumUi.test.mjs tests/experienceIntegration.test.mjs` -> passed, 30/30 tests.
+- `npm run lint` -> passed with no ESLint errors.
+- `npm run build` -> passed; TypeScript and Vite production build completed successfully.
+- `npx prettier --check src/pages/CourseCenter.tsx src/pages/course.css tests/curriculumUi.test.mjs tests/experienceIntegration.test.mjs` -> passed.
+- `git diff --check` -> passed with no whitespace errors.

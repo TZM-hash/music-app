@@ -61,6 +61,29 @@ test('课程中心桌面端展示作品地图和可筛选的茉莉花作品卡',
   assert.match(css, /course-filter-rail/)
   assert.match(css, /course-work-detail/)
   assert.match(css, /@media \(min-width: 1024px\)/)
+  const desktopStyles = css.slice(css.indexOf('@media (min-width: 1024px)'))
+  assert.match(desktopStyles, /\.course-works-map\s*\{[\s\S]*grid-template-columns/)
+  assert.doesNotMatch(css.slice(0, css.indexOf('@media (min-width: 1024px)')), /\.course-works-map/)
+})
+
+test('课程中心保留旧学段课程入口并直接进入对应课堂', () => {
+  const course = read('src/pages/CourseCenter.tsx')
+
+  assert.match(course, /COURSES/)
+  assert.match(course, /小学低段：听见高低长短/)
+  assert.match(course, /小学中段：读懂谱面基本信息/)
+  assert.match(course, /小学高段：连接旋律、节奏与调式/)
+  assert.match(course, /进入这个学段的课堂/)
+  assert.match(course, /openLesson\(activeCourse\.id\)/)
+  assert.match(course, /openTheory\(\{ stage: activeCourse\.id \}\)/)
+})
+
+test('作品地图选择全部年级后摘要和空状态重置保持全部年级', () => {
+  const course = read('src/pages/CourseCenter.tsx')
+
+  assert.match(course, /displayedGrade = gradeFilter === 'all' \? null : gradeFilter/)
+  assert.match(course, /displayedGrade\s*\?\s*`\$\{getGradeLabel\(displayedGrade\)\}/)
+  assert.match(course, /setGradeFilter\(gradeFilter\)/)
 })
 
 test('主要内容页面统一读取顶部全局年级', () => {

@@ -175,6 +175,17 @@ test('作品地图把茉莉花卡片连接到探索剧场并保留理论次要�
   assert.match(course, /课程|教材|教师支持/)
 })
 
+test('课程中心保留旧课程、理论和教师支持导航', () => {
+  const course = readSource('src/pages/CourseCenter.tsx')
+
+  assert.match(course, /COURSES\.map/)
+  assert.match(course, /openLesson\(activeCourse\.id\)/)
+  assert.match(course, /openTheory\(\{ stage: activeCourse\.id \}\)/)
+  assert.match(course, /course-support-bar/)
+  assert.match(course, /进入互动课堂/)
+  assert.match(course, /进入音乐探索馆/)
+})
+
 test('旧音乐探险舞台和训练中心入口仍然保留', () => {
   const training = readSource('src/pages/TrainingCenter.tsx')
   assert.match(training, /MusicExperienceStage/)
