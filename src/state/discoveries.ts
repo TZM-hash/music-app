@@ -1,5 +1,6 @@
 import type { PrimaryGrade, Semester } from '../music/zhejiangCurriculum'
 import type { ExplorationPath } from '../music/explorationUnits'
+import { normalizeToolNotes, type MusicDiscoveryToolNote } from '../music/explorationTools'
 
 export type DiscoverySource = 'textbook' | 'extension'
 
@@ -20,6 +21,7 @@ export interface MusicDiscovery {
   concepts?: string[]
   relistenChoice?: string
   relistenReflection?: string
+  toolNotes?: MusicDiscoveryToolNote[]
   tags: string[]
   createdAt: number
 }
@@ -40,6 +42,7 @@ export interface MusicDiscoveryDraft {
   concepts?: string[]
   relistenChoice?: string
   relistenReflection?: string
+  toolNotes?: MusicDiscoveryToolNote[]
   tags?: string[]
 }
 
@@ -120,6 +123,7 @@ export function createMusicDiscovery(
     ...(draft.relistenReflection
       ? { relistenReflection: draft.relistenReflection.trim().slice(0, 160) }
       : {}),
+    ...(draft.toolNotes !== undefined ? { toolNotes: normalizeToolNotes(draft.toolNotes) } : {}),
     tags: Array.from(new Set((draft.tags ?? []).filter(Boolean))).slice(0, 8),
     createdAt,
   }

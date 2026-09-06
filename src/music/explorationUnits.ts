@@ -1,4 +1,5 @@
 import type { PrimaryGrade } from './zhejiangCurriculum'
+import type { ExplorationToolReference } from './explorationTools'
 
 export type ExplorationPath = 'emotion' | 'movement' | 'story' | 'culture'
 export type ExplorationStageId =
@@ -56,6 +57,7 @@ export interface ExplorationUnit {
   }
   relisten: { prompt: string; choices: ExplorationChoice[] }
   reflectionPrompts: Partial<Record<ExplorationAgeBand, string>>
+  tools?: ExplorationToolReference[]
 }
 
 export const JASMINE_EXPLORATION_UNIT: ExplorationUnit = {
@@ -67,6 +69,22 @@ export const JASMINE_EXPLORATION_UNIT: ExplorationUnit = {
   color: '#6c9f83',
   source: 'textbook',
   songId: 'jasmine',
+  tools: [
+    {
+      id: 'microscope',
+      stage: 'evidence',
+      title: '音乐显微镜',
+      question: '旋律是怎样平稳地流动起来的？',
+      evidenceLabels: ['旋律更平稳', '音与音之间走得更近'],
+    },
+    {
+      id: 'instrument',
+      stage: 'concept',
+      title: '乐器探秘台',
+      question: '不同声音怎样唱出茉莉花的颜色？',
+      evidenceLabels: ['柔和', '清脆', '明亮'],
+    },
+  ],
   curriculumTopicIds: ['pentatonic-scale', 'gong-shang-jue-zhi-yu', 'folk-song-region'],
   paths: [
     {

@@ -18,14 +18,24 @@ function makeLocalStorage() {
 }
 
 function loadDiscoveries() {
-  const sourcePath = path.resolve('src/state/discoveries.ts')
-  const source = fs.readFileSync(sourcePath, 'utf8')
-  const transpiled = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
-  }).outputText
-  const module = { exports: {} }
-  new Function('module', 'exports', 'require', transpiled)(module, module.exports, require)
-  return module.exports
+  const cache = new Map()
+  const load = (filePath) => {
+    const resolved = path.resolve(filePath.endsWith('.ts') ? filePath : `${filePath}.ts`)
+    if (cache.has(resolved)) return cache.get(resolved).exports
+    const source = fs.readFileSync(resolved, 'utf8')
+    const transpiled = ts.transpileModule(source, {
+      compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
+    }).outputText
+    const module = { exports: {} }
+    cache.set(resolved, module)
+    const localRequire = (specifier) => {
+      if (specifier.startsWith('.')) return load(path.resolve(path.dirname(resolved), specifier))
+      return require(specifier)
+    }
+    new Function('module', 'exports', 'require', transpiled)(module, module.exports, localRequire)
+    return module.exports
+  }
+  return load('src/state/discoveries.ts')
 }
 
 beforeEach(() => {
@@ -160,4 +170,33 @@ test('旧发现记录没有新增字段时仍然可以读取', () => {
   const [legacy] = discoveries.loadMusicDiscoveries('stu-old')
   assert.equal(legacy.title, '稳定拍')
   assert.equal(legacy.unitId, undefined)
+  assert.equal(legacy.toolNotes, undefined)
+})
+
+test('发现卡保存有界的工具观察记录', () => {
+  const discoveries = loadDiscoveries()
+  const longObservation = '观察'.repeat(100)
+  discoveries.saveMusicDiscovery(
+    {
+      topicId: 'pentatonic-scale',
+      title: '工具观察',
+      statement: '我找到了声音线索。',
+      toolNotes: [
+        {
+          toolId: 'microscope',
+          observation: longObservation,
+          evidence: ['旋律', '旋律', '音色', '级进', '多余'],
+        },
+        { toolId: 'instrument', observation: '音色更亮', evidence: ['音色'] },
+        { toolId: 'rhythm', observation: '拍点稳定', evidence: ['节奏'] },
+        { toolId: 'unknown', observation: '不应保存', evidence: ['无效'] },
+      ],
+    },
+    700
+  )
+
+  const [saved] = discoveries.loadMusicDiscoveries()
+  assert.equal(saved.toolNotes.length, 3)
+  assert.equal(saved.toolNotes[0].observation.length, 160)
+  assert.deepEqual(saved.toolNotes[0].evidence, ['旋律', '音色', '级进', '多余'])
 })

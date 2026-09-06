@@ -92,3 +92,15 @@ test('四条路径至少提供三个选择且课程主题 id 均为字符串', (
   assert.ok(JASMINE_EXPLORATION_UNIT.curriculumTopicIds.length > 0)
   assert.ok(JASMINE_EXPLORATION_UNIT.curriculumTopicIds.every((id) => typeof id === 'string'))
 })
+
+test('茉莉花探索单元最多推荐显微镜和乐器工具并保留旧流程', () => {
+  const load = createTsLoader()
+  const { JASMINE_EXPLORATION_UNIT } = load('src/music/explorationUnits.ts')
+
+  assert.deepEqual(
+    JASMINE_EXPLORATION_UNIT.tools.map((tool) => tool.id),
+    ['microscope', 'instrument']
+  )
+  assert.ok(JASMINE_EXPLORATION_UNIT.tools.every((tool) => tool.evidenceLabels.length > 0))
+  assert.ok(JASMINE_EXPLORATION_UNIT.evidence.options.length >= 2)
+})
