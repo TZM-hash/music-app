@@ -257,16 +257,25 @@
 }
 
 .instrument-explorer__header h1,
-.rhythm-movement-lab__header h1 { margin: 6px 0 8px; font-size: 2rem; }
+.rhythm-movement-lab__header h1 {
+  margin: 6px 0 8px;
+  font-size: 2rem;
+}
 .instrument-explorer__header p,
 .rhythm-movement-lab__header p,
 .instrument-explorer__live,
 .rhythm-movement-lab__live,
-.rhythm-movement-lab__record { color: var(--text-soft); line-height: 1.6; }
+.rhythm-movement-lab__record {
+  color: var(--text-soft);
+  line-height: 1.6;
+}
 .instrument-explorer__eyebrow,
 .rhythm-movement-lab__eyebrow,
 .instrument-explorer__section-heading span,
-.rhythm-movement-lab__section-heading span { color: var(--tool-accent); font-weight: 900; }
+.rhythm-movement-lab__section-heading span {
+  color: var(--tool-accent);
+  font-weight: 900;
+}
 .instrument-explorer__return,
 .rhythm-movement-lab__return,
 .instrument-explorer__play,
@@ -274,55 +283,228 @@
 .instrument-explorer__save,
 .rhythm-movement-lab__tap,
 .rhythm-movement-lab__save,
-.rhythm-movement-lab__movement button { border: 1px solid var(--line-neon); border-radius: 10px; padding: 10px 13px; background: transparent; color: var(--text); font: inherit; font-weight: 800; cursor: pointer; }
-.instrument-explorer__controls { display: flex; gap: 14px; }
-.instrument-explorer__controls label { display: flex; flex-direction: column; gap: 6px; color: var(--text-soft); font-weight: 800; }
-.instrument-explorer__controls select { min-width: 180px; padding: 9px; border: 1px solid var(--line-neon); border-radius: 9px; background: var(--bg-card); color: var(--text); font: inherit; }
-.instrument-explorer__layout { grid-template-columns: minmax(0, 1.8fr) minmax(260px, 0.8fr); align-items: start; }
-.rhythm-movement-lab__layout { grid-template-columns: minmax(0, 1.8fr) minmax(260px, 0.8fr); align-items: start; }
+.rhythm-movement-lab__movement button {
+  border: 1px solid var(--line-neon);
+  border-radius: 10px;
+  padding: 10px 13px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
+.instrument-explorer__controls {
+  display: flex;
+  gap: 14px;
+}
+.instrument-explorer__controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--text-soft);
+  font-weight: 800;
+}
+.instrument-explorer__controls select {
+  min-width: 180px;
+  padding: 9px;
+  border: 1px solid var(--line-neon);
+  border-radius: 9px;
+  background: var(--bg-card);
+  color: var(--text);
+  font: inherit;
+}
+.instrument-explorer__layout {
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 0.8fr);
+  align-items: start;
+}
+.rhythm-movement-lab__layout {
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 0.8fr);
+  align-items: start;
+}
 .instrument-explorer__samples,
 .instrument-explorer__context,
 .rhythm-movement-lab__layout > main,
-.rhythm-movement-lab__movement { min-width: 0; padding: 18px; border: 1px solid var(--line); border-radius: 18px; background: rgba(0, 0, 0, 0.035); }
+.rhythm-movement-lab__movement {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.035);
+}
 .instrument-explorer__section-heading,
-.rhythm-movement-lab__section-heading { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.rhythm-movement-lab__section-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
 .instrument-explorer__section-heading small,
-.rhythm-movement-lab__section-heading small { color: var(--text-soft); }
-.instrument-explorer__sample-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-.instrument-explorer__sample { display: flex; min-height: 250px; flex-direction: column; gap: 9px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; }
-.instrument-explorer__sample.selected { border-color: var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 12%, transparent); }
-.instrument-explorer__select { align-self: flex-end; padding: 7px 9px; }
-.instrument-explorer__sample-label { color: var(--tool-accent); font-size: 0.78rem; font-weight: 900; }
-.instrument-explorer__sample h2 { margin: 0; font-size: 1.3rem; }
-.instrument-explorer__sample p { margin: 0; color: var(--text-soft); }
-.instrument-explorer__sample dl { display: grid; gap: 6px; margin: 0; color: var(--text-soft); }
-.instrument-explorer__sample dl div { display: flex; justify-content: space-between; gap: 10px; }
-.instrument-explorer__sample dt { font-weight: 800; }
-.instrument-explorer__sample dd { margin: 0; }
-.instrument-explorer__play { margin-top: auto; background: var(--tool-accent); color: #fff; }
-.instrument-explorer__comparison { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
-.instrument-explorer__comparison > div { display: flex; flex-direction: column; gap: 5px; padding: 12px; border-left: 3px solid var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 8%, transparent); }
-.instrument-explorer__comparison span { color: var(--text-soft); }
-.instrument-explorer__comparison p { margin: 0; color: var(--text-soft); }
+.rhythm-movement-lab__section-heading small {
+  color: var(--text-soft);
+}
+.instrument-explorer__sample-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.instrument-explorer__sample {
+  display: flex;
+  min-height: 250px;
+  flex-direction: column;
+  gap: 9px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.instrument-explorer__sample.selected {
+  border-color: var(--tool-accent);
+  background: color-mix(in srgb, var(--tool-accent) 12%, transparent);
+}
+.instrument-explorer__select {
+  align-self: flex-end;
+  padding: 7px 9px;
+}
+.instrument-explorer__sample-label {
+  color: var(--tool-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+.instrument-explorer__sample h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+.instrument-explorer__sample p {
+  margin: 0;
+  color: var(--text-soft);
+}
+.instrument-explorer__sample dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  color: var(--text-soft);
+}
+.instrument-explorer__sample dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.instrument-explorer__sample dt {
+  font-weight: 800;
+}
+.instrument-explorer__sample dd {
+  margin: 0;
+}
+.instrument-explorer__play {
+  margin-top: auto;
+  background: var(--tool-accent);
+  color: #fff;
+}
+.instrument-explorer__comparison {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+.instrument-explorer__comparison > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 12px;
+  border-left: 3px solid var(--tool-accent);
+  background: color-mix(in srgb, var(--tool-accent) 8%, transparent);
+}
+.instrument-explorer__comparison span {
+  color: var(--text-soft);
+}
+.instrument-explorer__comparison p {
+  margin: 0;
+  color: var(--text-soft);
+}
 .instrument-explorer__live,
-.rhythm-movement-lab__live { margin: 14px 0 0; }
+.rhythm-movement-lab__live {
+  margin: 14px 0 0;
+}
 .instrument-explorer__context h2,
-.rhythm-movement-lab__movement h2 { margin-top: 0; }
-.instrument-explorer__context p { color: var(--text-soft); line-height: 1.6; }
+.rhythm-movement-lab__movement h2 {
+  margin-top: 0;
+}
+.instrument-explorer__context p {
+  color: var(--text-soft);
+  line-height: 1.6;
+}
 .instrument-explorer__field,
-.rhythm-movement-lab__field { display: flex; flex-direction: column; gap: 7px; margin-top: 16px; color: var(--text-soft); font-weight: 800; }
+.rhythm-movement-lab__field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 16px;
+  color: var(--text-soft);
+  font-weight: 800;
+}
 .instrument-explorer__field textarea,
-.rhythm-movement-lab__field textarea { min-height: 96px; resize: vertical; border: 1px solid var(--line-neon); border-radius: 10px; padding: 10px; background: var(--bg-card); color: var(--text); font: inherit; }
-.instrument-explorer__feedback { padding: 10px; border-left: 3px solid var(--tool-accent); }
+.rhythm-movement-lab__field textarea {
+  min-height: 96px;
+  resize: vertical;
+  border: 1px solid var(--line-neon);
+  border-radius: 10px;
+  padding: 10px;
+  background: var(--bg-card);
+  color: var(--text);
+  font: inherit;
+}
+.instrument-explorer__feedback {
+  padding: 10px;
+  border-left: 3px solid var(--tool-accent);
+}
 .instrument-explorer__save,
-.rhythm-movement-lab__save { width: 100%; margin-top: 14px; background: var(--tool-accent); color: #fff; }
+.rhythm-movement-lab__save {
+  width: 100%;
+  margin-top: 14px;
+  background: var(--tool-accent);
+  color: #fff;
+}
 .instrument-explorer__save:disabled,
-.rhythm-movement-lab__save:disabled { cursor: not-allowed; opacity: 0.45; }
-.instrument-explorer__empty { grid-column: 1 / -1; }
-.rhythm-movement-lab__timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
-.rhythm-movement-lab__timeline > div { display: flex; min-height: 120px; flex-direction: column; gap: 8px; justify-content: center; padding: 12px; border: 1px solid var(--line); border-radius: 10px; }
-.rhythm-movement-lab__timeline > div.accent { border-color: var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 11%, transparent); }
-.rhythm-movement-lab__timeline small { color: var(--text-soft); }
-.rhythm-movement-lab__tap { margin-top: 16px; background: var(--tool-accent); color: #fff; font-size: 1rem; }
-.rhythm-movement-lab__movement > div { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
-.rhythm-movement-lab__movement button.selected { border-color: var(--tool-accent); background: color-mix(in srgb, var(--tool-accent) 13%, transparent); }
+.rhythm-movement-lab__save:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.instrument-explorer__empty {
+  grid-column: 1 / -1;
+}
+.rhythm-movement-lab__timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+.rhythm-movement-lab__timeline > div {
+  display: flex;
+  min-height: 120px;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.rhythm-movement-lab__timeline > div.accent {
+  border-color: var(--tool-accent);
+  background: color-mix(in srgb, var(--tool-accent) 11%, transparent);
+}
+.rhythm-movement-lab__timeline small {
+  color: var(--text-soft);
+}
+.rhythm-movement-lab__tap {
+  margin-top: 16px;
+  background: var(--tool-accent);
+  color: #fff;
+  font-size: 1rem;
+}
+.rhythm-movement-lab__movement > div {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.rhythm-movement-lab__movement button.selected {
+  border-color: var(--tool-accent);
+  background: color-mix(in srgb, var(--tool-accent) 13%, transparent);
+}

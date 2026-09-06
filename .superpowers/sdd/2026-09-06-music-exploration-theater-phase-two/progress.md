@@ -42,12 +42,6 @@
 - Task 5: fix round 1/5 (3 addressed, 0 open; commits 96e18cc..ec69eb9; restored legacy course flow, scoped map CSS to desktop, fixed all-grade summary/reset)
 - Task 5: complete (commits fb7ec6b..ec69eb9, review clean)
 - Task 6: complete (commits ec69eb9..6fbfe00, review clean)
-- Task 2: pending
-- Task 3: pending
-- Task 4: pending
-- Task 5: pending
-- Task 6: pending
-- Task 7: pending
 
 ## Baseline
 
@@ -150,3 +144,28 @@ review diffs, and task briefs; no application code or test file was dirty. This 
 stage and commit only `progress.md` with:
 
 `chore: record phase two desktop verification`
+
+### Task 7 fix round — 2026-09-06
+
+Formatted only these files with `npx prettier --write`:
+`src/components/InstrumentExplorer.tsx`, `src/components/MusicMicroscope.tsx`,
+`src/components/RhythmMovementLab.tsx`, `src/components/explorationTools.css`,
+`tests/explorationToolComponents.test.mjs`, and `tests/musicMicroscope.test.mjs`.
+
+The initial format run exposed two source-text assertions in
+`tests/explorationToolComponents.test.mjs` that required JSX attributes to remain on one line.
+Both expressions now allow whitespace between attributes; this preserves the existing behavior
+contract while allowing Prettier formatting. No application behavior, mobile breakpoint, or
+desktop acceptance scope changed.
+
+| Command | Exit | Exact result summary |
+| --- | ---: | --- |
+| `git diff --check` | 0 | No output; the former `tests/musicMicroscope.test.mjs:55` trailing whitespace is removed. |
+| `npm test` | 0 | `ℹ tests 189`; `ℹ pass 189`; `ℹ fail 0`; `ℹ cancelled 0`; `ℹ skipped 0`; `ℹ todo 0`; `ℹ duration_ms 2755.9894`. |
+| `npm run lint` | 0 | `eslint src --ext .ts,.tsx` completed with no reported errors. |
+| `npm run build` | 0 | `1121 modules transformed`; `dist/index.html 6,238.15 kB`; `✓ built in 1.95s`. |
+| `npx prettier --check @phaseTwoFiles` | 0 | `All matched files use Prettier code style!` for all 21 phase-two files listed above. |
+| 64-test desktop evidence command recorded above | 0 | `ℹ tests 64`; `ℹ pass 64`; `ℹ fail 0`; `ℹ cancelled 0`; `ℹ skipped 0`; `ℹ todo 0`; `ℹ duration_ms 896.986`. |
+
+- Task 7: fix round complete; formatting gate and whitespace check are clean, with desktop-only
+  verification retained and browser audio-output limitations unchanged.

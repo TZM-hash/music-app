@@ -47,13 +47,19 @@ test('音乐显微镜 B 试听改变旋律或节奏数据，而不只是力度',
 
 test('音乐显微镜选择新的时间线音符时会停止旧试听', () => {
   const source = read('src/components/MusicMicroscope.tsx')
-  assert.match(source, /onClick=\{\(\) => \{[\s\S]*stopPlayback\(\)[\s\S]*setMarkedCueIndex\(index\)/)
+  assert.match(
+    source,
+    /onClick=\{\(\) => \{[\s\S]*stopPlayback\(\)[\s\S]*setMarkedCueIndex\(index\)/
+  )
 })
 
 test('音乐显微镜样式只定义桌面三栏工具，不添加移动断点', () => {
   const styles = read('src/components/explorationTools.css')
-  assert.match(styles, /\.music-microscope\s*\{/) 
-  assert.match(styles, /grid-template-columns:\s*minmax\(180px, 0\.8fr\)\s+minmax\(420px, 1\.8fr\)\s+minmax\(220px, 0\.9fr\)/)
+  assert.match(styles, /\.music-microscope\s*\{/)
+  assert.match(
+    styles,
+    /grid-template-columns:\s*minmax\(180px, 0\.8fr\)\s+minmax\(420px, 1\.8fr\)\s+minmax\(220px, 0\.9fr\)/
+  )
   assert.match(styles, /\.music-microscope__timeline/)
   assert.match(styles, /\.music-microscope__observation/)
   assert.doesNotMatch(styles, /@media\s*\(max-width:/)
