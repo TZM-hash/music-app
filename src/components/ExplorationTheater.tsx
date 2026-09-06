@@ -23,6 +23,17 @@ import {
   type RelistenChoice,
 } from '../state/explorationSessions'
 import { saveMusicDiscovery, type MusicDiscovery } from '../state/discoveries'
+import {
+  EXPLORATION_TOOL_CATALOG,
+  JASMINE_INSTRUMENT_SAMPLES,
+  JASMINE_MICROSCOPE_CUES,
+  JASMINE_RHYTHM_PATTERN,
+  type MusicDiscoveryToolNote,
+  type ExplorationToolId,
+} from '../music/explorationTools'
+import MusicMicroscope from './MusicMicroscope'
+import InstrumentExplorer from './InstrumentExplorer'
+import RhythmMovementLab from './RhythmMovementLab'
 import './explorationTheater.css'
 
 export interface ExplorationTheaterProps {
@@ -82,6 +93,10 @@ function reflectionFor(
     .replace('______', evidence || '音乐里的变化')
 }
 
+function toolLabel(toolId: ExplorationToolId): string {
+  return EXPLORATION_TOOL_CATALOG.find((tool) => tool.id === toolId)?.title ?? toolId
+}
+
 export default function ExplorationTheater({
   unit,
   studentId,
@@ -101,6 +116,9 @@ export default function ExplorationTheater({
   const [evidencePreview, setEvidencePreview] = useState<string | null>(null)
   const [reflection, setReflection] = useState('')
   const [saveNotice, setSaveNotice] = useState('')
+  const [toolNotes, setToolNotes] = useState<MusicDiscoveryToolNote[]>([])
+  const [expandedToolId, setExpandedToolId] = useState<ExplorationToolId | null>(null)
+  const [cultureOpened, setCultureOpened] = useState(false)
   const tokenRef = useRef(0)
   const savedRef = useRef(false)
 
@@ -120,6 +138,18 @@ export default function ExplorationTheater({
   const selectedRelisten = unit.relisten.choices.find(
     (choice) => choiceForRelisten(choice.id) === session.relistenChoice
   )
+  const stageTools = useMemo(
+    () => unit.tools?.filter((tool) => tool.stage === currentStage.id).slice(0, 3) ?? [],
+    [currentStage.id, unit.tools]
+  )
+  const expandedTool = stageTools.find((tool) => tool.id === expandedToolId)
+  const cultureClues = useMemo(
+    () =>
+      Array.from(new Set([unit.culture.ageBands[band] ?? unit.culture.body, unit.culture.body]))
+        .filter(Boolean)
+        .slice(0, 2),
+    [band, unit.culture]
+  )
 
   useEffect(() => {
     const restored = loadExplorationSession(studentId, unit.id)
@@ -128,6 +158,9 @@ export default function ExplorationTheater({
     setEvidencePreview(null)
     setReflection(restored?.relistenReflection ?? '')
     setSaveNotice('')
+    setToolNotes([])
+    setExpandedToolId(null)
+    setCultureOpened(false)
     savedRef.current = false
   }, [grade, studentId, unit.id])
 
@@ -242,6 +275,86 @@ export default function ExplorationTheater({
     if (normalized) updateResponse({ relistenChoice: normalized })
   }
 
+  const handleToolNote = (note: MusicDiscoveryToolNote) => {
+    setToolNotes((current) =>
+      [...current.filter((item) => item.toolId !== note.toolId), note].slice(0, 3)
+    )
+  }
+
+  const renderExpandedTool = () => {
+    if (!expandedTool) return null
+    const onReturn = () => setExpandedToolId(null)
+    if (expandedTool.id === 'microscope') {
+      return (
+        <MusicMicroscope
+          cues={unit.songId === 'jasmine' ? JASMINE_MICROSCOPE_CUES : fragment.slice(0, 8)}
+          evidenceLabels={expandedTool.evidenceLabels}
+          onNote={handleToolNote}
+          onReturn={onReturn}
+        />
+      )
+    }
+    if (expandedTool.id === 'instrument') {
+      return (
+        <InstrumentExplorer
+          samples={JASMINE_INSTRUMENT_SAMPLES}
+          onNote={handleToolNote}
+          onReturn={onReturn}
+        />
+      )
+    }
+    return (
+      <RhythmMovementLab
+        pattern={JASMINE_RHYTHM_PATTERN}
+        onNote={handleToolNote}
+        onReturn={onReturn}
+      />
+    )
+  }
+
+  const renderToolShelf = () => {
+    if (stageTools.length === 0) return null
+    return (
+      <section className="exploration-tool-shelf" aria-label="聆听工具">
+        <div className="exploration-tool-shelf__header">
+          <div>
+            <span className="exploration-eyebrow">把听见的线索放大</span>
+            <h3>本阶段可以使用的工具</h3>
+          </div>
+          <small>工具观察会带回最后的发现卡</small>
+        </div>
+        <div className="exploration-tool-shelf__buttons">
+          {stageTools.map((tool) => (
+            <button
+              key={tool.id}
+              type="button"
+              aria-pressed={expandedToolId === tool.id}
+              onClick={() => setExpandedToolId((current) => (current === tool.id ? null : tool.id))}
+            >
+              <strong>{tool.title}</strong>
+              <span>{expandedToolId === tool.id ? '收起工具' : '打开工具'}</span>
+            </button>
+          ))}
+        </div>
+        {expandedTool && (
+          <div className="exploration-tool-panel">
+            <div className="exploration-tool-context">
+              <div>
+                <span className="exploration-eyebrow">第一遍听到的声音</span>
+                <strong>{unit.title}</strong>
+                <p>{unit.question}</p>
+              </div>
+              <button type="button" onClick={() => void playCues(fragment)}>
+                回到作品再听
+              </button>
+            </div>
+            {renderExpandedTool()}
+          </div>
+        )}
+      </section>
+    )
+  }
+
   const saveDiscovery = () => {
     if (savedRef.current || session.stage !== 'reflect') return
     const evidence = selectedEvidence?.label ?? '旋律里的平稳流动'
@@ -262,6 +375,7 @@ export default function ExplorationTheater({
       concepts: visibleConcepts.map((concept) => concept.title),
       relistenChoice: session.relistenChoice,
       relistenReflection: reflection,
+      toolNotes: toolNotes,
     })
     savedRef.current = true
     setSaveNotice('这张发现卡已经保存。你可以把自己的听见带回课堂。')
@@ -413,16 +527,26 @@ export default function ExplorationTheater({
           </article>
         ))}
       </div>
-      {band === 'primary-5-6' && (
-        <aside className="exploration-culture-card">
-          <span>{unit.culture.title}</span>
-          <p>{unit.culture.ageBands[band] ?? unit.culture.body}</p>
-          <p>{unit.culture.body}</p>
-          <button type="button" onClick={() => void playCues(fragment)}>
-            带着文化线索再听
-          </button>
-        </aside>
-      )}
+      <aside className="exploration-culture-card">
+        <span>{unit.culture.title}</span>
+        {!cultureOpened ? (
+          <>
+            <p>{cultureClues[0]}</p>
+            <button type="button" onClick={() => setCultureOpened(true)}>
+              打开文化换镜
+            </button>
+          </>
+        ) : (
+          <>
+            {cultureClues.map((clue) => (
+              <p key={clue}>{clue}</p>
+            ))}
+            <button type="button" onClick={() => void playCues(fragment)}>
+              带着文化线索再听
+            </button>
+          </>
+        )}
+      </aside>
     </section>
   )
 
@@ -476,6 +600,18 @@ export default function ExplorationTheater({
           音乐词语：{visibleConcepts.map((concept) => concept.title).join('、') || '旋律'}
         </small>
         <small>再听之后：{selectedRelisten?.label ?? '我还在整理自己的新线索'}</small>
+        {toolNotes.length > 0 && (
+          <div className="exploration-tool-notes-preview">
+            <span className="exploration-eyebrow">工具观察</span>
+            {toolNotes.map((note) => (
+              <article key={note.toolId}>
+                <strong>{toolLabel(note.toolId)}</strong>
+                <p>{note.observation || '我先记下了这条证据。'}</p>
+                <small>证据：{note.evidence.join('、') || '暂未选择'}</small>
+              </article>
+            ))}
+          </div>
+        )}
       </div>
       <label className="exploration-reflection-field">
         我的新发现（可以写一句话，也可以请老师帮你记录）
@@ -562,6 +698,7 @@ export default function ExplorationTheater({
             </p>
           )}
           {content}
+          {renderToolShelf()}
           <div className="exploration-stage-actions">
             {currentStage.id !== 'listen' && (
               <button

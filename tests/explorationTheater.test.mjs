@@ -79,3 +79,26 @@ test('探索剧场恢复反思、支持回退修订并隔离切换单元后的�
     /useEffect\(\(\) => \{[\s\S]*?tokenRef\.current \+= 1[\s\S]*?stopAllAudio\(\)[\s\S]*?setIsPlaying\(false\)[\s\S]*?return \(\) => \{[\s\S]*?tokenRef\.current \+= 1[\s\S]*?stopAllAudio\(\)[\s\S]*?\}\s*\}, \[unit\.id\]\)/
   )
 })
+
+test('探索剧场按阶段接入工具并合并保存有界观察', () => {
+  const source = readSource('src/components/ExplorationTheater.tsx')
+  assert.match(source, /unit\.tools/)
+  for (const component of ['MusicMicroscope', 'InstrumentExplorer', 'RhythmMovementLab']) {
+    assert.match(source, new RegExp(component))
+  }
+  assert.match(source, /toolNotes/)
+  assert.match(source, /回到作品再听/)
+  assert.match(source, /slice\(0, 3\)/)
+  assert.match(source, /toolNotes:\s*toolNotes/)
+})
+
+test('探索剧场提供文化换镜并要求带着文化线索再听', () => {
+  const source = readSource('src/components/ExplorationTheater.tsx')
+  assert.match(source, /cultureClues/)
+  assert.match(source, /slice\(0, 2\)/)
+  assert.match(source, /cultureOpened|setCultureOpened/)
+  assert.match(source, /带着文化线索再听/)
+  for (const choice of ['keep-feeling', 'add-clue', 'change-interpretation']) {
+    assert.match(source, new RegExp(choice))
+  }
+})

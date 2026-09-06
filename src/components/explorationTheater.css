@@ -338,6 +338,103 @@
   align-self: flex-start;
 }
 
+.exploration-tool-shelf {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+  padding: 18px;
+  border: 1px solid color-mix(in srgb, var(--exploration-accent) 35%, var(--line));
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--exploration-accent) 7%, transparent);
+}
+.exploration-tool-shelf__header,
+.exploration-tool-shelf__buttons,
+.exploration-tool-context {
+  display: flex;
+  gap: 12px;
+}
+.exploration-tool-shelf__header,
+.exploration-tool-context {
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.exploration-tool-shelf__header h3 {
+  margin: 4px 0 0;
+}
+.exploration-tool-shelf__header small,
+.exploration-tool-context p,
+.exploration-tool-notes-preview small {
+  color: var(--text-soft);
+}
+.exploration-tool-shelf__buttons {
+  flex-wrap: wrap;
+}
+.exploration-tool-shelf__buttons button,
+.exploration-tool-context button {
+  border: 1px solid var(--line-neon);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+.exploration-tool-shelf__buttons button {
+  display: flex;
+  min-width: 170px;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+  text-align: left;
+}
+.exploration-tool-shelf__buttons button[aria-pressed='true'] {
+  border-color: var(--exploration-accent);
+  background: color-mix(in srgb, var(--exploration-accent) 15%, transparent);
+}
+.exploration-tool-shelf__buttons span {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+}
+.exploration-tool-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+.exploration-tool-context {
+  padding: 12px 0 2px;
+}
+.exploration-tool-context strong {
+  display: block;
+  margin-top: 4px;
+}
+.exploration-tool-context p {
+  margin: 4px 0 0;
+}
+.exploration-tool-notes-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.exploration-tool-notes-preview article {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 4px 12px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.exploration-tool-notes-preview article p,
+.exploration-tool-notes-preview article small {
+  margin: 0;
+}
+.exploration-tool-notes-preview article small {
+  grid-column: 2;
+}
+
 @media (max-width: 720px) {
   .exploration-theater-head,
   .exploration-theater-layout {

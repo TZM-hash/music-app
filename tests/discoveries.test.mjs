@@ -199,4 +199,6 @@ test('发现卡保存有界的工具观察记录', () => {
   assert.equal(saved.toolNotes.length, 3)
   assert.equal(saved.toolNotes[0].observation.length, 160)
   assert.deepEqual(saved.toolNotes[0].evidence, ['旋律', '音色', '级进', '多余'])
+  assert.equal(saved.toolNotes[1].toolId, 'instrument')
+  assert.equal(saved.toolNotes[2].toolId, 'rhythm')
 })
