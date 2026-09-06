@@ -5,9 +5,20 @@ import { getCurrentStudent } from '../state/students'
 import { ProgressRing, SpectrumBars } from '../components/Charts'
 import { useFillOnMount } from '../components/useFillOnMount'
 import MusicExperienceStage from '../components/MusicExperienceStage'
+import MusicMicroscope from '../components/MusicMicroscope'
+import InstrumentExplorer from '../components/InstrumentExplorer'
+import RhythmMovementLab from '../components/RhythmMovementLab'
 import { buildExperienceJourney, getRecommendedActivities } from '../music/experienceActivities'
 import { buildExperienceInstanceKey } from '../music/experienceGameLogic'
 import { getGradeLabel } from '../music/zhejiangCurriculum'
+import {
+  EXPLORATION_TOOL_CATALOG,
+  JASMINE_INSTRUMENT_SAMPLES,
+  JASMINE_MICROSCOPE_CUES,
+  JASMINE_RHYTHM_PATTERN,
+  type ExplorationToolId,
+  type MusicDiscoveryToolNote,
+} from '../music/explorationTools'
 import '../components/charts.css'
 import './training.css'
 
@@ -24,6 +35,16 @@ interface TrainingModule {
   playHint: string
   metrics: string[]
   level: string
+  color: string
+}
+
+interface AuditoryLabTool {
+  id: ExplorationToolId
+  icon: string
+  title: string
+  question: string
+  focus: string
+  grade: string
   color: string
 }
 
@@ -105,7 +126,7 @@ const MODULES: TrainingModule[] = [
   },
 ]
 
-const AUDITORY_LAB_TOOLS = [
+const AUDITORY_LAB_TOOLS: AuditoryLabTool[] = [
   {
     id: 'microscope',
     icon: '◌',
@@ -136,10 +157,12 @@ const AUDITORY_LAB_TOOLS = [
 ]
 
 export default function TrainingCenter() {
-  const { navigate, currentStudentId, selectedGrade } = useApp()
+  const { navigate, openExploration, currentStudentId, selectedGrade } = useApp()
   const progress = loadProgress()
   const [activeId, setActiveId] = useState(MODULES[0].id)
   const [activeExperienceId, setActiveExperienceId] = useState('sound-detective')
+  const [activeAuditoryToolId, setActiveAuditoryToolId] = useState<ExplorationToolId | null>(null)
+  const [auditoryLabNotice, setAuditoryLabNotice] = useState('')
   const filled = useFillOnMount()
   const currentStudent = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? currentStudent?.grade
@@ -177,6 +200,56 @@ export default function TrainingCenter() {
     )[0]?.module ?? MODULES[0]
   const totalBest = MODULES.reduce((sum, m) => sum + (progress.bestScores[m.route] ?? 0), 0)
   const averageBest = Math.round(totalBest / MODULES.length)
+  const activeAuditoryTool = AUDITORY_LAB_TOOLS.find((tool) => tool.id === activeAuditoryToolId)
+
+  const openAuditoryTool = (toolId: ExplorationToolId) => {
+    const tool = AUDITORY_LAB_TOOLS.find((item) => item.id === toolId)
+    setActiveAuditoryToolId(toolId)
+    setAuditoryLabNotice(tool ? `正在使用${tool.title}。你的观察只保留在本次自由练习中。` : '')
+  }
+
+  const returnToJasmine = () => openExploration('jasmine')
+
+  const handleAuditoryLabNote = (note: MusicDiscoveryToolNote) => {
+    const tool = AUDITORY_LAB_TOOLS.find((item) => item.id === note.toolId)
+    setAuditoryLabNotice(
+      `${tool?.title ?? '这个工具'}的观察已保留在本次自由练习中，回到作品后可以继续寻找依据。`
+    )
+  }
+
+  const renderAuditoryLabTool = () => {
+    if (activeAuditoryToolId === 'microscope') {
+      return (
+        <MusicMicroscope
+          cues={JASMINE_MICROSCOPE_CUES}
+          evidenceLabels={
+            EXPLORATION_TOOL_CATALOG.find((tool) => tool.id === 'microscope')?.evidenceLabels ?? []
+          }
+          onNote={handleAuditoryLabNote}
+          onReturn={returnToJasmine}
+        />
+      )
+    }
+    if (activeAuditoryToolId === 'instrument') {
+      return (
+        <InstrumentExplorer
+          samples={JASMINE_INSTRUMENT_SAMPLES}
+          onNote={handleAuditoryLabNote}
+          onReturn={returnToJasmine}
+        />
+      )
+    }
+    if (activeAuditoryToolId === 'rhythm') {
+      return (
+        <RhythmMovementLab
+          pattern={JASMINE_RHYTHM_PATTERN}
+          onNote={handleAuditoryLabNote}
+          onReturn={returnToJasmine}
+        />
+      )
+    }
+    return null
+  }
 
   return (
     <div className="training-page">
@@ -193,7 +266,7 @@ export default function TrainingCenter() {
           </div>
           <div className="training-auditory-lab-hero-actions">
             <span>想带着作品开始吗？</span>
-            <button className="primary-action" type="button" onClick={() => navigate('lesson')}>
+            <button className="primary-action" type="button" onClick={returnToJasmine}>
               从一段作品开始
             </button>
           </div>
@@ -215,7 +288,7 @@ export default function TrainingCenter() {
               </div>
               <p className="training-auditory-tool-question">“{tool.question}”</p>
               <p className="training-auditory-tool-focus">{tool.focus}</p>
-              <button type="button" onClick={() => navigate('lesson')}>
+              <button type="button" onClick={() => openAuditoryTool(tool.id)}>
                 带入作品练习
               </button>
             </article>
@@ -232,10 +305,37 @@ export default function TrainingCenter() {
             <span>观察提示</span>
             <strong>没有唯一答案，先说出你听到的线索。</strong>
           </div>
-          <button type="button" onClick={() => navigate('lesson')}>
+          <div className="training-free-practice-actions" aria-label="自由练习工具">
+            {AUDITORY_LAB_TOOLS.map((tool) => (
+              <button key={tool.id} type="button" onClick={() => openAuditoryTool(tool.id)}>
+                自由练习 {tool.title}
+              </button>
+            ))}
+          </div>
+          <button type="button" onClick={returnToJasmine}>
             回到作品
           </button>
         </div>
+        {activeAuditoryTool && (
+          <section
+            className="training-auditory-tool-panel"
+            aria-label={`${activeAuditoryTool.title}自由练习`}
+          >
+            <div className="training-auditory-tool-panel__head">
+              <div>
+                <span className="training-kicker">自由练习 · 茉莉花声音样本</span>
+                <h2>{activeAuditoryTool.title}</h2>
+              </div>
+              <button type="button" onClick={returnToJasmine}>
+                回到作品
+              </button>
+            </div>
+            <p className="training-auditory-tool-panel__notice" role="status">
+              {auditoryLabNotice}
+            </p>
+            {renderAuditoryLabTool()}
+          </section>
+        )}
       </section>
 
       <section className="training-experience-shell" aria-labelledby="training-experience-title">

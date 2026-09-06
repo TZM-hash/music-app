@@ -101,4 +101,8 @@ test('探索剧场提供文化换镜并要求带着文化线索再听', () => {
   for (const choice of ['keep-feeling', 'add-clue', 'change-interpretation']) {
     assert.match(source, new RegExp(choice))
   }
+  assert.match(source, /restored\?\.cultureOpened \?\? false/)
+  assert.match(source, /updateResponse\(\{ cultureOpened: true \}\)/)
+  assert.match(source, /cultureOpened:\s*cultureOpened/)
+  assert.match(source, /文化换镜：/)
 })

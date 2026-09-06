@@ -532,7 +532,9 @@
   }
 
   .training-auditory-tool button,
-  .training-free-practice > button {
+  .training-free-practice > button,
+  .training-free-practice-actions button,
+  .training-auditory-tool-panel__head button {
     min-height: 36px;
     margin-top: auto;
     padding: 8px 12px;
@@ -544,14 +546,16 @@
   }
 
   .training-auditory-tool button:hover,
-  .training-free-practice > button:hover {
+  .training-free-practice > button:hover,
+  .training-free-practice-actions button:hover,
+  .training-auditory-tool-panel__head button:hover {
     border-color: var(--neon-cyan);
     background: rgba(0, 122, 255, 0.06);
   }
 
   .training-free-practice {
     display: grid;
-    grid-template-columns: minmax(220px, 1fr) minmax(260px, 0.9fr) auto;
+    grid-template-columns: minmax(220px, 1fr) minmax(260px, 0.9fr) minmax(220px, 0.85fr) auto;
     gap: 18px;
     align-items: center;
     padding-top: 16px;
@@ -577,6 +581,41 @@
     padding: 11px 13px;
     border-left: 3px solid var(--neon-gold);
     background: rgba(255, 149, 0, 0.09);
+  }
+
+  .training-free-practice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .training-free-practice-actions button {
+    margin-top: 0;
+  }
+
+  .training-auditory-tool-panel {
+    display: grid;
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+
+  .training-auditory-tool-panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .training-auditory-tool-panel__head h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.35rem;
+  }
+
+  .training-auditory-tool-panel__notice {
+    margin: 0;
+    color: var(--text-soft);
   }
 
   .training-free-practice-note strong {

@@ -9,6 +9,7 @@ export interface ExplorationResponse {
   expressionId?: string
   evidenceId?: string
   conceptIds?: string[]
+  cultureOpened?: boolean
   relistenChoice?: RelistenChoice
   relistenReflection?: string
 }
@@ -133,6 +134,7 @@ export function updateExplorationSession(
   if (expressionId !== undefined) next.expressionId = expressionId
   if (evidenceId !== undefined) next.evidenceId = evidenceId
   if (conceptIds !== undefined) next.conceptIds = conceptIds
+  if (typeof response.cultureOpened === 'boolean') next.cultureOpened = response.cultureOpened
   if (isRelistenChoice(response.relistenChoice)) next.relistenChoice = response.relistenChoice
   if (relistenReflection !== undefined) next.relistenReflection = relistenReflection
 

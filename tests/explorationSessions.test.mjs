@@ -111,6 +111,45 @@ test('response updates preserve subjective choices and normalize known fields', 
   assert.equal(session.updatedAt, 200)
 })
 
+test('culture-opened state is optional, normalized, and preserved in saved sessions', () => {
+  const storage = installStorage()
+  try {
+    const load = createTsLoader()
+    const {
+      createExplorationSession,
+      updateExplorationSession,
+      saveExplorationSession,
+      loadExplorationSession,
+    } = load('src/state/explorationSessions.ts')
+
+    const opened = updateExplorationSession(
+      createExplorationSession('jasmine', 'student-1', 3, 100),
+      { cultureOpened: true },
+      200
+    )
+    assert.equal(opened.cultureOpened, true)
+    saveExplorationSession(opened)
+    assert.equal(loadExplorationSession('student-1', 'jasmine').cultureOpened, true)
+
+    globalThis.localStorage.setItem(
+      'music-edu-exploration-sessions-v1',
+      JSON.stringify([
+        {
+          unitId: 'legacy',
+          studentId: 'student-1',
+          grade: 3,
+          stage: 'listen',
+          startedAt: 100,
+          updatedAt: 100,
+        },
+      ])
+    )
+    assert.equal(loadExplorationSession('student-1', 'legacy').cultureOpened, undefined)
+  } finally {
+    storage.restore()
+  }
+})
+
 test('changing path clears the old expression selection for the express stage', () => {
   const load = createTsLoader()
   const { createExplorationSession, updateExplorationSession } = load(

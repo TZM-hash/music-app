@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import { ensureAudio, playNote, stopAllAudio } from '../music/audioEngine'
 import { type MusicDiscoveryToolNote, type RhythmPattern } from '../music/explorationTools'
 import './explorationTools.css'
@@ -19,11 +19,29 @@ export default function RhythmMovementLab({ pattern, onNote, onReturn }: RhythmM
   const [observation, setObservation] = useState('')
   const [saveNotice, setSaveNotice] = useState('')
   const [feedback, setFeedback] = useState('可以再听')
-  const startedAt = useRef<number | null>(null)
+  const [isBeatPlaying, setIsBeatPlaying] = useState(false)
+  const [audioUnavailable, setAudioUnavailable] = useState(false)
+  const [playbackNotice, setPlaybackNotice] = useState('先启动稳定拍，再用点击或 Space 跟随。')
+  const beatOriginRef = useRef<number | null>(null)
+  const beatTimerRef = useRef<number | null>(null)
+  const playbackTokenRef = useRef(0)
   const lastTapAt = useRef<number | null>(null)
   const beatMs = 60000 / Math.max(pattern.bpm, 1)
 
-  useEffect(() => () => stopAllAudio(), [])
+  const stopStableBeat = useCallback(() => {
+    playbackTokenRef.current += 1
+    if (beatTimerRef.current !== null) {
+      window.clearInterval(beatTimerRef.current)
+      beatTimerRef.current = null
+    }
+    beatOriginRef.current = null
+    lastTapAt.current = null
+    stopAllAudio()
+    setIsBeatPlaying(false)
+    setPlaybackNotice('稳定拍已经停止，可以重新开始再跟随。')
+  }, [])
+
+  useEffect(() => () => stopStableBeat(), [stopStableBeat])
 
   const beatTimeline = useMemo(() => {
     let cursor = 0
@@ -34,23 +52,69 @@ export default function RhythmMovementLab({ pattern, onNote, onReturn }: RhythmM
     })
   }, [pattern.steps])
 
+  const startStableBeat = useCallback(async () => {
+    stopStableBeat()
+    const token = playbackTokenRef.current + 1
+    playbackTokenRef.current = token
+    setAudioUnavailable(false)
+    try {
+      if (!(await ensureAudio()) || playbackTokenRef.current !== token) {
+        if (playbackTokenRef.current === token) {
+          setAudioUnavailable(true)
+          setPlaybackNotice('设备暂时没有发出声音，仍可以选择动作和写下观察。')
+        }
+        return
+      }
+      let beatIndex = 0
+      const playStableBeat = () => {
+        const isAccent = beatIndex % pattern.beatsPerBar === 0
+        playNote(isAccent ? 'C5' : 'C4', '16n', isAccent ? 0.85 : 0.62, 'piano')
+        beatIndex += 1
+      }
+      beatOriginRef.current = performance.now()
+      lastTapAt.current = null
+      setTapTimes([])
+      playStableBeat()
+      beatTimerRef.current = window.setInterval(playStableBeat, beatMs)
+      setIsBeatPlaying(true)
+      setPlaybackNotice('稳定拍正在播放，跟着它试一试。')
+    } catch {
+      if (playbackTokenRef.current === token) {
+        setAudioUnavailable(true)
+        setPlaybackNotice('设备暂时没有发出声音，仍可以选择动作和写下观察。')
+      }
+    }
+  }, [beatMs, pattern.beatsPerBar, stopStableBeat])
+
   const recordTap = (timestamp = performance.now()) => {
+    const beatOrigin = beatOriginRef.current
+    if (beatOrigin === null) {
+      setPlaybackNotice('先启动稳定拍，再用点击或 Space 跟随。')
+      return
+    }
     if (lastTapAt.current !== null && timestamp - lastTapAt.current < 80) return
-    if (startedAt.current === null) startedAt.current = timestamp
     lastTapAt.current = timestamp
     setTapTimes((current) => [...current, timestamp].slice(-12))
-    const elapsed = timestamp - startedAt.current
+    const elapsed = timestamp - beatOrigin
     const nearestBeat = Math.round(elapsed / beatMs) * beatMs
     const distance = Math.abs(elapsed - nearestBeat)
     setFeedback(
       distance < beatMs * 0.12 ? '很稳定' : distance < beatMs * 0.3 ? '正在靠近' : '可以再听'
     )
-    void ensureAudio().then((ready) => {
-      if (ready) playNote('C4', '16n', 0.75, 'piano')
-    })
   }
 
   const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    const target = event.target
+    if (
+      event.nativeEvent.isComposing ||
+      target instanceof HTMLInputElement ||
+      target instanceof HTMLTextAreaElement ||
+      target instanceof HTMLSelectElement ||
+      (target instanceof HTMLElement &&
+        (target.isContentEditable || Boolean(target.closest('[contenteditable="true"]'))))
+    ) {
+      return
+    }
     if (event.code === 'Space' && !event.repeat) {
       event.preventDefault()
       recordTap()
@@ -97,14 +161,26 @@ export default function RhythmMovementLab({ pattern, onNote, onReturn }: RhythmM
               </div>
             ))}
           </div>
-          <button type="button" className="rhythm-movement-lab__tap" onClick={() => recordTap()}>
+          <button
+            type="button"
+            className="rhythm-movement-lab__beat-control"
+            onClick={() => void (isBeatPlaying ? stopStableBeat() : startStableBeat())}
+          >
+            {isBeatPlaying ? '停止稳定拍' : '开始稳定拍'}
+          </button>
+          <button
+            type="button"
+            className="rhythm-movement-lab__tap"
+            disabled={!isBeatPlaying}
+            onClick={() => recordTap()}
+          >
             点击记录动作
           </button>
           <p className="rhythm-movement-lab__record">
             已记录 {tapTimes.length} 次 · {feedback}
           </p>
           <p className="rhythm-movement-lab__live" aria-live="polite">
-            {feedback}
+            {audioUnavailable ? playbackNotice : isBeatPlaying ? playbackNotice : feedback}
           </p>
         </main>
         <aside className="rhythm-movement-lab__movement">

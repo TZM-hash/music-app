@@ -171,6 +171,23 @@ test('旧发现记录没有新增字段时仍然可以读取', () => {
   assert.equal(legacy.title, '稳定拍')
   assert.equal(legacy.unitId, undefined)
   assert.equal(legacy.toolNotes, undefined)
+  assert.equal(legacy.cultureOpened, undefined)
+})
+
+test('发现卡保存可选的文化换镜开启状态', () => {
+  const discoveries = loadDiscoveries()
+  discoveries.saveMusicDiscovery(
+    {
+      topicId: 'pentatonic-scale',
+      title: '文化换镜',
+      statement: '我带着江南水乡的线索又听了一次。',
+      cultureOpened: true,
+    },
+    650
+  )
+
+  const [saved] = discoveries.loadMusicDiscoveries()
+  assert.equal(saved.cultureOpened, true)
 })
 
 test('发现卡保存有界的工具观察记录', () => {

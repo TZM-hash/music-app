@@ -160,7 +160,7 @@ export default function ExplorationTheater({
     setSaveNotice('')
     setToolNotes([])
     setExpandedToolId(null)
-    setCultureOpened(false)
+    setCultureOpened(restored?.cultureOpened ?? false)
     savedRef.current = false
   }, [grade, studentId, unit.id])
 
@@ -275,6 +275,11 @@ export default function ExplorationTheater({
     if (normalized) updateResponse({ relistenChoice: normalized })
   }
 
+  const openCultureSwitcher = () => {
+    setCultureOpened(true)
+    updateResponse({ cultureOpened: true })
+  }
+
   const handleToolNote = (note: MusicDiscoveryToolNote) => {
     setToolNotes((current) =>
       [...current.filter((item) => item.toolId !== note.toolId), note].slice(0, 3)
@@ -373,6 +378,7 @@ export default function ExplorationTheater({
       firstFeeling,
       evidence: [evidence],
       concepts: visibleConcepts.map((concept) => concept.title),
+      cultureOpened: cultureOpened,
       relistenChoice: session.relistenChoice,
       relistenReflection: reflection,
       toolNotes: toolNotes,
@@ -532,7 +538,7 @@ export default function ExplorationTheater({
         {!cultureOpened ? (
           <>
             <p>{cultureClues[0]}</p>
-            <button type="button" onClick={() => setCultureOpened(true)}>
+            <button type="button" onClick={openCultureSwitcher}>
               打开文化换镜
             </button>
           </>
@@ -599,6 +605,7 @@ export default function ExplorationTheater({
         <small>
           音乐词语：{visibleConcepts.map((concept) => concept.title).join('、') || '旋律'}
         </small>
+        <small>文化换镜：{cultureOpened ? '已打开并带着线索再听' : '尚未打开'}</small>
         <small>再听之后：{selectedRelisten?.label ?? '我还在整理自己的新线索'}</small>
         {toolNotes.length > 0 && (
           <div className="exploration-tool-notes-preview">

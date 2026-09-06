@@ -42,7 +42,21 @@ test('训练中心顶部展示桌面听觉实验室入口和三张工具卡', ()
   assert.match(source, /从一段作品开始/)
   assert.match(source, /自由练习/)
   assert.match(source, /更多练习/)
-  assert.match(source, /navigate\('lesson'\)/)
+  for (const component of ['MusicMicroscope', 'InstrumentExplorer', 'RhythmMovementLab']) {
+    assert.match(source, new RegExp(component))
+  }
+  for (const fixture of [
+    'JASMINE_MICROSCOPE_CUES',
+    'JASMINE_INSTRUMENT_SAMPLES',
+    'JASMINE_RHYTHM_PATTERN',
+  ]) {
+    assert.match(source, new RegExp(fixture))
+  }
+  assert.match(source, /activeAuditoryToolId/)
+  assert.match(source, /openAuditoryTool/)
+  assert.match(source, /onNote=\{handleAuditoryLabNote\}/)
+  assert.match(source, /openExploration\('jasmine'\)/)
+  assert.doesNotMatch(source, /onClick=\{\(\) => navigate\('lesson'\)\}/)
   assert.match(source, /回到作品/)
 })
 

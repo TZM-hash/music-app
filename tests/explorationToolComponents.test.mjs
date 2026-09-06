@@ -47,6 +47,23 @@ test('节奏与动作工作台提供稳定拍时间线、Space 去重和鼠标�
   assert.match(source, /tapTimes|tapRecords|clickTimes/)
 })
 
+test('节奏与动作工作台以可控稳定拍为基准，并保留文本编辑的 Space 输入', () => {
+  const source = read('src/components/RhythmMovementLab.tsx')
+  for (const helper of ['ensureAudio', 'playNote', 'stopAllAudio']) {
+    assert.match(source, new RegExp(helper))
+  }
+  assert.match(source, /startStableBeat/)
+  assert.match(source, /stopStableBeat/)
+  assert.match(source, /beatOriginRef/)
+  assert.match(source, /setInterval/)
+  assert.match(source, /开始稳定拍/)
+  assert.match(source, /停止稳定拍/)
+  assert.match(source, /event\.nativeEvent\.isComposing/)
+  assert.match(source, /HTMLInputElement/)
+  assert.match(source, /HTMLTextAreaElement/)
+  assert.match(source, /isContentEditable/)
+})
+
 test('节奏与动作工作台允许动作词，只输出观察性反馈并支持保存返回', () => {
   const source = read('src/components/RhythmMovementLab.tsx')
   for (const word of ['走', '跳', '摇', '停', '推', '拉']) assert.match(source, new RegExp(word))

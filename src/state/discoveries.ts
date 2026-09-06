@@ -19,6 +19,7 @@ export interface MusicDiscovery {
   firstFeeling?: string
   evidence?: string[]
   concepts?: string[]
+  cultureOpened?: boolean
   relistenChoice?: string
   relistenReflection?: string
   toolNotes?: MusicDiscoveryToolNote[]
@@ -40,6 +41,7 @@ export interface MusicDiscoveryDraft {
   firstFeeling?: string
   evidence?: string[]
   concepts?: string[]
+  cultureOpened?: boolean
   relistenChoice?: string
   relistenReflection?: string
   toolNotes?: MusicDiscoveryToolNote[]
@@ -119,6 +121,7 @@ export function createMusicDiscovery(
     ...(draft.firstFeeling ? { firstFeeling: draft.firstFeeling.trim().slice(0, 40) } : {}),
     evidence: Array.from(new Set((draft.evidence ?? []).filter(Boolean))).slice(0, 8),
     concepts: Array.from(new Set((draft.concepts ?? []).filter(Boolean))).slice(0, 8),
+    ...(draft.cultureOpened !== undefined ? { cultureOpened: draft.cultureOpened === true } : {}),
     ...(draft.relistenChoice ? { relistenChoice: draft.relistenChoice } : {}),
     ...(draft.relistenReflection
       ? { relistenReflection: draft.relistenReflection.trim().slice(0, 160) }
