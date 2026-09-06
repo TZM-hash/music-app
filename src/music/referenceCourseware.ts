@@ -1,3 +1,5 @@
+import { GRADE_ONE_ACTIVITY_IDS } from './referenceLessons/gradeOneUpper'
+
 export type ReferenceCourseSource = 'zhejiang' | 'renyin-reference' | 'original'
 export type ReferenceGrade = 1 | 2 | 3
 export type JourneyStepId =
@@ -73,7 +75,7 @@ const point = (
   title,
   shortPrompt,
   concepts,
-  activityIds: [],
+  activityIds: GRADE_ONE_ACTIVITY_IDS[id] ?? [],
 })
 
 export const REFERENCE_KNOWLEDGE_POINTS: ReferenceKnowledgePoint[] = [
