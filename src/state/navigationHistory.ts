@@ -16,6 +16,7 @@ export const ROUTE_LABELS: Record<Route, string> = {
   lesson: '互动课堂',
   course: '学段总览',
   training: '挑战中心',
+  'reference-forest': '森林乐器大冒险',
   adventure: '我的发现',
   piano: '钢琴',
   drums: '架子鼓',

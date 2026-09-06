@@ -312,7 +312,7 @@ export default function Home() {
           <button
             type="button"
             className="home-playground-door home-playground-door-reference"
-            onClick={() => navigate('training')}
+            onClick={() => navigate('reference-forest')}
           >
             <span aria-hidden="true">🌲</span>
             <strong>森林乐器大冒险</strong>

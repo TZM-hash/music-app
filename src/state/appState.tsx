@@ -27,6 +27,7 @@ export type Route =
   | 'lesson'
   | 'course'
   | 'training'
+  | 'reference-forest'
   | 'adventure'
   | 'piano'
   | 'drums'

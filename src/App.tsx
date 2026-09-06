@@ -22,6 +22,7 @@ import ReadGame from './pages/games/ReadGame'
 import Theory from './pages/Theory'
 import CourseCenter from './pages/CourseCenter'
 import TrainingCenter from './pages/TrainingCenter'
+import ReferenceForestPage from './pages/ReferenceForestPage'
 import AdventureMap from './pages/AdventureMap'
 import ClassRoster from './pages/ClassRoster'
 import Dashboard from './pages/Dashboard'
@@ -89,6 +90,7 @@ function Shell() {
             {displayedRoute === 'theory' && <Theory />}
             {displayedRoute === 'course' && <CourseCenter />}
             {displayedRoute === 'training' && <TrainingCenter />}
+            {displayedRoute === 'reference-forest' && <ReferenceForestPage />}
             {displayedRoute === 'adventure' && <AdventureMap />}
             {mode === 'teacher' && displayedRoute === 'class' && <ClassRoster />}
             {mode === 'teacher' && displayedRoute === 'dashboard' && <Dashboard />}

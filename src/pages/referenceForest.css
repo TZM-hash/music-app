@@ -1,0 +1,66 @@
+.content.route-reference-forest > .reference-forest-page {
+  gap: 0 !important;
+  overflow: auto !important;
+  padding: clamp(0.2rem, 1vw, 0.75rem);
+}
+
+.reference-forest-card {
+  display: grid;
+  gap: 1rem;
+  margin: 0 auto;
+  max-width: 1180px;
+  width: 100%;
+  border-color: rgba(196, 143, 54, 0.28);
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.98), rgba(237, 247, 239, 0.98));
+}
+
+.reference-forest-card__intro {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.reference-forest-card__intro h2,
+.reference-forest-card__intro p {
+  margin: 0;
+}
+
+.reference-forest-card__intro h2 {
+  color: #23382f;
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  margin-top: 0.35rem;
+}
+
+.reference-forest-card__intro p {
+  color: #526a5d;
+  line-height: 1.6;
+  margin-top: 0.45rem;
+}
+
+.reference-forest-card__eyebrow {
+  color: #7b5b2a;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.reference-forest-card__intro button {
+  flex: 0 0 auto;
+  border: 1px solid rgba(69, 104, 88, 0.2);
+  border-radius: 0.9rem;
+  background: rgba(255, 255, 255, 0.8);
+  color: #456858;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  padding: 0.75rem 1rem;
+}
+
+.reference-forest-card__intro button:hover,
+.reference-forest-card__intro button:focus-visible {
+  border-color: #456858;
+  background: #456858;
+  color: #fff;
+}

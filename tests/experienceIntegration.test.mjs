@@ -33,6 +33,22 @@ test('玩乐中心保留旧玩法并提供一年级森林乐器大冒险', () =>
   assert.match(source, /MusicExperienceStage/)
 })
 
+test('首页森林入口直达专属森林游戏页面', () => {
+  const home = readSource('src/pages/Home.tsx')
+  const app = readSource('src/App.tsx')
+  const appState = readSource('src/state/appState.tsx')
+  const navigation = readSource('src/state/navigationHistory.ts')
+  const forestPage = readSource('src/pages/ReferenceForestPage.tsx')
+
+  const forestEntry = home.slice(home.indexOf('home-playground-door-reference'))
+  assert.match(forestEntry, /onClick=\{\(\) => navigate\('reference-forest'\)\}/)
+  assert.match(appState, /'reference-forest'/)
+  assert.match(navigation, /'reference-forest': '森林乐器大冒险'/)
+  assert.match(app, /displayedRoute === 'reference-forest' && <ReferenceForestPage \/>/)
+  assert.match(forestPage, /GradeOneForestQuest/)
+  assert.match(forestPage, /reference-forest-page-title/)
+})
+
 test('训练中心顶部展示桌面听觉实验室入口和三张工具卡', () => {
   const source = readSource('src/pages/TrainingCenter.tsx')
 
