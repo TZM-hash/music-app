@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ensureAudio, playNote, stopAllAudio } from '../../music/audioEngine'
 import type { JourneyStepId, ReferenceActivity } from '../../music/referenceCourseware'
+import { useTimers } from '../../hooks/useTimers'
 
 interface VoiceFormActivityProps {
   activity: ReferenceActivity
@@ -19,6 +20,7 @@ const FORMS = [
 export default function VoiceFormActivity({ onEvidence, onStepComplete }: VoiceFormActivityProps) {
   const [selected, setSelected] = useState('')
   const [notice, setNotice] = useState('先试听示例，再注意谁先进入、谁和谁同时进行。')
+  const { later } = useTimers()
 
   const listenExample = async (id: string) => {
     setSelected(id)
@@ -35,7 +37,7 @@ export default function VoiceFormActivity({ onEvidence, onStepComplete }: VoiceF
       }
       if (id === 'round') {
         playNote('C4', '2n', 0.7)
-        window.setTimeout(() => playNote('C4', '2n', 0.54), 260)
+        later(() => playNote('C4', '2n', 0.54), 260)
       }
       setNotice(`正在试听${FORMS.find((form) => form.id === id)?.label ?? '示例'}。`)
     } catch {

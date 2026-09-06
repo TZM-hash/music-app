@@ -19,6 +19,7 @@ function createTsLoader() {
     const module = { exports: {} }
     cache.set(resolved, module)
     const localRequire = (specifier) => {
+      if (specifier.endsWith('.mp3')) return { __esModule: true, default: 'data:audio/mpeg;base64,AA==' }
       if (specifier.startsWith('.')) return load(path.resolve(path.dirname(resolved), specifier))
       return require(specifier)
     }
@@ -36,7 +37,7 @@ test('参考资源只暴露项目相对路径并默认按需加载', () => {
   assert.ok(instrument)
   assert.equal(instrument.kind, 'audio')
   assert.equal(instrument.preload, 'none')
-  assert.match(instrument.src, /^\/reference-courseware\//)
+  assert.match(instrument.src, /^data:audio\/mpeg/)
   assert.doesNotMatch(instrument.src, /E:|人音版小学音乐/)
 })
 

@@ -1,0 +1,143 @@
+.instrument-sound-page {
+  display: grid;
+  gap: 22px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 30px 34px 44px;
+}
+
+.instrument-sound-page__hero,
+.instrument-sound-page__panel,
+.instrument-sound-page__prompt {
+  border: 1px solid rgba(120, 137, 175, 0.22);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 18px 45px rgba(38, 56, 94, 0.08);
+}
+
+.instrument-sound-page__hero {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  padding: 28px 32px;
+  background: linear-gradient(135deg, #fff9e9, #f5f8ff);
+}
+
+.instrument-sound-page__icon {
+  display: grid;
+  flex: 0 0 86px;
+  width: 86px;
+  height: 86px;
+  place-items: center;
+  border-radius: 26px;
+  background: #fff;
+  font-size: 44px;
+  box-shadow: 0 10px 22px rgba(38, 56, 94, 0.1);
+}
+
+.instrument-sound-page__eyebrow {
+  color: #7b6aab;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.instrument-sound-page h1,
+.instrument-sound-page h2,
+.instrument-sound-page p {
+  margin: 0;
+}
+
+.instrument-sound-page h1 {
+  margin-top: 4px;
+  color: #26365e;
+  font-size: 32px;
+}
+
+.instrument-sound-page h2 {
+  margin-top: 5px;
+  color: #26365e;
+  font-size: 22px;
+}
+
+.instrument-sound-page__hero p {
+  max-width: 720px;
+  margin-top: 10px;
+  color: #68708a;
+  line-height: 1.7;
+}
+
+.instrument-sound-page__panel {
+  padding: 26px 30px 28px;
+}
+
+.instrument-sound-page__panel-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.instrument-sound-page__keys {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  gap: 16px;
+  margin-top: 26px;
+}
+
+.instrument-sound-page__keys button {
+  min-height: 116px;
+  border: 1px solid #d9e0f1;
+  border-radius: 20px;
+  background: #f8faff;
+  color: #26365e;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    background 160ms ease;
+}
+
+.instrument-sound-page__keys button:hover,
+.instrument-sound-page__keys button.active {
+  border-color: #8b7bc2;
+  background: #eeeaff;
+  transform: translateY(-3px);
+}
+
+.instrument-sound-page__keys strong,
+.instrument-sound-page__keys small {
+  display: block;
+}
+
+.instrument-sound-page__keys strong {
+  font-size: 28px;
+}
+
+.instrument-sound-page__keys small {
+  margin-top: 8px;
+  color: #7b6aab;
+  font-weight: 700;
+}
+
+.instrument-sound-page__live {
+  min-height: 24px;
+  margin-top: 18px !important;
+  color: #68708a;
+}
+
+.instrument-sound-page__prompt {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  color: #59627c;
+}
+
+.instrument-sound-page__prompt span {
+  font-size: 26px;
+}
+
+.instrument-sound-page__prompt strong {
+  color: #7b6aab;
+}

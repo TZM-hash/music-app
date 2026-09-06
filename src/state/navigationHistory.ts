@@ -23,6 +23,29 @@ export const ROUTE_LABELS: Record<Route, string> = {
   mixer: '混音创作',
   recorder: '竖笛',
   xylophone: '木琴',
+  woodblock: '木鱼',
+  clappers: '响板',
+  bell: '碰钟',
+  gong: '锣',
+  drum: '鼓',
+  cymbal: '钹',
+  pipa: '琵琶',
+  erhu: '二胡',
+  dizi: '竹笛',
+  violin: '小提琴',
+  bass: '贝斯',
+  marimba: '马林巴',
+  musicbox: '八音盒',
+  organ: '管风琴/电子琴',
+  synth: '合成器',
+  pluck: '拨弦',
+  handbell: '铃铛',
+  strings: '弦乐',
+  trumpet: '小号',
+  'small-drum': '小鼓',
+  'ban-drum': '板鼓',
+  orchestra: '管弦合奏',
+  'dragon-drum': '龙舟鼓',
   'game-ear': '听感挑战',
   'game-echo': '节奏复制',
   'game-taiko': '节奏反应',
@@ -39,7 +62,7 @@ const MAX_RETURN_STACK = 12
 export function applyRouteNavigation(
   state: RouteHistoryState,
   nextRoute: Route,
-  options: RouteNavigationOptions = {},
+  options: RouteNavigationOptions = {}
 ): RouteHistoryState {
   const history = options.history ?? 'push'
   if (history === 'reset') return { route: nextRoute, stack: [] }

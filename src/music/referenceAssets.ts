@@ -1,5 +1,13 @@
 import type { ReferenceCourseSource } from './referenceCourseware'
 import { REFERENCE_ACTIVITIES } from './referenceActivityCatalog'
+import clappersAudio from './reference-courseware/g1/instrument-xiangban.mp3'
+import woodblockAudio from './reference-courseware/g1/instrument-muyu.mp3'
+import bellAudio from './reference-courseware/g1/instrument-pengzhong.mp3'
+import quarterRhythmAudio from './reference-courseware/g1/rhythm-quarter.mp3'
+import noteValuesAudio from './reference-courseware/g2/rhythm-note-values.mp3'
+import emotionHappyAudio from './reference-courseware/g3/emotion-happy.mp3'
+import chorusAudio from './reference-courseware/g3/voice-chorus.mp3'
+import roundAudio from './reference-courseware/g3/voice-round.mp3'
 
 export interface ReferenceAsset {
   id: string
@@ -11,14 +19,14 @@ export interface ReferenceAsset {
 }
 
 /**
- * 这里登记的是从参考课件中挑出的、已经复制到 public 的小型素材。
- * 原始 E 盘目录永远不参与运行时路径拼接，避免桌面端部署后失效。
+ * 这里登记的是从参考课件中挑出的、已经复制到源码目录的小型素材。
+ * 通过 import 接入后，Vite 会在单文件构建时内联为 data URL，直接双击也能播放。
  */
 const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g1/forest/clappers',
     kind: 'audio',
-    src: '/reference-courseware/g1/instrument-xiangban.mp3',
+    src: clappersAudio,
     alt: '响板示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -26,7 +34,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g1/forest/woodblock',
     kind: 'audio',
-    src: '/reference-courseware/g1/instrument-muyu.mp3',
+    src: woodblockAudio,
     alt: '木鱼示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -34,7 +42,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g1/forest/bell',
     kind: 'audio',
-    src: '/reference-courseware/g1/instrument-pengzhong.mp3',
+    src: bellAudio,
     alt: '碰钟示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -42,7 +50,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g1/rhythm/x-xx',
     kind: 'audio',
-    src: '/reference-courseware/g1/rhythm-quarter.mp3',
+    src: quarterRhythmAudio,
     alt: 'X、XX 节奏示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -50,7 +58,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g2/rhythm/note-values',
     kind: 'audio',
-    src: '/reference-courseware/g2/rhythm-note-values.mp3',
+    src: noteValuesAudio,
     alt: '音符时值示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -58,7 +66,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g3/emotion/story-cards',
     kind: 'audio',
-    src: '/reference-courseware/g3/emotion-happy.mp3',
+    src: emotionHappyAudio,
     alt: '音乐情绪示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -66,7 +74,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g3/voice/forms',
     kind: 'audio',
-    src: '/reference-courseware/g3/voice-chorus.mp3',
+    src: chorusAudio,
     alt: '合唱示例声音',
     preload: 'none',
     source: 'renyin-reference',
@@ -74,7 +82,7 @@ const REFERENCE_ASSETS: ReferenceAsset[] = [
   {
     id: 'g3/voice/round',
     kind: 'audio',
-    src: '/reference-courseware/g3/voice-round.mp3',
+    src: roundAudio,
     alt: '轮唱示例声音',
     preload: 'none',
     source: 'renyin-reference',

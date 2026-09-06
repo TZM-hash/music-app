@@ -63,6 +63,7 @@ test('演唱形式活动提供齐唱、合唱、轮唱示例和进入顺序线�
   assert.match(source, /合唱/)
   assert.match(source, /轮唱/)
   assert.match(source, /ensureAudio/)
+  assert.match(source, /useTimers|later/)
   assert.match(source, /进入|同时|错开/)
   assert.match(source, /onStepComplete\('try'\)/)
 })

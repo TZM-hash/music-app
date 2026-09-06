@@ -2,6 +2,7 @@
 // 按需导入 Tone.js，避免把整个库打进单文件包
 import { PITCH_CLASSES, chordNotes as buildTriad } from './notes'
 import { EMBEDDED_PIANO_SAMPLES } from './pianoSamples'
+import type { InstrumentSoundId } from './instrumentSounds'
 import {
   start as toneStart,
   now as toneNow,
@@ -240,6 +241,88 @@ export function playNote(note: string, duration = '4n', velocity = 0.85, patch?:
     getPianoVoice().triggerAttackRelease(note, duration, undefined, velocity)
   } else {
     getOtherSynth(p).triggerAttackRelease(note, duration, undefined, velocity)
+  }
+}
+
+/**
+ * 为探索馆、乐器侧栏和课件兜底提供可辨识的合成乐器音色。
+ * 真实采样由调用方优先播放；这里只负责不依赖外部文件的桌面端兜底。
+ */
+export function playInstrumentSound(
+  instrument: InstrumentSoundId,
+  note?: string,
+  duration = '4n',
+  velocity = 0.8
+): void {
+  const pitch = note ?? 'C4'
+  switch (instrument) {
+    case 'drums':
+    case 'drum':
+      playDrum('kick')
+      return
+    case 'woodblock':
+      playDrum('tom')
+      return
+    case 'clappers':
+      playDrum('clap')
+      return
+    case 'gong':
+      playDrum('crash')
+      return
+    case 'cymbal':
+      playDrum('crash')
+      return
+    case 'piano':
+      playNote(pitch, duration, velocity, 'piano')
+      return
+    case 'musicbox':
+      playNote(pitch, duration, velocity, 'musicbox')
+      return
+    case 'erhu':
+    case 'violin':
+      playNote(pitch, duration, velocity, 'strings')
+      return
+    case 'organ':
+      playNote(pitch, duration, velocity, 'organ')
+      return
+    case 'recorder':
+    case 'dizi':
+      playNote(pitch, duration, velocity, 'organ')
+      return
+    case 'xylophone':
+    case 'marimba':
+      playXylophone(pitch)
+      return
+    case 'bass':
+      triggerVoice('bass', pitch, currentVolume - 2)
+      return
+    case 'pipa':
+    case 'pluck':
+      triggerVoice('pluck', pitch, currentVolume - 2)
+      return
+    case 'bell':
+      playNote(pitch, duration, velocity, 'musicbox')
+      return
+    case 'synth':
+      triggerVoice('synth', pitch, currentVolume - 2)
+      return
+    case 'handbell':
+      playNote(pitch, duration, velocity, 'musicbox')
+      return
+    case 'strings':
+    case 'orchestra':
+      playNote(pitch, duration, velocity, 'strings')
+      return
+    case 'trumpet':
+      playNote(pitch, duration, velocity, 'organ')
+      return
+    case 'small-drum':
+    case 'ban-drum':
+      playDrum('snare')
+      return
+    case 'dragon-drum':
+      playDrum('kick')
+      return
   }
 }
 
@@ -509,25 +592,46 @@ function getMixSynth(kind: VoiceKind): PolySynth | Synth {
   let s: PolySynth | Synth
   switch (kind) {
     case 'bass':
-      s = new Synth({ oscillator: { type: 'sine' }, envelope: { attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.4 } }).toDestination()
+      s = new Synth({
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.01, decay: 0.2, sustain: 0.4, release: 0.4 },
+      }).toDestination()
       break
     case 'bell':
-      s = new PolySynth(Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.002, decay: 0.3, sustain: 0, release: 0.5 } }).toDestination()
+      s = new PolySynth(Synth, {
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.002, decay: 0.3, sustain: 0, release: 0.5 },
+      }).toDestination()
       break
     case 'pluck':
-      s = new PolySynth(Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.002, decay: 0.15, sustain: 0, release: 0.2 } }).toDestination()
+      s = new PolySynth(Synth, {
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.002, decay: 0.15, sustain: 0, release: 0.2 },
+      }).toDestination()
       break
     case 'marimba':
-      s = new PolySynth(Synth, { oscillator: { type: 'sine' }, envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.3 } }).toDestination()
+      s = new PolySynth(Synth, {
+        oscillator: { type: 'sine' },
+        envelope: { attack: 0.001, decay: 0.4, sustain: 0, release: 0.3 },
+      }).toDestination()
       break
     case 'synth':
-      s = new PolySynth(Synth, { oscillator: { type: 'square' }, envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.3 } }).toDestination()
+      s = new PolySynth(Synth, {
+        oscillator: { type: 'square' },
+        envelope: { attack: 0.01, decay: 0.1, sustain: 0.5, release: 0.3 },
+      }).toDestination()
       break
     case 'organ2':
-      s = new PolySynth(Synth, { oscillator: { type: 'fmsine' }, envelope: { attack: 0.02, decay: 0.1, sustain: 0.8, release: 0.3 } }).toDestination()
+      s = new PolySynth(Synth, {
+        oscillator: { type: 'fmsine' },
+        envelope: { attack: 0.02, decay: 0.1, sustain: 0.8, release: 0.3 },
+      }).toDestination()
       break
     default: // piano
-      s = new PolySynth(Synth, { oscillator: { type: 'triangle' }, envelope: { attack: 0.005, decay: 0.3, sustain: 0.3, release: 0.8 } }).toDestination()
+      s = new PolySynth(Synth, {
+        oscillator: { type: 'triangle' },
+        envelope: { attack: 0.005, decay: 0.3, sustain: 0.3, release: 0.8 },
+      }).toDestination()
   }
   mixSynths[kind] = s
   return s
@@ -535,7 +639,14 @@ function getMixSynth(kind: VoiceKind): PolySynth | Synth {
 
 /** 混音器触发一个音源的一步（可指定音高、音量 dB、音频时间轴时间） */
 export function triggerVoice(kind: VoiceKind, note: string, volumeDb: number, time?: number): void {
-  if (kind === 'kick' || kind === 'snare' || kind === 'hihat' || kind === 'tom' || kind === 'crash' || kind === 'clap') {
+  if (
+    kind === 'kick' ||
+    kind === 'snare' ||
+    kind === 'hihat' ||
+    kind === 'tom' ||
+    kind === 'crash' ||
+    kind === 'clap'
+  ) {
     playDrum(kind === 'clap' ? 'clap' : kind, time)
     return
   }
@@ -544,7 +655,10 @@ export function triggerVoice(kind: VoiceKind, note: string, volumeDb: number, ti
   synth.triggerAttackRelease(note, '16n', time)
 }
 
-export const VOICE_INFO: Record<VoiceKind, { name: string; icon: string; pitched: boolean; defaultNote: string }> = {
+export const VOICE_INFO: Record<
+  VoiceKind,
+  { name: string; icon: string; pitched: boolean; defaultNote: string }
+> = {
   kick: { name: '底鼓', icon: '🥁', pitched: false, defaultNote: 'C1' },
   snare: { name: '军鼓', icon: '🪘', pitched: false, defaultNote: 'C2' },
   hihat: { name: '踩镲', icon: '🎩', pitched: false, defaultNote: 'C6' },

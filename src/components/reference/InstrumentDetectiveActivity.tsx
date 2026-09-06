@@ -1,5 +1,8 @@
 import { useState } from 'react'
-import { ensureAudio, playNote, stopAllAudio } from '../../music/audioEngine'
+import { ensureAudio, playInstrumentSound, stopAllAudio } from '../../music/audioEngine'
+import { getReferenceAsset } from '../../music/referenceAssets'
+import { playReferenceAudio, stopReferenceAudio } from '../../music/referencePlayback'
+import type { InstrumentSoundId } from '../../music/instrumentSounds'
 import type { JourneyStepId, ReferenceActivity } from '../../music/referenceCourseware'
 
 interface InstrumentDetectiveActivityProps {
@@ -11,9 +14,32 @@ interface InstrumentDetectiveActivityProps {
 }
 
 const SAMPLES = [
-  { id: 'sample-a', name: '木鱼', texture: '清脆、短促', culture: '敲击让节奏像脚步一样清楚。' },
-  { id: 'sample-b', name: '碰钟', texture: '明亮、延续', culture: '声音会在空气中多停留一会儿。' },
-  { id: 'sample-c', name: '钢琴', texture: '有层次、可连贯', culture: '琴键让不同音高可以快速连接。' },
+  {
+    id: 'sample-a',
+    name: '木鱼',
+    texture: '清脆、短促',
+    culture: '敲击让节奏像脚步一样清楚。',
+    sound: 'woodblock' as InstrumentSoundId,
+    note: 'C4',
+    assetId: 'g1/forest/woodblock',
+  },
+  {
+    id: 'sample-b',
+    name: '碰钟',
+    texture: '明亮、延续',
+    culture: '声音会在空气中多停留一会儿。',
+    sound: 'bell' as InstrumentSoundId,
+    note: 'G5',
+    assetId: 'g1/forest/bell',
+  },
+  {
+    id: 'sample-c',
+    name: '钢琴',
+    texture: '有层次、可连贯',
+    culture: '琴键让不同音高可以快速连接。',
+    sound: 'piano' as InstrumentSoundId,
+    note: 'E4',
+  },
 ]
 
 export default function InstrumentDetectiveActivity({
@@ -28,6 +54,7 @@ export default function InstrumentDetectiveActivity({
 
   const playSample = async (id: string) => {
     stopAllAudio()
+    stopReferenceAudio()
     const sample = SAMPLES.find((item) => item.id === id)
     if (!sample) return
     setSelected(id)
@@ -36,8 +63,16 @@ export default function InstrumentDetectiveActivity({
         setNotice('设备暂时没有发出声音，但仍可以比较示例声音。')
         return
       }
-      playNote(id === 'sample-a' ? 'C4' : id === 'sample-b' ? 'G4' : 'E4', id === 'sample-b' ? '2n' : '4n', 0.72)
-      setNotice(`${sample.name}：${sample.texture}。这是示例声音，不是现场录音。`)
+      const asset = sample.assetId ? getReferenceAsset(sample.assetId) : undefined
+      const playedRealAudio = asset
+        ? await playReferenceAudio(asset, () =>
+            playInstrumentSound(sample.sound, sample.note, '4n', 0.72)
+          )
+        : false
+      if (!asset) playInstrumentSound(sample.sound, sample.note, '4n', 0.72)
+      setNotice(
+        `${sample.name}：${sample.texture}。${playedRealAudio ? '正在播放参考录音。' : '正在播放可辨识的合成音色兜底。'}`
+      )
     } catch {
       setNotice('设备暂时没有发出声音，但仍可以比较示例声音。')
     }
@@ -80,7 +115,11 @@ export default function InstrumentDetectiveActivity({
           </article>
         ))}
       </div>
-      <p className="reference-activity__culture">文化线索：{SAMPLES.find((item) => item.id === selected)?.culture ?? '先选择一个声音，看看演奏方式怎样影响音色。'}</p>
+      <p className="reference-activity__culture">
+        文化线索：
+        {SAMPLES.find((item) => item.id === selected)?.culture ??
+          '先选择一个声音，看看演奏方式怎样影响音色。'}
+      </p>
       <button type="button" className="primary" onClick={saveObservation}>
         保存我的听感
       </button>

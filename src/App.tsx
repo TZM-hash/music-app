@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AppProvider, useApp } from './state/appState'
 import { stopAllAudio } from './music/audioEngine'
+import { stopReferenceAudio } from './music/referencePlayback'
 import { stopUISounds } from './music/uiSounds'
 import TopBar from './components/TopBar'
 import Sidebar from './components/Sidebar'
@@ -14,6 +15,9 @@ import Drums from './pages/Drums'
 import Mixer from './pages/Mixer'
 import Recorder from './pages/Recorder'
 import Xylophone from './pages/Xylophone'
+import InstrumentSoundPage from './pages/InstrumentSoundPage'
+import type { InstrumentSoundId } from './music/instrumentSounds'
+import type { Route } from './state/appState'
 import EarGame from './pages/games/EarGame'
 import EchoGame from './pages/games/EchoGame'
 import TaikoGame from './pages/games/TaikoGame'
@@ -26,6 +30,32 @@ import ReferenceForestPage from './pages/ReferenceForestPage'
 import AdventureMap from './pages/AdventureMap'
 import ClassRoster from './pages/ClassRoster'
 import Dashboard from './pages/Dashboard'
+
+const INSTRUMENT_SOUND_ROUTES: Partial<Record<Route, InstrumentSoundId>> = {
+  woodblock: 'woodblock',
+  clappers: 'clappers',
+  bell: 'bell',
+  gong: 'gong',
+  drum: 'drum',
+  cymbal: 'cymbal',
+  pipa: 'pipa',
+  erhu: 'erhu',
+  dizi: 'dizi',
+  violin: 'violin',
+  bass: 'bass',
+  marimba: 'marimba',
+  musicbox: 'musicbox',
+  organ: 'organ',
+  synth: 'synth',
+  pluck: 'pluck',
+  handbell: 'handbell',
+  strings: 'strings',
+  trumpet: 'trumpet',
+  'small-drum': 'small-drum',
+  'ban-drum': 'ban-drum',
+  orchestra: 'orchestra',
+  'dragon-drum': 'dragon-drum',
+}
 
 function Shell() {
   const { mode, route, sidebarOpen, setSidebarOpen, navigate, navDirection } = useApp()
@@ -58,10 +88,16 @@ function Shell() {
   // 切换页面时停掉一切后台音频（伴奏/节拍器/持续音/UI 延迟音效），避免残留
   useEffect(() => {
     stopAllAudio()
+    stopReferenceAudio()
     stopUISounds()
   }, [route])
 
-  const isInstrument = displayedRoute === 'piano' || displayedRoute === 'drums' || displayedRoute === 'recorder' || displayedRoute === 'xylophone'
+  const isInstrument =
+    displayedRoute === 'piano' ||
+    displayedRoute === 'drums' ||
+    displayedRoute === 'recorder' ||
+    displayedRoute === 'xylophone' ||
+    Boolean(INSTRUMENT_SOUND_ROUTES[displayedRoute])
   const isGame = displayedRoute.startsWith('game-')
 
   return (
@@ -73,7 +109,10 @@ function Shell() {
         <div
           className={`content presentation-viewport route-${displayedRoute} ${isInstrument ? 'content-instrument' : ''} ${isGame ? 'content-game' : ''} ${leaving ? 'leaving' : ''} ${navDirection === 'back' ? 'nav-back' : 'nav-forward'}`}
         >
-          <ErrorBoundary key={displayedRoute} onReset={() => navigate('home', { history: 'reset' })}>
+          <ErrorBoundary
+            key={displayedRoute}
+            onReset={() => navigate('home', { history: 'reset' })}
+          >
             {displayedRoute === 'home' && <Home />}
             {displayedRoute === 'lesson' && <LessonMode />}
             {displayedRoute === 'piano' && <Piano />}
@@ -81,6 +120,9 @@ function Shell() {
             {displayedRoute === 'mixer' && <Mixer />}
             {displayedRoute === 'recorder' && <Recorder />}
             {displayedRoute === 'xylophone' && <Xylophone />}
+            {INSTRUMENT_SOUND_ROUTES[displayedRoute] && (
+              <InstrumentSoundPage instrument={INSTRUMENT_SOUND_ROUTES[displayedRoute]!} />
+            )}
             {displayedRoute === 'game-ear' && <EarGame />}
             {displayedRoute === 'game-echo' && <EchoGame />}
             {displayedRoute === 'game-taiko' && <TaikoGame />}
