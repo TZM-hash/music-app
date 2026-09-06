@@ -29,3 +29,11 @@ Implemented the desktop-only Instrument Explorer and Rhythm Movement Lab from th
 
 - The components are intentionally not wired into `ExplorationTheater` per the brief.
 - Audio availability remains dependent on the browser audio policy; the UI provides the required fallback and keeps non-audio interactions available.
+
+## Review Fix Evidence
+
+- Root cause: the native `<button>` keyboard activation already dispatches `click`, while `InstrumentExplorer` also handled Enter/Space in the same sample button's `onKeyDown`, causing `playSample` to run twice.
+- Fix: removed the redundant sample-button `onKeyDown`; retained `type="button"` and the native `onClick` path, so mouse, Enter, and Space activation remain supported without duplicate playback.
+- Regression test: updated `tests/explorationToolComponents.test.mjs` to require the native sample button/onClick contract and reject an `onKeyDown` handler on `.instrument-explorer__play`.
+- Evidence: the pre-fix focused regression test failed on the duplicate-handler assertion; after the fix `node --test tests/explorationToolComponents.test.mjs` passed all 5 tests.
+- Post-fix verification: `npm run lint`, `npm run build`, and `git diff --check` all exited 0.

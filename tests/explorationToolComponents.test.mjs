@@ -21,8 +21,9 @@ test('乐器探秘台声明样本边界并支持音色、家族与 A/B 比较', 
 test('乐器探秘台可用键盘和按钮试听，并提供无音频降级、保存和返回', () => {
   const source = read('src/components/InstrumentExplorer.tsx')
   for (const helper of ['ensureAudio', 'playNote', 'stopAllAudio']) assert.match(source, new RegExp(helper))
-  assert.match(source, /onKeyDown/)
-  assert.match(source, /Enter| /)
+  assert.match(source, /className="instrument-explorer__play" onClick=/)
+  assert.match(source, /<button type="button" className="instrument-explorer__play"/)
+  assert.doesNotMatch(source, /className="instrument-explorer__play"[\s\S]{0,300}onKeyDown/)
   assert.match(source, /aria-live="polite"/)
   assert.match(source, /audioUnavailable/)
   assert.match(source, /设备暂时没有发出声音/)

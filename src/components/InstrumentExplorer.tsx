@@ -82,7 +82,7 @@ export default function InstrumentExplorer({ samples, onNote, onReturn }: Instru
                 <h2>{sample.instrument}</h2>
                 <p>{sample.label}</p>
                 <dl><div><dt>质地</dt><dd>{sample.texture}</dd></div><div><dt>技法</dt><dd>{sample.technique}</dd></div></dl>
-                <button type="button" className="instrument-explorer__play" onClick={() => void playSample(sample)} onKeyDown={(event) => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); void playSample(sample) } }}>试听这个样本</button>
+                <button type="button" className="instrument-explorer__play" onClick={() => void playSample(sample)}>试听这个样本</button>
               </article>
             })}
           </div>
