@@ -2616,3 +2616,47 @@
     font-size: clamp(0.66rem, 0.6rem + 0.1vw, 0.74rem) !important;
   }
 }
+
+/* ========================================================================
+   桌面参考布局：沿用 ccb4879 的自然高度与滚动节奏
+
+   分页控件和各页的内容选择仍然保留；这里只解除展示层后来加入的
+   固定视口、强制裁切和等高压缩，让现有内容按照旧版桌面布局自然展开。
+   仅作用于电脑端，移动端规则保持原样。
+   ======================================================================== */
+
+@media (min-width: 1024px) {
+  .content.presentation-viewport {
+    display: block !important;
+    min-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+
+  .content.presentation-viewport > .presentation-page {
+    flex: none !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.presentation-viewport > .presentation-page > .page-pager {
+    margin-bottom: 14px !important;
+  }
+
+  .content.presentation-viewport .presentation-slide {
+    flex: none !important;
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .content.presentation-viewport .presentation-slide > * {
+    height: auto !important;
+    max-height: none !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+}

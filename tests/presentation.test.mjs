@@ -36,3 +36,11 @@ test('展示列表分页只返回当前页且对异常页大小安全兜底', ()
   assert.deepEqual(getPageSlice(items, 20, 2), { items: ['e'], pageCount: 3, pageIndex: 2 })
   assert.deepEqual(getPageSlice(items, 0, 0), { items, pageCount: 1, pageIndex: 0 })
 })
+
+test('桌面展示布局沿用旧版自然高度并允许内容滚动', () => {
+  const css = fs.readFileSync(path.resolve('src/presentation.css'), 'utf8')
+
+  assert.match(css, /@media \(min-width: 1024px\)[\s\S]*\.content\.presentation-viewport\s*\{[\s\S]*overflow-y:\s*auto/)
+  assert.match(css, /@media \(min-width: 1024px\)[\s\S]*\.content\.presentation-viewport\s*> \.presentation-page\s*\{[\s\S]*max-height:\s*none/)
+  assert.match(css, /@media \(min-width: 1024px\)[\s\S]*\.content\.presentation-viewport \.presentation-slide\s*\{[\s\S]*overflow:\s*visible/)
+})
