@@ -105,6 +105,36 @@ const MODULES: TrainingModule[] = [
   },
 ]
 
+const AUDITORY_LAB_TOOLS = [
+  {
+    id: 'microscope',
+    icon: '◌',
+    title: '音乐显微镜',
+    question: '我说音乐变了，具体是哪里变了？',
+    focus: '比较旋律片段，找到可以说清楚的变化。',
+    grade: '小学 1—6 年级',
+    color: '#6c9f83',
+  },
+  {
+    id: 'instrument',
+    icon: '♫',
+    title: '乐器探秘台',
+    question: '我听到的声音为什么有这样的颜色？',
+    focus: '比较音色样本，记录声音的质感与延续。',
+    grade: '小学 1—6 年级',
+    color: '#b36b3e',
+  },
+  {
+    id: 'rhythm',
+    icon: '◒',
+    title: '节奏与动作工作台',
+    question: '音乐怎样让我想走、跳、摇或停？',
+    focus: '跟随稳定拍，把动作和听到的线索连起来。',
+    grade: '小学 1—6 年级',
+    color: '#c27a38',
+  },
+]
+
 export default function TrainingCenter() {
   const { navigate, currentStudentId, selectedGrade } = useApp()
   const progress = loadProgress()
@@ -150,6 +180,64 @@ export default function TrainingCenter() {
 
   return (
     <div className="training-page">
+      <section className="training-auditory-lab card" aria-labelledby="training-auditory-lab-title">
+        <div className="training-auditory-lab-hero">
+          <div>
+            <span className="training-kicker">主动聆听 · 桌面工作台</span>
+            <h1 id="training-auditory-lab-title">听觉实验室</h1>
+            <p>从一个具体的听觉问题开始，比较、记录，再把你的发现带回作品里。</p>
+            <div className="training-current-grade" aria-label="当前年级">
+              <span>当前年级</span>
+              <strong>{effectiveGrade ? getGradeLabel(effectiveGrade) : '小学 1—6 年级'}</strong>
+            </div>
+          </div>
+          <div className="training-auditory-lab-hero-actions">
+            <span>想带着作品开始吗？</span>
+            <button className="primary-action" type="button" onClick={() => navigate('lesson')}>
+              从一段作品开始
+            </button>
+          </div>
+        </div>
+
+        <div className="training-auditory-tool-grid" aria-label="听觉工具选择">
+          {AUDITORY_LAB_TOOLS.map((tool) => (
+            <article
+              key={tool.id}
+              className="training-auditory-tool"
+              style={{ '--tool-color': tool.color } as CSSProperties}
+            >
+              <div className="training-auditory-tool-heading">
+                <span aria-hidden="true">{tool.icon}</span>
+                <div>
+                  <strong>{tool.title}</strong>
+                  <small>{tool.grade}</small>
+                </div>
+              </div>
+              <p className="training-auditory-tool-question">“{tool.question}”</p>
+              <p className="training-auditory-tool-focus">{tool.focus}</p>
+              <button type="button" onClick={() => navigate('lesson')}>
+                带入作品练习
+              </button>
+            </article>
+          ))}
+        </div>
+
+        <div className="training-free-practice">
+          <div>
+            <span className="training-kicker">不绑定作品</span>
+            <h2>自由练习</h2>
+            <p>先试听和比较，留下你的观察；准备好后，再回到作品寻找依据。</p>
+          </div>
+          <div className="training-free-practice-note" role="status">
+            <span>观察提示</span>
+            <strong>没有唯一答案，先说出你听到的线索。</strong>
+          </div>
+          <button type="button" onClick={() => navigate('lesson')}>
+            回到作品
+          </button>
+        </div>
+      </section>
+
       <section className="training-experience-shell" aria-labelledby="training-experience-title">
         <div className="training-experience-intro">
           <div>

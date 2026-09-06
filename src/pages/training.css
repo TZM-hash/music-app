@@ -120,7 +120,11 @@
   color: var(--text);
   text-align: left;
   box-shadow: var(--shadow-soft);
-  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
 }
 
 .training-nav-item:hover {
@@ -398,6 +402,194 @@
   transition: width 0.45s ease;
 }
 
+.training-auditory-lab {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .training-auditory-lab {
+    display: grid;
+    gap: 18px;
+    padding: 24px;
+    border-left: 4px solid #6c9f83;
+    background:
+      linear-gradient(135deg, rgba(108, 159, 131, 0.1), rgba(255, 255, 255, 0.8)),
+      repeating-linear-gradient(90deg, transparent 0 42px, rgba(108, 159, 131, 0.06) 42px 43px);
+  }
+
+  .training-auditory-lab-hero {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .training-auditory-lab-hero h1 {
+    margin: 2px 0 7px;
+    color: var(--text);
+    font-size: 2.35rem;
+  }
+
+  .training-auditory-lab-hero p {
+    max-width: 660px;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+
+  .training-current-grade {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 14px;
+    color: var(--text-soft);
+    font-size: 0.86rem;
+  }
+
+  .training-current-grade strong {
+    color: var(--text);
+  }
+
+  .training-auditory-lab-hero-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .training-auditory-lab-hero-actions span,
+  .training-free-practice-note span {
+    color: var(--text-soft);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .training-auditory-tool-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .training-auditory-tool {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border: 1px solid color-mix(in srgb, var(--tool-color) 34%, var(--line));
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.75);
+  }
+
+  .training-auditory-tool-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .training-auditory-tool-heading > span {
+    display: inline-grid;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    place-items: center;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--tool-color) 15%, white);
+    color: var(--tool-color);
+    font-size: 1.35rem;
+    font-weight: 900;
+  }
+
+  .training-auditory-tool-heading strong,
+  .training-auditory-tool-heading small {
+    display: block;
+  }
+
+  .training-auditory-tool-heading strong {
+    color: var(--text);
+    font-size: 1rem;
+  }
+
+  .training-auditory-tool-heading small {
+    margin-top: 3px;
+    color: var(--text-soft);
+    font-size: 0.75rem;
+    font-weight: 750;
+  }
+
+  .training-auditory-tool-question {
+    min-height: 48px;
+    color: var(--text);
+    font-weight: 850;
+    line-height: 1.5;
+  }
+
+  .training-auditory-tool-focus {
+    min-height: 42px;
+    color: var(--text-soft);
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  .training-auditory-tool button,
+  .training-free-practice > button {
+    min-height: 36px;
+    margin-top: auto;
+    padding: 8px 12px;
+    border: 1px solid var(--line-neon);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--neon-cyan);
+    font-weight: 850;
+  }
+
+  .training-auditory-tool button:hover,
+  .training-free-practice > button:hover {
+    border-color: var(--neon-cyan);
+    background: rgba(0, 122, 255, 0.06);
+  }
+
+  .training-free-practice {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) minmax(260px, 0.9fr) auto;
+    gap: 18px;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+
+  .training-free-practice h2 {
+    margin-bottom: 5px;
+    color: var(--text);
+    font-size: 1.3rem;
+  }
+
+  .training-free-practice p {
+    color: var(--text-soft);
+    font-size: 0.86rem;
+    line-height: 1.5;
+  }
+
+  .training-free-practice-note {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 11px 13px;
+    border-left: 3px solid var(--neon-gold);
+    background: rgba(255, 149, 0, 0.09);
+  }
+
+  .training-free-practice-note strong {
+    color: var(--text);
+    font-size: 0.86rem;
+  }
+
+  .training-free-practice > button {
+    margin-top: 0;
+    white-space: nowrap;
+  }
+}
+
 @media (max-width: 1180px) {
   .training-lab-strip {
     grid-template-columns: minmax(240px, 1fr) auto minmax(220px, 0.9fr);
@@ -503,7 +695,10 @@
   min-height: 70px;
   padding: 10px 13px;
   text-align: left;
-  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
 }
 
 .training-experience-door > span {

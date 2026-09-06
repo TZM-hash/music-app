@@ -24,6 +24,28 @@ test('玩乐中心展示三种音乐探险玩法并使用当前学生年级', ()
   assert.match(source, /key=\{buildExperienceInstanceKey\(/)
 })
 
+test('训练中心顶部展示桌面听觉实验室入口和三张工具卡', () => {
+  const source = readSource('src/pages/TrainingCenter.tsx')
+
+  assert.match(source, /听觉实验室/)
+  for (const copy of [
+    '音乐显微镜',
+    '我说音乐变了，具体是哪里变了？',
+    '乐器探秘台',
+    '我听到的声音为什么有这样的颜色？',
+    '节奏与动作工作台',
+    '音乐怎样让我想走、跳、摇或停？',
+  ]) {
+    assert.match(source, new RegExp(copy))
+  }
+  assert.match(source, /当前年级/)
+  assert.match(source, /从一段作品开始/)
+  assert.match(source, /自由练习/)
+  assert.match(source, /更多练习/)
+  assert.match(source, /navigate\('lesson'\)/)
+  assert.match(source, /回到作品/)
+})
+
 test('旧挑战路由仍然保留在更多练习入口', () => {
   const source = readSource('src/pages/TrainingCenter.tsx')
 
