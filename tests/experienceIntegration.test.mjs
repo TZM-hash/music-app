@@ -161,6 +161,20 @@ test('闯关地图展示当前学生的发现入口并兼容探索剧场回看',
   assert.match(map, /完成一次探索后，这里会出现你的音乐证据/)
 })
 
+test('作品地图把茉莉花卡片连接到探索剧场并保留理论次要动作', () => {
+  const course = readSource('src/pages/CourseCenter.tsx')
+
+  assert.match(course, /openExploration\('jasmine'\)/)
+  assert.match(course, /openTheory\(/)
+  assert.match(course, /selectedGrade/)
+  assert.match(course, /getCurriculumUnits/)
+  assert.match(course, /filter.*grade|grade.*filter/s)
+  assert.match(course, /filter.*source|source.*filter/s)
+  assert.match(course, /filter.*path|path.*filter/s)
+  assert.match(course, /filter.*tag|tag.*filter/s)
+  assert.match(course, /课程|教材|教师支持/)
+})
+
 test('旧音乐探险舞台和训练中心入口仍然保留', () => {
   const training = readSource('src/pages/TrainingCenter.tsx')
   assert.match(training, /MusicExperienceStage/)

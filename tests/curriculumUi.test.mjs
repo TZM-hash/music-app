@@ -44,6 +44,25 @@ test('学段总览和名册明确支持浙江人音版小学 1-6 年级', () => 
   assert.match(roster, /册次/)
 })
 
+test('课程中心桌面端展示作品地图和可筛选的茉莉花作品卡', () => {
+  const course = read('src/pages/CourseCenter.tsx')
+  const css = read('src/pages/course.css')
+
+  assert.match(course, /作品地图/)
+  assert.match(course, /当前年级|current-grade/)
+  for (const label of ['作品', '来源', '路径', '标签']) assert.match(course, new RegExp(label))
+  assert.match(course, /茉莉花/)
+  assert.match(course, /音乐显微镜|乐器探秘台/)
+  assert.match(course, /开始探索/)
+  assert.match(course, /查看音乐线索/)
+  assert.match(course, /没有匹配的作品|暂无匹配作品/)
+  assert.match(course, /教师支持/)
+  assert.match(css, /course-works-map/)
+  assert.match(css, /course-filter-rail/)
+  assert.match(css, /course-work-detail/)
+  assert.match(css, /@media \(min-width: 1024px\)/)
+})
+
 test('主要内容页面统一读取顶部全局年级', () => {
   for (const file of [
     'src/pages/Home.tsx',
