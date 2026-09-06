@@ -219,3 +219,46 @@ test('发现卡保存有界的工具观察记录', () => {
   assert.equal(saved.toolNotes[1].toolId, 'instrument')
   assert.equal(saved.toolNotes[2].toolId, 'rhythm')
 })
+
+test('教师观察分析汇总感受、证据、路径和二次聆听', () => {
+  const discoveries = loadDiscoveries()
+  const analytics = discoveries.buildDiscoveryAnalytics([
+    {
+      id: 'one',
+      studentId: 'stu-a',
+      topicId: 'jasmine',
+      title: '一',
+      statement: '我听到了流动。',
+      path: 'emotion',
+      firstFeeling: '温柔',
+      evidence: ['级进', '旋律'],
+      relistenChoice: 'new-clue',
+      toolNotes: [{ toolId: 'microscope', observation: '', evidence: [] }],
+      tags: [],
+      createdAt: 1,
+    },
+    {
+      id: 'two',
+      studentId: 'stu-b',
+      topicId: 'jasmine',
+      title: '二',
+      statement: '我想摇一摇。',
+      path: 'movement',
+      firstFeeling: '温柔',
+      evidence: ['节奏'],
+      cultureOpened: true,
+      tags: [],
+      createdAt: 2,
+    },
+  ])
+
+  assert.equal(analytics.total, 2)
+  assert.equal(analytics.studentCount, 2)
+  assert.equal(analytics.pathCounts.emotion, 1)
+  assert.equal(analytics.pathCounts.movement, 1)
+  assert.equal(analytics.feelingCounts['温柔'], 2)
+  assert.equal(analytics.evidenceCounts['级进'], 1)
+  assert.equal(analytics.withRelisten, 1)
+  assert.equal(analytics.cultureOpened, 1)
+  assert.equal(analytics.toolCounts.microscope, 1)
+})

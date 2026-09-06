@@ -1,6 +1,7 @@
 // 统计分析：为数据看板计算各类聚合指标
 import { loadRoster, loadSessions, sessionsOf, Session, Student } from './students'
 import { matchesLearningScope, type LearningScope } from './learningScope'
+import { loadMusicDiscoveries } from './discoveries'
 
 export const GAME_META: Record<string, { name: string; icon: string; skill: string }> = {
   'game-taiko': { name: '节奏反应', icon: '🥁', skill: '律动' },
@@ -18,6 +19,9 @@ export interface StudentStat {
   bestScore: number
   /** 各游戏平均正确率，用于雷达图 */
   skillByGame: Record<string, number>
+  discoveryCount: number
+  relistenCount: number
+  evidenceCount: number
 }
 
 export function studentStat(studentId: string): StudentStat | null {
@@ -41,7 +45,18 @@ function buildStat(student: Student, sessions: Session[]): StudentStat {
     skillByGame[gameId] =
       gs.length === 0 ? 0 : gs.reduce((a, s) => a + s.accuracy, 0) / gs.length
   }
-  return { student, totalSessions, totalStars, avgAccuracy, bestScore, skillByGame }
+  const discoveries = loadMusicDiscoveries(student.id)
+  return {
+    student,
+    totalSessions,
+    totalStars,
+    avgAccuracy,
+    bestScore,
+    skillByGame,
+    discoveryCount: discoveries.length,
+    relistenCount: discoveries.filter((item) => item.relistenChoice || item.relistenReflection).length,
+    evidenceCount: discoveries.filter((item) => (item.evidence?.length ?? 0) > 0).length,
+  }
 }
 
 /** 全班统计（按总星数排序，用于排行榜） */

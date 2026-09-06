@@ -14,8 +14,15 @@ import './course.css'
 const ADVENTURE_PRESENTATION_PAGES: readonly PagePagerItem[] = [
   { id: 'mission', label: '当前任务', hint: '查看当前小岛和下一步行动' },
   { id: 'map', label: '音乐地图', hint: '分组查看九座音乐岛屿' },
-  { id: 'cards', label: '发现卡', hint: '查看当前岛屿的主题卡片' },
+  { id: 'cards', label: '我的发现', hint: '回看感受、证据和再次聆听' },
 ]
+
+const DISCOVERY_PATH_LABELS: Record<string, string> = {
+  emotion: '情绪入口',
+  movement: '动作入口',
+  story: '故事入口',
+  culture: '文化入口',
+}
 
 function routeLabel(route: Route): string {
   const labels: Partial<Record<Route, string>> = {
@@ -36,13 +43,12 @@ export default function AdventureMap() {
   const { navigate, openTheory, openExploration, currentStudentId, selectedGrade } = useApp()
   const [adventurePage, setAdventurePage] = useState(0)
   const [questPage, setQuestPage] = useState(0)
+  const [discoveryPage, setDiscoveryPage] = useState(0)
   const progress = loadProgress()
   const student = getCurrentStudent()
   const effectiveGrade = selectedGrade ?? student?.grade
-  const discoverySummary = useMemo(
-    () => buildDiscoverySummary(loadMusicDiscoveries(currentStudentId)),
-    [currentStudentId]
-  )
+  const discoveries = useMemo(() => loadMusicDiscoveries(currentStudentId), [currentStudentId])
+  const discoverySummary = useMemo(() => buildDiscoverySummary(discoveries), [discoveries])
   const scopedTopicIds = useMemo(
     () =>
       new Set(
@@ -95,6 +101,22 @@ export default function AdventureMap() {
     })),
     [questPageData.pageCount]
   )
+  const discoveryPageData = useMemo(
+    () => getPageSlice(discoveries, discoveryPage, 4),
+    [discoveries, discoveryPage]
+  )
+  const discoveryPagerItems = useMemo<readonly PagePagerItem[]>(
+    () => Array.from({ length: discoveryPageData.pageCount }, (_, index) => ({
+      id: `discovery-page-${index}`,
+      label: `${index + 1}`,
+      hint: `第 ${index + 1} 页我的发现`,
+    })),
+    [discoveryPageData.pageCount]
+  )
+
+  useEffect(() => {
+    if (discoveryPageData.pageIndex !== discoveryPage) setDiscoveryPage(discoveryPageData.pageIndex)
+  }, [discoveryPage, discoveryPageData.pageIndex])
 
   const openExploreTheory = () => {
     const first = previewTopics[0]
@@ -167,41 +189,6 @@ export default function AdventureMap() {
         </div>
       </section>
 
-      <section className="leader-panel card discovery-replay-panel" aria-label="我的发现">
-        <div>
-          <span className="course-kicker">我的发现</span>
-          <h3>把听到的证据再听一次</h3>
-          <p>
-            {discoverySummary.total > 0
-              ? `已经留下 ${discoverySummary.total} 条音乐发现。`
-              : '完成一次探索后，这里会出现你的音乐证据。'}
-          </p>
-        </div>
-        {discoverySummary.latest[0] ? (
-          <button
-            className="big-start"
-            type="button"
-            onClick={() =>
-              discoverySummary.latest[0].unitId === 'jasmine'
-                ? openExploration('jasmine')
-                : openTheory({ topicId: discoverySummary.latest[0].topicId })
-            }
-          >
-            <b>{discoverySummary.latest[0].title}</b>
-            <span>{discoverySummary.latest[0].statement}</span>
-            <small>再听一次</small>
-          </button>
-        ) : (
-          <button
-            className="lesson-secondary"
-            type="button"
-            onClick={() => openExploration('jasmine')}
-          >
-            开始今日探索
-          </button>
-        )}
-      </section>
-
       <div className="adventure-presentation-map">
       <div className="map-track quest-track">
         {questPageData.items.map(({ quest, completed, pct, unlocked }) => (
@@ -240,41 +227,79 @@ export default function AdventureMap() {
       />
       </div>
 
-      <section className="leader-panel card quest-topic-panel adventure-presentation-cards">
+      <section className="leader-panel card quest-topic-panel adventure-presentation-cards discovery-library-panel">
         <div>
-          <span className="course-kicker">岛屿发现卡</span>
-          <h3>{activeQuest.title}会遇到这些关卡</h3>
+          <span className="course-kicker">我的音乐发现</span>
+          <h3>把感受、证据和再次聆听留下来</h3>
+          <p className="discovery-library-intro">
+            {discoverySummary.total > 0
+              ? discoverySummary.headline
+              : '完成一次探索后，这里会出现你的音乐证据，也会生成你的第一张发现卡。'}
+          </p>
         </div>
-        <div className="quest-topic-grid">
-          {previewTopics.map((topic) => (
-            <button
-              key={topic!.id}
-              onClick={() =>
-                openTheory(
-                  focusFromTheoryTopic({
-                    id: topic!.id,
-                    category: topic!.category,
-                    stage: topic!.stage,
-                  })
-                )
-              }
-              title={topic!.subtitle}
-            >
-              <b>{topic!.title}</b>
-              <small>
-                {topic!.category} · {topic!.level}
-              </small>
-              <span>{topic!.subtitle}</span>
+        {discoveryPageData.items.length > 0 ? (
+          <div className="discovery-card-grid">
+            {discoveryPageData.items.map((discovery) => (
+              <button
+                key={discovery.id}
+                className="discovery-card"
+                type="button"
+                onClick={() =>
+                  discoverySummary.latest[0] &&
+                  discoverySummary.latest[0].id === discovery.id &&
+                  discoverySummary.latest[0].unitId === 'jasmine'
+                    ? openExploration('jasmine')
+                    : discovery.unitId
+                    ? openExploration(discovery.unitId)
+                    : openTheory({ topicId: discovery.topicId })
+                }
+              >
+                <span className="discovery-card-topline">
+                  {discovery.path ? DISCOVERY_PATH_LABELS[discovery.path] : '音乐线索'}
+                  {discovery.grade ? ` · ${getGradeLabel(discovery.grade)}` : ''}
+                </span>
+                <b>{discovery.title}</b>
+                <p>“{discovery.statement}”</p>
+                <small>
+                  {discovery.evidence?.length
+                    ? `证据：${discovery.evidence.slice(0, 2).join('、')}`
+                    : '还可以再找一条音乐证据'}
+                  {discovery.relistenChoice ? ' · 已再次聆听' : ''}
+                </small>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="discovery-library-empty">
+            <span aria-hidden="true">🎧</span>
+            <div>
+              <b>先听见，再留下自己的话</b>
+              <p>从茉莉花探索剧场开始，选择一种感受或动作，找到音乐里的依据。</p>
+            </div>
+          </div>
+        )}
+        <PagePager
+          items={discoveryPagerItems}
+          activeIndex={discoveryPageData.pageIndex}
+          onChange={setDiscoveryPage}
+          ariaLabel="我的发现分页"
+          compact
+          showTabs={false}
+        />
+        <div className="discovery-next-step">
+          <div>
+            <span className="course-kicker">继续探索</span>
+            <b>{activeQuest.title}：先找一条可听见的线索</b>
+            <small>{activeQuest.mission}</small>
+          </div>
+          <div className="lesson-foot">
+            <button className="big-start" onClick={openExploreTheory}>
+              进入探索馆
             </button>
-          ))}
-        </div>
-        <div className="lesson-foot">
-          <button className="big-start" onClick={openExploreTheory}>
-            进入探索馆闯关
-          </button>
-          <button className="lesson-secondary" onClick={() => navigate(activeQuest.practiceRoute)}>
-            去完成小岛挑战
-          </button>
+            <button className="lesson-secondary" onClick={() => openExploration('jasmine')}>
+              再听茉莉花
+            </button>
+          </div>
         </div>
       </section>
       </div>

@@ -54,6 +54,19 @@ export interface DiscoverySummary {
   headline: string
 }
 
+export interface DiscoveryAnalytics {
+  total: number
+  studentCount: number
+  withFeeling: number
+  withEvidence: number
+  withRelisten: number
+  cultureOpened: number
+  pathCounts: Record<ExplorationPath, number>
+  feelingCounts: Record<string, number>
+  evidenceCounts: Record<string, number>
+  toolCounts: Record<string, number>
+}
+
 export const DISCOVERY_STORE_KEY = 'music-edu-discoveries-v1'
 const MAX_DISCOVERIES = 60
 
@@ -172,6 +185,57 @@ export function buildDiscoverySummary(
       total === 0
         ? '完成一张探索卡，留下第一条音乐发现。'
         : `已经留下 ${total} 条音乐发现，继续把听到的变化说出来。`,
+  }
+}
+
+export function buildDiscoveryAnalytics(discoveries: readonly MusicDiscovery[]): DiscoveryAnalytics {
+  const pathCounts: Record<ExplorationPath, number> = {
+    emotion: 0,
+    movement: 0,
+    story: 0,
+    culture: 0,
+  }
+  const feelingCounts: Record<string, number> = {}
+  const evidenceCounts: Record<string, number> = {}
+  const toolCounts: Record<string, number> = {}
+  const studentIds = new Set<string>()
+  let withFeeling = 0
+  let withEvidence = 0
+  let withRelisten = 0
+  let cultureOpened = 0
+
+  const increment = (counts: Record<string, number>, value: string) => {
+    const key = value.trim()
+    if (key) counts[key] = (counts[key] ?? 0) + 1
+  }
+
+  for (const discovery of discoveries) {
+    if (discovery.studentId) studentIds.add(discovery.studentId)
+    if (discovery.path && discovery.path in pathCounts) pathCounts[discovery.path] += 1
+    if (discovery.firstFeeling) {
+      withFeeling += 1
+      increment(feelingCounts, discovery.firstFeeling)
+    }
+    if (discovery.evidence && discovery.evidence.length > 0) {
+      withEvidence += 1
+      discovery.evidence.forEach((item) => increment(evidenceCounts, item))
+    }
+    if (discovery.relistenChoice || discovery.relistenReflection) withRelisten += 1
+    if (discovery.cultureOpened) cultureOpened += 1
+    discovery.toolNotes?.forEach((note) => increment(toolCounts, note.toolId))
+  }
+
+  return {
+    total: discoveries.length,
+    studentCount: studentIds.size,
+    withFeeling,
+    withEvidence,
+    withRelisten,
+    cultureOpened,
+    pathCounts,
+    feelingCounts,
+    evidenceCounts,
+    toolCounts,
   }
 }
 

@@ -5,6 +5,7 @@ import CountUp from '../components/CountUp'
 import { useFillOnMount } from '../components/useFillOnMount'
 import '../components/charts.css'
 import { useApp } from '../state/appState'
+import { buildDiscoveryAnalytics, loadMusicDiscoveries } from '../state/discoveries'
 import PagePager, { type PagePagerItem } from '../components/PagePager'
 import { getPageSlice } from '../components/presentation'
 import './dashboard.css'
@@ -42,6 +43,14 @@ export default function Dashboard() {
   const overview = useMemo(() => classOverview(scope), [scope])
   const filled = useFillOnMount()
   const ranking = useMemo(() => classStats(scope), [scope])
+  const discoveryAnalytics = useMemo(() => {
+    const studentIds = new Set(ranking.map((item) => item.student.id))
+    return buildDiscoveryAnalytics(
+      loadMusicDiscoveries().filter(
+        (item) => item.studentId !== null && studentIds.has(item.studentId)
+      )
+    )
+  }, [ranking])
   const [selected, setSelected] = useState<string | null>(ranking[0]?.student.id ?? null)
   const [focusGame, setFocusGame] = useState<FocusGame>('all')
   useEffect(() => {
@@ -89,6 +98,18 @@ export default function Dashboard() {
     [tablePageData.pageCount]
   )
   const visibleRanking = isDesktopPresentation ? tablePageData.items : ranking
+  const processPaths = [
+    { id: 'emotion', label: '情绪', icon: '🌈' },
+    { id: 'movement', label: '动作', icon: '🕺' },
+    { id: 'story', label: '故事', icon: '📖' },
+    { id: 'culture', label: '文化', icon: '🏮' },
+  ] as const
+  const topEvidence = Object.entries(discoveryAnalytics.evidenceCounts)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 4)
+  const topFeelings = Object.entries(discoveryAnalytics.feelingCounts)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 3)
 
   useEffect(() => {
     const media = window.matchMedia('(min-width: 901px)')
@@ -363,6 +384,18 @@ export default function Dashboard() {
                       <span>平均正确率</span>
                       <b>{Math.round(detail.avgAccuracy * 100)}%</b>
                     </div>
+                    <div className="ds-item">
+                      <span>音乐发现</span>
+                      <b>{detail.discoveryCount}</b>
+                    </div>
+                    <div className="ds-item">
+                      <span>找到证据</span>
+                      <b>{detail.evidenceCount}</b>
+                    </div>
+                    <div className="ds-item">
+                      <span>再次聆听</span>
+                      <b>{detail.relistenCount}</b>
+                    </div>
                     <div className="ds-skills">
                       {GAME_IDS.map((g) => (
                         <div key={g} className="skill-bar">
@@ -388,6 +421,57 @@ export default function Dashboard() {
                 </div>
               )}
             </div>
+            <section className="dash-process-panel card" aria-label="班级音乐探索过程观察">
+              <div className="dash-process-head">
+                <span className="dash-kicker">过程观察</span>
+                <h3>学生怎样在听音乐</h3>
+                <p>这里看的是感受、证据和回听，不给主观答案排名。</p>
+              </div>
+              <div className="dash-process-kpis">
+                <div>
+                  <b>{discoveryAnalytics.total}</b>
+                  <span>张发现卡</span>
+                </div>
+                <div>
+                  <b>{discoveryAnalytics.withEvidence}</b>
+                  <span>找到证据</span>
+                </div>
+                <div>
+                  <b>{discoveryAnalytics.withRelisten}</b>
+                  <span>完成回听</span>
+                </div>
+                <div>
+                  <b>{discoveryAnalytics.cultureOpened}</b>
+                  <span>打开文化换镜</span>
+                </div>
+              </div>
+              <div className="dash-process-paths">
+                <strong>学生从哪里进入</strong>
+                {processPaths.map((path) => (
+                  <div key={path.id}>
+                    <span>{path.icon} {path.label}</span>
+                    <div className="process-path-track">
+                      <i
+                        style={{
+                          width: `${discoveryAnalytics.total ? Math.round((discoveryAnalytics.pathCounts[path.id] / discoveryAnalytics.total) * 100) : 0}%`,
+                        }}
+                      />
+                    </div>
+                    <b>{discoveryAnalytics.pathCounts[path.id]}</b>
+                  </div>
+                ))}
+              </div>
+              <div className="dash-process-tags">
+                <div>
+                  <strong>常出现的感受</strong>
+                  <p>{topFeelings.length ? topFeelings.map(([label, count]) => `${label} ${count}`).join(' · ') : '还没有感受记录'}</p>
+                </div>
+                <div>
+                  <strong>常被指出的线索</strong>
+                  <p>{topEvidence.length ? topEvidence.map(([label, count]) => `${label} ${count}`).join(' · ') : '还没有证据记录'}</p>
+                </div>
+              </div>
+            </section>
           </div>
         )}
       </div>

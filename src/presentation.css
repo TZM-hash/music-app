@@ -973,6 +973,98 @@
   padding: 14px !important;
 }
 
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-library-panel {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto auto !important;
+  align-content: stretch !important;
+  gap: 10px !important;
+  overflow: hidden !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-library-intro {
+  margin: 4px 0 0 !important;
+  color: var(--text-soft) !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 11px !important;
+  border: 1px solid var(--line-neon) !important;
+  border-radius: 10px !important;
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  text-align: left !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card:hover,
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card:focus-visible {
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 10px 22px rgba(0, 122, 255, 0.12) !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card-topline,
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card small,
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-next-step small {
+  color: var(--text-soft) !important;
+  font-size: 0.74rem !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card-topline {
+  color: var(--neon-cyan) !important;
+  font-weight: 800 !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-card p {
+  display: -webkit-box !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 2 !important;
+  color: var(--text) !important;
+  line-height: 1.45 !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-library-empty,
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-next-step {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 10px !important;
+  background: rgba(0, 122, 255, 0.05) !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-library-empty {
+  justify-content: flex-start !important;
+  color: var(--text-soft) !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-library-empty > span {
+  font-size: 2rem !important;
+}
+
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-library-empty p,
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-next-step b,
+.content.route-adventure .adventure-presentation[data-adventure-page='2'] .discovery-next-step small {
+  display: block !important;
+  margin: 3px 0 0 !important;
+}
+
 .content.route-adventure .adventure-presentation[data-adventure-page='2'] .quest-topic-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   min-height: 0 !important;

@@ -333,6 +333,41 @@
   border: 1px solid var(--line-soft);
 }
 
+.theory-clue-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theory-clue-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid rgba(0, 122, 255, 0.16);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(0, 122, 255, 0.08), rgba(255, 255, 255, 0.78));
+}
+
+.theory-clue-card span {
+  color: var(--neon-cyan);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.theory-clue-card b {
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.theory-clue-card p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
 .explain-copy {
   display: flex;
   flex-direction: column;
@@ -351,6 +386,12 @@
   border-left: 3px solid var(--primary);
   border-radius: 0 10px 10px 0;
   background: rgba(0, 122, 255, 0.05);
+}
+
+.explain-detail summary {
+  cursor: pointer;
+  color: var(--neon-cyan);
+  font-weight: 800;
 }
 .explain-detail-title {
   display: block;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useApp } from '../state/appState'
 import { ensureAudio, playNote } from '../music/audioEngine'
 import { stopUISounds, uiLater } from '../music/uiSounds'
@@ -30,10 +30,10 @@ import { loadReviewBook, recordReviewAnswer, saveReviewBook } from '../state/the
 import './theory.css'
 
 const THEORY_PRESENTATION_PAGES: readonly PagePagerItem[] = [
-  { id: 'topics', label: '选主题', hint: '按年级和方向选择教材发现卡' },
-  { id: 'listen', label: '听与看', hint: '阅读概念并试听互动演示' },
-  { id: 'play', label: '玩与说', hint: '完成挑战并留下自己的音乐发现' },
-  { id: 'extend', label: '浙江拓展', hint: '连接浙江声音与课堂表达' },
+  { id: 'topics', label: '找线索', hint: '按年级和声音入口选择发现卡' },
+  { id: 'listen', label: '听见', hint: '先听现象，再看简短提示' },
+  { id: 'play', label: '试一试', hint: '比较、表达并留下自己的发现' },
+  { id: 'extend', label: '连接文化', hint: '把声音线索带回浙江课堂' },
 ]
 
 type CategoryFilter = '全部' | string
@@ -136,8 +136,8 @@ export default function Theory() {
       <section className="theory-lab-head card">
         <div>
           <span className="theory-kicker">浙江人音版 · 互动音乐探索馆</span>
-          <h2>小学 1—6 年级的音乐发现地图</h2>
-          <p>按顶部选择的年级匹配发现卡，再按音乐方向和教材来源浏览；每张卡都用声音、图形、小游戏和创作入口帮助学生边玩边理解。</p>
+          <h2>小学 1—6 年级的音乐线索库</h2>
+          <p>先从“我听到了什么”开始，再用一张短线索卡找到音乐名称；听、比较、表达之后，乐理才会自然出现。</p>
           <span className="theory-scope-note">{effectiveGrade ? `${getGradeLabel(effectiveGrade)}内容` : '全部年级内容'}</span>
         </div>
         <div className="theory-count">
@@ -170,7 +170,7 @@ export default function Theory() {
               </div>
             ) : (
               <label className="theory-filter-select">
-                <span className="side-group-title">知识点</span>
+                <span className="side-group-title">线索卡</span>
                 <select
                   aria-label="选择知识点"
                   value={active.id}
@@ -334,51 +334,35 @@ export default function Theory() {
 }
 
 function DetailedExplanation({ topic }: { topic: TheoryTopic }) {
-  const stageLabel = getStageLabel(topic.stage)
-  const keywordTones = ['a', 'b', 'c', 'd'] as const
-
   return (
     <div className="topic-explanation">
-      <div className="explain-copy">
-        <p>
-          这张发现卡从 <Keyword tone="a">{topic.title}</Keyword> 开始。它属于
-          <Keyword tone="b">{topic.category}</Keyword> 里的 {stageLabel} 探索，学生可以先听见：
-          {topic.concept}
-        </p>
-        <p>
-          互动时可以先抓住 <Keyword tone="c">{topic.subtitle}</Keyword> 这个入口，再把抽象说法落到
-          <Keyword tone="d">听觉变化</Keyword>、<Keyword tone="a">视觉符号</Keyword> 和
-          <Keyword tone="b">身体动作</Keyword> 上。这样学生不只是记住名称，而是能说出“我听到了什么、我看到了什么、我想怎么表现它”。
-        </p>
-        <p>
-          可以用下方演示先做对比，再让学生用自己的话、动作或哼唱复述。表达时可以抓住这些线索：
-          {topic.keyPoints.map((point, index) => (
-            <Keyword key={point} tone={keywordTones[index % keywordTones.length]}>
-              {point}
-            </Keyword>
-          ))}
-        </p>
-        {topic.detail && (
-          <div className="explain-detail">
-            <span className="explain-detail-title">📖 深入讲解</span>
-            {topic.detail.split('\n\n').map((para, i) => (
-              <p key={i}>{para}</p>
-            ))}
-          </div>
-        )}
+      <div className="theory-clue-card-grid" aria-label="音乐线索卡">
+        <article className="theory-clue-card">
+          <span>先听</span>
+          <b>{topic.subtitle}</b>
+          <p>{topic.concept}</p>
+        </article>
+        <article className="theory-clue-card">
+          <span>找依据</span>
+          <b>{topic.keyPoints[0] ?? '听出一个变化'}</b>
+          <p>点击演示做一次比较，说说你是从哪里听出来的。</p>
+        </article>
+        <article className="theory-clue-card">
+          <span>再命名</span>
+          <b>{topic.title}</b>
+          <p>听到现象以后，再把它和音乐名称、符号或动作连起来。</p>
+        </article>
       </div>
+      {topic.detail && (
+        <details className="explain-detail">
+          <summary>想知道这个线索的乐理名字？</summary>
+          {topic.detail.split('\n\n').map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </details>
+      )}
     </div>
   )
-}
-
-function Keyword({
-  tone,
-  children,
-}: {
-  tone: 'a' | 'b' | 'c' | 'd'
-  children: ReactNode
-}) {
-  return <mark className={`keyword keyword-${tone}`}>{children}</mark>
 }
 
 function FilterGroup({
